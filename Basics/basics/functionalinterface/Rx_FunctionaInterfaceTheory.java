@@ -1,15 +1,26 @@
 package basics.functionalinterface;
 
 
+import java.util.function.Supplier;
+
 //Built-in Functional Interfaces in java.util.function
 //        Java provides many ready-to-use functional interfaces:
 //
-//        Interface	Signature	Description
-//        Runnable	void run()	No input, no return
-//        Supplier<T>	T get()	Returns value, takes nothing
-//        Consumer<T>	void accept(T t)	Takes value, returns nothing
-//        Function<T,R>	R apply(T t)	Takes input, returns output
-//        Predicate<T>	boolean test(T t)	Takes input, returns boolean
-//        BiFunction<T,U,R>	R apply(T t, U u)	Two inputs, one output
+//Interface	Abstract Method	Description
+//        Supplier<T>	T get()	Supplies a value
+//        Consumer<T>	void accept(T)	Consumes a value
+//        Function<T, R>	R apply(T)	Transforms a value
+//        Predicate<T>	boolean test(T)	Tests a condition
+//        BiFunction<T,U,R>	R apply(T,U)	Takes 2 inputs, returns 1 output
+//        BiConsumer<T,U>	void accept(T,U)	Takes 2 inputs, returns nothing
+//        UnaryOperator<T>	T apply(T)	Function where input and output are same type
+//        BinaryOperator<T>	T apply(T, T)	Two same-type inputs → same-type output
 public class Rx_FunctionaInterfaceTheory {
+    public static void main(String[] args) {
+
+
+    }
 }
+
+
+
