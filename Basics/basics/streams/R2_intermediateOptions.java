@@ -1,6 +1,7 @@
 package basics.streams;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,5 +55,19 @@ public class R2_intermediateOptions {
             .sorted(String.CASE_INSENSITIVE_ORDER)
             .collect(Collectors.toList()));
         //[air, in, Magic, the]
+
+
+        //reverse order
+//        Reverse Order with sorted(Comparator.reverseOrder())
+//🔹 Strings Example
+//        java
+//                Copy
+//        Edit
+        List<String> names = List.of("Sumit", "Neha", "Amit");
+
+        List<String> reversed = names.stream()
+                .sorted(Comparator.reverseOrder())  // reverse natural order
+                .collect(Collectors.toList());
+        System.out.println(reversed);
     }
 }
