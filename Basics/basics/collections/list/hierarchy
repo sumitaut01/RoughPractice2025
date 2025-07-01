@@ -1,0 +1,33 @@
+java.lang.Iterable
+        ↑
+   java.util.Collection
+        ↑
+     java.util.List
+        ↑
+ ┌────────────┬──────────────┬───────────┐
+ │            │              │           │
+ArrayList  LinkedList     Vector     (interface)
+                              ↑
+                           Stack
+
+Explanation
+1. Iterable
+Root interface for all collection types
+Supports enhanced for-loop (for-each)
+
+2. Collection
+Core interface for storing groups of objects
+Methods like add(), remove(), size(), etc.
+
+3. List
+Extends Collection
+Maintains insertion order
+Allows duplicate elements
+Provides indexed access (like arrays)
+
+✅ Implementations of List
+Class	Description
+ArrayList	Resizable array, fast for random access
+LinkedList	Doubly linked list, fast for insert/delete
+Vector	Legacy synchronized version of ArrayList
+Stack	Legacy LIFO structure (extends Vector)
