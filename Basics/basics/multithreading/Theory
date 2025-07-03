@@ -1,0 +1,16 @@
+ What is Multithreading?
+Multithreading is a feature of Java that allows concurrent execution of two or more parts of a program — called threads.
+
+Each thread runs independently, but shares the same memory space.
+
+🧠 Why Multithreading?
+Benefit	Description
+✅ Better performance	Especially on multi-core CPUs
+✅ Efficient CPU usage	CPU is not idle while waiting for I/O
+✅ Async operations	UI remains responsive
+✅ Parallel processing	Handle tasks in parallel
+
+🧱 Two Ways to Create a Thread
+Approach	Example Class
+1️⃣ Extend Thread class	MyThread extends Thread
+2️⃣ Implement Runnable	MyTask implements Runnable

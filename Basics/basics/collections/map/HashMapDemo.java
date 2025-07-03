@@ -22,23 +22,12 @@ public class HashMapDemo {
 
     //How HashMap Stores Data — Step by Step
     //Let’s say you do:
-    //
-    //java
-    //Copy
-    //Edit
     //map.put("Apple", 10);
     //1. Compute Hash Code
-    //java
-    //Copy
-    //Edit
     //int hash = "Apple".hashCode(); // e.g. 63062875
     //2. Convert to Bucket Index
-    //java
-    //Copy
-    //Edit
     //index = hash % table.length
     //(usually done more efficiently using bitwise operations)
-    //
     //3. Check the Bucket
     //If bucket is empty → place new Node
     //
@@ -84,6 +73,9 @@ public class HashMapDemo {
         ks.forEach(k-> System.out.println(k+"====>"+hm.get(k)));
         //college====>kits
         //name====>sumit
+
+
+
 
 
 
