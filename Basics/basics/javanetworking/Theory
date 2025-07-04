@@ -1,0 +1,22 @@
+Awesome! Let’s dive into Java Networking, focusing on:
+
+🔌 Sockets (TCP/IP communication)
+
+🌐 HTTP communication using HttpURLConnection and modern HttpClient
+
+This is useful not just for backend work — but also for automation testers who:
+
+Simulate client-server interactions
+
+Validate API connectivity
+
+Send mock HTTP requests
+
+Test socket-based systems (rare but real)
+
+
+1. Java Sockets (TCP Client-Server Model)
+🔧 How It Works:
+Component	Role
+ServerSocket	Listens for incoming client connections
+Socket	Represents the connection between client and server
