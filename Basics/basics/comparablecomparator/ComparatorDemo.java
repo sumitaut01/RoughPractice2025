@@ -49,7 +49,7 @@ class StudentDemo  {
     }
 }
 
-
+//separate class
 class AgeComparaor implements Comparator<StudentDemo>{
     @Override
     public int compare(StudentDemo o1, StudentDemo o2) {
