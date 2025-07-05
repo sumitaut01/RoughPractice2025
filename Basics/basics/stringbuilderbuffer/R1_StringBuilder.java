@@ -3,7 +3,7 @@ package basics.stringbuilderbuffer;
 
 //not thread safe
 //mutable
-//faster thab s buffer as not thred safe
+//faster than s buffer as not thred safe
 
 //StringBuilder is a mutable class in java.lang used to modify strings without creating new objects each time.
 
