@@ -55,9 +55,6 @@ public class R_trywithresources {
 
 
 //        Multiple Resources
-//        java
-//                Copy
-//        Edit
 //        try (
 //                FileInputStream fis = new FileInputStream("input.txt");
 //                FileOutputStream fos = new FileOutputStream("output.txt")
@@ -67,11 +64,7 @@ public class R_trywithresources {
 //            e.printStackTrace();
 //        }
 
-
 //        Behind the Scenes
-//                java
-//        Copy
-//                Edit
 //        try (MyResource r = new MyResource()) {
 //            // use r
 //        }

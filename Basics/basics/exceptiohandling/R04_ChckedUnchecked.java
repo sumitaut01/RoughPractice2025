@@ -21,22 +21,16 @@ package basics.exceptiohandling;
 //
 //        🔹 Examples:
 //        IOException
-//
 //        SQLException
-//
 //        FileNotFoundException
-//
 //        ParseException
 //
 //public void readFile(String path) throws IOException {
 //        FileInputStream fis = new FileInputStream(path);  // Checked exception
 //        }
 //        If you don’t:
-//
 //        Catch it with try-catch
-//
 //        Or declare with throws
-//
 //        🚫 Compile-time error!
 public class R04_ChckedUnchecked {
 }
