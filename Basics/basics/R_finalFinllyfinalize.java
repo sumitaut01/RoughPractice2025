@@ -31,10 +31,7 @@ package basics;
 
 //        2. finally — Always Executes (Exception Handling)
 //        The finally block is used with try-catch to ensure that important code always runs, even if an exception occurs.
-//
-//        java
-//        Copy
-//        Edit
+
 //        try {
 //        System.out.println(10 / 0);
 //        } catch (Exception e) {
