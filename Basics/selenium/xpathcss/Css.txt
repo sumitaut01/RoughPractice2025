@@ -1,0 +1,69 @@
+
+1. ID then #
+htmltag#id
+
+2. Class then .
+htmltag.class
+=>div.subnav.field
+
+3. Parent Child
+Parent>Chid
+xpath:  parent//child
+div>ul.menu
+
+
+4. If the class has spaces, we have to remove spaces and add .
+wont work =>.menu list-none flex flex-col lg:flex-row justify-end gap-4
+This works: not : escaped with \
+====> .menu.list-none.flex.flex-col.lg\:flex-row.justify-end.gap-4
+
+5.
+xpaht
+//input[@id='name']
+input[id='name]
+
+6. There is no and in css
+
+//input[@id='name' and @type='some']
+input[id='name][type='some']  //works line and
+
+
+7. contains *
+input[id*='nam]
+
+8. starts with ^
+input[id^='nam]
+
+9. ends with $
+button[class$=' p-1 ']
+
+10 first-of-type
+li[class='menu__item flex leading-5']  ==matches 5 elements
+
+li[class='menu__item flex leading-5']:first-of-type   ==matches first element
+
+11 last-of-type
+li[class='menu__item flex leading-5']  ==matches 5 elements
+
+li[class='menu__item flex leading-5']:last-of-type   ==matches first element
+
+12 nth-of-type(12)
+li[class='menu__item flex leading-5']  ==matches 5 elements
+
+li[class='menu__item flex leading-5']:nth-of-type(6)   ==matches nth element
+
+
+13 sibling +
+
+li[class='menu__item flex leading-5']:nth-of-type(5)+li  =6th item
+
+14 not
+
+
+
+
+
+
+
+
+

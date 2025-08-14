@@ -1,0 +1,60 @@
+package basics;
+
+public class R18_Interface implements I1, I2 {
+
+//    All methods
+//    are public abstract by default
+//
+//    Fields are
+//    public static final by default
+//
+//    From Java 8+,
+//    interfaces can
+//    have default and static methods
+//
+//    From Java 9+,
+//    private methods are
+//    also allowed
+//    in interfaces
+
+    public static void main(String[] args) {
+
+        I1 i1 = new R18_Interface();
+        i1.sum(2, 3);//implemented sum from I1
+
+        System.out.println(I1.min_bal);//cant be changed
+        //I1.min_bal=300;// cant assign value to final variable
+
+
+        I2 i2 = new R18_Interface();
+        i2.mul(3, 4);//implemented mul from I2
+
+
+
+    }
+
+    @Override
+    public void sum(int a, int b) {
+
+        System.out.println("implemented sum from I1");
+    }
+
+    @Override
+    public void mul(int a, int b) {
+        System.out.println("implemented mul from I2");
+    }
+}
+
+
+interface I1 {
+ int min_bal=500;// its public static by default
+    public void sum(int a, int b);
+
+}
+
+interface I2 {
+
+    public void mul(int a, int b);
+}
+
+
