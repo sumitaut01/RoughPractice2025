@@ -40,9 +40,6 @@ public class R2_intermediateOptions {
 
 
 //        You can store in list and use multiple times to avoid above problem ✔ Option 2: Store data in a List and reuse it
-//        java
-//        Copy
-//        Edit
         List<String> words = Arrays.asList("Magic", "in", "the", "air");
 
         System.out.println(words.stream()

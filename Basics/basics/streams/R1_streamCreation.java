@@ -20,6 +20,19 @@ public class R1_streamCreation {
         //Stream<String> stream1 = list.stream();
 
         List.of("Sumit","Neha").stream().count();
+
+        //method reference
+        Stream.of(1,2,5,4).forEach(R1_streamCreation::print);
+//        1
+//        2
+//        5
+//        4
+
+    }
+
+
+    public static void print(int number){
+        System.out.println(number);
     }
 
 }

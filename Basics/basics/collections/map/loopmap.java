@@ -4,17 +4,11 @@ public class loopmap {
 }
 
 //Suppose You Have:
-//java
-//Copy
-//Edit
 //Map<String, Integer> map = new HashMap<>();
 //map.put("Apple", 10);
 //map.put("Banana", 20);
 //map.put("Mango", 30);
 //✅ 1. Loop through Keys Only
-//java
-//Copy
-//Edit
 //for (String key : map.keySet()) {
 //    System.out.println("Key: " + key);
 //}
@@ -39,16 +33,10 @@ public class loopmap {
 //Most common and efficient method.
 //
 //✅ 4. Using Lambda + forEach()
-//java
-//Copy
-//Edit
 //map.forEach((key, value) -> System.out.println(key + " => " + value));
 //Short and clean. Great for functional style.
-//
 //✅ 5. Using Iterator (when you need to remove entries)
-//java
-//Copy
-//Edit
+
 //Iterator<Map.Entry<String, Integer>> iterator = map.entrySet().iterator();
 //while (iterator.hasNext()) {
 //    Map.Entry<String, Integer> entry = iterator.next();
@@ -60,9 +48,6 @@ public class loopmap {
 //    }
 //}
 //✅ 6. Java 8 Streams
-//java
-//Copy
-//Edit
 //map.entrySet()
 //   .stream()
 //   .filter(e -> e.getValue() > 10)

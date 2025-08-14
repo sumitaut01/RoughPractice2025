@@ -16,11 +16,10 @@ public class R_XAnonymousClass {
         Animalone animal=new Animalone() {
             @Override
             public void sound() {
-                System.out.println("Annonyms class used");
+                System.out.println("Anonymous class used");
             }
         };
-
-        animal.sound();//Annonyms class used
+        animal.sound();//Anonymous class used
     }
 }
 

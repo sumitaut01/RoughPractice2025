@@ -14,18 +14,13 @@ This means you can write code that works with any data type, while still being t
 
 🧠 Basic Example: Without vs With Generics
 ❌ Without Generics
-java
-Copy
-Edit
+
 List list = new ArrayList();
 list.add("Sumit");
 list.add(100);  // No compile-time error!
 
 String name = (String) list.get(0);  // Needs explicit cast
 ✅ With Generics
-java
-Copy
-Edit
 List<String> list = new ArrayList<>();
 list.add("Sumit");
 // list.add(100); ❌ Compile-time error

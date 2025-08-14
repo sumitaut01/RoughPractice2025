@@ -15,17 +15,14 @@ package basics.collections.list;
 
 //What is ArrayList?
 //        A resizable array-based collection.
-//
 //        Maintains insertion order.
-//
 //        Allows duplicate elements.
-//
 //        Provides random access using index.
-//
 //        Not thread-safe (use Collections.synchronizedList() for safety
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 //Behind the Scenes
@@ -40,7 +37,7 @@ public class ArrayListDemo {
     public static void main(String[] args) {
 
         List<String> lStr=new ArrayList<>();
-        lStr.add("Sumit");  //returns boolean
+        lStr.add("Sumit");  //returns boolean : true in this case
         lStr.add("Amit");
         lStr.add("Neha");
 
@@ -48,6 +45,8 @@ public class ArrayListDemo {
         System.out.println(lStr.remove("does not exist"));// false as value does not exists
 
         System.out.println(lStr);//[Sumit, Amit]
+
+
 
         System.out.println(lStr.indexOf("Sumit"));//0
         System.out.println(lStr.indexOf("kkk"));//-1 as kkk does not exist
@@ -73,8 +72,28 @@ public class ArrayListDemo {
         System.out.println(lStr);//[Jason, Jmes, Chase]
 
         //sublist
-
         System.out.println(lStr.subList(0,1));//Jason
+
+
+        //Sorting
+        List<String> names=List.of("D","A","B","C");
+        System.out.println(names);////[D, A, B, C]
+        //Collections.sort(names);// will error our
+        //Exception in thread "main" java.lang.UnsupportedOperationException
+        //	at java.base/java.util.ImmutableCollections.uoe(ImmutableCollections.java:142)
+
+        //Below Will work
+        List<String> names2=new ArrayList<>();
+        names2.add("D");
+        names2.add("A");
+        names2.add("B");
+        System.out.println(names2);
+
+        Collections.sort(names2);
+        System.out.println(names2);//[A, B, D]
+
+
+
 
     }
 }

@@ -5,14 +5,10 @@ public class theory {
 
 //Hashtable — Legacy Thread-Safe Map
 //Hashtable extends Dictionary<K, V>
-//
 //It is a synchronized, thread-safe hash-based map
-//
 //Introduced before Map<K,V> and later retrofitted to implement it
 //
-//java
-//Copy
-//Edit
+
 //public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>
 //🛠️ Characteristics of Hashtable:
 //Feature	Details
@@ -42,7 +38,5 @@ public class theory {
 //Hashtable implements Map, so it can be used wherever a Map is expected
 //
 //But it’s a legacy class, and modern code uses:
-//
 //HashMap (not thread-safe)
-//
 //ConcurrentHashMap (thread-safe)
