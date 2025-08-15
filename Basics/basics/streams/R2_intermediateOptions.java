@@ -1,8 +1,13 @@
 package basics.streams;
 
+
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,5 +71,24 @@ public class R2_intermediateOptions {
                 .sorted(Comparator.reverseOrder())  // reverse natural order
                 .collect(Collectors.toList());
         System.out.println(reversed);
+
+
+
+        //
+
+       Supplier<List<String>> lst=()-> List.of("Sagar","Neha","Abhi","Shashank");
+        Predicate<String> pred= st->st.startsWith("S");
+        Function<String,String> func=stt->stt.toUpperCase();
+
+       lst.get().stream().filter(pred).map(func).collect(Collectors.toList()).forEach(str-> System.out.println(str));
+       //SAGAR
+        //SHASHANK
     }
+
+
+
+    //Multi Work:
+
+
+
 }
