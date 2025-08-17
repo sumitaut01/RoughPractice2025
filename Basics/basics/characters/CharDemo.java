@@ -3,7 +3,7 @@ package basics.characters;
 public class CharDemo {
 
 //    What is char?
-//    char is a primitive data type.
+//    char is a primitive data type, takes 2 bytes.
 
     //    char c = 'A';
 //✅ 2. Internal Representation
@@ -42,6 +42,18 @@ public class CharDemo {
         String s="sumit";
 
       char []arrCh=  s.toCharArray();
+
+
+
+
+        char c = 'A';
+        char hindi = 'क';
+        char emoji = '\uD83D'; // part of surrogate pair for 😊
+
+        System.out.println("Char: " + c + " | Size: " + Character.BYTES + " bytes");
+        System.out.println("Hindi Char: " + hindi);
+        System.out.println("Unicode of A: " + (int)c);
+        System.out.println("Unicode of क: " + Integer.toHexString(hindi));
 
 
 

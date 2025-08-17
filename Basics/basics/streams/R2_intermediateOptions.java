@@ -36,7 +36,7 @@ public class R2_intermediateOptions {
 
 
         //*** below will result in error
-//        Java Streams can only be used once.
+//        Java Streams can only be used once,
 //                Once you call a terminal operation like collect(), forEach(), count() on a stream, it becomes consumed/closed — you cannot use it again.
 //        System.out.println(stm3.sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList()));
         System.out.println(stm3.sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList()));
@@ -62,9 +62,6 @@ public class R2_intermediateOptions {
         //reverse order
 //        Reverse Order with sorted(Comparator.reverseOrder())
 //🔹 Strings Example
-//        java
-//                Copy
-//        Edit
         List<String> names = List.of("Sumit", "Neha", "Amit");
 
         List<String> reversed = names.stream()
@@ -75,7 +72,6 @@ public class R2_intermediateOptions {
 
 
         //
-
        Supplier<List<String>> lst=()-> List.of("Sagar","Neha","Abhi","Shashank");
         Predicate<String> pred= st->st.startsWith("S");
         Function<String,String> func=stt->stt.toUpperCase();

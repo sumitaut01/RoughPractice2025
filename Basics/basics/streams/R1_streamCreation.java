@@ -10,15 +10,12 @@ public class R1_streamCreation {
 
 
         //1 Stream.of
-
         System.out.println(Stream.of("Sumit","Neha","Raj").count());
 
        //2Arrays.stream
-
         Stream<Integer> stream2 = Arrays.stream(new Integer[]{1, 2, 3});
 
         //Stream<String> stream1 = list.stream();
-
         List.of("Sumit","Neha").stream().count();
 
         //method reference
