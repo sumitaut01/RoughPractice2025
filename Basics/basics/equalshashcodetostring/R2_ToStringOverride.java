@@ -1,5 +1,8 @@
 package basics.equalshashcodetostring;
 
+import io.restassured.mapper.ObjectMapper;
+import io.restassured.mapper.ObjectMapperDeserializationContext;
+import io.restassured.mapper.ObjectMapperSerializationContext;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +11,9 @@ public class R2_ToStringOverride {
     public static void main(String[] args) {
         System.out.println(new Worker());//Worker{age=0, role='null'}
         System.out.println(new Worker(32,"QA"));//Worker{age=32, role='QA'}
+
+
+
 
     }
 }

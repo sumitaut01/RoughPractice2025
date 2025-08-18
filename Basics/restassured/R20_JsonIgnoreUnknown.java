@@ -45,8 +45,13 @@ public class R20_JsonIgnoreUnknown {
 
         ObjectMapper objectMapper2=new ObjectMapper();
         Dummy2 dummy2=objectMapper.readValue(response.asString(), Dummy2.class);
-
         System.out.println(dummy2);//Dummy2{id=1}
+        //Or
+
+        Dummy2 dummy3= response.as(Dummy2.class);
+        System.out.println(dummy3);//Dummy2{id=1}
+
+
 
     }
 }

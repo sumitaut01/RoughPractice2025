@@ -13,19 +13,13 @@ import static io.restassured.RestAssured.config;
 public class R13_RestConfiigDemo {
 //What is RestAssuredConfig?
 //RestAssuredConfig is a configuration object that lets you customize behaviors like:
-//
 //timeouts
-//
 //logging
-//
 //encoder/decoder behavior
-//
 //JSON/XML parsing
-//
 //HTTP client settings
-//
 //SSL settings
-//
+
 //You use it when you want to override RestAssured’s default internal behavior.
     public static void main(String[] args) {
         WireMockServer wireMockServer = new WireMockServer(8089); // custom port
