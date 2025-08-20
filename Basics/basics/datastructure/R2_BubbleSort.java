@@ -1,4 +1,4 @@
 package basics.datastructure;
 
-public class BinarySearchDemo {
+public class R2_BubbleSort {
 }

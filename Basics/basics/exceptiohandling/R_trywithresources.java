@@ -27,11 +27,8 @@ public class R_trywithresources {
 
 //        ❌ Problems:
 //        Verbose
-//
 //        Easy to forget .close()
-//
 //        Cluttered finally block
-
 
 //try with resources
 

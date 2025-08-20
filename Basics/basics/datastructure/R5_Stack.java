@@ -18,9 +18,7 @@ import java.util.Stack;
 //        Push = add to top, Pop = remove from top
 
 
-public class R_Stack {
-
-
+public class R5_Stack {
 
     public static void main(String[] args) {
 
