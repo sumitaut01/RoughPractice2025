@@ -1,0 +1,11 @@
+
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ý’—øÿÿÿÿ
+T
+java:S1854">Remove this useless assignment to local variable "jsonSchema".(»½ä¨
+S
+java:S1854"8Remove this useless assignment to local variable "json".(ð¶šÁÿÿÿÿÿ
+D
+java:S1481")Remove this unused "json" local variable.(ð¶šÁÿÿÿÿÿ
+E
+java:S1481"/Remove this unused "jsonSchema" local variable.(»½ä¨
+R	java:S125ƒ"<This block of commented-out lines of code should be removed.(Œ»ˆí
