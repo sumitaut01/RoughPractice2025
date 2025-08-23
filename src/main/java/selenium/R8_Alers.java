@@ -1,5 +1,6 @@
 package selenium;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,6 +34,8 @@ public class R8_Alers {
         driver.switchTo().alert().dismiss();
         driver.switchTo().alert().sendKeys("");
         driver.switchTo().alert().getText();
+
+       // Alert alert=
 
 
     }
