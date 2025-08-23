@@ -22,7 +22,6 @@ package basics;
 
 //String Pool is Part of the Heap
 //        🔹 The String pool (also called the intern pool) is a special area of the heap memory where string literals are stored and reused.
-//
 //        🧠 Explanation
 //        Memory Area	Stores
 //        Stack	Method calls, local variables (including references to objects)

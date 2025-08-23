@@ -1,5 +1,11 @@
 package basics;
 
+import java.io.Serializable;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 public abstract  class R17_AbstractClass {
 //    Can have both abstract and concrete methods
 //
@@ -27,13 +33,14 @@ public abstract  class R17_AbstractClass {
     }
 }
 
-class abstractimpl extends R17_AbstractClass{
+class abstractimpl extends R17_AbstractClass {
 
-    abstractimpl(String name){
+    abstractimpl(String name) {
         super(name);
         System.out.println("inside  impl class constructor");
 
     }
+
     @Override
     void am_print() {
         System.out.println("abstract method implemented");
@@ -43,10 +50,29 @@ class abstractimpl extends R17_AbstractClass{
     public static void main(String[] args) {
 
 
-        R17_AbstractClass obj=new abstractimpl("sumit");
+        R17_AbstractClass obj = new abstractimpl("sumit");
         obj.am_print();//abstract method implemented
         obj.print();//non abstract method
 
 
     }
 }
+
+    //Example From Java
+//    public abstract class AbstractMap<K,V> implements Map<K,V> {
+//        /**
+//         * Sole constructor.  (For invocation by subclass constructors, typically
+//         * implicit.)
+//         */
+//        protected AbstractMap() {
+//        }
+//        public abstract Set<Entry<K, V>> entrySet();
+//    }
+//
+//    public class HashMap<K,V> extends java.util.AbstractMap<K,V>
+//            implements Map<K,V>, Cloneable, Serializable {
+//
+//}
+
+
+

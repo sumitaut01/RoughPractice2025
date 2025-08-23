@@ -16,8 +16,6 @@ class Car {
         engine.start();
     }
   //  Here:
-
 //    Car creates and controls Engine → tightly coupled.
-//
 //    You cannot easily replace Engine with another type (like ElectricEngine).
 }

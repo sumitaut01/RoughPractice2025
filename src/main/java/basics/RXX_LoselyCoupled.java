@@ -1,10 +1,6 @@
 package basics;
-
-
 //Coupling refers to how much one class or module depends on another.
-//
 //        Tight Coupling: High dependency (bad for flexibility)
-//
 //        Loose Coupling: Low dependency (preferred)
 public class RXX_LoselyCoupled {
 

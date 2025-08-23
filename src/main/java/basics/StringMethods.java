@@ -65,6 +65,19 @@ public class StringMethods {
         System.out.println(a1.compareTo("Apple"));//0
 
 
+        String test="raftaar";
+        System.out.println(test.replace("r", "X"));//XaftaaX
+
+
+        String test2="XaftaaX";
+        System.out.println(test2.replaceFirst("X", "r"));//raftaaX
+
+
+        String test3="#12XaftaaX66%^";
+        System.out.println(test3.replaceAll("[a-z A-z]", ""));//#1266%
+
+
+
 
 
 
