@@ -37,5 +37,32 @@ public class TreeMapDemo {
 
 
 
+        //In Process
+
+        TreeMap<String,Integer> nav=new TreeMap<>();
+        nav.put("Bay", 29);
+        nav.put("Dumit", 35);
+        nav.put("Aeha", 32);
+
+        System.out.println(nav);
+
+        System.out.println(nav.lowerKey("A"));
+        System.out.println(nav.lowerKey("D"));
+        System.out.println(nav.ceilingKey("B"));
+
+
+
+        //Treemap soritng
+        TreeMap<String,Integer> navdesc=new TreeMap<>(Comparator.reverseOrder());
+        navdesc.put("A", 29);
+        navdesc.put("D", 35);
+        navdesc.put("Z", 32);
+
+        System.out.println(navdesc);//{Z=32, D=35, A=29}
+
+
+
+
+
     }
 }

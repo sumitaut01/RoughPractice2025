@@ -19,9 +19,6 @@ public class theory {
 //Synchronized	Entire methods are synchronized (coarse-grained)
 //
 //🧠 Where They Stand in the Hierarchy
-//mathematica
-//Copy
-//Edit
 //                   Object
 //                     |
 //              Dictionary<K, V>   (Legacy)

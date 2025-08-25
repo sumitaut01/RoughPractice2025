@@ -8,7 +8,7 @@ public class StringMethods {
 
 
         String s1="Sumit";//SCP
-        String s2="Sumit";//SCP
+        String s2="Sumit";//no new string  s2 just points to s1
         String s3=new String("Sumit");
 
         //Equals and ==

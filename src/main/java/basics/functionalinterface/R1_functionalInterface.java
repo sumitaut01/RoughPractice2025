@@ -10,7 +10,7 @@ public class R1_functionalInterface {
 
     }
 
-    //functional interface can only have obe abstract methods
+    //functional interface can only have one abstract methods
     interface run{
         void demo();
     }
