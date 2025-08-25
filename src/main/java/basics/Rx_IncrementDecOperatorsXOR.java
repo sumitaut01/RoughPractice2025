@@ -6,7 +6,7 @@ public class Rx_IncrementDecOperatorsXOR {
       //  1. Post-Increment / Post-Decrement
 
         int a = 5;
-        int b = a++;  // b = 5, a = 6
+        int b = a++;  // b = 5, a = 5
        // The original value is used first, then incremented.
 
 

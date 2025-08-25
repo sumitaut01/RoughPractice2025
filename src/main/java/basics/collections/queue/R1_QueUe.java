@@ -4,6 +4,10 @@ import java.util.ArrayDeque;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
+//public interface Queue<E>
+//extends java.util.Collection<E>
 
 //add() vs offer() → add() throws exception if full, offer() returns false.
 //remove() vs poll() → remove() throws exception if empty, poll() returns null.
@@ -35,6 +39,7 @@ public class R1_QueUe {
         qStr.poll();
         qStr.element();
         qStr.remove();
+
 
 
         Queue<String> qStr2=new ArrayBlockingQueue<>(3);

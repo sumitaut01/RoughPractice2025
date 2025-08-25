@@ -7,6 +7,13 @@ package basics.collections.list;
 //A reference to the previous node
 
 
+//public class LinkedList<E>
+//    extends AbstractSequentialList<E>
+//    implements List<E>,
+//    Deque<E>     //interface Deque<E> extends Queue<E>
+//    , Cloneable, java.io.Serializable
+
+
 //Basic Operations
 //        1. Add Elements
 //

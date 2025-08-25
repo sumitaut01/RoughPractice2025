@@ -4,6 +4,8 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -17,6 +19,10 @@ public class R8_Alers {
 //            String getText();
 //            void sendKeys(String keysToSend);
 //        }
+
+
+        //  Alert alert=new WebDriverWait(driver,Duration.ofSeconds(10))
+        //                .until(ExpectedConditions.alertIsPresent());
 
         WebDriver driver = new ChromeDriver();
 
@@ -34,6 +40,8 @@ public class R8_Alers {
         driver.switchTo().alert().dismiss();
         driver.switchTo().alert().sendKeys("");
         driver.switchTo().alert().getText();
+
+
 
        // Alert alert=
 

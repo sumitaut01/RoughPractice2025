@@ -21,7 +21,6 @@ public class RX_toString {
         @Override
         public String toString(){
             return "values from class Something "+ someval1 +" "+someStringval2;
-
         }
 
 

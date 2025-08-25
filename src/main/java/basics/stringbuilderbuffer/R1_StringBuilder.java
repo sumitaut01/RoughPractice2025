@@ -33,5 +33,8 @@ class R1_StringBuilder{
         System.out.println(sb);
         //mumitsagar
         //mumitsagar
+
+        System.out.println(sb.reverse());//ragastimum
+
     }
 }
