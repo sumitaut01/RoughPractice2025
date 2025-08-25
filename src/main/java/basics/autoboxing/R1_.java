@@ -8,7 +8,6 @@ public class R1_ {
 
 
         int x=3;
-
         ArrayList<Integer> al=new ArrayList<>();
         al.add(3);// behind the scenes, autoboxing happening
 
