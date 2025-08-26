@@ -14,7 +14,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 public class R20_JsonIgnoreUnknown {
 
     public static void main(String[] args) throws JsonProcessingException {
-
         WireMockServer wireMockServer = new WireMockServer(8089); // custom port
         wireMockServer.start();
         wireMockServer.stubFor(get(urlEqualTo("/api/user/1"))
@@ -76,7 +75,6 @@ class Dummy2{
     public void setId(int id) {
         this.id = id;
     }
-
     @Override
     public String toString() {
         return "Dummy2{" +

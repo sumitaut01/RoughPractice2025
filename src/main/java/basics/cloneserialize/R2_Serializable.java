@@ -2,6 +2,7 @@ package basics.cloneserialize;
 
 import java.io.*;
 
+// add transietn field as well which wont get serialized
 public class R2_Serializable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {

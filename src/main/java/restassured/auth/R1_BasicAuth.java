@@ -10,11 +10,11 @@ import io.restassured.response.Response;
 public class R1_BasicAuth {
 
     public static void main(String[] args) {
-        Response response=RestAssured.given().auth().basic("postman", "password")
+      //  Response response=RestAssured.given().auth().basic("postman", "password")
+        RestAssured.given().auth().basic("postman", "password")
                 .baseUri("https://postman-echo.com")
-                .basePath("/basic-auth")
-                .get();
-        System.out.println(response.then().log().all());
+                .basePath("/basic-auth").log().all().get().then().log().all();
+
         //HTTP/1.1 200 OK
         //Date: Wed, 20 Aug 2025 04:07:09 GMT
         //Content-Type: application/json; charset=utf-8
@@ -31,7 +31,7 @@ public class R1_BasicAuth {
 
 
 //2 Invalid
-         response=RestAssured.given().auth().basic("postm", "password")
+       Response  response=RestAssured.given().auth().basic("postm", "password")
                 .baseUri("https://postman-echo.com")
                 .basePath("/basic-auth")
                 .get();

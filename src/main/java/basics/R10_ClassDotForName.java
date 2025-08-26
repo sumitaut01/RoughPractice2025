@@ -24,4 +24,8 @@ class MyClass {
     static {
         System.out.println("Static block executed");
     }
+
+    public MyClass(){
+        System.out.println("Default Constructor");
+    }
 }
