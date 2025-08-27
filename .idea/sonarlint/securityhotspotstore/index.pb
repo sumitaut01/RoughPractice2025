@@ -3,8 +3,6 @@ W
 'src/main/java/selenium/xpathcss/Css.txt,d\b\db6994bfd064d6b631a9d0dccaa7a4105162a955
 [
 +src/main/java/selenium/xpathcss/R1_Css.java,2\6\26f098eccbeb5a58f09a0a7ab60efa640f830d89
-]
--src/main/java/basics/advancedcollections/Info,6\b\6bc3df04693b5eb5698a2d6c2a8bae60b426922d
 Z
 *src/main/java/basics/R_XAtomicInteger.java,6\0\602e063c42381c3afc60935c16c16cf3960b597e
 ^

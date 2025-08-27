@@ -7,8 +7,6 @@ Z
 *src/main/java/basics/R_XAtomicInteger.java,6\0\602e063c42381c3afc60935c16c16cf3960b597e
 ^
 .src/main/java/basics/R_XConcurrentHashMap.java,d\4\d48f90b0a80bbc0be6c8d8d2ae55aea2ccb61de9
-]
--src/main/java/basics/advancedcollections/Info,6\b\6bc3df04693b5eb5698a2d6c2a8bae60b426922d
 T
 $src/main/java/basics/Generics/Theory,b\2\b200bdc09bab84660841c4ac04b0f3db2b898e93
 t
