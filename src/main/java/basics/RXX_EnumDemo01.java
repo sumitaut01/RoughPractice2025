@@ -19,6 +19,34 @@ public class RXX_EnumDemo01 {
         }
 
 
+
+        Env env=Env.valueOf("QA");
+        Env[] envs=Env.values();
+
+
     }
 }
 enum Day {MONDAY, TUESDAY, WEDNESDAY};
+
+enum Env{
+    QA("QA Env"),
+    UAT("Uat Env");
+    String s;
+
+    Env(String s) {
+        this.s=s;
+    }
+
+    public String getS() {
+        return s;
+    }
+
+}
+
+
+//In the Env enum, the line Env(String s) is the constructor. It's used to initialize the s instance variable for each enum constant (QA and UAT).
+// The value passed to the constructor ("QA Env" or "Uat Env") is assigned to the s variable when the enum constants are created.
+//Unlike regular classes, an enum's constructor is always implicitly private.
+// This is because you can't create new enum instances with new outside of the enum itself;
+// the constants are the only instances that can exist.
+

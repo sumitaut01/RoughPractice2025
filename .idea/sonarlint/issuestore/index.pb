@@ -17,8 +17,6 @@ Lsrc/main/java/basics/filehandling/serialization_Deseri/R_1Serialization.java,e
 Msrc/main/java/basics/filehandling/serialization_Deseri/R_2Desrialization.java,b\3\b32e012cf88d04deb1c4aaf07935d2809caa45c5
 i
 9src/main/java/basics/Generics/R2_SubClasssSuperClass.java,7\e\7e3b42086a8bbe239192153defbf893cc799075b
-X
-(src/main/java/basics/RXX_EnumDemo01.java,5\e\5eb6c5d269d8779c3697343284e97655daa46b7b
 o
 ?src/main/java/basics/collections/map/ConcurrentHashMapDemo.java,2\9\29314b69330a689cc63dac4a8a0d2325464520c1
 e
@@ -169,10 +167,6 @@ c
 3src/main/java/basics/datastructure/R_MergeSort.java,5\6\56ad69a82e31473cf214a6066fb4423ecae19b96
 O
 src/test/java/demo/R_XEnum.java,6\d\6d92412644b1404a96fa645633c8d4ed22129114
-X
-(src/main/java/basics/R_XThreadlocal.java,e\f\efdad4a063b35c2ed72002f661c4eae9e63e3a95
-U
-%src/main/java/basics/RegexDetail.java,7\0\7043dd3eb6e76755bf5e6f63b7e196a9ba1ca899
 W
 'src/main/java/basics/RegexExamples.java,9\4\943a05a7aaff957cbe5ffd42879e0086af5fbf08
 P

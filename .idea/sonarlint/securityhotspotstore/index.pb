@@ -15,8 +15,6 @@ Dsrc/main/java/basics/functionalinterface/R1_functionalInterface.java,e\3\e3200
 Lsrc/main/java/basics/filehandling/serialization_Deseri/R_1Serialization.java,e\5\e5ad829addbac5fde3aa782ad6b8c8d049e8d868
 }
 Msrc/main/java/basics/filehandling/serialization_Deseri/R_2Desrialization.java,b\3\b32e012cf88d04deb1c4aaf07935d2809caa45c5
-X
-(src/main/java/basics/RXX_EnumDemo01.java,5\e\5eb6c5d269d8779c3697343284e97655daa46b7b
 i
 9src/main/java/basics/Generics/R2_SubClasssSuperClass.java,7\e\7e3b42086a8bbe239192153defbf893cc799075b
 o
@@ -121,8 +119,6 @@ j
 :src/main/java/basics/javapgms/R24_SubArrayWithZeroSum.java,3\8\38a62e46a9273c32707ff5dbfca0a24aebe4f5ba
 `
 0src/main/java/basics/javapgms/R31_PrefixSum.java,1\8\18f07e076f9c8a9de2d7ab756c250adabc1711f0
-X
-(src/main/java/basics/R_XThreadlocal.java,e\f\efdad4a063b35c2ed72002f661c4eae9e63e3a95
 _
 /src/main/java/basics/collections/Deque/R1_.java,8\a\8ae415698525ec487ba1fa12bac9092995cdb0fc
 n
@@ -177,8 +173,6 @@ m
 =src/main/java/basics/javapgms/patterns/pracFloydTriangle.java,8\1\81491cc550672a5c96d68370728e65c1875f5b45
 e
 5src/main/java/basics/Rx_IncrementDecOperatorsXOR.java,8\a\8aa06a3cb179c7e846a7959f33976aa9725a03a0
-U
-%src/main/java/basics/RegexDetail.java,7\0\7043dd3eb6e76755bf5e6f63b7e196a9ba1ca899
 T
 $src/main/java/basics/ArraysSort.java,a\9\a9123ff0d70bbb91463bdd66d8c7b1669c20dc61
 c

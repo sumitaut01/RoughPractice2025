@@ -7,7 +7,7 @@ public class RegexDetail {
 		
 	
 		//Example 1
-	 java.util.regex.Pattern p=	 java.util.regex.Pattern.compile("b");	 
+	 Pattern p=	 Pattern.compile("b");
 		Matcher m= p.matcher("abbbbb");
 		while(m.find()) {
 			System.out.println("Start with "+m.start() +" Ends at "+m.end() + "m.ground returns "+m.group());
