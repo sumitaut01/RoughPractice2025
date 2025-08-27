@@ -5,8 +5,6 @@ W
 +src/main/java/selenium/xpathcss/R1_Css.java,2\6\26f098eccbeb5a58f09a0a7ab60efa640f830d89
 Z
 *src/main/java/basics/R_XAtomicInteger.java,6\0\602e063c42381c3afc60935c16c16cf3960b597e
-^
-.src/main/java/basics/R_XConcurrentHashMap.java,d\4\d48f90b0a80bbc0be6c8d8d2ae55aea2ccb61de9
 T
 $src/main/java/basics/Generics/Theory,b\2\b200bdc09bab84660841c4ac04b0f3db2b898e93
 t
@@ -87,8 +85,6 @@ h
 0src/main/java/selenium/waits/R1_FlunentWait.java,d\8\d8bed3ab5ff9c34e50ea184589be0e2ccce59251
 W
 'src/test/java/demo/R3_DataProvider.java,c\f\cff0184b16ce9a4cf7f4978e7cc155ce047ae56d
-W
-'src/test/java/demo/R4_DataSupplier.java,d\b\db5b97c3e70006dd85243c5c6c370ef6566e626a
 O
 src/test/java/demo/Rx_Base.java,b\3\b368ce9afc2ba8a7f5b389c21b0e64d797bf9ca3
 w
@@ -109,10 +105,6 @@ d
 4src/main/java/basics/javapgms/R7_SecondMaxArray.java,1\c\1c300f313165cd6f68320932d3688dbf20ce47ee
 P
  src/test/java/demo/R_XChild.java,d\2\d2f83b0cf81c6fe2ff99367483ec8f6aeb33162d
-Z
-*src/main/java/basics/R22ListInterface.java,1\8\18d0d150bb52643016266db15b8d8f366cb6e843
-Z
-*src/main/java/basics/R23_MapInterface.java,6\e\6e65164957da14ed9c868cf81a4d771f81666f8f
 g
 7src/main/java/basics/designpattern/builder/Product.java,f\3\f3d84623876665eae9118c5351e0de2985de4d19
 j
@@ -148,8 +140,6 @@ O
 T
 $src/main/java/selenium/R8_Alers.java,a\6\a6ec39afa2ab505400953807fedb31c60b2edf9b
 V
-&src/main/java/basics/jsonPathDemo.java,9\4\94425cfb5cbbc4fd237cf93015e2e8e875928f02
-V
 &src/main/java/basics/ChromeDriver.java,6\a\6a1069cbf815fbd7ff4e96faff428df67b94a271
 b
 2src/main/java/basics/OverRidingCovarintObject.java,8\4\84f6634006e704aec9d98737d01bbaa16b4fdd2d
@@ -157,8 +147,6 @@ _
 /src/main/java/basics/MainInterviewQuetions.java,8\5\850d3ce900d3302c05873df604eaca8b1615a6d2
 c
 3src/main/java/basics/javapgms/patterns/Pattern.java,1\7\178d7c08409c8ec0eee51411b5f268df3381ce54
-U
-%src/main/java/basics/OwnHashcode.java,8\9\8961281257df6c91a07f7f910df4d104f7222c72
 d
 4src/main/java/basics/javapgms/R1_RomanToInteger.java,5\e\5e5b02c9d7a3b65e0f980e9e92fbe2615bc184a2
 d

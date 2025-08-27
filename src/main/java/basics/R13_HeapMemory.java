@@ -2,15 +2,10 @@ package basics;
 
 public class R13_HeapMemory {
 //    Shared across all threads.
-//
 //    Stores:
-//
 //    Objects (created via new)
-//
 //    Instance variables
-//
 //    Static variables
-//
 //    Managed by the Garbage Collector
 
 

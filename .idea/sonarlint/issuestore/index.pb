@@ -5,8 +5,6 @@ W
 +src/main/java/selenium/xpathcss/R1_Css.java,2\6\26f098eccbeb5a58f09a0a7ab60efa640f830d89
 Z
 *src/main/java/basics/R_XAtomicInteger.java,6\0\602e063c42381c3afc60935c16c16cf3960b597e
-^
-.src/main/java/basics/R_XConcurrentHashMap.java,d\4\d48f90b0a80bbc0be6c8d8d2ae55aea2ccb61de9
 T
 $src/main/java/basics/Generics/Theory,b\2\b200bdc09bab84660841c4ac04b0f3db2b898e93
 t
@@ -86,8 +84,6 @@ h
 ]
 -src/main/java/basics/restassured/Student.java,6\2\6232127fc2049294680068bc256ca2aade47f8f0
 W
-'src/test/java/demo/R4_DataSupplier.java,d\b\db5b97c3e70006dd85243c5c6c370ef6566e626a
-W
 'src/test/java/demo/R3_DataProvider.java,c\f\cff0184b16ce9a4cf7f4978e7cc155ce047ae56d
 W
 'src/main/java/basics/StringMethods.java,8\e\8e4b6f5e12a21d1faf474f3ec1105199cf9bd58d
@@ -109,10 +105,6 @@ f
 6src/main/java/basics/javapgms/R3_ShiftArraytoLeft.java,1\2\12cd2a7ac24f7cdab49fd3d777cfcca94c10253b
 P
  src/test/java/demo/R_XChild.java,d\2\d2f83b0cf81c6fe2ff99367483ec8f6aeb33162d
-Z
-*src/main/java/basics/R22ListInterface.java,1\8\18d0d150bb52643016266db15b8d8f366cb6e843
-Z
-*src/main/java/basics/R23_MapInterface.java,6\e\6e65164957da14ed9c868cf81a4d771f81666f8f
 g
 7src/main/java/basics/designpattern/builder/Product.java,f\3\f3d84623876665eae9118c5351e0de2985de4d19
 `
@@ -127,8 +119,6 @@ V
 &src/main/java/basics/ChromeDriver.java,6\a\6a1069cbf815fbd7ff4e96faff428df67b94a271
 P
  src/test/java/enums/EnvEnum.java,e\d\edd97bdc58cf39e1a6cce4eeca03108b99cc5826
-V
-&src/main/java/basics/jsonPathDemo.java,9\4\94425cfb5cbbc4fd237cf93015e2e8e875928f02
 i
 9src/main/java/basics/collections/list/LinkedListDemo.java,e\a\ea8855885e738675eb4ce30c78f89fe16be5dea5
 _
@@ -137,8 +127,6 @@ W
 'src/main/java/selenium/myWebDriver.java,7\7\77c77de9c483eb3570999edc772af803ade0bc83
 b
 2src/main/java/basics/OverRidingCovarintObject.java,8\4\84f6634006e704aec9d98737d01bbaa16b4fdd2d
-U
-%src/main/java/basics/OwnHashcode.java,8\9\8961281257df6c91a07f7f910df4d104f7222c72
 c
 3src/main/java/basics/javapgms/patterns/Pattern.java,1\7\178d7c08409c8ec0eee51411b5f268df3381ce54
 d
