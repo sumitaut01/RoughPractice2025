@@ -3,14 +3,11 @@ package basics;
 public class R12_Stack {
 
 //    Each thread gets its own stack.
-//
 //    Stores:
-//
 //    Primitive variables (e.g., int x = 5)
-//
 //    References to objects (but not the object itself)
-//
 //    Method call frames
+//Considered faster
 
 
     void test() {

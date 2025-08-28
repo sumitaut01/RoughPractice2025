@@ -1,0 +1,17 @@
+
+
+Statement:
+connection.createstatement
+
+Preprared Statement --Prepared staemtn for parameter
+connection.preparestatment("select * from emp where dept_num=?"
+int dept=10;
+stm.setInt(1,dept)
+
+
+
+
+ExequteQuery()     --Select
+ExecuteUpdate()  ---DML
+
+Callable  ( for stored procedures)

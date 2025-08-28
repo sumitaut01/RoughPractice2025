@@ -5,7 +5,6 @@ import java.util.Arrays;
 public class R_Array {
     public static void main(String[] args) {
 
-
         int arr[]=new int[5];//array of 5 elements 0 to 4
         System.out.println(Arrays.toString(arr));//[0, 0, 0, 0, 0] default values
         System.out.println(arr.length);//5 size
@@ -30,8 +29,19 @@ public class R_Array {
         //1 2
         //1 2 3
 
-        //
+        // Via For each
 
+        for(int [] a:dblArray){
+            for(int i:a){
+                System.out.print(i+" ");
+            }
+            System.out.println("");
+
+        }
+/*
+1 2
+1 2 3
+ */
 
 
 

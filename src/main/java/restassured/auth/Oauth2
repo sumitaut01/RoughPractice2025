@@ -5,3 +5,55 @@
 #generate #3 using 1 and 2
 #3Secret
 
+
+
+Resource owner – An entity capable of granting access to a protected resource.
+Resource server – The server hosting the protected resources that is capable of accepting and responding to protected resource requests using access tokens.
+Client –  An application making protected resource requests on behalf of the resource owner and with its authorization.
+Authorization server – The server issues access tokens to the client after successfully authenticating the resource owner and obtaining authorization.
+
+BookMyShow Example (Google Sign-In with OAuth 2.0)
+1. Resource Owner (You, the User)
+You are the one who has the Google account (email, profile, etc.).
+You own the resource (email, profile info, etc.) that BookMyShow needs access to.
+You grant permission when Google asks:
+“BookMyShow wants to access your Google profile and email. Do you allow?”
+
+2. Resource Server (Google APIs)
+Google’s APIs (e.g., https://www.googleapis.com/userinfo/v2/me) hold your protected resources.
+They only release your profile/email info if BookMyShow presents a valid Access Token.
+
+3. Client (BookMyShow Application)
+BookMyShow (mobile app / web app) is the client.
+It wants your Google profile/email so it can log you in or create your account in BookMyShow.
+BookMyShow doesn’t get your password directly. Instead, it gets an Access Token from Google (after you approve).
+
+4. Authorization Server (Google OAuth Server)
+
+Google’s OAuth 2.0 Authorization Server handles:
+Authenticating you (checking your Google password / saved login).
+Asking you for consent (whether BookMyShow can use your data).
+Issuing an Authorization Code and then an Access Token to BookMyShow.
+
+🔄 Flow (Simplified)
+
+You click “Sign in with Google” on BookMyShow.
+
+BookMyShow redirects you to Google’s Authorization Server (login + consent).
+
+You approve → Google sends back an Authorization Code to BookMyShow.
+
+BookMyShow exchanges that code with Google for an Access Token.
+
+BookMyShow uses the Access Token to call Google’s Resource Server and get your profile/email.
+
+BookMyShow logs you in (or creates your account) using that info.
+
+⚡ Quick Mapping Table
+OAuth Term	In BookMyShow + Google Sign-In
+Resource Owner	You, the user with Google account
+Resource Server	Google APIs (userinfo, gmail, etc.)
+Client	BookMyShow app/website
+Authorization Server	Google OAuth 2.0 endpoint (login + token issuing)
+
+👉 That’s why in your earlier RestAssured API tests, you often just pass the Authorization header with Bearer token → because you’re simulating steps 4–6. The login & consent (steps 1–3) are usually handled once in browser or automated in test setup.
