@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class R8_Alers {
+public class R8_Alerts {
 
     public static void main(String[] args) {
 

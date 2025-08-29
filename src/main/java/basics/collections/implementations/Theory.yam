@@ -1,0 +1,41 @@
+Iterable<T>:
+  - java.util.Collection<E>:
+    - java.util.List<E>:
+      - java.util.AbstractList<E>:
+        - java.util.AbstractSequentialList<E>:
+          - java.util.LinkedList<E>
+        - java.util.Vector<E>:
+          - java.util.Stack<E>
+        - java.util.ArrayList<E>
+    - java.util.Queue<E>:
+      - java.util.Deque<E>:
+        - java.util.ArrayDeque<E>
+      - java.util.PriorityQueue<E>
+      - java.util.concurrent.BlockingQueue<E>:
+        - java.util.concurrent.ArrayBlockingQueue<E>
+        - java.util.concurrent.LinkedBlockingQueue<E>
+        - java.util.concurrent.PriorityBlockingQueue<E>
+    - java.util.Set<E>:
+      - java.util.SortedSet<E>:
+        - java.util.NavigableSet<E>:
+          - java.util.TreeSet<E>
+      - java.util.AbstractSet<E>:
+        - java.util.HashSet<E>:
+          - java.util.LinkedHashSet<E>
+
+
+Map<K, V>:
+  - java.util.AbstractMap<K, V>:
+    - java.util.HashMap<K, V>:
+      - java.util.LinkedHashMap<K, V>
+    - java.util.TreeMap<K, V>
+    - java.util.WeakHashMap<K, V>
+  - java.util.SortedMap<K, V>:
+    - java.util.NavigableMap<K, V>:
+      - java.util.TreeMap<K, V> (implements both `SortedMap` and `NavigableMap`)
+  - java.util.concurrent.ConcurrentMap<K, V>:
+    - java.util.concurrent.ConcurrentHashMap<K, V>
+  - java.util.concurrent.ConcurrentNavigableMap<K, V>:
+    - java.util.concurrent.ConcurrentSkipListMap<K, V>
+  - java.util.Hashtable<K, V> (Legacy, synchronized)
+  - java.util.IdentityHashMap<K, V>

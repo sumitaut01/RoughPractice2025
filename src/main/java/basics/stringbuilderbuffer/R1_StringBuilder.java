@@ -6,6 +6,9 @@ package basics.stringbuilderbuffer;
 //faster than s buffer as not thread safe
 //StringBuilder is a mutable class in java.lang used to modify strings without creating new objects each time.
 
+//public final class StringBuilder
+//    extends AbstractStringBuilder
+//    implements Appendable, java.io.Serializable, Comparable<StringBuilder>, CharSequence
 
 //Common Methods
 //        Method	What It Does
