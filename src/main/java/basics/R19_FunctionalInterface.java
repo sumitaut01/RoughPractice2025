@@ -10,6 +10,10 @@ public class R19_FunctionalInterface {
             }
         };
         test.run();;//Method implemented
+
+        test.test();//default method
+
+        TestInterface.staticMethod();//static method
     }
 }
 

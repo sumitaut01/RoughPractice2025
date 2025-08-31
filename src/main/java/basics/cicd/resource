@@ -1,0 +1,11 @@
+https://updates.jenkins.io/download/war/
+https://www.oracle.com/java/technologies/downloads/?er=221886#jdk21-windows
+mvn -version
+java -version
+
+java -jar jenkins.war --httpPort=9090
+http://localhost:9090/
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+799a1b8fc92b4b5286a2e7885393f5ff

@@ -1,14 +1,9 @@
 package basics;
 
 //A Stream in Java represents a sequence of elements that supports various operations to process data (like filtering, mapping, sorting, reducing) in a pipeline.
-//
 //        Works with collections like List, Set
-//
 //        Does not store data, just processes it
-//
 //        Can be parallel or sequential
-
-
 //
 //Stream Pipeline = 3 Stages
 //        Stage	Examples
@@ -44,7 +39,6 @@ public class R20_Streams {
 
 
         List<String> names = List.of("Sumit", "Sagar", "Ram", "Shyam");
-
         names.stream()
                 .filter(name -> name.startsWith("S"))
                 .map(String::toUpperCase)
