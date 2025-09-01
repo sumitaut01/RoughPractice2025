@@ -10,18 +10,15 @@ import java.time.Duration;
 
 public class R4_Waits {
 
-
+//public class WebDriverWait
+//extends org.openqa.selenium.support.ui.FluentWait<org.openqa.selenium.WebDriver>
     public static void main(String[] args) {
 
 
         WebDriver driver=new ChromeDriver();
-
-
         driver.get("https://www.selenium.dev/");
-
         WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.titleIs("somr random text"));
-
         driver.quit();
     }
 }

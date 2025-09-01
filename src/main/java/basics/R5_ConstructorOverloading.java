@@ -22,7 +22,7 @@ public class R5_ConstructorOverloading {
     public R5_ConstructorOverloading(int age, String college) {
         this.age = age;
         this.college = college;
-        System.out.println("using parametrized constructor");
+        System.out.println("using parametrized constructor in class named R5_ConstructorOverloading");
     }
 
     public static void main(String[] args) {

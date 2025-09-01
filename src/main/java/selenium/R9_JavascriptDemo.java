@@ -12,6 +12,11 @@ public class R9_JavascriptDemo {
 
 
 
+      Remote remote=new Remote();
+      remote.executeScript("from remote");
+
+
+
 
 
 
@@ -45,7 +50,6 @@ interface  jsexecutor {
 
 
 class chrome extends   Remote{
-
      public void getChromeDriver(){
          System.out.println("chrome invoked");
 

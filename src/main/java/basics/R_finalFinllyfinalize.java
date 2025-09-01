@@ -63,13 +63,9 @@ package basics;
 //}
 //🔴 Deprecated
 //        As of Java 9+, finalize() is deprecated because:
-//
 //        It introduces unpredictability
-//
 //        Slows down GC
-//
 //        Not reliable for resource cleanup
-//
 //        ✅ Use try-with-resources or manual close instead.
 
 
