@@ -38,8 +38,9 @@ public class DriverFactory {
             options.addArguments("--disable-gpu");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--remote-allow-origins=*");
-            options.addArguments("--user-data-dir=/tmp/chrome-" + System.currentTimeMillis());
+            options.addArguments("--remote-debugging-port=0"); // 🔑 fixes user-data-dir lock
+// ❌ remove --user-data-dir completely for CI
+
             return new ChromeDriver(options);
         });
 
