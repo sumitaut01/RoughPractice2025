@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="All Test Suite">
-    <test  thread-count="2" parallel="classes" verbose="2" preserve-order="true" name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo">
+    <test  thread-count="1" parallel="classes" verbose="2" preserve-order="true" name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo">
         <classes>
 
             <class name="demo.TestExample">
