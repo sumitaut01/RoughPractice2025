@@ -57,8 +57,6 @@ public class R1_Basics {
 
         driver.get("https://uat01.gpp.corporate.ingrammicro.com:7443/#/home");
         //driver.navigate().refresh();
-
-
         Thread.sleep(10000);
 
         driver.quit();

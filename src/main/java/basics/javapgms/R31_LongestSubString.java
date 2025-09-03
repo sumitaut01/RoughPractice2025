@@ -1,6 +1,8 @@
 package basics.javapgms;
 
 //abcabcbb
+import basics.characters.CharacterDemo;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,5 +39,28 @@ public class R31_LongestSubString {
         String input = "abcagcd";
         int ml = lengthOfLongestSubString(input);
         System.out.println("The length of the longest substring without repeating characters is: " + ml);
+
+
+        int s=0,e=0,max=0,curr=0;
+
+        HashMap< Character,Integer> hm=new HashMap<>();
+        while(s<input.length() && e<input.length()){
+            if(!hm.containsKey(input.charAt(e))){
+                hm.put(input.charAt(e),1);
+            }
+            curr=hm.size();
+            max=Math.max(curr, max);
+            s++;
+            e=s;
+            hm.clear();
+        }
     }
+
+
+
+
+
+
+
+
 }

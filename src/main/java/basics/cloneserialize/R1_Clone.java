@@ -12,7 +12,6 @@ public class R1_Clone {
         //because of Cloneable market interface ,it's possible
 
         HashMap<String ,String> map1=new HashMap<>();
-
         map1.put("firstName", "Sumit");
         map1.put("lastName", "Raut");
         System.out.println(map1);//{firstName=Sumit, lastName=Raut}

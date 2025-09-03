@@ -4,12 +4,12 @@ import enums.BrowserType;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.Test;
 
-public class TestExample {
+public class TestExample2 {
 
     @Test
     public void method1() {
         WebDriver driver = DriverFactory.getDriver(BrowserType.CHROME);
-        driver.get("https://www.google.com");
+        driver.get("https://www.rediff.com");
         System.out.println("Title: " + driver.getTitle());
         driver.quit();
     }
@@ -18,7 +18,7 @@ public class TestExample {
     @Test
     public void method2() {
         WebDriver driver = DriverFactory.getDriver(BrowserType.CHROME);
-        driver.get("https://www.facebook.com");
+        driver.get("https://www.yahoo.com");
         System.out.println("Title: " + driver.getTitle());
         driver.quit();
     }
