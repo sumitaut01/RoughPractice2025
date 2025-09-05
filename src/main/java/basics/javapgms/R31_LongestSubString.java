@@ -5,7 +5,7 @@ import basics.characters.CharacterDemo;
 
 import java.util.HashMap;
 import java.util.Map;
-
+//The length of the longest substring without repeating characters is
 public class R31_LongestSubString {
 
     public static int lengthOfLongestSubString(String str) {

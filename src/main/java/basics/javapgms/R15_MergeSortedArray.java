@@ -14,7 +14,7 @@ public class R15_MergeSortedArray {
 
     public static void main(String[] args) {
         int[] arr1 = {1, 3, 5, 7};
-        int[] arr2 = {1, 3, 5, 7};
+        int[] arr2 = {2, 4, 6};
 
         int n = arr1.length, m = arr2.length;
         int[] result = new int[n + m];

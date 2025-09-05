@@ -1,0 +1,11 @@
+This is the list of some basic Linux commands which I would be using in this course.
+Print the current working directory - pwd
+List all the files & folders -  ls -al
+Create directory  -  mkdir dirname
+Change to directory  -  cd dirname
+Create file - touch filename
+Find files with the name - find / -name partialfilename
+Remove file -  rm file
+Remove directory - rm -r directory
+I found the below list helpful. (source @reddit. )
+

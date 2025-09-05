@@ -19,6 +19,8 @@ public class R_XRemoveDuplicateFromArray {
                 i++;
                 nums[i] = nums[j];
             }
+            System.out.println(j);
+            System.out.println(Arrays.toString(nums));
         }
 
         System.out.println(Arrays.toString(nums));

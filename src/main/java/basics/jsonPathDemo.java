@@ -50,6 +50,19 @@ public class jsonPathDemo {
 			//45
 			
 		}
+
+//jsonpath.com
+		//jsonpathfinder.com
+		//jsonpath finder for chrome
+		//book[0:2].category
+
+		//book[1] //first
+		//book[-1] //last
+		//book[-2] //second last
+
+		//book[?(@.isbn)] //books having isbn key
+
+		//book[?(@.price<10)] //books having price less than 10
 		
 		
 		
