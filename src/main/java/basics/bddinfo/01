@@ -1,0 +1,32 @@
+Scenario: Verify Updating user password feature
+ Given I am in the HR system with "Admin" account
+ And there is another user with "$Test123" password
+ When I update password of the user to "@Test123"
+ Then I got the message "Password changed successfully."
+ And the user password should be "@Test123"
+
+
+Scenario Outline: Verify Updating user password feature
+ Given I am in the HR system with "<account_type>" account
+ And there is another user with "<old_password>" password
+ When I update password of the user to "<new_password>"
+ Then I got the message "<message>"
+ And the user password should be "<final_password>"
+
+Examples:
+|account_type |old_password |new_password |message           |final_password |
+|Admin        |$Test123 |@Test123     |Password changed.. |@Test123  |
+|Viewer       |$Test123 |@Test123     |Invalid right access.. |$Test123  |
+
+
+Feature: Login Action
+
+Scenario: Successful Login with Valid Credentials
+	Given User is on Home Page
+	When User Navigate to LogIn Page
+	And User enters UserName and Password
+	Then Message displayed Login Successfully
+
+Scenario: Successful LogOut
+	When User LogOut from the Application
+	Then Message displayed LogOut Successfully

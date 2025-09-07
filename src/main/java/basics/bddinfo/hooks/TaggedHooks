@@ -1,0 +1,59 @@
+Define tagged hooks in Hooks class file. Hooks can be used like @Before("@TagName"). Create before and after hooks for every scenario. I have also added normal before and after hooks, in case you are not aware, please go to the previous chapter of Hooks in Cucumber.
+
+
+public class Hooks {
+
+	@Before
+    public void beforeScenario(){
+        System.out.println("This will run before the every Scenario");
+    }
+
+	@After
+    public void afterScenario(){
+        System.out.println("This will run after the every Scenario");
+    }
+
+	@Before("@First")
+    public void beforeFirst(){
+        System.out.println("This will run only before the First Scenario");
+    }
+
+	@Before("@Second")
+    public void beforeSecond(){
+        System.out.println("This will run only before the Second Scenario");
+    }
+
+	@Before("@Third")
+    public void beforeThird(){
+        System.out.println("This will run only before the Third Scenario");
+    }
+
+	@After("@First")
+    public void afterFirst(){
+        System.out.println("This will run only after the First Scenario");
+    }
+
+	@After("@Second")
+    public void afterSecond(){
+        System.out.println("This will run only after the Second Scenario");
+    }
+
+	@After("@Third")
+    public void afterThird(){
+        System.out.println("This will run only after the Third Scenario");
+    }
+}
+
+
+
+Alternatives / Modern Practices
+
+Global Hooks + Conditional Logic
+Instead of multiple tagged hooks, you can check inside the hook:
+
+@Before
+public void setup(Scenario scenario) {
+    if (scenario.getSourceTagNames().contains("@API")) {
+        System.out.println("Setup for API test");
+    }
+}

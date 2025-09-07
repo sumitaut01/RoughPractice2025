@@ -1,0 +1,6 @@
+How to set the Order or Priority of Cucumber Hooks?
+The very important thing to note here is:
+
+@Before(order = int) : This runs in increment order, means value 0 would run first and 1 would be after 0.
+@After(order = int) : This runs in decrements order, means apposite of @Before. Value 1 would run first and 0 would be after 1.
+So, as per the logic above the Hooks file will look like below.

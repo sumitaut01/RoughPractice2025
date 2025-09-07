@@ -1,0 +1,18 @@
+For this, Cucumber has already provided a way to organize your scenario execution by using tags in feature file. We can define each scenario with a useful tag. Later, in the runner file, we can decide which specific tag (and so as the scenario(s)) we want Cucumber to execute. Tag starts with “@”. After “@” you can have any relevant text to define your tag like @SmokeTests just above the scenarios you like to mark. Then to target these tagged scenarios just specify the tags names in the CucumberOptions as tags = {"@SmokeTests"}.
+
+Tagging not just specifically works with Scenarios, it also works with Features. Means you can also tag your features files. Any tag that exists on a Feature will be inherited by Scenario, Scenario Outline or Examples.
+
+Scenario: Increa@FunctionalTest
+Feature: ECommerce Application
+
+@SmokeTest @RegressionTest
+Scenario: Successful Login
+Given This is a blank test
+
+@RegressionTest
+Scenario: UnSuccessful Login
+Given This is a blank test
+
+@SmokeTest
+Scenario: Add a product to bag
+Given This is a blank test
