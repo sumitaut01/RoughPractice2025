@@ -16,9 +16,18 @@ public class Hierarchy {
     public static void main(String[] args) {
 
         SearchContext context;
+
         WebDriver webDriver;
         /*
         public interface WebDriver extends org.openqa.selenium.SearchContext
+         */
+        JavascriptExecutor javascriptExecutor;//public interface JavascriptExecutor
+
+        TakesScreenshot takesScreenshot;//public interface TakesScreenshot
+
+        WebElement webElement;
+        /*
+        public interface WebElement extends org.openqa.selenium.SearchContext, org.openqa.selenium.TakesScreenshot
          */
         ChromiumDriver chromiumDriver;
         /*
@@ -39,8 +48,6 @@ implements org.openqa.selenium.HasAuthentication,
         /*
           public class ChromeDriver extends org.openqa.selenium.chromium.ChromiumDriver
          */
-
-
         RemoteWebDriver remoteWebDriver;
         /*
         public class RemoteWebDriver
@@ -54,10 +61,7 @@ implements org.openqa.selenium.HasAuthentication,
            org.openqa.selenium.PrintsPage,
            org.openqa.selenium.TakesScreenshot
          */
-        WebElement webElement;
-        /*
-        public interface WebElement extends org.openqa.selenium.SearchContext, org.openqa.selenium.TakesScreenshot
-         */
+
         Wait<String> wait;
 
         FluentWait<String> fluentWait;
@@ -70,10 +74,6 @@ implements org.openqa.selenium.HasAuthentication,
         Action action;//public interface Action
 
         Alert alert;//public interface Alert
-
-        JavascriptExecutor javascriptExecutor;//public interface JavascriptExecutor
-
-        TakesScreenshot takesScreenshot;//public interface TakesScreenshot
 
         Select select;
         //public class Select
