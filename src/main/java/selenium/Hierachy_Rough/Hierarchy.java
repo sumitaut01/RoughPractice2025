@@ -15,9 +15,9 @@ public class Hierarchy {
 
     public static void main(String[] args) {
 
-        SearchContext context;
+        SearchContext context;//public interface SearchContext
 
-        WebDriver webDriver;
+        WebDriver driver;//public interface WebDriver
         /*
         public interface WebDriver extends org.openqa.selenium.SearchContext
          */
@@ -25,11 +25,26 @@ public class Hierarchy {
 
         TakesScreenshot takesScreenshot;//public interface TakesScreenshot
 
-        WebElement webElement;
+        WebElement webElement;//public interface WebElement
         /*
         public interface WebElement extends org.openqa.selenium.SearchContext, org.openqa.selenium.TakesScreenshot
          */
-        ChromiumDriver chromiumDriver;
+
+        RemoteWebDriver remoteWebDriver;// public class RemoteWebDriver
+        /*
+        public class RemoteWebDriver
+               implements org.openqa.selenium.WebDriver,
+           org.openqa.selenium.JavascriptExecutor,
+           org.openqa.selenium.HasCapabilities,
+           org.openqa.selenium.HasDownloads,
+           org.openqa.selenium.federatedcredentialmanagement.HasFederatedCredentialManagement,
+           org.openqa.selenium.virtualauthenticator.HasVirtualAuthenticator,
+           org.openqa.selenium.interactions.Interactive,
+           org.openqa.selenium.PrintsPage,
+           org.openqa.selenium.TakesScreenshot
+         */
+
+        ChromiumDriver chromiumDriver;//public class ChromiumDriver
         /*
         public class ChromiumDriver extends org.openqa.selenium.remote.RemoteWebDriver
 implements org.openqa.selenium.HasAuthentication,
@@ -44,27 +59,14 @@ implements org.openqa.selenium.HasAuthentication,
            org.openqa.selenium.html5.LocationContext,
            org.openqa.selenium.html5.WebStorage
          */
-        ChromeDriver chromeDriver;
+        ChromeDriver chromeDriver;//public class ChromeDriver
         /*
           public class ChromeDriver extends org.openqa.selenium.chromium.ChromiumDriver
          */
-        RemoteWebDriver remoteWebDriver;
-        /*
-        public class RemoteWebDriver
-               implements org.openqa.selenium.WebDriver,
-           org.openqa.selenium.JavascriptExecutor,
-           org.openqa.selenium.HasCapabilities,
-           org.openqa.selenium.HasDownloads,
-           org.openqa.selenium.federatedcredentialmanagement.HasFederatedCredentialManagement,
-           org.openqa.selenium.virtualauthenticator.HasVirtualAuthenticator,
-           org.openqa.selenium.interactions.Interactive,
-           org.openqa.selenium.PrintsPage,
-           org.openqa.selenium.TakesScreenshot
-         */
 
-        Wait<String> wait;
+        Wait<String> wait;//public interface Wait<F>
 
-        FluentWait<String> fluentWait;
+        FluentWait<String> fluentWait;//public class FluentWait<T>
         /*
         public class FluentWait<T> implements org.openqa.selenium.support.ui.Wait<T>
          */
