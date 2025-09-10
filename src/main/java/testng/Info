@@ -1,0 +1,89 @@
+ITestLsitners
+Context
+
+Retry logic
+    <listeners>
+        <listener class-name="com.listeners.TestListener"></listener>
+        <listener class-name="com.listeners.AnnotationTransformer"></listener>
+    </listeners>
+
+
+  @Test(groups = {"Segment_VendorFloorTestCases"}, priority = 8
+            , dataProviderClass = CustomDataProvider.class, dataProvider = "CustomDataProvider")
+    @TestCaseDescription(category = {"Segment_VendorFloorTestCases"}, testdata = "SegmentVendorFloor_Sheet1")
+    public void AddVendorFloorRecord_01(Hashtable<String, String> data) {
+        SegmentPage segmentPage = new SegmentPage();
+        segmentPage
+                .navigateToSegment()
+                .clickOnSegmentSearch()
+                .clickSegmentRadio()
+                .searchUsingContains(data.get("SegName"))
+                .clickSegmentNameFromSearchResult(data.get("SegName"))
+                .navigateToSegment()
+                .clickOnSegmentVendorFloor()
+                .deleteVendorFloorRecord(data.get("VendorNum"), data.get("DefaultCommentTag"), data.get("DefaultComment"))
+                .addVendorFloorRule(data.get("VendorNum"), data.get("FloorRuleCostCode"), data.get("FloorRulePct"), data.get("InitialAmount"), data.get("AllowFloor"))
+                .enterBJTagAndComment(data.get("CommentTag"), data.get("Comment"))
+                .finalSave()
+                .validateUpdatePopupShown()
+                .validateDataFromUIForVendor(data.get("VendorNum"), data.get("FloorRuleCostCode"), data.get("FloorRulePct"), data.get("InitialAmount"), data.get("AllowFloor"))
+                .clickViewCommentIconForVendor(data.get("VendorNum"));
+        businessValidations.validateBJCommentTagAndComment(data.get("CommentTag"), data.get("Comment"));
+    }
+
+
+
+
+    /    @Test(description = "TC08: GetCustPrice Validation ", enabled = true, priority = 10)
+    //    public void GetCustPrice() throws Exception {
+    //        if (!(isTestMappedToCountry(new Object() {
+    //        }.getClass().getEnclosingMethod().getName())) || !(isTestCategoryMapped(ModuleNameInTestApplicability))) return;
+    //        ITestContext oIContext = Reporter.getCurrentTestResult().getTestContext();
+    //        APIDriver objAPIDriver = AppUtil.preparePrequisites(oIContext, hmConfig);
+    //        //---------------Actual TC starts-----
+    //
+    //        PriceSimBucket action = new PriceSimBucket(hmTestData, hmConfig, objAPIDriver);
+    //        action.performGetCustPrice();
+    //        //------------------Test Case End------
+    //        objAPIDriver.setTestCaseCompleted(true);
+    //        objAPIDriver.getSoftAssert().assertAll();
+    //    }
+    //**************Factory code starts**********
+
+        @Factory
+        public static Object[] invokeObjects() throws Exception {
+            Object[][] myData2Dim = null;
+            Object[] data1Dim = null;
+            String sExcelFileName = null, sTabName = null;
+            ;
+
+            String sSheetName = System.getProperty("Environment").trim();
+            sExcelFileName = Constants.BASEPATH + File.separator + "TestData" + File.separator + TestDataFile;
+            System.out.println(sExcelFileName);
+            HashMap<String, MapTCForNations> listTCMappingToCountry = MapTCForNations.getListOfTestvsCountryMap(ModuleNameInTestApplicability);
+            sTabName = (!sSheetName.equalsIgnoreCase(Constants.READ_FROM_PROPERTIES_FILE)) ? sSheetName : RunConfig.getProperty(Constants.Environment);
+            System.out.println("Sheet name : "+sSheetName);
+            try {
+                myData2Dim = new ReadExcelFile().readExcelDataTo2DimArrayWithJasonObject(sExcelFileName, sTabName);
+                if (null != myData2Dim) {
+                    int iTotalCountryGiven = myData2Dim.length;
+                    data1Dim = new Object[iTotalCountryGiven];
+                    for (int i = 0; i < iTotalCountryGiven; i++) {
+                        @SuppressWarnings("unchecked")
+                        HashMap<String, String> pExcelHMap = (HashMap<String, String>) myData2Dim[i][0];
+                        HashMap<String, String> pConfigHMap = new ReadExcelFile().readConfigSheetforRunConfig(
+                                sExcelFileName, RunConfig.getProperty(Constants.ConfigSheetName),
+                                pExcelHMap.get(Constants.ExcelHeaderRunConfig));
+                        PriceCostSimService newInstance = new PriceCostSimService(pExcelHMap, pConfigHMap);
+                        newInstance.setTheCountriesForTheTC(listTCMappingToCountry);
+                        data1Dim[i] = newInstance;
+                    }
+                } else
+                    System.out.println("Please check the RUNFORCOUNTRIES parameter column of TestData Sheet for given countries");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return data1Dim;
+        }
+
+    }

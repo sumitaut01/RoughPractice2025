@@ -115,3 +115,92 @@ amount  |rnk|
  LIMIT 5 OFFSET 5;
  --offset-skip first 5 records
  --limt- shows only 5
+
+
+ How many employees in each department
+ SELECT dept_id, COUNT(emp_id) AS deptwise_emp
+ FROM employee
+ GROUP BY dept_id;
+
+ 🔹 2. Department-wise min, max, avg salary
+ SELECT dept_id,
+        MIN(salary) AS min_sal,
+        MAX(salary) AS max_sal,
+        AVG(salary) AS avg_sal
+ FROM employee
+ GROUP BY dept_id;
+
+ 🔹 3. Number of employees joined every month (ascending)
+ SELECT DATE_TRUNC('month', hire_date) AS hire_month,
+        COUNT(emp_id) AS num_employees
+ FROM employee
+ GROUP BY hire_month
+ ORDER BY hire_month ASC;
+
+ 🔹 4. List departments having at least 4 employees
+ SELECT dept_id, COUNT(emp_id) AS num_employees
+ FROM employee
+ GROUP BY dept_id
+ HAVING COUNT(emp_id) >= 4;
+
+ 🔹 5. How many employees joined in January or September
+ SELECT EXTRACT(MONTH FROM hire_date) AS hire_month,
+        COUNT(emp_id) AS num_employees
+ FROM employee
+ WHERE EXTRACT(MONTH FROM hire_date) IN (1, 9)
+ GROUP BY hire_month;
+
+ 🔹 6. Find duplicate records
+ SELECT emp_name, dept_id, hire_date, salary, COUNT(*)
+ FROM employee
+ GROUP BY emp_name, dept_id, hire_date, salary
+ HAVING COUNT(*) > 1;
+
+
+ (Replace column list with all columns that define uniqueness in your table)
+
+ 🔹 7. Display particular number of rows (say rows 40–100)
+ SELECT *
+ FROM employee
+ OFFSET 40
+ LIMIT 60;
+
+ 🔹 8. Max salary department-wise
+ SELECT dept_id, MAX(salary) AS max_sal
+ FROM employee
+ GROUP BY dept_id;
+
+ 🔹 9. Departments having more than 3 employees
+ SELECT dept_id, COUNT(emp_id) AS num_employees
+ FROM employee
+ GROUP BY dept_id
+ HAVING COUNT(emp_id) > 3;
+
+ 🔹 10. Joins
+
+ Inner Join
+
+ SELECT e.emp_id, e.emp_name, d.dept_name
+ FROM employee e
+ INNER JOIN department d ON e.dept_id = d.dept_id;
+
+
+ Left Join
+
+ SELECT e.emp_id, e.emp_name, d.dept_name
+ FROM employee e
+ LEFT JOIN department d ON e.dept_id = d.dept_id;
+
+
+ Right Join
+
+ SELECT e.emp_id, e.emp_name, d.dept_name
+ FROM employee e
+ RIGHT JOIN department d ON e.dept_id = d.dept_id;
+
+
+ Full Outer Join
+
+ SELECT e.emp_id, e.emp_name, d.dept_name
+ FROM employee e
+ FULL OUTER JOIN department d ON e.dept_id = d.dept_id;

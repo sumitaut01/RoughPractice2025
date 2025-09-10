@@ -5,7 +5,7 @@ public class RX_SysoWork {
     }
 }
 
-class SystemNew {
+final class SystemNew {
 static PrintStreamNew Out;
 }
 

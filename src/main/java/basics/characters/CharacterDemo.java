@@ -3,8 +3,8 @@ package basics.characters;
 public class CharacterDemo {
 
     public static void main(String[] args) {
-
-        Character ch='A';
+        Character
+         ch='A';
         System.out.println(ch);//A
 
         int aa=ch;

@@ -1,6 +1,7 @@
 package basics.collections.queue;
 
 import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -49,6 +50,19 @@ public class R1_QueUe {
 
         System.out.println(  qStr2.offer("4th"));//false
        // System.out.println(  qStr2.add("4th"));//exception  Exception in thread "main" java.lang.IllegalStateException: Queue full
+
+
+
+
+
+        //LinkedList
+      //  Queue<String> qstr=new LinkedList<String>();
+
+
+
+        //PriorityQueue
+      //  Queue<String> qstr=new PriorityQueue<>();
+
 
     }
 }

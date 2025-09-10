@@ -19,7 +19,9 @@ public class PropertiesDemo {
         System.out.println(properties.setProperty("env","qa"));
         System.out.println(properties.setProperty("newprop","newpropvalue"));
         System.out.println(properties);
-        properties.clone();
+
+
+
 
     }
 

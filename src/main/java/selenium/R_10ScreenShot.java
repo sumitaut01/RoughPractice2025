@@ -1,12 +1,14 @@
 package selenium;
 
 import org.apache.commons.io.FileUtils;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 public class R_10ScreenShot {
 
@@ -40,5 +42,16 @@ public class R_10ScreenShot {
 
 
         driver.quit();
+
+
+
+
+
+
+
+
+
+
+
     }
 }
