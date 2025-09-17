@@ -11,7 +11,6 @@ public class LinkedHashMapDemo {
        // LinkedHashMap<String,String> lhm=new LinkedHashMap<>();
 
         HashMap<String,String>  lhm=new LinkedHashMap<>();
-
         lhm.put("name","sumit");
         lhm.put("city","bhandara");
         lhm.put("course","it");

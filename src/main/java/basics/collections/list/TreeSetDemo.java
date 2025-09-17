@@ -9,11 +9,9 @@ public class TreeSetDemo {
 
 //✅ What is it?
 //                A TreeSet is a sorted set implemented using a self-balancing binary search tree (Red-Black Tree).
-//
 //                Maintains elements in sorted (ascending) order by default.
 //
 //        You can pass a custom comparator for custom sorting.
-//
 //        Slower than HashSet and LinkedHashSet for basic operations.
 //
 //        Features of TreeSet

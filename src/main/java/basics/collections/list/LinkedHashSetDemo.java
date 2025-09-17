@@ -23,5 +23,29 @@ public class LinkedHashSetDemo {
 
         System.out.println(str);//[sumit, neha, amit, juhi]
 
+
+
+
+
+
+        LinkedHashSet<String> lst=new LinkedHashSet<>();
+
+        System.out.println(lst.size());
+        System.out.println(lst.isEmpty());
+
+        lst.addFirst("A");
+        lst.addLast("Z");
+
+        System.out.println(lst);//[A, Z]
+
+        lst.removeLast();
+        System.out.println(lst);//[A]
+
+        System.out.println(lst.removeLast());
+        System.out.println(lst.removeLast());//Exception in thread "main" java.util.NoSuchElementException
+
+
+
+
     }
 }

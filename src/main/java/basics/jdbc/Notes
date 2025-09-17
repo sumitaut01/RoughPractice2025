@@ -1,4 +1,5 @@
 
+Drivermanager.getconnection( conection string.....)
 
 Statement:
 connection.createstatement

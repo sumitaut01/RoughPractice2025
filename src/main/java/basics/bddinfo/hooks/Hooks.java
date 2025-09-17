@@ -5,7 +5,7 @@ package basics.bddinfo.hooks;
 Scenario Hooks execute before and after every scenario.
 In the above example, executed two times for two scenarios.
 
-Note we can havve multiple before after and the can give thenm int value to decide which executes first or later
+Note we can have multiple before after and the can give then int value to decide which executes first or later
  */
 
 public class Hooks {

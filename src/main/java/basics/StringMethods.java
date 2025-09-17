@@ -8,14 +8,40 @@ public class StringMethods {
 
 
         String s1="Sumit";//SCP
-        String s2="Sumit";//no new string  s2 just points to s1
-        String s3=new String("Sumit");
+        String s2="Sumit";//no new string in SCP.  s2 just points to s1
+        String s3=new String("Sumit");//heap memory has "sumit" as well
+        /*
+
+hashCode()
+For String, it’s content-based.
+All strings with the same sequence of characters have the same hashCode(),
+regardless of whether they live in SCP or heap.
+         */
+
+        System.out.println(s1.hashCode());
+        System.out.println(s2.hashCode());
+        System.out.println(s3.hashCode());
+        //80245910
+        //80245910
+        //80245910
+
+        //Notice, we have used  , which is memory based
+
+        System.out.println(System.identityHashCode(s1));
+        System.out.println(System.identityHashCode(s2));
+        System.out.println(System.identityHashCode(s3));
+        //2104457164
+        //2104457164
+        //1521118594  --- different for s3
 
         //Equals and ==
         System.out.println(s1==s2);//true
         System.out.println(s1==s3);//false
         System.out.println(s1.equals(s2));//true
         System.out.println(s1.equals(s3));//true
+
+
+
 
 
         System.out.println(s1.charAt(0));//s

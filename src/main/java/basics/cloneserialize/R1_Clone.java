@@ -9,7 +9,7 @@ public class R1_Clone {
 
         //public class HashMap<K,V> extends AbstractMap<K,V>
         //    implements Map<K,V>, Cloneable, Serializable {
-        //because of Cloneable market interface ,it's possible
+        //because of Cloneable market interface ,it's possible to clone
 
         HashMap<String ,String> map1=new HashMap<>();
         map1.put("firstName", "Sumit");

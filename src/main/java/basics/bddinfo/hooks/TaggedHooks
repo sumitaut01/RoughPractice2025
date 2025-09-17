@@ -1,4 +1,10 @@
-Define tagged hooks in Hooks class file. Hooks can be used like @Before("@TagName"). Create before and after hooks for every scenario. I have also added normal before and after hooks, in case you are not aware, please go to the previous chapter of Hooks in Cucumber.
+Define tagged hooks in Hooks class file.
+Hooks can be used like @Before("@TagName"). Create before and after hooks for every scenario.
+I have also added normal before and after hooks, in case you are not aware, please go to the previous chapter of
+Hooks in Cucumber.
+
+Also note that, if step definitions and hooks are in different folder, we will have to pass hooks package also
+
 
 
 public class Hooks {

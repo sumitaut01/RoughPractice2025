@@ -39,5 +39,15 @@ class R1_StringBuilder{
 
         System.out.println(sb.reverse());//ragastimum
 
+
+        System.out.println(sb.indexOf("Z"));//-1
+
+
+        System.out.println(sb.insert(0, "A"));//Aragastimum
+
+        System.out.println(sb.delete(1, 100));  //deletes everything
+
+
+
     }
 }

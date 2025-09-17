@@ -204,3 +204,36 @@ amount  |rnk|
  SELECT e.emp_id, e.emp_name, d.dept_name
  FROM employee e
  FULL OUTER JOIN department d ON e.dept_id = d.dept_id;
+
+
+
+
+
+ in postgres, find 3 employess from all department,  top 3 interms of salary
+ ChatGPT said:
+
+ Got it 👍 You want to fetch the top 3 highest-paid employees from each department in PostgreSQL.
+ You can do this using ROW_NUMBER() (or RANK() / DENSE_RANK()) with a window function:
+
+ SELECT department_id,
+        employee_id,
+        employee_name,
+        salary
+ FROM (
+     SELECT e.*,
+            ROW_NUMBER() OVER (PARTITION BY department_id
+                               ORDER BY salary DESC) AS rn
+     FROM employees e
+ ) t
+ WHERE rn <= 3
+ ORDER BY department_id, salary DESC;
+
+ Explanation:
+
+ PARTITION BY department_id → ensures ranking restarts for each department.
+
+ ORDER BY salary DESC → assigns highest salary as rank 1.
+
+ ROW_NUMBER() → gives a unique sequence (1,2,3…) even if salaries tie.
+
+ WHERE rn <= 3 → filters top 3 per department.

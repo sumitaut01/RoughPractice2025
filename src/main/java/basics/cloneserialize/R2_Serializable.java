@@ -3,7 +3,7 @@ package basics.cloneserialize;
 import java.beans.Transient;
 import java.io.*;
 
-// add transietn field as well which wont get serialized
+// add transient field as well which wont get serialized
 public class R2_Serializable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -17,7 +17,7 @@ public class R2_Serializable {
 
 
         //below line possible only because MyClass implements Serializable
-        // //Deserialize
+        // //Serialize- Writing Object State
         ObjectOutputStream objectOutputStream=new ObjectOutputStream(new FileOutputStream("MyClass.ser"));
         objectOutputStream.writeObject(obj1);
         objectOutputStream.close();

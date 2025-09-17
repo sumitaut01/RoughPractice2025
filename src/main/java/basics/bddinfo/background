@@ -1,5 +1,6 @@
 Background with Hooks
-This is so interesting to see the working of Background with Hooks. The background is run before each of your scenarios but after any of your @Before hook.
+This is so interesting to see the working of Background with Hooks.
+The background is run before each of your scenarios but after any of your @Before hook.
 
 To get it straight, let's assign a task to the Before & After Hook in the same test.
 

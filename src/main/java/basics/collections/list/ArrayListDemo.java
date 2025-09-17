@@ -32,6 +32,16 @@ import java.util.List;
 //        add(index, val)	O(n) – may shift elements
 //        remove(index)	O(n) – shift elements
 //        contains(val)	O(n) – linear scan
+
+
+/*
+public class ArrayList<E> extends AbstractList<E>
+        implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
+    private static final int DEFAULT_CAPACITY = 10;
+    private Object[] elementData; // The backing array
+    private int size;
+}
+ */
 public class ArrayListDemo {
 
     public static void main(String[] args) {
@@ -91,6 +101,11 @@ public class ArrayListDemo {
 
         Collections.sort(names2);
         System.out.println(names2);//[A, B, D]
+
+
+        Collections.reverse(names2);
+        System.out.println(names2);//[D, B, A]
+
 
 
 

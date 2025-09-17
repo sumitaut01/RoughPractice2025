@@ -8,5 +8,7 @@ public class R6_Predicate {
 
         Predicate<String> prd=s->s.isEmpty();//true
 
+        System.out.println(prd.test("nonempty"));//flase
+
     }
 }

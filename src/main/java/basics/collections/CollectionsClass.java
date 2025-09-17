@@ -11,9 +11,9 @@ public class CollectionsClass {
 
         List<String> alist=new ArrayList<>();
 
-        alist.add("afirst");
-        alist.add("bsecond");
-        alist.add("bnth");
+        alist.add("afirst");//true
+        alist.add("bsecond");//true
+        alist.add("bnth");//true
 
         System.out.println(alist);//[afirst, bsecond, bnth]
 

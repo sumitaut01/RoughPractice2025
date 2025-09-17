@@ -8,7 +8,7 @@ public class HashMapDemo {
 //    A HashMap stores key-value pairs, where:
 //    Keys must be unique
 //    Each key maps to one value
-//    Allows one null key, and multiple null values
+//    Allows one null key, and multiple null values.  Fun fact:ConcurrentHashmap won't allow null key
 //    Unordered by default
 
     //Internal Data Structure

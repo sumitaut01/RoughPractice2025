@@ -1,5 +1,6 @@
 package basics.exceptiohandling;
 
+//finally always executes even when there is return before it
 public class R_XFinallyExecutedAlwaysEvenIfReturn {
 
     public static void main(String[] args) {

@@ -73,6 +73,9 @@ public class SetDemo {
         //Second
         //First
 
+        //
+       hs.forEach(System.out::println);
+
 
         hs.stream().forEach(s-> System.out.println(s));
         //Second
