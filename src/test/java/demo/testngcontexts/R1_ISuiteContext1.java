@@ -10,7 +10,6 @@ public class R1_ISuiteContext1 {
     @Test
     public void method1(ITestContext context){
         System.out.println("Method 1: Setting ITestContext in class 1 method 1");
-
         context.setAttribute("username", "myuser");
 
 

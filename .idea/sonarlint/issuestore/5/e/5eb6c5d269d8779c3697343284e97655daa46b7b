@@ -1,0 +1,17 @@
+
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ï†é8·òØ3
+X	java:S125"<This block of commented-out lines of code should be removed.(‰íÅÁ8¼òØ3
+Z
+java:S1854"8Remove this useless assignment to local variable "envs".(Üüè‚ûÿÿÿÿ8½òØ3
+T
+java:S1854"7Remove this useless assignment to local variable "env".(Šş·Š8½òØ3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(İÉÌŞ8½òØ3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(“øŒ²ÿÿÿÿÿ8¾òØ3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(Ó³»Óúÿÿÿÿ8¾òØ3
+E
+java:S1481"(Remove this unused "env" local variable.(Šş·Š8¾òØ3
+K
+java:S1481")Remove this unused "envs" local variable.(Üüè‚ûÿÿÿÿ8¾òØ3
+>
+java:S1116"Remove this empty statement.(¸´±Ôıÿÿÿÿ8¾òØ3
+X	java:S1252"<This block of commented-out lines of code should be removed.(×Ï¬8â“ÿØ3

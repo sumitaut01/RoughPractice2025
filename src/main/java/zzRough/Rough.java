@@ -96,4 +96,41 @@ public class Rough {
             curr = 0;
         }
     }
+
+
+
+    @Test
+    public void sliding_window() {
+
+        int[] arr = {1, 4, 5, 2, 3};
+        int k = 3;
+        int len = arr.length;
+        int max = 0;
+        int curr = 0;
+
+        for(int i=0;i<k;i++){
+            max+=arr[i];
+            System.out.println("intial max sum "+max);
+        }
+
+        for(int j=k;j<len;j++){
+            curr=max+arr[j]-arr[j-k];
+            max=Math.max(max,curr);
+        }
+        System.out.println(max);//11
+    }
+
+
+    @Test
+    public void ChapterCountMap(){
+
+        String st="sumit";
+        int[] data = new int[256]; //0 to 255
+        for (int i = 0; i < st.length(); i++) {
+            System.out.println(data[st.charAt(i)]);//s=115
+            //data[115]//it will be 0 after initilization
+            data[st.charAt(i)]++;
+            // data[115]=0++;
+        }
+    }
 }

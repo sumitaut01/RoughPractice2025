@@ -1,0 +1,19 @@
+
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(íæÕüÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ïúÁøÿÿÿÿ
+U
+java:S1854":Remove this useless assignment to local variable "deque4".(ß÷½‚üÿÿÿÿ
+U
+java:S1854":Remove this useless assignment to local variable "deque3".(¡†Ş¥üÿÿÿÿ
+P
+java:S1854":Remove this useless assignment to local variable "deque2".(¯ŒÜ™
+O
+java:S1854"9Remove this useless assignment to local variable "deque".(Àï‚ô
+@
+java:S1481"*Remove this unused "deque" local variable.(Àï‚ô
+A
+java:S1481"+Remove this unused "deque2" local variable.(¯ŒÜ™
+F
+java:S1481"+Remove this unused "deque3" local variable.(¡†Ş¥üÿÿÿÿ
+F
+java:S1481"+Remove this unused "deque4" local variable.(ß÷½‚üÿÿÿÿ
