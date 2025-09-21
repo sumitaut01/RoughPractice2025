@@ -1,0 +1,52 @@
+select * from users u  inner join  profiles p on  u.user_id=p.user_id --inner join
+
+select * from users u  left join  profiles p on  u.user_id=p.user_id  //all from left
+
+select u.user_id as "user id",p.user_id as "user id2" ,* from users u  left join  profiles p on  u.user_id=p.user_id
+
+
+select * from profiles
+
+
+SELECT
+    u.user_id   AS user_id_from_users,
+    p.user_id   AS user_id_from_profiles,
+    u.username,
+    u.email,
+    u.created_at,
+    u.status,
+    p.profile_id,
+    p.full_name,
+    p.bio,
+    p.dob
+FROM users u
+LEFT JOIN profiles p ON u.user_id = p.user_id;
+
+
+//Right Join
+
+SELECT
+    u.user_id   AS user_id_from_users,
+    p.user_id   AS user_id_from_profiles,
+    u.username,
+    u.email,
+    u.created_at,
+    u.status,
+    p.profile_id,
+    p.full_name,
+    p.bio,
+    p.dob
+FROM users u
+RIGHT JOIN profiles p ON u.user_id = p.user_id;
+
+
+
+select * from products
+
+
+--//2nd max
+select distinct(p1.price) from products p1
+where 1=
+(
+select count(p2.price) from products p2 where p2.price>p1.price
+)

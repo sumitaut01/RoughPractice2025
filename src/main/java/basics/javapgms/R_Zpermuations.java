@@ -23,13 +23,14 @@ public class R_Zpermuations {
         for (int i = 0; i < str.length(); i++) {
             // Pick one character
             char ch = str.charAt(i);
-            System.out.println(ch);
+            //System.out.println(ch);
 
             // Remaining string after removing picked char
             String remaining = str.substring(0, i) + str.substring(i + 1);
-            System.out.println(remaining);
+           // System.out.println(remaining);
 
             // Recurse
+            //System.out.println("executing "+i);
             permute(remaining, ans + ch);
         }
     }

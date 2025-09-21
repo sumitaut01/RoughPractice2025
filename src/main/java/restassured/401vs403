@@ -1,0 +1,74 @@
+401 vs 403 different in restaasured api testing
+ChatGPT said:
+
+Good question 👍 Let’s reframe it in Better Questions Checklist style so the answer is sharp:
+
+✅ Goal
+
+Understand the difference between 401 and 403 HTTP status codes in the context of API testing with RestAssured.
+
+📌 Context
+
+You’re working with RestAssured in Java for API testing.
+
+Sometimes APIs return 401 Unauthorized or 403 Forbidden when requests fail authentication/authorization.
+
+You want to know what each means, how to simulate them, and how to validate in RestAssured.
+
+🧪 Explanation
+🔑 401 Unauthorized
+
+Meaning: Client is not authenticated.
+
+The server thinks you’re not logged in / didn’t provide valid credentials.
+
+Example:
+
+Missing Authorization header.
+
+Invalid username/password.
+
+Expired or malformed token.
+
+In RestAssured, this often happens when you don’t set .auth().preemptive().basic(user, pass) or the bearer token is wrong.
+
+given()
+    .auth().none() // no auth
+.when()
+    .get("/secure/api")
+.then()
+    .statusCode(401);
+
+🛑 403 Forbidden
+
+Meaning: Client is authenticated but not authorized.
+
+The server knows who you are, but says you don’t have permission for that resource.
+
+Example:
+
+A normal user tries to access an admin-only endpoint.
+
+Valid token, but role/permissions don’t allow access.
+
+given()
+    .auth().oauth2(validUserToken) // authenticated user
+.when()
+    .get("/admin/api")
+.then()
+    .statusCode(403);
+
+⚖️ Quick Difference
+Code	When it happens	Analogy
+401 Unauthorized	You haven’t logged in, or your login is invalid	Guard at the door: “Show me your ID first.”
+403 Forbidden	You’re logged in, but not allowed inside	Guard at the door: “I see your ID, but you can’t enter this area.”
+🛠️ In API Testing with RestAssured
+
+Use 401 tests → to validate missing/invalid credentials handling.
+
+Use 403 tests → to validate role-based access control.
+
+Both should be part of negative testing scenarios.
+
+
+

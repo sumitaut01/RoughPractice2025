@@ -237,3 +237,6 @@ amount  |rnk|
  ROW_NUMBER() → gives a unique sequence (1,2,3…) even if salaries tie.
 
  WHERE rn <= 3 → filters top 3 per department.
+
+
+
