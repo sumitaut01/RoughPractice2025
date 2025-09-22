@@ -12,3 +12,85 @@ Please use the following password to proceed to installation:
 now:
 sumit_raut
 testing1234
+
+
+
+
+
+
+
+
+its possible that we can use github actions and trigger aws grid url:
+
+🔧 Step 1. Pre-requisites
+
+Your AWS EC2 Selenium Grid is already up at http://<Elastic-IP>:4444/wd/hub.
+
+Hub + Chrome node are running with docker-compose.
+
+Port 4444 is open in the EC2 security group.
+
+Your Selenium Test Project (Maven + TestNG/JUnit) is pushed to GitHub.
+
+🔧 Step 2. Add GitHub Secret
+
+Go to your GitHub repo → Settings → Secrets → Actions → New repository secret:
+
+SELENIUM_GRID_URL → http://<Elastic-IP>:4444/wd/hub
+
+This way, your Grid URL is not hardcoded in the workflow.
+
+🔧 Step 3. Update Your Code
+
+In your driver setup, read the URL from environment variable:
+
+String gridUrl = System.getenv("SELENIUM_GRID_URL");
+WebDriver driver = new RemoteWebDriver(
+    new URL(gridUrl),
+    new ChromeOptions()
+);
+
+
+
+tep 4. Create GitHub Actions Workflow
+
+In your repo, create:
+
+.github/workflows/selenium-grid.yml
+
+
+Paste this:
+
+name: Run Selenium Tests on AWS Grid
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run Selenium Tests
+        env:
+          SELENIUM_GRID_URL: ${{ secrets.SELENIUM_GRID_URL }}
+        run: mvn clean test

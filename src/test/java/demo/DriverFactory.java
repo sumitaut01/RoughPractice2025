@@ -1,6 +1,6 @@
 package demo;
 
-import enums.BrowserType;
+import myproject.enums.BrowserType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -14,16 +14,9 @@ import java.util.function.Supplier;
 //Performance → faster than HashMap because lookup is array-based.
 //Order → drivers stored in the order enums are declared (not random).
 //Cleaner than Switch → no giant switch (browserType) needed.
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
-
-import java.util.EnumMap;
-import java.util.function.Supplier;
 
 public class DriverFactory {
 

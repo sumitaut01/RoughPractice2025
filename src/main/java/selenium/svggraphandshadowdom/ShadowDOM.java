@@ -22,8 +22,13 @@ public class ShadowDOM {
 		driver.get("chrome://downloads/");
 		
 		WebElement root = driver.findElement(By.cssSelector("downloads-manager"));
+
+
 		
+		//WebElement shadowRoot1 = (WebElement) ((JavascriptExecutor)driver).executeScript("return arguments[0].shadowRoot",root);
 		WebElement shadowRoot1 = (WebElement) ((JavascriptExecutor)driver).executeScript("return arguments[0].shadowRoot",root);
+
+
  
 		WebElement root2 = shadowRoot1.findElement(By.cssSelector("downloads-toolbar"));
 		WebElement shadowRoot2 = (WebElement) ((JavascriptExecutor)driver).executeScript("return arguments[0].shadowRoot",root2);

@@ -1,4 +1,4 @@
-package enums;
+package myproject.enums;
 
 public enum BrowserType {
     CHROME,

@@ -1,0 +1,92 @@
+# Update packages
+sudo yum update -y
+
+# Install Docker
+sudo yum install -y docker
+
+# Start the Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Add ec2-user to docker group (so you don't need sudo every time)
+sudo usermod -aG docker ec2-user
+
+# Logout and login again, or run:
+newgrp docker
+
+# Verify Docker works
+docker --version
+
+
+
+
+
+docker run -d -p 4442-4444:4442-4444 --name selenium-hub selenium/hub:4.23.0
+
+attach node:
+docker run -d --name chrome-node --shm-size="2g" \
+  --link selenium-hub:hub \
+  selenium/node-chrome:4.23.0
+
+
+
+
+
+
+  ///
+
+  Step 1. Install Docker Compose (Amazon Linux 2023)
+
+  Run these commands:
+
+  # Download Docker Compose v2 binary
+  sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+  # Make it executable
+  sudo chmod +x /usr/local/bin/docker-compose
+
+  # Verify installation
+  docker-compose --version
+
+
+
+//nano docker-compose.yml
+
+
+
+  version: "3"
+  services:
+    selenium-hub:
+      image: selenium/hub:4.23.0
+      container_name: selenium-hub
+      ports:
+        - "4442:4442"
+        - "4443:4443"
+        - "4444:4444"
+
+    chrome:
+      image: selenium/node-chrome:4.23.0
+      shm_size: 2g
+      depends_on:
+        - selenium-hub
+      environment:
+        - SE_EVENT_BUS_HOST=selenium-hub
+        - SE_EVENT_BUS_PUBLISH_PORT=4442
+        - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+    firefox:
+      image: selenium/node-firefox:4.23.0
+      shm_size: 2g
+      depends_on:
+        - selenium-hub
+      environment:
+        - SE_EVENT_BUS_HOST=selenium-hub
+        - SE_EVENT_BUS_PUBLISH_PORT=4442
+        - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+
+
+//http://3.229.28.53:4444/wd/hub
+from latest
+http://3.229.28.53:4444/
+http://3.229.28.53:4444/wd/ui

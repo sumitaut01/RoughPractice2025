@@ -1,7 +1,7 @@
 package demo;
 
-import enums.EnvEnum;
-import enums.RunMode;
+import myproject.enums.EnvEnum;
+import myproject.enums.RunMode;
 
 import java.io.FileInputStream;
 import java.io.IOException;

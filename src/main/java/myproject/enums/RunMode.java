@@ -1,4 +1,4 @@
-package enums;
+package myproject.enums;
 
 // Enum for run modes
 public enum RunMode {

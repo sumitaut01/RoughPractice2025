@@ -12,15 +12,15 @@ public class ShadowDomHandler {
     public static void main(String[] args) throws InterruptedException {
 
         WebDriver driver = new ChromeDriver();
-        driver.get("your_web_page_with_shadow_dom_here"); // Replace with a URL that has a Shadow DOM
+        driver.get("chrome://downloads/"); // Replace with a URL that has a Shadow DOM
 
         // 1. Locate the Shadow Host element
-        WebElement shadowHost = driver.findElement(By.cssSelector("#host-element"));
+        WebElement shadowHost = driver.findElement(By.cssSelector("downloads-manager"));
 
         // 2. Get the Shadow Root
         SearchContext shadowRoot = shadowHost.getShadowRoot();
         // For older Selenium versions or specific scenarios, you might need to use JavaScript Executor
-        // SearchContext shadowRoot = (SearchContext) ((JavascriptExecutor) driver).executeScript("return arguments[0].shadowRoot", shadowHost);
+         SearchContext shadowRoot1 = (SearchContext) ((JavascriptExecutor) driver).executeScript("return arguments[0].shadowRoot", shadowRoot);
 
         // 3. Find the element inside the Shadow Root using its CSS selector
         WebElement buttonInsideShadowDom = shadowRoot.findElement(By.cssSelector("#button-in-shadow-dom"));

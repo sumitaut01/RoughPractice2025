@@ -2,8 +2,11 @@ package basics.javapgms;
 
 //abcabcbb
 import basics.characters.CharacterDemo;
+import org.testng.annotations.Test;
+import selenium.xpathcss.Rough;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 //The length of the longest substring without repeating characters is
 public class R31_LongestSubString {
@@ -58,9 +61,31 @@ public class R31_LongestSubString {
 
 
 
+    @Test
+    public void Rough(){
+       //brute
+        int start = 0;
+        int maxLength = 0;
+        String input = "abcfhagcd";
+        int max=0;
 
 
+        HashSet<Character> hs;
+        for(int i=0;i<input.length();i++){
+            hs=new HashSet<>();
 
+            for (int j=i;j<input.length();j++){
 
+                if(hs.add(input.charAt(j))) {
+                    max=Math.max(max, hs.size());
+                }
+                else{
+                   break;
+                }
+            }
+        }
 
+        System.out.println(max);
+
+    }
 }

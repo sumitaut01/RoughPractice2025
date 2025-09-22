@@ -1,6 +1,6 @@
 package demo;
 
-import enums.BrowserType;
+import myproject.enums.BrowserType;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.Test;
 

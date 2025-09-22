@@ -1,5 +1,7 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
 import java.util.Arrays;
 
 public class R3_ShiftArraytoLeft {
@@ -18,5 +20,24 @@ public class R3_ShiftArraytoLeft {
         }
 
         System.out.println("After : " + Arrays.toString(temp));
+    }
+
+
+    @Test
+    public void rough() {
+        //Before: [0, 1, 2, 3, 4, 5]
+        //After : [1, 2, 3, 4, 5, 0]
+
+
+        int arr[]={0, 1, 2, 3, 4, 5};
+        int temp[]=new int[arr.length];
+        int shiftby=1;
+
+        for(int i=0;i< arr.length;i++){
+            temp[i]= arr[ (i+shiftby)%arr.length];
+        }
+        System.out.println(Arrays.toString(arr));
+        System.out.println(Arrays.toString(temp));
+
     }
 }

@@ -1,5 +1,7 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
 public class R31_Fibonacci {
 
     public static void main(String[] args) {
@@ -19,5 +21,22 @@ public class R31_Fibonacci {
             second=c;
         }
 //0 1 1 2 3 5
+    }
+
+
+    @Test
+    public void rough(){
+        int a=0;
+        int b=1;
+
+        System.out.println(a);
+        System.out.println(b);
+        for(int i=0;i<5;i++){
+           int c=a+b;
+            System.out.println(c);
+            a=b;
+            b=c;
+        }
+
     }
 }
