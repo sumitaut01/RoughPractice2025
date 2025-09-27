@@ -1,0 +1,15 @@
+
+]
+java:S11925"GDefine a constant instead of duplicating this literal "/users" 3 times.(ƒâ‡Ê
+t
+java:S11924"YDefine a constant instead of duplicating this literal "https://fakestoreapi.com" 3 times.(‚ç¼œýÿÿÿÿ
+u
+java:S13190"_The type of "hm" should be an interface such as "Map" rather than the implementation "HashMap".(ÊŠî¢
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Òçÿ÷ùÿÿÿÿ
+Q	java:S125""<This block of commented-out lines of code should be removed.(ž«“â
+N	java:S1066"9Replace this use of System.out or System.err by a logger.(†ùÚ
+Q	java:S1256"<This block of commented-out lines of code should be removed.(†ùÚ
+N	java:S106@"9Replace this use of System.out or System.err by a logger.(ñìÄé
+Q	java:S125@"<This block of commented-out lines of code should be removed.(ñìÄé
+N	java:S106J"9Replace this use of System.out or System.err by a logger.(ñìÄé
+Q	java:S125J"<This block of commented-out lines of code should be removed.(ñìÄé

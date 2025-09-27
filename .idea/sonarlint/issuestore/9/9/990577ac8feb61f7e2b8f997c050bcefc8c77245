@@ -1,0 +1,11 @@
+
+h	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Æ§¹8ýŠ”Ž–3
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(€¥“ý8ýŠ”Ž–3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(Ü—Œ­8‚‹”Ž–3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(©×…ÿüÿÿÿÿ8þ»•Ž–3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ð¹Ýšüÿÿÿÿ8é©–Ž–3
+D
+java:S1068"'Remove this unused "dob" private field.(‚ª†×8…‹”Ž–3
+K
+java:S1144
+".Remove this unused private "methodOne" method.(µà‰ø8‹È”Ž–3

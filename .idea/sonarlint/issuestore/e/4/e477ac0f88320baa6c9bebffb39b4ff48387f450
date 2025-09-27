@@ -1,0 +1,45 @@
+
+w
+java:S1192$"UDefine a constant instead of duplicating this literal "    \"customer\": {
+" 3 times.(¤Ö Œúÿÿÿÿ8À´•¨3
+t
+java:S11928"RDefine a constant instead of duplicating this literal "    \"items\": [
+" 3 times.(Ç¢¢üÿÿÿÿ8Á´•¨3
+w
+java:S1192["ZDefine a constant instead of duplicating this literal "        \"quantity\": 1,
+" 3 times.(„ãÊ±8Á´•¨3
+e
+java:S11927"HDefine a constant instead of duplicating this literal "    },
+" 3 times.(¥ÁÊÁ8Á´•¨3
+k
+java:S11929"IDefine a constant instead of duplicating this literal "      {
+" 4 times.(Ÿñ¼Ñÿÿÿÿÿ8Á´•¨3
+€
+java:S1192."^Define a constant instead of duplicating this literal "        \"country\": \"USA\"
+" 4 times.(ë¨´ùÿÿÿÿÿ8Á´•¨3
+d
+java:S1192D"HDefine a constant instead of duplicating this literal "    ],
+" 3 times.(Â¥—?8Á´•¨3
+g
+java:S1192""EDefine a constant instead of duplicating this literal "  {
+" 3 times.(Ÿñ¼Ñÿÿÿÿÿ8Á´•¨3
+€
+java:S1192)"^Define a constant instead of duplicating this literal "      \"shippingAddress\": {
+" 3 times.(ŸÊ‰—ıÿÿÿÿ8Á´•¨3
+f
+java:S11926"IDefine a constant instead of duplicating this literal "      }
+" 6 times.(ÚÜƒ8Á´•¨3
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(•¸¼Æ8Â´•¨3
+O
+java:S6126!"2Replace this String concatenation with Text block.(®’ºö8Ù´•¨3
+U	java:S106‰"9Replace this use of System.out or System.err by a logger.(«¤Ñ8Ù´•¨3
+Y	java:S125Œ"<This block of commented-out lines of code should be removed.(À£à›8Ú´•¨3
+V	java:S106“"9Replace this use of System.out or System.err by a logger.(¥ñ¥«8î´•¨3
+[	java:S106”"9Replace this use of System.out or System.err by a logger.(Óâğ´úÿÿÿÿ8î´•¨3
+V	java:S106—"9Replace this use of System.out or System.err by a logger.(ºú†Ä8ÂËª¨3
+l	java:S116§"PRename this field "Items" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ü¼ö8î´•¨3
+^	java:S125İ"<This block of commented-out lines of code should be removed.(Ú€ßûÿÿÿÿ8ªà´¨3
+g
+java:S1128"JRemove this unused import 'com.fasterxml.jackson.annotation.JsonProperty'.(ËÃ§Ï8ªà´¨3
+L
+java:S1128"*Remove this unused import 'java.util.Map'.(¼è½Òşÿÿÿÿ8ªà´¨3

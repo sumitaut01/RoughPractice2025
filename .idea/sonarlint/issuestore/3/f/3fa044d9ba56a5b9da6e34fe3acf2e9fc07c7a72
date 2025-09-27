@@ -1,0 +1,17 @@
+
+\
+java:S2259&"AA "NullPointerException" could be thrown; "obj" is nullable here.(œ…½óþÿÿÿÿ
+M
+java:S1854"7Remove this useless assignment to local variable "nc2".(øâô­
+A
+java:S1481
+"&Remove this unused "i" local variable.(£¹›úúÿÿÿÿ
+V	java:S125"<This block of commented-out lines of code should be removed.(»Ûèœÿÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¥†ÕÝ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¯¿ƒ¥
+N	java:S106"9Replace this use of System.out or System.err by a logger.(šº °
+S	java:S106"9Replace this use of System.out or System.err by a logger.(è¤šàøÿÿÿÿ
+P
+java:S2209&"5Change this instance-reference to a static reference.(œ…½óþÿÿÿÿ
+N	java:S106/"9Replace this use of System.out or System.err by a logger.(¸¯Š¯
+S	java:S1066"9Replace this use of System.out or System.err by a logger.(¡€¨¬ûÿÿÿÿ

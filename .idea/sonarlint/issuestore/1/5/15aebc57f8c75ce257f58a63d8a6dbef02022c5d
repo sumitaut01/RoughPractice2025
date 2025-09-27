@@ -1,0 +1,9 @@
+
+b	java:S101*"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(¸Ê¾é
+X
+java:S35188"CMake sure this expression can't be zero before doing this division.(Þ¹Û*
+V	java:S125"<This block of commented-out lines of code should be removed.(ñ¥ùšøÿÿÿÿ
+J
+java:S18548"5Remove this useless assignment to local variable "x".(Þ¹Û*
+;
+java:S14818"&Remove this unused "x" local variable.(Þ¹Û*

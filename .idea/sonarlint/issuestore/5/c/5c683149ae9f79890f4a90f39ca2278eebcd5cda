@@ -1,0 +1,17 @@
+
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ò’•”
+t
+java:S1171"YMove the contents of this initializer to a standard constructor or to field initializers.(ÒÌâ–øÿÿÿÿ
+M	java:S106"9Replace this use of System.out or System.err by a logger.(ôÂºd
+t
+java:S1171"YMove the contents of this initializer to a standard constructor or to field initializers.(ÒÌâ–øÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿ»¥Ã
+S	java:S106"9Replace this use of System.out or System.err by a logger.(…®ÁÏùÿÿÿÿ
+N
+java:S1854 "8Remove this useless assignment to local variable "obj2".(Œ›Âº
+S
+java:S1854"8Remove this useless assignment to local variable "obj1".(€šŽ€ùÿÿÿÿ
+D
+java:S1481")Remove this unused "obj1" local variable.(€šŽ€ùÿÿÿÿ
+?
+java:S1481 ")Remove this unused "obj2" local variable.(Œ›Âº

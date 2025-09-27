@@ -16,6 +16,9 @@ public class ComparatorDemo {
         dl.sort(new AgeComparator());
         System.out.println(dl);
         //[D{age=2, name='Amit'}, D{age=12, name='Sumit'}, D{age=20, name='Neha'}]
+
+
+
     }
 }
 

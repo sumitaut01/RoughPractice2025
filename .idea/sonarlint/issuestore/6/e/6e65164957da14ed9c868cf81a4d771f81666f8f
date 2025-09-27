@@ -1,0 +1,14 @@
+
+a
+java:S1192"FDefine a constant instead of duplicating this literal "Sumit" 4 times.(çŒø‹ùÿÿÿÿ
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(­Þºÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(çŒø‹ùÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(»ÔÕÚúÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(‚Öéí
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ŒÛŽÂ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(›³üÈýÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ã®‰á
+S	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿãìœúÿÿÿÿ
+b
+java:S2175"GA "Map<String, Integer>" cannot contain a "String" in a "Integer" type.(Ÿãìœúÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(µ­“Ô

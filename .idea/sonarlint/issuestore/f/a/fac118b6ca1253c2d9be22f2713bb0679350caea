@@ -1,0 +1,15 @@
+
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ü”Ò‚8Ô—²Œ—3
+`
+java:S1659/">Declare "e" and all following declarations on a separate line.(ÁªìÄûÿÿÿÿ8º˜²Œ—3
+U	java:S106,"9Replace this use of System.out or System.err by a logger.(ìã·Ë8»˜²Œ—3
+j	java:S100A"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ð«‘Å8¼˜²Œ—3
+L
+java:S1481C"*Remove this unused "start" local variable.(¡Ò¾Žüÿÿÿÿ8¼˜²Œ—3
+K
+java:S1481D".Remove this unused "maxLength" local variable.(ºƒãÛ8¼˜²Œ—3
+Z	java:S106X"9Replace this use of System.out or System.err by a logger.(¾ùôŒùÿÿÿÿ8½˜²Œ—3
+^
+java:S1128"<Remove this unused import 'basics.characters.CharacterDemo'.(åä€úÿÿÿÿ8¾˜²Œ—3
+V
+java:S1128"4Remove this unused import 'selenium.xpathcss.Rough'.(ÏÃûÙûÿÿÿÿ8¾˜²Œ—3

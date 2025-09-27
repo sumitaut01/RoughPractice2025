@@ -14,6 +14,6 @@ public class LinkedHashMapDemo {
         lhm.put("name","sumit");
         lhm.put("city","bhandara");
         lhm.put("course","it");
-        System.out.println(lhm);
+        System.out.println(lhm);//{name=sumit, city=bhandara, course=it}
     }
 }

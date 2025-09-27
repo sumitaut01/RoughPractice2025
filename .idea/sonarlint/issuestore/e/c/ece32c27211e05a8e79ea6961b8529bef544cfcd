@@ -1,0 +1,19 @@
+
+>
+java:S1604"(Make this anonymous inner class a lambda(Å‹ï‹
+k	java:S114"QRename this interface name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ÉÒüóþÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ëôßÊ
+V	java:S125"<This block of commented-out lines of code should be removed.(ù–ð²ùÿÿÿÿ
+V
+java:S1612"@Replace this lambda with method reference 'System.out::println'.(ä”ãÈ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ä”ãÈ
+S	java:S106$"9Replace this use of System.out or System.err by a logger.(ŽÅ‘Ôûÿÿÿÿ
+h
+java:S4276("RRefactor this code to use the more specialised Functional Interface 'IntPredicate'(¯çå›
+S	java:S106)"9Replace this use of System.out or System.err by a logger.(½¨›þÿÿÿÿ
+N	java:S106*"9Replace this use of System.out or System.err by a logger.(Ó°Ž³
+q
+java:S42760"[Refactor this code to use the more specialised Functional Interface 'ToIntFunction<String>'(°ÿ°‹
+W
+java:S16120"AReplace this lambda with method reference 'CharSequence::length'.(°ÿ°‹
+N	java:S1061"9Replace this use of System.out or System.err by a logger.(û¨¥Û

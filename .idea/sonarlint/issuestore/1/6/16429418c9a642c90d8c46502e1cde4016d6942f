@@ -1,0 +1,16 @@
+
+g	java:S101	"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(¬ãø¹ûÿÿÿÿ
+—
+java:S1186*"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(â™éÀ
+œ
+java:S11860"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¨«ñùşÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Ó÷¡
+Q	java:S125"<This block of commented-out lines of code should be removed.(Ó÷¡
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Â˜»Ì
+S	java:S106#"9Replace this use of System.out or System.err by a logger.(ã™€Ÿşÿÿÿÿ
+N	java:S106$"9Replace this use of System.out or System.err by a logger.(Â˜»Ì
+P	java:S125&"<This block of commented-out lines of code should be removed.(¼°ÄN
+V
+java:S10756"ARefactor your code to get this URI from a customizable parameter.(ĞÊ±
+R
+java:S1128"7Remove this unused import 'io.restassured.RestAssured'.(ºÉµ±ùÿÿÿÿ
