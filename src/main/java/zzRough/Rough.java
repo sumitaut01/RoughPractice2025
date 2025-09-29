@@ -124,13 +124,61 @@ public class Rough {
     @Test
     public void ChapterCountMap(){
 
-        String st="sumit";
+        String st="sumitraut";
         int[] data = new int[256]; //0 to 255
         for (int i = 0; i < st.length(); i++) {
-            System.out.println(data[st.charAt(i)]);//s=115
-            //data[115]//it will be 0 after initilization
-            data[st.charAt(i)]++;
-            // data[115]=0++;
+            data[(int)st.charAt(i)]++;
         }
+
+
+       for(int j=0;j<data.length;j++){
+           if(data[j]!=0){
+               char c=(char)j;
+               int count=data[j];
+               System.out.println(c+" "+count);
+           }
+       }
     }
+
+    @Test
+    public void enumTest(){
+
+
+
+
+      enum myEnum{
+
+          QA("qaurl"),
+          UAT("uaturl");
+
+          String url;
+
+          myEnum(String str){
+              this.url=str;
+          }
+
+
+          public String getStr(){
+              return url;
+          }
+      }
+
+
+        myEnum qa = myEnum.QA;
+        System.out.println(qa.getStr());//qaurl
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
 }

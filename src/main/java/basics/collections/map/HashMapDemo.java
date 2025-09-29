@@ -75,6 +75,13 @@ public class HashMapDemo {
         //name====>sumit
 
 
+     Set<String> val= (Set<String>) hm.values();
+        System.out.println(val);
+
+
+
+
+        }
 
 
 
@@ -83,4 +90,4 @@ public class HashMapDemo {
     }
 
 
-}
+

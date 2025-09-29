@@ -36,5 +36,22 @@ public class R_28AnagramString {
         System.out.println(hm); //
         //{s=0, t=0, e=0, i=0, l=0, n=0}
 
+
+
+
+        //Rough to see equals() behaviour on hashmap
+
+        HashMap<String,Integer> hm1=new HashMap<>();
+        HashMap<String,Integer> hm2=new HashMap<>();
+        HashMap<String,Integer> hm3=new HashMap<>();
+
+        hm1.put("name",35);
+        hm2.put("name",33);
+        hm3.put("name",35);
+
+
+        System.out.println(hm1.equals(hm2));//false
+        System.out.println(hm1.equals(hm3));//true
+
     }
 }

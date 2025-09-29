@@ -1,12 +1,0 @@
-
-i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(•¨ïÓ8è§šÿ3
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(©©Á¼úÿÿÿÿ8ì§šÿ3
-T	java:S106"9Replace this use of System.out or System.err by a logger.(Ë”“<8í§šÿ3
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(û×«‘ûÿÿÿÿ8í§šÿ3
-U	java:S106"9Replace this use of System.out or System.err by a logger.(…ìçÀ8î§šÿ3
-U	java:S106"9Replace this use of System.out or System.err by a logger.(†Á’8î§šÿ3
-U	java:S106"9Replace this use of System.out or System.err by a logger.(Ûµ¨±8î§šÿ3
-U
-java:S1128"3Remove this unused import 'java.util.NavigableMap'.(õ Ì§ûÿÿÿÿ8Ôÿšÿ3
-R
-java:S1128"0Remove this unused import 'java.util.SortedSet'.(ÆÙÉÛşÿÿÿÿ8Ôÿšÿ3

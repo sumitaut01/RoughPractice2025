@@ -178,7 +178,11 @@
 //
 //        try {
 //            FluentWait<WebDriver> wait = new FluentWait<>(DriverManager.getDriver());
-//            wait.withTimeout(getWaitType(waitType)).pollingEvery(Duration.ofSeconds(1L)).ignoring(NoSuchElementException.class).ignoring(StaleElementReferenceException.class).until(new Function<WebDriver, Boolean>() {
+//            wait.withTimeout(getWaitType(waitType))
+//            .pollingEvery(Duration.ofSeconds(1L))
+//            .ignoring(NoSuchElementException.class)
+//            .ignoring(StaleElementReferenceException.class)
+//            .until(new Function<WebDriver, Boolean>() {
 //                public Boolean apply(WebDriver d) {
 //                    WebElement element = d.findElement(locator);
 //                    return element.isDisplayed();

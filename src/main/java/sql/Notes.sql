@@ -83,7 +83,7 @@ amount  |rnk|
 
 
 
-
+--Common table Expression
  --With
  with holder as (
  select * from employees where salary>5000
@@ -107,7 +107,7 @@ amount  |rnk|
  FROM temp_contacts;
 
 
- //limit and off set
+ --limit and off set
 
  SELECT id, name, salary
  FROM employees
