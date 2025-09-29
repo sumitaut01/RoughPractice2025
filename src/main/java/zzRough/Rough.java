@@ -2,7 +2,10 @@ package zzRough;
 
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,41 +146,49 @@ public class Rough {
     @Test
     public void enumTest(){
 
-
-
-
       enum myEnum{
-
           QA("qaurl"),
           UAT("uaturl");
-
           String url;
-
           myEnum(String str){
               this.url=str;
           }
-
-
           public String getStr(){
               return url;
           }
       }
-
-
         myEnum qa = myEnum.QA;
         System.out.println(qa.getStr());//qaurl
+
+    }
+
+    @Test
+    public void dummy(){
+
+      for(int i=0;i<256;i++){
+          System.out.println((char)i);
+      }
+
+    }
+
+
+    @Test
+    public void Streams(){
+
+        ArrayList<String> str=new ArrayList<>();
+        str.add("sumit");
+
+        Supplier<List<String>> sup=()-> str;
+        sup.get().stream()
+                .map(String::toUpperCase)
+                .forEach(System.out::println);
+
+//SUMIT
 
 
 
 
     }
-
-
-
-
-
-
-
 
 
 

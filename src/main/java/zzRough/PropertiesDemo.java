@@ -20,9 +20,6 @@ public class PropertiesDemo {
         System.out.println(properties.setProperty("newprop","newpropvalue"));
         System.out.println(properties);
 
-
-
-
     }
 
     @Test

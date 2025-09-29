@@ -1,14 +1,0 @@
-
-g	java:S101
-"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ÿòáüÿÿÿÿ
-g
-java:S2095"LUse try-with-resources or close this "BufferedReader" in a "finally" clause.(µ¢î™üÿÿÿÿ
-M	java:S106"9Replace this use of System.out or System.err by a logger.(Õ®8
-M
-java:S1135"2Complete the task associated to this TODO comment.(» æÿÿÿÿÿ
-M	java:S106"9Replace this use of System.out or System.err by a logger.(ƒÚáB
-V
-java:S1075 "ARefactor your code to get this URI from a customizable parameter.(ì‚İj
-N	java:S106#"9Replace this use of System.out or System.err by a logger.(š¾ø
-U
-java:S1128":Remove this unused import 'java.io.FileNotFoundException'.(·î™ùÿÿÿÿ

@@ -14,6 +14,14 @@ sale_id|sale_date |amount  |
          --------+
          12000.00|
 
+
+         // skip first record  offset means
+         SELECT DISTINCT salary
+         FROM employees
+         ORDER BY salary DESC
+         OFFSET 1 LIMIT 1;
+
+
 --Group By
 @. Select * from products
 product_id|name      |category   |price   |stock|created_at             |

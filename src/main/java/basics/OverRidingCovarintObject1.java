@@ -5,7 +5,8 @@ public class OverRidingCovarintObject1 {
     public static void main(String[] args) {
         Parent p=new Child();
         p.Method1(5);//From Child
-
+       // From Parent char
+        //From Parent Object
 
         p.Method2("Name");
     }
