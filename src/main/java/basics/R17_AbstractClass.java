@@ -55,6 +55,9 @@ class abstractimpl extends R17_AbstractClass {
         obj.print();//non abstract method
 
 
+        abstractimpl new2=  new abstractimpl("neha");
+        new2.am_print();
+        new2.print();
     }
 }
 

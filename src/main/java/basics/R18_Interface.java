@@ -20,6 +20,9 @@ public class R18_Interface implements I1, I2 {
     public static void main(String[] args) {
 
         I1 i1 = new R18_Interface();
+
+        System.out.println(i1 instanceof I1);//true
+        System.out.println(i1 instanceof R18_Interface);//true
         i1.sum(2, 3);//implemented sum from I1
 
         System.out.println(I1.min_bal);//cant be changed

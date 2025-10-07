@@ -20,8 +20,6 @@ public class JdbcWork {
             // 2|Bob    |            1| 75000|
             // 3|Charlie|            2| 60000|
         }
-
-
         rs.close();
         preparedStatement.close();
         con.close();

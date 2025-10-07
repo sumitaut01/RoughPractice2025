@@ -24,7 +24,7 @@ public class R2_TwoSum {
 
 
     @Test
-    public void threesum(){
+    public void twosumwithindexes(){
 
         int []a={0,9,2,3,4,5,6,7,8,1};
         int eSum=9;

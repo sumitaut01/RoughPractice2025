@@ -10,7 +10,7 @@ public class R23_MapInterface {
 
         Map<String,Integer> hm=new HashMap<>();
         System.out.println(hm.put("Sumit",35));//null if value added first time for the key
-        System.out.println(hm.put("Sumit",36));//35 old key
+        System.out.println(hm.put("Sumit",36));//35 old value
         hm.put("Amit",40);
         hm.put("neha",31);
 

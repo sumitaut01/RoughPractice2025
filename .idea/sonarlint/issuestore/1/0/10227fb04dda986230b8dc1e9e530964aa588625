@@ -1,0 +1,14 @@
+
+r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(†¥Ê¡øÿÿÿÿ8ê…Ú¤š3
+]
+java:S1854m"@Remove this useless assignment to local variable "curentWindow".(ŒÛì„8ðõ±ªš3
+\
+java:S1854u"?Remove this useless assignment to local variable "otherWindow".(ÔÃß¬8ðõ±ªš3
+X	java:S125"<This block of commented-out lines of code should be removed.(æ‚„Â8û…Ú¤š3
+U	java:S106<"9Replace this use of System.out or System.err by a logger.(Ú£ÅÉ8ûðÛ¤š3
+U	java:S106="9Replace this use of System.out or System.err by a logger.(â—¾›8öõ±ªš3
+N
+java:S1481m"1Remove this unused "curentWindow" local variable.(ŒÛì„8‚ñÛ¤š3
+R
+java:S1481n"0Remove this unused "otherWindow" local variable.(œýªºþÿÿÿÿ8úõ±ªš3
+Z	java:S106s"9Replace this use of System.out or System.err by a logger.(ËŒÀöýÿÿÿÿ8ûõ±ªš3

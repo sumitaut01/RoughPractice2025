@@ -1,16 +1,0 @@
-
-a
-java:S1192"FDefine a constant instead of duplicating this literal "Sumit" 4 times.(ù©˜—ûÿÿÿÿ
-g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(è¡’øùÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ù©˜—ûÿÿÿÿ
-N	java:S106"9Replace this use of System.out or System.err by a logger.(¼À¾›
-N	java:S106"9Replace this use of System.out or System.err by a logger.(ÚÞ‘€
-S	java:S106"9Replace this use of System.out or System.err by a logger.(î¸»€ÿÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ù©˜—ûÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ÀÖÝ©ûÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ñµÔÍþÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(Éíôöþÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(Ò»…ƒøÿÿÿÿ
-m
-java:S6204"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(ªçŸŠøÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(¹¦…‡úÿÿÿÿ

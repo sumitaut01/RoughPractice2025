@@ -1,0 +1,15 @@
+
+V	java:S125'"<This block of commented-out lines of code should be removed.(üÒÝþÿÿÿÿÿ
+S	java:S106="9Replace this use of System.out or System.err by a logger.(ë¯Üëøÿÿÿÿ
+N	java:S106>"9Replace this use of System.out or System.err by a logger.(Òø‡Ï
+N	java:S106?"9Replace this use of System.out or System.err by a logger.(þ°Ñ¡
+S	java:S106B"9Replace this use of System.out or System.err by a logger.(Å­ËÝúÿÿÿÿ
+V
+java:S1612H"@Replace this lambda with method reference 'System.out::println'.(õ²ßë
+N	java:S106H"9Replace this use of System.out or System.err by a logger.(õ²ßë
+N	java:S106M"9Replace this use of System.out or System.err by a logger.(åÝàÔ
+U
+java:S1612P"@Replace this lambda with method reference 'System.out::println'.(ë«Ãw
+M	java:S106P"9Replace this use of System.out or System.err by a logger.(ë«Ãw
+J
+java:S1128"/Remove this unused import 'java.sql.SQLOutput'.(ê¤òÃùÿÿÿÿ

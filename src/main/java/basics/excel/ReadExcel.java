@@ -2,8 +2,10 @@ package basics.excel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.annotations.Test;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ReadExcel {
@@ -23,8 +25,34 @@ public class ReadExcel {
             }
             System.out.println();
         }
-
         workbook.close();
         fis.close();
     }
+
+
+
+
+    @Test
+    public void test() throws IOException {
+
+        Workbook workbook=new XSSFWorkbook(new FileInputStream("Users.xlsx"));
+
+        Sheet sheet=workbook.getSheet("Users");
+        int rowCount= sheet.getLastRowNum();
+
+        for(int i=0;i<rowCount;i++){
+            Row row= sheet.getRow(i);
+            for(int j=0;j<row.getLastCellNum();j++){
+                String data=row.getCell(j).getStringCellValue();
+                System.out.print(data+ " ");
+            }
+            System.out.println("");
+        }
+        workbook.close();
+    }
 }
+
+
+
+
+

@@ -102,5 +102,23 @@ regardless of whether they live in SCP or heap.
         String test3="#12XaftaaX66%^";
         System.out.println(test3.replaceAll("[a-z A-z]", ""));//#1266%
 
+
+
+
+        //Way of creation:
+        String x1="Sumit";
+        String x2=new String("Sumit");
+        String x3=new StringBuffer("First").append("Second").toString();
+
+        char []ax4={'a','b','c','d'};
+        String x4= new String(ax4);
+
+
+
+
+
+
+
+
     }
 }

@@ -1,0 +1,8 @@
+
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ϊγ―τώÿÿÿÿ
+^
+java:S2095"HUse try-with-resources or close this "FileReader" in a "finally" clause.(ΤΏΔ
+P
+java:S1854":Remove this useless assignment to local variable "reader".(ΤΏΔ
+A
+java:S1481"+Remove this unused "reader" local variable.(ΤΏΔ
