@@ -26,17 +26,13 @@ public class R1_Generics {
 }
 
 class Box<T>{
-
   private T item;
-
   public T get(){
       return item;
   }
-
   public void setItem(T itemType){
       this.item=itemType;
   }
-
 }
 
 

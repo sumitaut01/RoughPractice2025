@@ -23,6 +23,8 @@ class MyClassX implements X1, X2 {
         // Option 2: Explicitly call one of the parent interfaces
         X1.super.show(); // call X1's default method
         X2.super.show(); // call X2's default method
+
+
     }
 }
 

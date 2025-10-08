@@ -18,13 +18,13 @@ public class DriverFactory {
     private static WebDriver driver;
 
     public static WebDriver initDriver() throws MalformedURLException {
-        RunMode runMode = RunMode.valueOf(ConfigReader.get("runMode").toUpperCase());
+        RunMode runMode = RunMode.valueOf(ConfigReader.get("runmode").toUpperCase());
         BrowserType browser = BrowserType.valueOf(ConfigReader.get("browser").toUpperCase());
 
         if (runMode == RunMode.LOCAL) {
             driver = getLocalDriver(browser);
         } else if (runMode == RunMode.REMOTE) {
-            RemoteProvider provider = RemoteProvider.valueOf(ConfigReader.get("remoteProvider").toUpperCase());
+            RemoteProvider provider = RemoteProvider.valueOf(ConfigReader.get("remoteprovider").toUpperCase());
             driver = getRemoteDriver(browser, provider);
         }
         return driver;
@@ -45,13 +45,13 @@ public class DriverFactory {
         String gridUrl;
         switch (provider) {
             case AWS:
-                gridUrl = ConfigReader.get("gridUrlAWS");
+                gridUrl = ConfigReader.get("gridUrlaws");
                 break;
             case AZURE:
-                gridUrl = ConfigReader.get("gridUrlAzure");
+                gridUrl = ConfigReader.get("gridUrlazure");
                 break;
             case GITHUB:
-                gridUrl = ConfigReader.get("gridUrlGithub");
+                gridUrl = ConfigReader.get("gridUrlgithub");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown provider: " + provider);

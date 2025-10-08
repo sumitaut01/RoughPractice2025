@@ -16,7 +16,8 @@ public class CollectionsClass {
         alist.add("bnth");//true
 
         System.out.println(alist);//[afirst, bsecond, bnth]
-
+//Collections is a utility class
+        //Collection is interface
         //1
         Collections.reverse(alist);
         System.out.println(alist);//[bnth, bsecond, afirst]

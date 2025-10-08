@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true" parallel="classes" thread-count="3"
+          name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo/threadlocal">
+        <classes>
+            <class name="demo.threadlocal.Class1">
+                <methods>
+                    <include name="run"/>
+                </methods>
+            </class>
+            <class name="demo.threadlocal.Class2">
+                <methods>
+                    <include name="run"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

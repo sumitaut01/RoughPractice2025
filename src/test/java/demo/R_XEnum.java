@@ -15,6 +15,9 @@ public class R_XEnum {
         properties.load(fileInputStream);
 
 
+        System.out.println(properties);//{runmode=local, env=uat}
+
+
         //From enum directly
         EnvEnum env= EnvEnum.UAT;
         switch (env){

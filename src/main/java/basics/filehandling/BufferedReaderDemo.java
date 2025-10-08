@@ -9,7 +9,6 @@ public class BufferedReaderDemo {
     public static void main(String[] args) throws IOException {
 
         BufferedReader reader=new BufferedReader(new FileReader("demo.txt"));
-
         String line;
         while ((line = reader.readLine()) != null) {
             System.out.println(line);//firstsecond

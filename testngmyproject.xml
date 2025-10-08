@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <listeners>
+        <listener class-name="myproject.listeners.MyProjectListener"></listener>
+    </listeners>
+    <test verbose="2" preserve-order="true" parallel="classes" thread-count="3"
+          name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/myproject/tests/Test1.java">
+        <classes>
+            <class name="myproject.tests.Test1">
+                <methods>
+                    <include name="googleTest"/>
+                    <include name="facebookTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

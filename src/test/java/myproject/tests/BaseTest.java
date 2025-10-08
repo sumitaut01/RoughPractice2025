@@ -1,6 +1,7 @@
 package myproject.tests;
 
 
+import demo.threadlocal.DriverManager;
 import myproject.driverfactory.DriverFactory;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
@@ -13,11 +14,13 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() throws Exception {
         driver = DriverFactory.initDriver();
+        DriverManager.setDriver(driver);
     }
 
 
     @AfterMethod
     public void tearDown() {
-        DriverFactory.quitDriver();
+        DriverManager.getDriver().quit();
+        DriverManager.remove();
     }
 }

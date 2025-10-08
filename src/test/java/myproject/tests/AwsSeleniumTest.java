@@ -1,5 +1,6 @@
 package myproject.tests;
 
+import demo.threadlocal.DriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -14,9 +15,10 @@ public class AwsSeleniumTest {
             options
         );
 
-        driver.get("https://www.google.com");
+
+        DriverManager.getDriver().get("https://www.google.com");
         System.out.println("Title: " + driver.getTitle());
-        driver.quit();
+        DriverManager.getDriver().quit();
     }
 }
 

@@ -9,6 +9,8 @@ public class ConcurrentHashMapDemo {
         ConcurrentHashMap<String, String> csh = new ConcurrentHashMap<>();
         csh.put("name", "sumit");
         csh.put("age", "35");
+
+        // below differs from normal hashmap which accepts one null key
         csh.put(null, null);//null pointer exeption
     }
 }

@@ -21,6 +21,7 @@ public class R18_Interface implements I1, I2 {
 
         I1 i1 = new R18_Interface();
 
+
         System.out.println(i1 instanceof I1);//true
         System.out.println(i1 instanceof R18_Interface);//true
         i1.sum(2, 3);//implemented sum from I1
@@ -31,6 +32,14 @@ public class R18_Interface implements I1, I2 {
 
         I2 i2 = new R18_Interface();
         i2.mul(3, 4);//implemented mul from I2
+
+        //500 all
+        System.out.println(I1.min_bal);
+        System.out.println(min_bal);
+        System.out.println(R18_Interface.min_bal);
+
+
+
 
 
 

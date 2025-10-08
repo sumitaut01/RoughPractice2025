@@ -1,5 +1,7 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
 import java.util.Arrays;
 
 public class R_36MaxOccurence {
@@ -29,4 +31,33 @@ public class R_36MaxOccurence {
         System.out.println("The character with maximum occurrence is: " + maxChar);//a
 
     }
+
+
+    @Test
+    public void rough(){
+        String st = "Learning a little each dayaddsupxxxxxx";
+        int [] data=new int[256];
+        for(int i=0;i<st.length();i++){
+            data[st.charAt(i)]++;
+        }
+
+        //then logic to print max from array
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
 }

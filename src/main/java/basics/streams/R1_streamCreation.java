@@ -8,6 +8,7 @@ public class R1_streamCreation {
 
     public static void main(String[] args) {
 
+        // Do note .of creations are immutable
 
         //1 Stream.of
         System.out.println(Stream.of("Sumit","Neha","Raj").count());

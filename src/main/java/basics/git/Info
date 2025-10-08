@@ -1,0 +1,49 @@
+Git Command Notes: Local and Remote Effects
+Command	Action	Local Repository Effect	Remote Repository Effect	How to Remove git add . Files
+git init	Initializes a new Git repository.	Creates the .git directory, turning the current directory into a local Git repo.	None (No remote connection established yet).	N/A
+git add .	Stages all changes (new, modified, deleted) in the current directory for the next commit.	Moves changes from the working directory to the staging area (index).	None.	git reset HEAD . (or git restore --staged . in newer Git versions) moves the files back to the working directory.
+git commit -m "..."	Permanently records the staged changes as a new commit in the history.	Creates a new commit object in the local repository's history (the .git folder).	None.	N/A
+git fetch	Downloads objects (commits, files, refs) from the remote repository to the local repository.	Updates remote-tracking branches (e.g., origin/main), showing you what the remote has. It does not merge or modify your current working branch.	None (Read-only operation on the remote).	N/A
+git pull	Fetches changes from the remote and then integrates them into the current local branch.	Fetches the changes and then automatically performs a merge (default) or rebase (if configured) into your current branch, updating your working files.	None (Read-only operation on the remote).	N/A
+git merge	Integrates changes from one branch (e.g., a feature branch) into another (e.g., main).	Creates a new merge commit (unless it's a fast-forward merge) in the history of the current branch, combining the changes.	None.	N/A
+git rebase	Moves or combines a sequence of commits to a new base commit.	Rewrites the commit history of the current branch, making it appear as if the commits were done after the base branch's latest commit. Creates new commit SHA-1 IDs.	None.	N/A
+git cherry-pick	Applies the changes introduced by an existing commit from one branch onto the current branch.	Creates a new commit on the current branch that duplicates the changes of the specified commit.	None.	N/A
+git reset	A powerful command used to undo local changes, often manipulating the three trees: Head, Index (Staging Area), and Working Directory.	Depends on the mode: --soft moves HEAD; --mixed (default) moves HEAD and Staging Area; --hard moves HEAD, Staging Area, and Working Directory. Used to undo commits or unstage files.	None.	N/A
+git branch	Used to list, create, or delete branches.	Creates, lists, or deletes local branch pointers.	None (Unless used with flags to track remote branches).	N/A
+git checkout	Used to switch branches or restore working tree files.	Switches the HEAD pointer to a different branch or commit, updating the Working Directory to match the state of that branch/commit.	None.	N/A
+
+Export to Sheets
+Key Concepts and Removal of Staged Files
+1. The Three States in Git
+Understanding where your files are helps grasp these commands:
+
+Working Directory: The files you are currently viewing and editing.
+
+Staging Area (Index): Files marked to go into the next commit (using git add).
+
+Local Repository (HEAD): Where committed changes are permanently stored.
+
+2. How to Remove git add . Files
+The command git add . moves changes from the Working Directory to the Staging Area. To "remove" them (i.e., unstage them), you need to move them back to the Working Directory without committing.
+
+Git Version	Command	Effect
+Legacy/Universal	git reset HEAD .	This command tells Git to reset the staging area (.) to match the latest commit (HEAD), effectively un-staging all changes while leaving the files in the Working Directory untouched.
+Modern (Git 2.23+)	git restore --staged .	This is the newer, more intuitive command explicitly designed to un-stage files, making their purpose clearer than git reset.
+
+Export to Sheets
+3. Pushing Changes
+The one essential command missing from your list that updates the remote is git push.
+
+git push: Uploads local branch commits to the corresponding remote repository.
+
+Local Effect: None, other than updating local tracking information.
+
+Remote Effect: Updates the remote branch with your latest local commits, making them available to others.
+
+
+
+
+
+
+
+
