@@ -166,6 +166,12 @@
         </dependency>
 
     </dependencies>
+    <profile>
+        <id>qa</id>
+        <properties>
+            <env>QA</env>
+        </properties>
+    </profile>
 
     <build>
         <plugins>

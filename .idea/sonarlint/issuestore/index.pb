@@ -127,8 +127,6 @@ b
 2src/main/java/basics/javapgms/patterns/R1_Sqr.java,4\9\4961d1e9f9e0fd201765aab9d1ec1057eebff283
 q
 Asrc/main/java/basics/multithreading/ThreadLocalDriverManager.java,9\c\9c27bf9840a6979e1b250ea82cdef4665d82e9d5
-R
-"src/main/java/restassured/401vs403,4\b\4b059690276e91b41dc9f36cb02721e228216344
 k
 ;src/main/java/basics/javapgms/R16_MaximumSumofSubarray.java,1\5\156f551e41cc81b6e36a95c52b4e78e87df3d8ee
 r
@@ -200,8 +198,6 @@ Csrc/main/java/restassured/R24_RequestDataHashmapTextJsonString.java,3\3\331d7c
 -src/main/java/restassured/R21_JsonSchema.json,7\6\76db5214b6c32a0369ce258ae2e419cacbb22e74
 N
 src/main/java/restassured/Info,e\c\ec67ecdbf281814a9b6ce8e3be884d87318bd2b6
-e
-5src/main/java/restassured/CompleJsonWithJsonPath.java,b\1\b1543882082e646e0964fe20d16749353c526d00
 a
 1src/main/java/restassured/auth/R1_BasicAuth2.java,7\6\76810bb784afba2fdbf792f9afacd054ac386a34
 a
@@ -290,22 +286,14 @@ c
 +src/main/java/restassured/R7PathParams.java,3\f\3f14b37019ac4f76881484114ca2a7e8f167fc79
 [
 +src/main/java/restassured/R8_FormParam.java,7\f\7ffa44e20478267ca261c75aa8716d3b57ee7e5d
-\
-,src/main/java/restassured/R9_FileUpload.java,c\9\c9687da755c5996c94f608dc17005664b318dd08
 ]
 -src/main/java/restassured/R10_ResponseAs.java,e\d\ed59a38c1b9a0a8c6d6e4b4efa177860414b1ff6
 _
 /src/main/java/restassured/R11_ObjectMapper.java,2\2\22766435c05bb1542de406e126958e5e1dc06c50
 [
 +src/main/java/restassured/R12_GsonDemo.java,8\e\8e25ddf9e6b465a261b7779f5598afbe69d8a1e8
-g
-7src/main/java/restassured/R15_SerializationJackson.java,9\4\9495c294e61328dd86a7b905cbe96fcb927ddeab
-i
-9src/main/java/restassured/R16_DeSerializationJackson.java,2\2\22679f557d7a5a598b224f423b297f2ae649eb23
 l
 <src/main/java/restassured/R17_JsonIncludeIngoreDefaults.java,3\9\394a696d2f3de0896044312f42ced8d5943ee3cb
-h
-8src/main/java/restassured/R_XResponseAfter10Seconds.java,d\f\df796052c4bec2b9d1e710d533a4440bb4b93eea
 `
 0src/main/java/restassured/RateLimitingInAPi.java,3\9\393ddd77fcd25b5ed8e4802c681abbb841efe17f
 ]
@@ -424,8 +412,6 @@ K
 src/main/java/sql/Resources,4\4\4422c4605803f1e47d9b731b52edbc7d66f6f1d1
 Q
 !src/main/java/sql/02DataEntry.sql,5\6\56c555922078890d015ab3865d5f8cce6547c871
-Z
-*src/main/java/restassured/R1_WireMock.java,0\6\068db90c2a74a0156b2de9ef17edcc0b06a036da
 \
 ,src/main/java/reporters/ScreenShotUtils.java,f\f\ff821de7326aac714268fe6f3b37f05beb843afb
 S

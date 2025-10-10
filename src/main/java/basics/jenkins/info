@@ -1,0 +1,2 @@
+207. How to integrate RestAssured tests with Jenkins parameters?
+Answer: Pass environment (-Denv=qa) to Maven, read inside test with System.getProperty("env").

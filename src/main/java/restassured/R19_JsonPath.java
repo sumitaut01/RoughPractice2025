@@ -117,5 +117,12 @@ public class R19_JsonPath {
         System.out.println(jsonpath3.getString("address[0][1].type"));//temp
         System.out.println(jsonpath3.getString("address[1][0].type"));//communication
         System.out.println(jsonpath3.getString("address[1][1].type"));//old
+
+
+
+
+
+        //How to validate that JSON array contains object with specific key-value?
+        //.body("find { it.id == 10 }.name", equalTo("John"));
     }
 }
