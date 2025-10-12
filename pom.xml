@@ -166,12 +166,6 @@
         </dependency>
 
     </dependencies>
-    <profile>
-        <id>qa</id>
-        <properties>
-            <env>QA</env>
-        </properties>
-    </profile>
 
     <build>
         <plugins>
@@ -181,7 +175,7 @@
                 <version>3.5.3</version>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                        <suiteXmlFile>testngmyproject.xml</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
@@ -189,6 +183,40 @@
         </plugins>
 
     </build>
+
+<!--    mvn clean test -Pqa-->
+<!--    mvn clean test -Puat-->
+    <profiles>
+        <!-- QA Profile -->
+        <profile>
+            <id>qa</id>
+            <properties>
+                <env>qa</env>
+                <baseUrl>https://qa.example.com</baseUrl>
+                <dbUrl>jdbc:postgresql://qa-db:5432/testdb</dbUrl>
+            </properties>
+        </profile>
+
+        <!-- UAT Profile -->
+        <profile>
+            <id>uat</id>
+            <properties>
+                <env>uat</env>
+                <baseUrl>https://uat.example.com</baseUrl>
+                <dbUrl>jdbc:postgresql://uat-db:5432/testdb</dbUrl>
+            </properties>
+        </profile>
+
+        <!-- PROD Profile -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+                <baseUrl>https://prod.example.com</baseUrl>
+                <dbUrl>jdbc:postgresql://prod-db:5432/testdb</dbUrl>
+            </properties>
+        </profile>
+    </profiles>
 
 
 
