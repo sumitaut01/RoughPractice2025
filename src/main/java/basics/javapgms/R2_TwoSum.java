@@ -50,4 +50,32 @@ public class R2_TwoSum {
 //        found pair 7 2at indices 7 & 2
 //        found pair 1 8at indices 9 & 8
     }
+
+
+
+
+    @Test
+    public void Rough(){
+
+
+        int []a={0,9,2,3,4,5,6,7,8,1};
+        int eSum=9;
+
+        HashMap<Integer,Integer> hm=new HashMap<>();
+
+        for(int i=0;i<a.length;i++){
+            int desired=eSum-a[i];
+
+            if(hm.containsKey(desired)){
+                System.out.println(desired +" "+a[i]);
+            }
+            else{
+                hm.put(a[i],i);
+            }
+
+
+        }
+
+
+    }
 }

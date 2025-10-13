@@ -1,6 +1,6 @@
 package basics.javapgms;
 
-class ust {
+class UST_CreditCardMasking {
     public static void main(String[] args) {
         String card = "1234567890123456";
         StringBuilder sb = new StringBuilder();

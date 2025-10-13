@@ -13,8 +13,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <extentreport.version>5.0.8</extentreport.version>
+        <env>qa</env>
+        <baseUrl>https://qa.example.com</baseUrl>
+        <dbUrl>jdbc:postgresql://qa-db:5432/testdb</dbUrl>
     </properties>
-
 
     <dependencies>
         <!-- ✅ Core Rest Assured -->
@@ -177,6 +179,11 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>testngmyproject.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <systemPropertyVariables>
+                        <env>${env}</env>
+                        <baseUrl>${baseUrl}</baseUrl>
+                        <dbUrl>${dbUrl}</dbUrl>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -217,8 +224,5 @@
             </properties>
         </profile>
     </profiles>
-
-
-
 
 </project>

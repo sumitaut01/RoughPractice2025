@@ -1,0 +1,22 @@
+
+b	java:S101	"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Àü­æ
+S	java:S106#"9Replace this use of System.out or System.err by a logger.(­ü‚áıÿÿÿÿ
+N	java:S106$"9Replace this use of System.out or System.err by a logger.(ĞŠ¬
+S	java:S106%"9Replace this use of System.out or System.err by a logger.(„ÖÚ¤ıÿÿÿÿ
+S	java:S106&"9Replace this use of System.out or System.err by a logger.(ÆîÛµıÿÿÿÿ
+S	java:S106'"9Replace this use of System.out or System.err by a logger.(Ø£ÿÿÿÿÿ
+N	java:S106)"9Replace this use of System.out or System.err by a logger.(à•ó³
+H
+java:S6126-"2Replace this String concatenation with Text block.(¨ÏáÇ
+N	java:S106>"9Replace this use of System.out or System.err by a logger.(›Óûú
+N	java:S106C"9Replace this use of System.out or System.err by a logger.(··Ûë
+V	java:S125E"<This block of commented-out lines of code should be removed.(Şƒñ¢şÿÿÿÿ
+N	java:S106p"9Replace this use of System.out or System.err by a logger.(Ç¿Ü…
+N	java:S106q"9Replace this use of System.out or System.err by a logger.(™ƒ§ó
+N	java:S106t"9Replace this use of System.out or System.err by a logger.(Ïì÷
+N	java:S106u"9Replace this use of System.out or System.err by a logger.(Ç‘Ï
+N	java:S106v"9Replace this use of System.out or System.err by a logger.(Áİ¢î
+S	java:S106w"9Replace this use of System.out or System.err by a logger.(®ØİÒıÿÿÿÿ
+V	java:S125~"<This block of commented-out lines of code should be removed.(¥Ìáüÿÿÿÿ
+F
+java:S1128"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ

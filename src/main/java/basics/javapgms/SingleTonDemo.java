@@ -1,10 +1,10 @@
 package basics.javapgms;
 
 
-class nonsingleTon{
+class NonSingleTon{
 	
 	
-	public nonsingleTon() {
+	public NonSingleTon() {
 		
 		System.out.println("Object Created");
 	}
@@ -50,11 +50,11 @@ public class SingleTonDemo {
 //		true
 //		true
 //		true
-		
-		
-		nonsingleTon non1=new nonsingleTon();
-		nonsingleTon non2=new nonsingleTon();
-		nonsingleTon non3=new nonsingleTon();
+
+
+		NonSingleTon non1=new NonSingleTon();
+		NonSingleTon non2=new NonSingleTon();
+		NonSingleTon non3=new NonSingleTon();
 		
 		System.out.println(non1.hashCode());
 		System.out.println(non2.hashCode());

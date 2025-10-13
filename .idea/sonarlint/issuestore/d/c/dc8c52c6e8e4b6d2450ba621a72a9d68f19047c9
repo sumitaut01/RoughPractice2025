@@ -1,0 +1,9 @@
+
+u
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(œ Ã×
+N	java:S106 "9Replace this use of System.out or System.err by a logger.(ø ¿ô
+N	java:S106!"9Replace this use of System.out or System.err by a logger.(Ææ Ï
+S	java:S106""9Replace this use of System.out or System.err by a logger.(’¼æÎþÿÿÿÿ
+q
+java:S2159""VRemove this call to "equals"; comparisons between unrelated types always return false.(’¼æÎþÿÿÿÿ
+M	java:S106+"9Replace this use of System.out or System.err by a logger.(¬ê·/
