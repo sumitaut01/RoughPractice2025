@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Set;
+import java.util.*;
 
 public class RoughAll {
 
@@ -35,12 +35,20 @@ public class RoughAll {
         waitForElementClickable(driver,radio3);
         Thread.sleep(1000);
         driver.findElement(radio3).click();
+        System.out.println("---start--radio is selected");
+        System.out.println(driver.findElement(radio3).isSelected());
+        System.out.println("---end--radio is selected");
+
+
 
         //checkbox
         By checkbox1=By.xpath("//input[@type='checkbox' and @value='option1']");
         waitForElementClickable(driver,checkbox1);
         Thread.sleep(1000);
         driver.findElement(checkbox1).click();
+        System.out.println("-----start--checkbox is selected");
+        System.out.println(driver.findElement(checkbox1).isSelected());
+        System.out.println("-----end--checkbox is selected");
 
         //select
         By select=By.xpath("//select[@id='dropdown-class-example']");
@@ -57,6 +65,7 @@ public class RoughAll {
         Thread.sleep(1000);
         selBox.selectByIndex(2);
 
+
         System.out.println("-------Printing--------------------------------");
         selBox.getOptions().forEach(opt-> System.out.println(opt.getText()));
 
@@ -70,6 +79,8 @@ public class RoughAll {
         //take screenshot
         TakesScreenshot ts=(TakesScreenshot)driver;
         FileUtils.copyFile(ts.getScreenshotAs(OutputType.FILE),new File("screenshot.png"));
+
+
 
 
         Thread.sleep(1000);
@@ -90,21 +101,11 @@ public class RoughAll {
                .build()
                .perform();
 
-
-
-
-
-
-
-
-
         //new Window
 
         By newWindow=By.xpath("//button[@id='openwindow']");
         WebElement newWindowele=driver.findElement(newWindow);
         newWindowele.click();
-
-
 
         String curentWindow=driver.getWindowHandle();
         String otherWindow="";
@@ -124,9 +125,43 @@ public class RoughAll {
 
 
         //Webtable
+        driver.switchTo().window(curentWindow);
 
 
-        driver.close();
+
+        By tblHeader=By.xpath("//table[@name='courses']/tbody//tr/th");
+        By tblRows=By.xpath("//table[@name='courses']/tbody//tr");
+
+
+        String colData="//table[@name='courses']/tbody//tr[#ROW]/td[#COL]";
+
+        int eleHdr=driver.findElements(tblHeader).size();
+        int eleRows=driver.findElements(tblRows).size();
+        List<HashMap<String,String>> data=new ArrayList<>();
+
+        LinkedHashMap<String,String> xx;
+        for(int i=2;i<=eleRows;i++){
+            xx=new LinkedHashMap<>();
+
+            for (int j=1;j<eleHdr;j++){
+
+               xx.put(driver.findElement(By.xpath("//table[@name='courses']/tbody//tr[1]/th[#HEADER]".replace("#HEADER", ""+j))).getText(),
+                       driver.findElement(By.xpath("//table[@name='courses']/tbody//tr["+i+"]/td[#DATA]".replace("#DATA",""+j))).getText());
+
+                System.out.println(xx);
+            }
+
+            data.add(xx);
+
+
+        }
+
+        System.out.println(data.size());
+        System.out.println(data);
+
+
+
+
 
         driver.quit();
 

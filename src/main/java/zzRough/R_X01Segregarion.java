@@ -1,5 +1,7 @@
 package zzRough;
 
+import org.testng.annotations.Test;
+
 import java.util.Arrays;
 
 public class R_X01Segregarion {
@@ -29,5 +31,31 @@ public class R_X01Segregarion {
         System.out.println(Arrays.toString(arr));//[0, 0, 0, 1, 1]
     }
 
+
+
+
+
+// 1 0 11
+    @Test
+    public void  rough(){
+
+        int arr[]={1,0,0,1,0};
+        int j=0;
+        System.out.println(Arrays.toString(arr));
+        for(int i=0;i<arr.length;i++){
+            if(arr[i]==0){
+            int temp=arr[j];
+            arr[j]=arr[i];
+            arr[i]=temp;
+            j++;
+            }
+        }
+
+
+        System.out.println(Arrays.toString(arr));//[0, 0, 0, 1, 1]
+
+
+
+    }
 
 }

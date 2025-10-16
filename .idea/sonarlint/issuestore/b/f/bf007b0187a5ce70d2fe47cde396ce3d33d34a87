@@ -1,14 +1,0 @@
-
-T
-java:S1854">Remove this useless assignment to local variable "byNameSort".(ïƒ§İ
-R
-java:S1854"=Remove this useless assignment to local variable "byAgeSort".(şÚó
-
-S	java:S106"9Replace this use of System.out or System.err by a logger.(Ëÿäªøÿÿÿÿ
-M	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿòx
-M	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿòx
-C
-java:S1481".Remove this unused "byAgeSort" local variable.(şÚó
-
-E
-java:S1481"/Remove this unused "byNameSort" local variable.(ïƒ§İ

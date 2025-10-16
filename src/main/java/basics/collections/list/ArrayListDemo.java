@@ -108,6 +108,22 @@ public class ArrayListDemo {
 
 
 
+        //add same item twice.. true twixe
+        List<String> names3=new ArrayList<>();
+        System.out.println(names3.add("A"));//true
+        System.out.println(names3.add("A"));//true
+
+        names3.add(1,"N");
+        System.out.println(names3);//[A, N, A]
+        names3.add("Z");
+        System.out.println(names3); //[A, N, A, Z]
+        names3.sort(Collections.reverseOrder());
+        System.out.println(names3);//[Z, N, A, A]
+        Collections.sort(names3);
+        System.out.println(names3);//[A, A, N, Z]
+
+
+
 
 
     }

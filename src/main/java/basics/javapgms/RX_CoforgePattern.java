@@ -10,13 +10,16 @@ public class RX_CoforgePattern {
 
         String str = "aabbccadd";
 
+        System.out.println(str);
         int count;
         for (int i = 0; i < str.length(); i = i + count) {
             count = 0;
             for (int j = i; j < str.length(); j++) {
                 if (String.valueOf(str.charAt(j)).equals(String.valueOf(str.charAt(i)))) {
                     count++;
-                } else {
+                }
+                else{
+
                     break;
                 }
             }

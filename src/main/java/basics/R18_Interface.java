@@ -65,7 +65,6 @@ interface I1 {
 }
 
 interface I2 {
-
     public void mul(int a, int b);
 }
 

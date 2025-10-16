@@ -1,14 +1,16 @@
 
-2
-java:S1116"Remove this empty statement.(¥ÓÜ
-k
+9
+java:S1116"Remove this empty statement.(¥ÓÜ8ÎşÇ‰3
+r
 java:S3008
-"PRename this field "Count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ö¹áıÿÿÿÿ
-i
+"PRename this field "Count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ö¹áıÿÿÿÿ8ÎşÇ‰3
+p
 java:S1845
-"NRename field "Count" to prevent any misunderstanding/clash with field "count".(ö¹áıÿÿÿÿ
-K
-java:S1854"6Remove this useless assignment to local variable "m2".(Æ¢‘>
-<
-java:S1481"'Remove this unused "m2" local variable.(Æ¢‘>
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ûŸ¢«úÿÿÿÿ
+"NRename field "Count" to prevent any misunderstanding/clash with field "count".(ö¹áıÿÿÿÿ8ÎşÇ‰3
+R
+java:S1854"6Remove this useless assignment to local variable "m2".(Æ¢‘>8ĞşÇ‰3
+C
+java:S1481"'Remove this unused "m2" local variable.(Æ¢‘>8ÑşÇ‰3
+T	java:S106"9Replace this use of System.out or System.err by a logger.(ùÄ´[8ÒşÇ‰3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(œÿÌØüÿÿÿÿ8ÒşÇ‰3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ûŸ¢«úÿÿÿÿ8ÒşÇ‰3

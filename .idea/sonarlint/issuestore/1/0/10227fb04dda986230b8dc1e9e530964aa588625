@@ -1,14 +1,23 @@
 
-r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(†¥Ê¡øÿÿÿÿ8ê…Ú¤š3
-]
-java:S1854m"@Remove this useless assignment to local variable "curentWindow".(ŒÛì„8ğõ±ªš3
+r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(†¥Ê¡øÿÿÿÿ8İô­ñ3
 \
-java:S1854u"?Remove this useless assignment to local variable "otherWindow".(ÔÃß¬8ğõ±ªš3
-X	java:S125"<This block of commented-out lines of code should be removed.(æ‚„Â8û…Ú¤š3
-U	java:S106<"9Replace this use of System.out or System.err by a logger.(Ú£ÅÉ8ûğÛ¤š3
-U	java:S106="9Replace this use of System.out or System.err by a logger.(â—¾›8öõ±ªš3
-N
-java:S1481m"1Remove this unused "curentWindow" local variable.(ŒÛì„8‚ñÛ¤š3
+java:S1854v"?Remove this useless assignment to local variable "otherWindow".(ÔÃß¬8äô­ñ3
+^
+java:S1854ˆ";Remove this useless assignment to local variable "colData".(äÑ°Òûÿÿÿÿ8äô­ñ3
+X	java:S125"<This block of commented-out lines of code should be removed.(æ‚„Â8éô­ñ3
+T	java:S106&"9Replace this use of System.out or System.err by a logger.(ìè¡F8éô­ñ3
+Z	java:S106'"9Replace this use of System.out or System.err by a logger.(ùÒÓ…úÿÿÿÿ8éô­ñ3
+U	java:S106("9Replace this use of System.out or System.err by a logger.(è£Âå8éô­ñ3
+U	java:S1061"9Replace this use of System.out or System.err by a logger.(ìĞÓÄ8êô­ñ3
+Z	java:S1062"9Replace this use of System.out or System.err by a logger.( …ü’ûÿÿÿÿ8êô­ñ3
+U	java:S1063"9Replace this use of System.out or System.err by a logger.(¡ÇíĞ8êô­ñ3
+U	java:S106E"9Replace this use of System.out or System.err by a logger.(Ú£ÅÉ8ëô­ñ3
+U	java:S106F"9Replace this use of System.out or System.err by a logger.(â—¾›8ëô­ñ3
 R
-java:S1481n"0Remove this unused "otherWindow" local variable.(œıªºşÿÿÿÿ8úõ±ªš3
-Z	java:S106s"9Replace this use of System.out or System.err by a logger.(ËŒÀöıÿÿÿÿ8ûõ±ªš3
+java:S1481o"0Remove this unused "otherWindow" local variable.(œıªºşÿÿÿÿ8ğô­ñ3
+Z	java:S106t"9Replace this use of System.out or System.err by a logger.(ËŒÀöıÿÿÿÿ8ñô­ñ3
+O
+java:S1481ˆ",Remove this unused "colData" local variable.(äÑ°Òûÿÿÿÿ8ñô­ñ3
+[	java:S106—"9Replace this use of System.out or System.err by a logger.(ì–ÅÇüÿÿÿÿ8Ö¡¯ñ3
+[	java:S106Ÿ"9Replace this use of System.out or System.err by a logger.(”´Û¨ÿÿÿÿÿ8æòÄñ3
+[	java:S106 "9Replace this use of System.out or System.err by a logger.(éí÷„ùÿÿÿÿ8ÏğÍñ3

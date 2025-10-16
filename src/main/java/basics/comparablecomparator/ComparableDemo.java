@@ -27,6 +27,10 @@ public class ComparableDemo {
       //  stu.sort(null);//[Student{age=4, name='Aastha'}, Student{age=12, name='Sumit'}, Student{age=15, name='Neha'}]
         System.out.println(stu.toString());//[Student{age=4, name='Aastha'}, Student{age=12, name='Sumit'}, Student{age=15, name='Neha'}]
 
+
+
+
+
     }
 }
 

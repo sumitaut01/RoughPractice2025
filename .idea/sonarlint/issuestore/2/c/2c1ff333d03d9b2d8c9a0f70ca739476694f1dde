@@ -1,0 +1,30 @@
+
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ğ½Öğøÿÿÿÿ
+B
+java:S1481",Remove this unused "context" local variable.(É›ëÚ
+F
+java:S1481"+Remove this unused "driver" local variable.(¸’äşıÿÿÿÿ
+L
+java:S1481"7Remove this unused "javascriptExecutor" local variable.(“ ”B
+O
+java:S1481"4Remove this unused "takesScreenshot" local variable.(ÌÂÒ†ûÿÿÿÿ
+E
+java:S1481"/Remove this unused "webElement" local variable.(£„îÓ
+J
+java:S1481!"4Remove this unused "remoteWebDriver" local variable.(£î§¡
+N
+java:S1481/"3Remove this unused "chromiumDriver" local variable.(‹¾ª¥úÿÿÿÿ
+L
+java:S1481>"1Remove this unused "chromeDriver" local variable.(šú¸Ñşÿÿÿÿ
+>
+java:S1481C")Remove this unused "wait" local variable.(—Á<
+J
+java:S1481E"/Remove this unused "fluentWait" local variable.(û¡üûıÿÿÿÿ
+G
+java:S1481J",Remove this unused "actions" local variable.(¯²æÄúÿÿÿÿ
+A
+java:S1481L"+Remove this unused "action" local variable.(Õ·’
+E
+java:S1481N"*Remove this unused "alert" local variable.(ÜÍ°æıÿÿÿÿ
+F
+java:S1481P"+Remove this unused "select" local variable.(ç¥ÉĞùÿÿÿÿ

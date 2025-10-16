@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 //we have created separate compator classes below
-//with lambdas we can create in one line and muultiple in same class
+//with lambdas we can create in one line and muultiple in same class as compator is functional interface
+
+//*** remeber  Comparator is functional interface hence lambda like creation possible
 public class ComparatorDemo {
 
     public static void main(String[] args) {
@@ -29,6 +33,22 @@ public class ComparatorDemo {
         //Comparator by Lambda
         Comparator<StudentDemo> byAgeSort = (s1, s2) ->  Integer.compare(s1.age,s2.age);
         Comparator<StudentDemo> byNameSort = (s1, s2) -> s1.name.compareTo(s2.name);
+
+
+        List<StudentDemo> stx = st.stream()
+                .sorted(byAgeSort.thenComparing(byNameSort))
+                .collect(Collectors.toList());
+
+        System.out.println(stx);
+
+
+
+
+
+
+
+
+
 
 
 

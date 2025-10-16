@@ -53,6 +53,32 @@ public class StringBufferBuilder {
 //[Sumit, Raut, Asmi]
 //[Asmi, Raut, Sumit]
 
+
+
+
+        StringBuffer stringBuffer=new StringBuffer();
+
+        stringBuffer.append(1); //if interger used ,automatically converts to string
+        stringBuffer.insert(0, 0);
+
+        System.out.println(stringBuffer);
+
+        System.out.println(stringBuffer.indexOf("z"));
+
+        System.out.println(stringBuffer.charAt(0));
+       // System.out.println(stringBuffer.charAt(999)); //StringIndexOutOfBoundsException: Index 999 out of bounds for length 2
+        System.out.println(stringBuffer.deleteCharAt(0));
+        System.out.println(stringBuffer.reverse());
+
+        System.out.println(stringBuffer.delete(0,2));
+
+        System.out.println(stringBuffer);
+        System.out.println("");
+
+
+
+
+
     }
 
 }

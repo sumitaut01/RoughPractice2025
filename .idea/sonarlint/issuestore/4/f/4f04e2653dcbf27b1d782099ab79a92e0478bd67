@@ -1,0 +1,13 @@
+
+k
+java:S1192
+"VDefine a constant instead of duplicating this literal "Array BEFORE sorting:" 3 times.(À¤ûv
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Â¬ŽÕûÿÿÿÿ
+M	java:S106
+"9Replace this use of System.out or System.err by a logger.(À¤ûv
+V	java:S125"<This block of commented-out lines of code should be removed.(ûÜÍúÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ÑÚ”
+M	java:S106"9Replace this use of System.out or System.err by a logger.(À¤ûv
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ó‘Ä¢
+S	java:S106"9Replace this use of System.out or System.err by a logger.(žýÆèøÿÿÿÿ
+S	java:S106!"9Replace this use of System.out or System.err by a logger.(ÇýÑ¤øÿÿÿÿ

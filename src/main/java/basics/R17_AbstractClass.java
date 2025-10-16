@@ -38,7 +38,6 @@ class abstractimpl extends R17_AbstractClass {
     abstractimpl(String name) {
         super(name);
         System.out.println("inside  impl class constructor");
-
     }
 
     @Override
@@ -48,8 +47,6 @@ class abstractimpl extends R17_AbstractClass {
 
 
     public static void main(String[] args) {
-
-
         R17_AbstractClass obj = new abstractimpl("sumit");
         obj.am_print();//abstract method implemented
         obj.print();//non abstract method

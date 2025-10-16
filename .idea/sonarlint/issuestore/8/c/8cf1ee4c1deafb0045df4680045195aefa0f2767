@@ -1,0 +1,12 @@
+
+g
+java:S2095"LUse try-with-resources or close this "BufferedReader" in a "finally" clause.(ĞëÆªıÿÿÿÿ
+N
+java:S1854"8Remove this useless assignment to local variable "baos".(ÓäÈ
+P	java:S125
+"<This block of commented-out lines of code should be removed.(ø°î!
+B
+java:S2201",The return value of "getBytes" must be used.(µÖÍê
+?
+java:S1481")Remove this unused "baos" local variable.(ÓäÈ
+Q	java:S125 "<This block of commented-out lines of code should be removed.(‘á»ş

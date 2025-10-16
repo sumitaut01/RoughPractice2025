@@ -21,5 +21,8 @@ public class R_XScanner {
         System.out.println("Salary is "+sal);
 
 
+
+
+
     }
 }

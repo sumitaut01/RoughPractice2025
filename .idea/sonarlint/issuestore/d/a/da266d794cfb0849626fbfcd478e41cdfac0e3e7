@@ -1,0 +1,14 @@
+
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(û°™ó
+e
+java:S20954"OUse try-with-resources or close this "ObjectInputStream" in a "finally" clause.(·°úŒ
+Q	java:S125"<This block of commented-out lines of code should be removed.(§ìåÇ
+V	java:S125"<This block of commented-out lines of code should be removed.(™Ì¥óÿÿÿÿÿ
+Q	java:S125"<This block of commented-out lines of code should be removed.(…”Ú
+V	java:S125!"<This block of commented-out lines of code should be removed.(÷ÿäàùÿÿÿÿ
+Q	java:S125$"<This block of commented-out lines of code should be removed.(Ñ™Ú„
+V	java:S125*"<This block of commented-out lines of code should be removed.(Ð›«¹üÿÿÿÿ
+Q	java:S125;"<This block of commented-out lines of code should be removed.(¯±ÁÉ
+J
+java:S1128
+"/Remove this unused import 'java.time.Duration'.(ëá¯‰üÿÿÿÿ

@@ -1,0 +1,20 @@
+
+h
+java:S1192"FDefine a constant instead of duplicating this literal "Sumit" 4 times.(ù©˜—ûÿÿÿÿ8¦Öô‡ž3
+n	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(è¡’øùÿÿÿÿ8¦Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ù©˜—ûÿÿÿÿ8¯Öô‡ž3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(¼À¾›8¯Öô‡ž3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ÚÞ‘€8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(î¸»€ÿÿÿÿÿ8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ù©˜—ûÿÿÿÿ8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ÀÖÝ©ûÿÿÿÿ8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ñµÔÍþÿÿÿÿ8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(Éíôöþÿÿÿÿ8°Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(Ò»…ƒøÿÿÿÿ8±Öô‡ž3
+t
+java:S6204"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(ªçŸŠøÿÿÿÿ8±Öô‡ž3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(¹¦…‡úÿÿÿÿ8±Öô‡ž3
+o
+java:S62040"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(ª™¨¹8²Öô‡ž3
+Z	java:S1062"9Replace this use of System.out or System.err by a logger.(µÏ…èùÿÿÿÿ8³Öô‡ž3
+X	java:S1256"<This block of commented-out lines of code should be removed.(«š¦®8îøô‡ž3

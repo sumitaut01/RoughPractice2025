@@ -37,7 +37,7 @@ public class R_XStringImmutable {
         String s1="Sumit";//suit goes into shared string pool
 
         System.out.println(s1);//Sumit
-        System.out.println(s1.concat("Raut"));//SumitRaut
+        System.out.println(s1.concat("Raut"));//SumitRaut in heap. Raut in SCP
         System.out.println(s1);//Sumit //notice that string s1 did not chnage
 
 

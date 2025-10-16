@@ -1,8 +1,6 @@
 package zzRough;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class R1_MapPractice {
 
@@ -67,6 +65,35 @@ public class R1_MapPractice {
         System.out.println(hm);
 
 
+
+
+
+        //rough hm loop
+
+        for(Map.Entry<String, String> s:hm.entrySet()){
+            System.out.println(s.getKey() +" "+s.getValue());
+        }
+
+
+        //2
+
+        for(String k:hm.keySet()){
+            System.out.println("from keyset");
+            System.out.println(hm.get(k));
+        }
+
+        //3
+        for(String v:hm.values()){
+            System.out.println("from value");
+            System.out.println(v);
+        }
+
+        //
+
+        Collection<String> st=hm.values();
+       String[] stArray= (String[]) st.toArray();
+
+        System.out.println("");
 
 
 

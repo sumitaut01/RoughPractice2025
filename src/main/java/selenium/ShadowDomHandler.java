@@ -15,20 +15,34 @@ public class ShadowDomHandler {
         driver.get("chrome://downloads/"); // Replace with a URL that has a Shadow DOM
 
         // 1. Locate the Shadow Host element
-        WebElement shadowHost = driver.findElement(By.cssSelector("downloads-manager"));
+        WebElement shadowHost0 = driver.findElement(By.cssSelector("downloads-manager"));
+        SearchContext shadow0=shadowHost0.getShadowRoot();
 
-        // 2. Get the Shadow Root
-        SearchContext shadowRoot = shadowHost.getShadowRoot();
-        // For older Selenium versions or specific scenarios, you might need to use JavaScript Executor
-         SearchContext shadowRoot1 = (SearchContext) ((JavascriptExecutor) driver).executeScript("return arguments[0].shadowRoot", shadowRoot);
 
-        // 3. Find the element inside the Shadow Root using its CSS selector
-        WebElement buttonInsideShadowDom = shadowRoot.findElement(By.cssSelector("#button-in-shadow-dom"));
+        //shadow0
 
-        // 4. Perform an action on the element
-        buttonInsideShadowDom.click();
-        
-        System.out.println("Clicked the element inside the Shadow DOM!");
+        WebElement shadowHost01=  shadow0.findElement(By.cssSelector("#toolbar"));
+        SearchContext shadowRoot01 = shadowHost01.getShadowRoot();
+
+
+        WebElement shadowHost02=  shadowRoot01.findElement(By.cssSelector("#toolbar"));
+        SearchContext shadowRoot02 = shadowHost02.getShadowRoot();
+
+
+
+        WebElement shadowHost03=  shadowRoot02.findElement(By.cssSelector("#search"));
+        SearchContext shadowRoot03 = shadowHost03.getShadowRoot();
+
+
+        WebElement shadowHost04=  shadowRoot03.findElement(By.cssSelector("#icon"));
+        SearchContext shadowRoot04 = shadowHost04.getShadowRoot();
+
+
+        WebElement ele=  shadowRoot03.findElement(By.cssSelector("#searchInput"));
+        ele.sendKeys("test");
+
+
+
 
         driver.quit();
     }

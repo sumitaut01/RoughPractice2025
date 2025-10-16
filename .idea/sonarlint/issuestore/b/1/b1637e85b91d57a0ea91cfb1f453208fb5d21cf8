@@ -1,0 +1,14 @@
+
+P
+java:S1161/":Add the "@Override" annotation above this method signature( ÊÆß
+S	java:S1061"9Replace this use of System.out or System.err by a logger.(£æ—üÿÿÿÿ
+P
+java:S11617":Add the "@Override" annotation above this method signature(¯şÔæ
+S	java:S1069"9Replace this use of System.out or System.err by a logger.(‹ÀŠîùÿÿÿÿ
+P
+java:S1161=":Add the "@Override" annotation above this method signature(Ö¾Œ˜
+S	java:S106@"9Replace this use of System.out or System.err by a logger.(ßÌ‘Çşÿÿÿÿ
+P
+java:S1161C":Add the "@Override" annotation above this method signature(Æ«Úä
+M	java:S106F"9Replace this use of System.out or System.err by a logger.(Å—
+S	java:S106J"9Replace this use of System.out or System.err by a logger.(©à•ııÿÿÿÿ

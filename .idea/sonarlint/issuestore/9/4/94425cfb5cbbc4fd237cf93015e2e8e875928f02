@@ -1,0 +1,18 @@
+
+`
+java:S1192	"EDefine a constant instead of duplicating this literal "{\r
+" 4 times.(¦Íâÿıÿÿÿÿ
+_
+java:S1192"IDefine a constant instead of duplicating this literal "courses[" 4 times.(ŞÍ‚
+a
+java:S1192
+"FDefine a constant instead of duplicating this literal "},\r
+" 3 times.(¢ê‘Íûÿÿÿÿ
+a	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ãü—<
+M
+java:S6126	"2Replace this String concatenation with Text block.(¦Íâÿıÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(“œ·ú
+N	java:S106"9Replace this use of System.out or System.err by a logger.(×óè¨
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ŞÍ‚
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ø™×ñüÿÿÿÿ
+S	java:S106."9Replace this use of System.out or System.err by a logger.(ø™×ñüÿÿÿÿ

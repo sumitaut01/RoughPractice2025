@@ -25,7 +25,7 @@ regardless of whether they live in SCP or heap.
         //80245910
         //80245910
 
-        //Notice, we have used  , which is memory based
+        //Notice, we have used  identityHashCode , which is memory based
 
         System.out.println(System.identityHashCode(s1));
         System.out.println(System.identityHashCode(s2));

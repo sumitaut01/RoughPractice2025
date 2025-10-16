@@ -167,11 +167,11 @@ amount  |rnk|
 
  (Replace column list with all columns that define uniqueness in your table)
 
- 🔹 7. Display particular number of rows (say rows 40–100)
+ 🔹 7. Display particular number of rows (say rows 41–100)
  SELECT *
  FROM employee
- OFFSET 40
- LIMIT 60;
+ OFFSET 40  --skips 40
+ LIMIT 60; -- restrict results to 60
 
  🔹 8. Max salary department-wise
  SELECT dept_id, MAX(salary) AS max_sal
@@ -228,10 +228,7 @@ amount  |rnk|
         employee_name,
         salary
  FROM (
-     SELECT e.*,
-            ROW_NUMBER() OVER (PARTITION BY department_id
-                               ORDER BY salary DESC) AS rn
-     FROM employees e
+     SELECT e.*,ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS rn FROM employees e
  ) t
  WHERE rn <= 3
  ORDER BY department_id, salary DESC;

@@ -1,0 +1,40 @@
+
+o
+java:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(Üá¬‡
+\
+java:S1192"FDefine a constant instead of duplicating this literal "Sumit" 4 times.(¥Œ©¿
+b	java:S101
+"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ÀÇ›³
+M
+java:S3958'"2Refactor the code so this stream pipeline is used.(âÁîàûÿÿÿÿ
+M	java:S106"9Replace this use of System.out or System.err by a logger.(»ã¢)
+N	java:S106""9Replace this use of System.out or System.err by a logger.(¢Î€’
+S	java:S106*"9Replace this use of System.out or System.err by a logger.(¯›ÀŒÿÿÿÿÿ
+N	java:S106."9Replace this use of System.out or System.err by a logger.(ÅªäŞ
+N	java:S1060"9Replace this use of System.out or System.err by a logger.(™±†á
+N	java:S1068"9Replace this use of System.out or System.err by a logger.(ÅªäŞ
+S	java:S106:"9Replace this use of System.out or System.err by a logger.(ƒªû§şÿÿÿÿ
+S	java:S106D"9Replace this use of System.out or System.err by a logger.(ãàòşÿÿÿÿ
+N	java:S106E"9Replace this use of System.out or System.err by a logger.(ÚÂ×İ
+S	java:S106H"9Replace this use of System.out or System.err by a logger.(ù›ñùÿÿÿÿ
+N	java:S106R"9Replace this use of System.out or System.err by a logger.(°Š×’
+S	java:S106Z"9Replace this use of System.out or System.err by a logger.(µı¢¼ùÿÿÿÿ
+S	java:S106`"9Replace this use of System.out or System.err by a logger.(ÏŠñğıÿÿÿÿ
+q
+java:S4276a"[Refactor this code to use the more specialised Functional Interface 'UnaryOperator<String>'(‚“
+N	java:S106b"9Replace this use of System.out or System.err by a logger.(ÒŸ¤Ô
+N	java:S106o"9Replace this use of System.out or System.err by a logger.(ÿÆÌ
+S	java:S106v"9Replace this use of System.out or System.err by a logger.(ƒñ€Úüÿÿÿÿ
+V	java:S125v"<This block of commented-out lines of code should be removed.(ƒñ€Úüÿÿÿÿ
+S	java:S106|"9Replace this use of System.out or System.err by a logger.(Ô¤ÉÂüÿÿÿÿ
+V	java:S125|"<This block of commented-out lines of code should be removed.(Ô¤ÉÂüÿÿÿÿ
+R	java:S125"<This block of commented-out lines of code should be removed.(Ÿ‹©´
+T	java:S106†"9Replace this use of System.out or System.err by a logger.(ã®·Ãıÿÿÿÿ
+W	java:S125‹"<This block of commented-out lines of code should be removed.(ë™İìùÿÿÿÿ
+O	java:S106’"9Replace this use of System.out or System.err by a logger.(ÅœÄ¿
+O	java:S106—"9Replace this use of System.out or System.err by a logger.(İí
+R	java:S125—"<This block of commented-out lines of code should be removed.(İí
+Q
+java:S1128";Remove this unused import 'com.google.common.collect.Maps'.(¯œĞ
+J
+java:S1128"4Remove this unused import 'java.util.stream.Stream'.(ó÷”

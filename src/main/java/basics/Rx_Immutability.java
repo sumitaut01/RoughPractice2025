@@ -23,6 +23,8 @@ package basics;
 //        4. If any field is an object, return a copy, not the original
 //        So that internal data is not modified from outside. Refer (Output Question No : )
 
+import groovy.transform.Immutable;
+
 public class Rx_Immutability {
 
     //public final class String
@@ -32,12 +34,29 @@ public class Rx_Immutability {
     //           java.lang.constant.Constable,
     //           java.lang.constant.ConstantDesc
 
-
-    MyImmutable m=new MyImmutable(32);
-    MyImmutable m1=new MyImmutable(333);
+    public static void main(String[] args) {
 
 
+        MyImmutable m = new MyImmutable(32);
+        m=new MyImmutable(3373);
 
+        MyImmutable m1 = new MyImmutable(333);
+
+        //Step 1:
+        // Stack           Heap
+        //  ┌────┐         ┌──────────────────────┐
+        //  │ m  │ ──────► │ MyImmutable(age=32) │
+        //  └────┘         └──────────────────────┘
+        //
+        //Step 2:
+        // Stack           Heap
+        //  ┌────┐         ┌──────────────────────┐
+        //  │ m  │ ──────► │ MyImmutable(age=3373)│
+        //  └────┘         └──────────────────────┘
+        //                 (MyImmutable(age=32)) ← Unreachable, GC soon----   so this 31 hadnt changed hence we are saying immutable
+
+
+    }
 }
 
 

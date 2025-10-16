@@ -8,8 +8,8 @@ public class R2_StringWork {
         String s2="sumit";
 
 
-        System.out.println(s1==s2);//true
-        System.out.println(s1.equals(s2));//true
+        System.out.println(s1==s2);//true because both point to scp
+        System.out.println(s1.equals(s2));//true content is equals. equals overriden for content check for string
 
         String s3=new String("sumit");// just heap object. Sumit already in scp
 

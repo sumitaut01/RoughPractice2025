@@ -5,22 +5,10 @@ public class R9_JavascriptDemo {
     public static void main(String[] args) {
 
         webdriver driver= new chrome();
-
         driver.get();//fine
-
       ((jsexecutor)driver).executeScript("ss");
-
-
-
       Remote remote=new Remote();
       remote.executeScript("from remote");
-
-
-
-
-
-
-
     }
 }
 
