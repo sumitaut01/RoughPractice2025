@@ -1,5 +1,8 @@
 package selenium.waits;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import java.time.Duration;
 
@@ -27,6 +30,9 @@ public class R1_FlunentWait {
 
 
 
+
+
+
     }
 }
 
@@ -34,3 +40,7 @@ public class R1_FlunentWait {
 //public interface Wait<F> {
 //    <T> T until(Function<? super F, T> isTrue);
 //}
+
+
+
+

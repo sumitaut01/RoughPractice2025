@@ -1,0 +1,95 @@
+Excellent question 👍 — yes, you can absolutely pass a TestNG suite XML file to mvn test (or mvn clean test) from the command line.
+
+Let’s go step-by-step 👇
+
+✅ 1. Basic Command
+
+If you have a testng.xml file, you can run it directly using Maven:
+
+mvn test -DsuiteXmlFile=testng.xml
+
+
+✅ Maven’s maven-surefire-plugin recognizes the property suiteXmlFile and runs the specified TestNG suite instead of the default test discovery.
+
+✅ 2. Example Project Structure
+my-test-project/
+ ├── pom.xml
+ ├── src/
+ │   └── test/
+ │       ├── java/
+ │       │   └── com/example/tests/...
+ │       └── resources/
+ │           └── testng.xml
+
+
+Then you can run:
+
+mvn test -DsuiteXmlFile=src/test/resources/testng.xml
+
+✅ 3. Configure pom.xml
+
+Make sure your pom.xml has the Surefire plugin configured to use TestNG and accept the suiteXmlFile parameter:
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.2.5</version>
+      <configuration>
+        <suiteXmlFiles>
+          <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+        </suiteXmlFiles>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+
+This tells Maven:
+
+If you pass -DsuiteXmlFile=... → use that file
+
+If not, it will look for default test sources under src/test/java
+
+✅ 4. Multiple Suites Example
+
+You can run multiple suites like this:
+
+mvn test -DsuiteXmlFile="src/test/resources/smoke.xml,src/test/resources/regression.xml"
+
+
+But make sure your pom.xml supports multiple <suiteXmlFile> entries:
+
+<suiteXmlFiles>
+  <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+</suiteXmlFiles>
+
+
+Maven will split them by commas automatically.
+
+✅ 5. You can also hardcode suites in pom.xml
+
+If you want a default suite to run when you type just mvn test, you can fix it like this:
+
+<suiteXmlFiles>
+  <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+</suiteXmlFiles>
+
+
+Then running mvn test will automatically execute that suite.
+
+⚡ Optional: Run by group or test class (if not using suite.xml)
+
+If you don’t want to use XML at all, you can use:
+
+mvn test -Dgroups=smoke
+mvn test -Dtest=LoginTest
+mvn test -Dtest=LoginTest#verifyLogin
+
+✅ Summary
+Scenario	Command
+Run a single TestNG XML suite	mvn test -DsuiteXmlFile=testng.xml
+Run from a specific folder	mvn test -DsuiteXmlFile=src/test/resources/testng.xml
+Run multiple suites	mvn test -DsuiteXmlFile="suite1.xml,suite2.xml"
+Default suite via pom	Add <suiteXmlFile> inside <configuration>

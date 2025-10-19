@@ -1,0 +1,14 @@
+
+2
+java:S1116"Remove this empty statement.(¥ÓÜ
+k
+java:S3008
+"PRename this field "Count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ö¹áýÿÿÿÿ
+i
+java:S1845
+"NRename field "Count" to prevent any misunderstanding/clash with field "count".(ö¹áýÿÿÿÿ
+K
+java:S1854"6Remove this useless assignment to local variable "m2".(Æ¢‘>
+<
+java:S1481"'Remove this unused "m2" local variable.(Æ¢‘>
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ûŸ¢«úÿÿÿÿ

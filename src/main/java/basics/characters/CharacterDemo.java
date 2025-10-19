@@ -1,5 +1,7 @@
 package basics.characters;
 
+import org.testng.annotations.Test;
+
 public class CharacterDemo {
 
     public static void main(String[] args) {
@@ -44,5 +46,22 @@ public class CharacterDemo {
 
 
 
+    }
+
+    @Test
+    public void Rough(){
+        String name="sumit raut";
+
+        int [] aChar=new int[256];
+
+        for( char c: name.toCharArray()){
+         aChar[(int)c]++;
+        }
+
+        for(int i=0;i<aChar.length;i++){
+            if(aChar[i]!=0){
+                System.out.println(i +" "+ (char)i +" "+aChar[i]);
+            }
+        }
     }
 }

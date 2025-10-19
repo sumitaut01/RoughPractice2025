@@ -37,6 +37,10 @@ input[id^='nam]
 9. ends with $
 button[class$=' p-1 ']
 
+
+10.1  :first-child          input:first-child
+      :last-child
+      :nth--child(2)s
 10 first-of-type
 li[class='menu__item flex leading-5']  ==matches 5 elements
 

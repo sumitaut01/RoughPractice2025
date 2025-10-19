@@ -1,6 +1,7 @@
 package basics.failfastfailsafe;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 //Fail-Fast iterators directly operate on the original collection and throw ConcurrentModificationException if the collection is modified during iteration (e.g., ArrayList, HashMap).
 //
@@ -31,7 +32,7 @@ public class FailSafeExample {
         }
 
         System.out.println("Final List: " + list);
-    }
+
 
     //Notice:
     //
@@ -43,4 +44,24 @@ public class FailSafeExample {
 //            B
 //    C
 //    Final List: [A, B, C, D, D, D]
+
+
+        //using ConcurrentHashMap
+    Map<Integer, String> cmap = new ConcurrentHashMap<>();
+        cmap.put(1, "A");
+        cmap.put(2, "B");
+        cmap.put(3, "C");
+
+    Iterator<Integer> itr2 = cmap.keySet().iterator();
+
+        while (itr.hasNext()) {
+        Integer key = itr2.next();
+        System.out.println("Key: " + key + ", Value: " + cmap.get(key));
+
+        // Safe to modify while iterating
+        cmap.put(4, "D");
+    }
+
+        System.out.println("Final Map: " + cmap);
+}
 }

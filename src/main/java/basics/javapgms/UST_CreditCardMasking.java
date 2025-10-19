@@ -1,5 +1,8 @@
 package basics.javapgms;
 
+
+import org.testng.annotations.Test;
+
 class UST_CreditCardMasking {
     public static void main(String[] args) {
         String card = "1234567890123456";
@@ -21,6 +24,33 @@ class UST_CreditCardMasking {
 
         System.out.println(sb.toString());
     }
-}
+
 
 //****-****-****-3456
+
+
+
+@Test
+public void rough(){
+
+    String card = "1234567890123456";
+
+    StringBuffer sb=new StringBuffer();
+
+    for(int i=0;i<card.length();i++){
+
+        if(i<12){
+            sb.append("*");
+        }
+
+        if((i+1)%4==0 &&i<card.length()-1){
+            sb.delete(i,1+1 );
+            sb.insert(i,"-");
+        }
+    }
+
+    System.out.println(sb);
+
+
+}
+}

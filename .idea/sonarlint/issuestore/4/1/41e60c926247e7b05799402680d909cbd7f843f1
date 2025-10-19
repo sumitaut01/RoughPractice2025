@@ -1,0 +1,8 @@
+
+X	java:S125	"<This block of commented-out lines of code should be removed.(¡¨¥ú8·¨áÖ3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(å ËŒ8º¨áÖ3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ç§«½üÿÿÿÿ8½¨áÖ3
+{
+java:S12103"YOverride "equals(Object obj)" to comply with the contract of the "compareTo(T o)" method.(Î²›øÿÿÿÿ8¾¨áÖ3
+]	java:S1256"<This block of commented-out lines of code should be removed.(ÅÁãúûÿÿÿÿ8Ä¨áÖ3
+]	java:S125D"<This block of commented-out lines of code should be removed.(ÅÁãúûÿÿÿÿ8É¨áÖ3

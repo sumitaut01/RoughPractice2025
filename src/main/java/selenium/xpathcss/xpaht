@@ -1,1 +1,43 @@
 	driver.findElement(By.xpath("//div[normalize-space()='100 Rows']")).click();
+	(//a)[last()]
+	//input[@id=’email’ or @type=’email’]
+
+	//input[@id=’email’ and @type=’email’]
+
+	//tagName[starts-with(@attributeName,’some text’)]
+
+	//Wild Card
+	//*[any xpath expression]
+    //tagName[@*=’value’]
+
+    //tagName[text()=’value’]
+    //tagName[contains(text(),’value’)]
+
+
+//Using position method:
+  Position refers order.
+
+  Note: when we write //input it will list all input nodes. When we write //input[2] it will not give you second input node from result of //input. It will give all input nodes which comes on 2nd position with respect to their parent node in DOM. Position should be positive and greater than zero.
+    //input[position()=2]
+
+
+Using attribute name:
+If you want to if any web element has some attributes like id , name etc. or to know how many web elements have some attributes, we can use below expression.
+
+Syntax:
+
+//tagName[@AttributeName]
+
+Example:
+
+//a[@id]
+   a[@id]
+
+
+
+   ancestor: Selects all ancestors of current node.
+   descendent: Selects all descenders of current node.
+   following: Selects everything in the document after the closing tag of the current node
+   following-sibling: Selects all siblings after the current node
+   preceding: Selects all nodes that appear before the current node in the document, except ancestors, attribute nodes and namespace nodes
+   preceding-sibling: Selects all siblings before the current node

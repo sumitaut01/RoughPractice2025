@@ -1,0 +1,26 @@
+
+;
+java:S2157"%Add a "clone()" method to this class.(Ñ»ñ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¿¹û®
+P	java:S125"<This block of commented-out lines of code should be removed.(±ñ«B
+S	java:S106"9Replace this use of System.out or System.err by a logger.(‘ëíÏüÿÿÿÿ
+P	java:S125"<This block of commented-out lines of code should be removed.(±ñ«B
+S	java:S106"9Replace this use of System.out or System.err by a logger.(‘ëíÏüÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¤ä¥ı
+Q	java:S125"<This block of commented-out lines of code should be removed.(ØşÌÁ
+Q	java:S125"<This block of commented-out lines of code should be removed.(¤ä¥ı
+S	java:S106#"9Replace this use of System.out or System.err by a logger.(‘ëíÏüÿÿÿÿ
+N	java:S106%"9Replace this use of System.out or System.err by a logger.(¿¹û®
+Q	java:S125$"<This block of commented-out lines of code should be removed.(Æ‡‡’
+h
+java:S2975D"SRemove this "clone" implementation; use a copy constructor or copy factory instead.(™”” 
+=
+java:S1185D"(Remove this method to simply inherit it.(™”” 
+h
+java:S2975s"SRemove this "clone" implementation; use a copy constructor or copy factory instead.(™”” 
+=
+java:S1185s"(Remove this method to simply inherit it.(™”” 
+E
+java:S1128"/Remove this unused import 'javax.mail.Address'.(Õµìš
+D
+java:S1128".Remove this unused import 'java.util.Objects'.(¼¸õ›

@@ -18,7 +18,6 @@ public class FailFastExample {
             System.out.println(itr.next());
             list.add("D"); // ❌ Structural modification
         }
-    }
 
 
 //    A
@@ -26,4 +25,23 @@ public class FailFastExample {
 //    at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1095)
 //    at java.base/java.util.ArrayList$Itr.next(ArrayList.java:1049)
 //    at basics.failfastfailsafe.FailFastExample.main(FailFastExample.java:14)
+
+
+        //With maps
+        HashMap<String, String> map = new HashMap<>();
+        map.put("name", "Sumit");
+
+
+        Iterator<String> itr2 = map.keySet().iterator();
+
+        while (itr2.hasNext()) {
+            String key = itr2.next();
+            System.out.println("Key: " + key + ", Value: " + map.get(key));
+
+            // Structural modification outside iterator
+            map.put("age", "some"); // ❌ This line causes ConcurrentModificationException
+        }
+
+    }
+
 }

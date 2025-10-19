@@ -1,0 +1,19 @@
+
+h
+java:S1192"FDefine a constant instead of duplicating this literal "sumit" 3 times.(¸Û˜Ôüÿÿÿÿ8µÀÁ×3
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(°“—…8¶ÀÁ×3
+^
+java:S4973"<Strings and Boxed types should be compared using "equals()".( ÀÊøÿÿÿÿ8¶ÀÁ×3
+^
+java:S4973"<Strings and Boxed types should be compared using "equals()".(§¯ÄÊüÿÿÿÿ8¶ÀÁ×3
+v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ê†Ê™8¶ÀÁ×3
+X
+java:S1854"6Remove this useless assignment to local variable "s4".(¼ŞõÈøÿÿÿÿ8¼ÀÁ×3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.( ÀÊøÿÿÿÿ8¾ÀÁ×3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(‰çÌûÿÿÿÿÿ8¾ÀÁ×3
+=
+java:S2129" Remove this "String" constructor(®Ä˜‰8¿ÀÁ×3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(§¯ÄÊüÿÿÿÿ8¿ÀÁ×3
+U	java:S106"9Replace this use of System.out or System.err by a logger.(™ÅÉí8ÀÀÁ×3
+I
+java:S1481"'Remove this unused "s4" local variable.(¼ŞõÈøÿÿÿÿ8ÀÀÁ×3

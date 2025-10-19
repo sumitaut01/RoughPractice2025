@@ -1,0 +1,8 @@
+
+n	java:S101	"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(…İÄ¯úÿÿÿÿ8å¥Ñ¸3
+v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ê†Ê™8æ¥Ñ¸3
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(³ğ¸ûÿÿÿÿ8ï¥Ñ¸3
+Z	java:S106%"9Replace this use of System.out or System.err by a logger.(Á°Šüÿÿÿÿ8ñ¥Ñ¸3
+Z	java:S106("9Replace this use of System.out or System.err by a logger.(³ğ¸ûÿÿÿÿ8ñ¥Ñ¸3
+j
+java:S1128"HRemove this unused import 'org.openqa.selenium.remote.http.UrlTemplate'.(«ÌƒÑüÿÿÿÿ8ò¥Ñ¸3

@@ -1,0 +1,8 @@
+
+1
+java:S1643"Use a StringBuilder instead.(¸è‘u
+u
+java:S1149 "_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(²ðÕ¤
+N	java:S106"9Replace this use of System.out or System.err by a logger.(â ÌÕ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Ææ Ï
+N	java:S106!"9Replace this use of System.out or System.err by a logger.(˜‰Â³

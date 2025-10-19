@@ -1,0 +1,40 @@
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.1.2</version>
+      <configuration>
+        <systemPropertyVariables>
+          <env>${env}</env>
+          <browser>${browser}</browser>
+          <baseUrl>${base.url}</baseUrl>
+        </systemPropertyVariables>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+
+public class TestConfig {
+    public static void main(String[] args) {
+        System.out.println("Env: " + System.getProperty("env"));
+        System.out.println("Browser: " + System.getProperty("browser"));
+        System.out.println("Base URL: " + System.getProperty("baseUrl"));
+    }
+}
+
+Step 5: You can override them at runtime 💪
+
+If you run:
+
+mvn test -Denv=UAT -Dbrowser=edge -Dbase.url=https://uat.example.com
+
+Step 6: (Optional) Set defaults inside <properties> but overrideable
+
+You can keep safe defaults in your POM:
+
+<properties>
+  <env>QA</env>
+  <browser>chrome</browser>
+</properties>

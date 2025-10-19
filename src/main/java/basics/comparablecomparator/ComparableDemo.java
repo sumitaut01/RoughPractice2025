@@ -51,6 +51,9 @@ public class ComparableDemo {
      public int compareTo(Student o) {
          return this.age-o.age;// Natural Order Sorting
      }
+//     public int compareTo(Student o) {
+//         return Integer.compare(this.age,o.age);// Natural Order Sorting
+//     }
 
      @Override
      public String toString() {
