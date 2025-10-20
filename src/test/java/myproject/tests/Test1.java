@@ -2,6 +2,7 @@ package myproject.tests;
 
 
 import demo.threadlocal.DriverManager;
+import myproject.Reporters.ExtentLogger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,6 +22,7 @@ public class Test1 extends  BaseTest{
     @Test
     public void googleTest() {
 
+        ExtentLogger.logInfo("Test Execution started");
         System.out.println("Env: " + System.getProperty("env"));
         System.out.println("Base URL: " + System.getProperty("baseUrl"));
         System.out.println("DB URL: " + System.getProperty("dbUrl"));
@@ -35,6 +37,7 @@ public class Test1 extends  BaseTest{
     @Test
     public void facebookTest() {
         DriverManager.getDriver().get("https://www.google.com");
+        ExtentLogger.logInfo("https://www.google.com");
         System.out.println("Title: " + driver.getTitle());
         Assert.fail(); // failing forcefully
     }

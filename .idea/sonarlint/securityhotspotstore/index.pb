@@ -186,8 +186,6 @@ i
 9src/main/java/restassured/R16_DeSerializationJackson.java,2\2\22679f557d7a5a598b224f423b297f2ae649eb23
 X
 (src/main/java/basics/R13_HeapMemory.java,e\8\e8cab76b2a5d315792cf510222124017a038b294
-7
-pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 [
 +src/main/java/restassured/R19_JsonPath.java,a\0\a0fcb97423912f73f81dabc96f80f90c7038bf2c
 c
@@ -204,8 +202,6 @@ d
 4src/main/java/basics/javapgms/R11_LeaderInArray.java,f\9\f9ddf5111ad9042fcd70fc91d693ba6ff0d3cab7
 d
 4src/main/java/basics/javapgms/R7_SecondMaxArray.java,1\c\1c300f313165cd6f68320932d3688dbf20ce47ee
-C
-testngmyproject.xml,2\d\2d0be2e01d2532dd5cd380e70498a67d999a02df
 W
 'src/main/java/bddinfo/hooks/TaggedHooks,4\d\4d52b73738f3e6a98511869d34e8652ad668c947
 H
@@ -218,16 +214,8 @@ Y
 )src/main/java/seleniumutils/WebWaits.java,5\9\595dc2e6f877b666a299c7a4fe815e02f63bcd9d
 n
 >src/test/java/myproject/listeners/MyAnnotationTransformer.java,4\b\4b5a524ab7608145eedaeb96fc8a0d236b48ef05
-h
-8src/test/java/myproject/listeners/MyProjectListener.java,c\3\c333c3f3d5048713077ad0acd6d1496efd6fd76d
 b
 2src/test/java/myproject/tests/AwsSeleniumTest.java,4\3\43b7f6a9530770408c32e43ac41d7f70728a2d63
-[
-+src/test/java/myproject/tests/BaseTest.java,f\5\f513e9ff98a6e96f6c3e782d42ae9206399dd559
-`
-0src/test/java/myproject/tests/DriverManager.java,1\4\141a967490ed3006cfa34087aea5d4edf10bc20a
-X
-(src/test/java/myproject/tests/Test1.java,f\c\fc14f7a465225a8ea8588e054fceee6dc001d66f
 i
 9src/main/java/basics/collections/list/ComparatorDemo.java,c\b\cb1c940d8c25f763f00d125cb01c7efd6b4507cb
 _
@@ -454,10 +442,6 @@ g
 7src/main/java/basics/RX_FutureandCompletableFuture.java,a\7\a780ed9b2992f6ee592194155e6b81912a482572
 W
 'src/main/java/basics/RegexExamples.java,9\4\943a05a7aaff957cbe5ffd42879e0086af5fbf08
-Y
-)src/main/java/reporters/ExtentLogger.java,b\f\bfc603c3dcb33f8f4f03c7046f2d30f4b8875d01
-c
-3src/main/java/myproject/Reporters/ExtentReport.java,f\1\f1394a76630b168a571f87e01d07eb2f6a4fe42b
 Z
 *src/main/java/reporters/DriverManager.java,1\c\1c43261c675885a1deab647cc2694afde619a81c
 S
@@ -650,8 +634,6 @@ a
 1src/main/java/myproject/enums/RemoteProvider.java,7\e\7ed5a890cc9554a2f0f037690c9a014f3ebc5e89
 Z
 *src/main/java/myproject/enums/RunMode.java,b\1\b10a01b5d1670f7d125e5174d7e8913fd6aef248
-d
-4src/main/java/myproject/Reporters/ExtentManager.java,5\2\522321297e1f47635764ac63c9f7f5359c140e84
 _
 /src/main/java/myproject/utils/ConfigReader.java,4\6\46213aa03cbc65014b50d3b36b75081c09ae5e94
 L

@@ -1,5 +1,6 @@
 package myproject.listeners;
 
+import myproject.Reporters.ExtentLogger;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -13,10 +14,13 @@ public class MyProjectListener implements ITestListener {
 
     public void onTestSuccess(ITestResult result) {
         System.out.println("Test has been Sucess: onTestSuccess");
+
+        ExtentLogger.logPass("Test has been Sucess: onTestSuccess");
     }
 
     public void onTestFailure(ITestResult result) {
         System.out.println("Test has been failed: onTestFailure");
+        ExtentLogger.logFail("Test has been failed: onTestFailure");
     }
 
     public void onTestSkipped(ITestResult result) {
