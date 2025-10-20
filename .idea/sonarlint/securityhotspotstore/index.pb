@@ -550,8 +550,6 @@ f
 6src/main/java/basics/collections/CollectionsClass.java,a\b\ab454a1811ec49f8fa06beae25cc5d5a4b9e5ef3
 e
 5src/main/java/basics/collections/map/HashMapDemo.java,9\a\9a33c6b47d7dbf6b36c5345be602957cd86e7a3d
-h
-8src/main/java/myproject/driverfactory/DriverFactory.java,9\4\9430ea1e6f72e149cd8ce08813b05dd254763664
 a
 1src/main/java/basics/collections/map/loopmap.java,5\8\5859845695915b6b041ffec4860ff939b56b4126
 k

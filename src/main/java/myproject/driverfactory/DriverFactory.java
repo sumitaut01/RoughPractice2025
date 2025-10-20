@@ -11,13 +11,16 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import myproject.utils.ConfigReader;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class DriverFactory {
     private static WebDriver driver;
 
-    public static WebDriver initDriver() throws MalformedURLException {
+    public static WebDriver initDriver() throws IOException {
         RunMode runMode = RunMode.valueOf(ConfigReader.get("runmode").toUpperCase());
         BrowserType browser = BrowserType.valueOf(ConfigReader.get("browser").toUpperCase());
 
@@ -41,7 +44,7 @@ public class DriverFactory {
         }
     }
 
-    private static WebDriver getRemoteDriver(BrowserType browser, RemoteProvider provider) throws MalformedURLException {
+    private static WebDriver getRemoteDriver(BrowserType browser, RemoteProvider provider) throws IOException {
         String gridUrl;
         switch (provider) {
             case AWS:
@@ -59,7 +62,17 @@ public class DriverFactory {
 
         switch (browser) {
             case CHROME:
-                return new RemoteWebDriver(new URL(gridUrl), new ChromeOptions());
+
+                ChromeOptions options=new ChromeOptions();
+                // Use unique user data dir
+                Path userDataDir = Files.createTempDirectory("chrome-profile-");
+                options.addArguments("--user-data-dir=" + userDataDir.toAbsolutePath().toString());
+
+                return new RemoteWebDriver(new URL(gridUrl), options);
+
+
+
+
             case FIREFOX:
                 return new RemoteWebDriver(new URL(gridUrl), new FirefoxOptions());
             default:

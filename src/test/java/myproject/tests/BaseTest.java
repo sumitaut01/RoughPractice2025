@@ -40,6 +40,6 @@ public class BaseTest {
         DriverManager.getDriver().quit();
         DriverManager.remove();
 
-        
+
     }
 }

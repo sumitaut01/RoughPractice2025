@@ -14,7 +14,6 @@ public class MyProjectListener implements ITestListener {
 
     public void onTestSuccess(ITestResult result) {
         System.out.println("Test has been Sucess: onTestSuccess");
-
         ExtentLogger.logPass("Test has been Sucess: onTestSuccess");
     }
 

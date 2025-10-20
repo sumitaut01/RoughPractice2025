@@ -32,12 +32,13 @@ public class Test1 extends  BaseTest{
         //DB URL: jdbc:postgresql://uat-db:5432/testdb
         DriverManager.getDriver().get("https://www.google.com");
         System.out.println("Title: " + driver.getTitle());
+        ExtentLogger.logInfo("title is "+DriverManager.getDriver().getTitle());
     }
 
     @Test
     public void facebookTest() {
-        DriverManager.getDriver().get("https://www.google.com");
-        ExtentLogger.logInfo("https://www.google.com");
+        DriverManager.getDriver().get("https://www.facebook.com");
+        ExtentLogger.logInfo("title is "+DriverManager.getDriver().getTitle());
         System.out.println("Title: " + driver.getTitle());
         Assert.fail(); // failing forcefully
     }
