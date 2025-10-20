@@ -33,10 +33,20 @@ public class DriverFactory {
         return driver;
     }
 
-    private static WebDriver getLocalDriver(BrowserType browser) {
+    private static WebDriver getLocalDriver(BrowserType browser) throws IOException {
         switch (browser) {
             case CHROME:
-                return new ChromeDriver(new ChromeOptions());
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--headless=new"); // modern headless mode
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--disable-gpu");
+                options.addArguments("--remote-debugging-port=9222");
+
+                // ✅ Create a unique temporary profile for each run
+                Path tempUserData = Files.createTempDirectory("chrome-user-data-");
+                options.addArguments("--user-data-dir=" + tempUserData.toAbsolutePath().toString());
+                return new ChromeDriver(options);
             case FIREFOX:
                 return new FirefoxDriver(new FirefoxOptions());
             default:
