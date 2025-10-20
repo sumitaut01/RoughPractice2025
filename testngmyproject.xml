@@ -4,7 +4,7 @@
     <listeners>
         <listener class-name="myproject.listeners.MyProjectListener"></listener>
     </listeners>
-    <test verbose="2" preserve-order="true" parallel="classes" thread-count="3"
+    <test verbose="2" preserve-order="true" parallel="classes" thread-count="1"
           name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/myproject/tests/Test1.java">
         <classes>
             <class name="myproject.tests.Test1">
