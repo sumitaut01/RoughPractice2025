@@ -1,9 +1,0 @@
-
-\
-java:S1854&"@Remove this useless assignment to local variable "shadowRoot04".(ÝáÀ8 ¸ˆÂž3
-“
-java:S1130"wRemove the declaration of thrown exception 'java.lang.InterruptedException', as it cannot be thrown from method's body.(º™Ú78èæïÁž3
-M
-java:S1481&"1Remove this unused "shadowRoot04" local variable.(ÝáÀ8Ìð‹Âž3
-`
-java:S1128"CRemove this unused import 'org.openqa.selenium.JavascriptExecutor'.(Ë‚«»8Þž”Âž3

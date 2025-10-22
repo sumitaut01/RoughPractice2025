@@ -2,6 +2,7 @@ package zzRough;
 
 import org.testng.annotations.Test;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Rough {
+public class Rough implements  Serializable {
     @Test
     public void Test1() {
         String str = " This is it";
@@ -184,6 +185,39 @@ public class Rough {
                 .forEach(System.out::println);
 
 //SUMIT
+
+
+
+
+    }
+
+
+    class P implements Serializable {
+    int age;
+    String name;
+
+    public P(int age,String name){
+        this.age=age;
+        this.name=name;
+    }
+    }
+    @Test
+    public void RoughX() throws IOException, ClassNotFoundException {
+
+        //Serialation
+       P p =new P(35,"Sumit");
+        ObjectOutputStream objectOutputStream=new ObjectOutputStream(new FileOutputStream("P.ser"));
+        objectOutputStream.writeObject(p);
+
+
+        //Desri
+
+        ObjectInputStream inputStream=new ObjectInputStream(new FileInputStream("P.ser"));
+        P px= (P) inputStream.readObject();
+
+        System.out.println(px.age +" "+px.name); //35 Sumit
+
+
 
 
 

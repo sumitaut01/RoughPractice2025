@@ -101,6 +101,21 @@ public class RoughAll {
                .build()
                .perform();
 
+
+
+
+
+       //Other actions methods
+
+//        actwork.scrollToElement()
+//        actwork.dragAndDrop(, )
+//        actwork.click()
+//        actwork.moveToElement(, )
+//
+//        actwork.contextClick()
+//        actwork.keyDown(, Keys.ARROW_DOWN)
+//        actwork.setActiveKeyboard()
+
         //new Window
 
         By newWindow=By.xpath("//button[@id='openwindow']");

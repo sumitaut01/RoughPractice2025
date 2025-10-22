@@ -1,9 +1,0 @@
-
-v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ê†Ê™8©í¥™3
-r	java:S114 "QRename this interface name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ã¬üÿÿÿÿ8‘©í¥™3
-U	java:S106"9Replace this use of System.out or System.err by a logger.(Öû”8•©í¥™3
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(úüŠšøÿÿÿÿ8–©í¥™3
-T	java:S106"9Replace this use of System.out or System.err by a logger.(´¹‹m8–©í¥™3
-{	java:S115!"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(ŞÃ§æùÿÿÿÿ8–©í¥™3
-e
-java:S1128"CRemove this unused import 'org.apache.http.io.SessionOutputBuffer'.(ÚÉµûÿÿÿÿ8—©í¥™3

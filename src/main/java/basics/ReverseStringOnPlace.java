@@ -1,5 +1,7 @@
 package basics;
 
+import org.testng.annotations.Test;
+
 public class ReverseStringOnPlace {
 
 	public static void main(String[] args) {
@@ -40,5 +42,22 @@ public class ReverseStringOnPlace {
 	System.out.println("Original:"+text2);
 	System.out.println("reverse:"+reverse); //i evol uoy ybab 
 	
+}
+
+
+@Test
+	public void Rough(){
+	String text = "this is sparta for you";
+	String rev="";
+	for(String s: text.split(" ")){
+		rev=rev+" "+ new StringBuffer(s).reverse();
+	}
+	System.out.println(rev.trim());//siht si atraps rof uoy
+
+
+
+
+
+
 }
 }

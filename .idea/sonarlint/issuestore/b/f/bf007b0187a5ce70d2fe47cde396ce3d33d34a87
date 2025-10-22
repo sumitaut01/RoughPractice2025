@@ -1,9 +1,0 @@
-
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(Ëÿäªøÿÿÿÿ8šŠş½3
-T	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿòx8›Šş½3
-T	java:S106"9Replace this use of System.out or System.err by a logger.(Ÿòx8›Šş½3
-o
-java:S6204("RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(ª™¨¹8Óà€¾3
-Z	java:S106*"9Replace this use of System.out or System.err by a logger.(²ƒ§øÿÿÿÿ8œŠş½3
-U
-java:S1128"8Remove this unused import 'java.util.function.Function'.(»³Í8Ş½¾3

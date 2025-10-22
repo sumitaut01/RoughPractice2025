@@ -1,0 +1,3 @@
+this is line 1 of resourceloaderfile.txt
+this is line 2 of resourceloaderfile.txt
+this is line 3 of resourceloaderfile.txt

@@ -72,19 +72,14 @@ package selenium;
 //    @FindBy(id = "username")
 //    WebElement username;
 //}
-//
-//
+
 //Without:
-//
 //PageFactory.initElements(driver, this);
-//
-//
 //👉 username will stay null, because no initialization happened.
 //
 //🔹 Step 5: Visual Analogy
 //
 //Think of it like this:
-//
 //Component	Role
 //@FindBy	“Blueprint” → tells where to find an element
 //PageFactory	“Builder” → scans the blueprints and builds actual element proxies
@@ -93,12 +88,10 @@ package selenium;
 //the other materializes those declarations into usable WebElements.
 //
 //🔹 Step 6: What changed in Selenium 4+
-//
 //PageFactory and @FindBy are still supported and not deprecated,
 //but Selenium encourages moving toward constructor-based By locators instead.
 //
 //For example:
-//
 //public class LoginPage {
 //    private final WebDriver driver;
 //    private final By username = By.id("username");
@@ -107,13 +100,11 @@ package selenium;
 //    public LoginPage(WebDriver driver) {
 //        this.driver = driver;
 //    }
-//
 //    public void login(String user, String pass) {
 //        driver.findElement(username).sendKeys(user);
 //        driver.findElement(password).sendKeys(pass);
 //    }
 //}
-//
 //
 //✅ No reflection, faster, works with modern frameworks.
 //
@@ -127,7 +118,6 @@ package selenium;
 //Modern alternative	Use By locators in constructor (no PageFactory)
 //
 //In short:
-//
 //@FindBy says "what to find",
 //PageFactory says "I’ll find it for you when you need it."
 public class R_XPageFactory {

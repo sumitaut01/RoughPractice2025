@@ -29,7 +29,7 @@ public class R1_Clone {
         map2.put("firstName", "Amit");
 
 
-
+        System.out.println("Princting map1 & map2");
         System.out.println(map1);//{firstName=Sumit, lastName=Raut}
         System.out.println(map2);//{firstName=Amit, lastName=Raut}
 
@@ -58,7 +58,10 @@ public class R1_Clone {
         //But if the map contains mutable objects (like lists, maps, or custom classes), changes inside those objects will reflect in both maps — unless you deep copy them.
 
 
-
+        System.out.println(original);
+        System.out.println(clone);
+        //{fruits=[apple, banana, cherry]}
+        //{fruits=[apple, banana, cherry]}
 
 
     }
