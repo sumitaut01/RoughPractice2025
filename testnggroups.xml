@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="All Test Suite">
+
+    <listeners>
+        <listener class-name="myproject.listeners.MyProjectListener"/>
+    </listeners>
+
+    <test name="Group Based Execution" verbose="2" preserve-order="true" parallel="classes" thread-count="1">
+        
+        <!-- Include/exclude groups -->
+        <groups>
+            <run>
+                <!-- Run only smoke and regression -->
+                <include name="smoke"/>
+<!--                <include name="regression"/>-->
+                <!-- Example: exclude sanity -->
+                <exclude name="sanity"/>
+            </run>
+        </groups>
+
+        <classes>
+            <class name="myproject.tests.Test1"/>
+        </classes>
+
+    </test>
+</suite>

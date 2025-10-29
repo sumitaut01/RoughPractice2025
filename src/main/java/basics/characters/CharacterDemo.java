@@ -64,4 +64,39 @@ public class CharacterDemo {
             }
         }
     }
+
+
+    @Test
+    public void R2(){
+
+        String name="sumit raut";
+       int [] all=new int[256];
+
+       for(int i=0;i<name.length();i++){
+           all[ (int)name.charAt(i)]++;
+        }
+
+
+       for(int i=0;i<all.length;i++){
+
+           if(all[i]!=0){
+               System.out.println( i +" "+ (char)i +" "+all[i]);
+           }
+        }
+
+
+//32   1
+//97 a 1
+//105 i 1
+//109 m 1
+//114 r 1
+//115 s 1
+//116 t 2
+//117 u 2
+
+
+
+
+
+    }
 }

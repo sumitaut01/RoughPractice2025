@@ -1,0 +1,20 @@
+so git has three componenet, working directory, staging area  and HEAD is always the last commit?
+ChatGPT said:
+
+✅ Exactly right — that’s the perfect foundation to understand Git deeply.
+Let’s break it down clearly 👇
+
+⚙️ Git has three main areas
+Area	Description	Command to move changes	Example
+1️⃣ Working Directory	Where you actually edit files. These are untracked or modified files on your filesystem.	git add <file> → moves to staging area	You modify app.java
+2️⃣ Staging Area (Index)	A temporary area where you mark which changes should go into the next commit.	git commit → moves from staging to HEAD	You run git add app.java
+3️⃣ HEAD (Repository)	Points to the latest commit in your current branch — what Git considers the "official" version of the project.	git reset or git checkout → moves changes from HEAD back	HEAD points to commit abc123
+📍 HEAD explained
+
+HEAD is a pointer to your current commit (usually the last one in the current branch).
+
+When you make a new commit, HEAD moves to that new commit.
+
+If you checkout another branch, HEAD moves to point to that branch’s last commit.
+
+🧭 Think of HEAD as “Where I currently am in history.”

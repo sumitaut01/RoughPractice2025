@@ -1,12 +1,9 @@
 select * from users u  inner join  profiles p on  u.user_id=p.user_id --inner join
-
 select * from users u  left join  profiles p on  u.user_id=p.user_id  //all from left
-
 select u.user_id as "user id",p.user_id as "user id2" ,* from users u  left join  profiles p on  u.user_id=p.user_id
 
 
 select * from profiles
-
 
 SELECT
     u.user_id   AS user_id_from_users,

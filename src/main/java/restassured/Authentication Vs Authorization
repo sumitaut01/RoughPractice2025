@@ -1,0 +1,320 @@
+ell me authetication ans authrization in restassured
+ChatGPT said:
+
+Excellent question 👍 — this is very important in API testing with RestAssured.
+Let’s clearly understand both conceptually and in practice (with code).
+
+🧭 1️⃣ Authentication vs Authorization
+Term	Meaning	Example
+Authentication	Verifies who you are	Logging in with username/password or token
+Authorization	Verifies what you can access	Whether you can access /admin endpoint after login
+
+In short:
+
+🧍‍♂️ Authentication = Identity check
+🔐 Authorization = Access control
+
+⚙️ 2️⃣ Authentication Types in RestAssured
+
+RestAssured supports many types of authentication out of the box.
+
+🔹 Basic Authentication
+
+Used when API requires username & password.
+
+given()
+    .auth()
+    .basic("username", "password")
+.when()
+    .get("https://api.example.com/users")
+.then()
+    .statusCode(200);
+
+
+🧠 Sends credentials as Base64 encoded string in the request header:
+
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+🔹 Preemptive Basic Auth
+
+Sends credentials immediately (not after 401 challenge).
+
+given()
+    .auth()
+    .preemptive()
+    .basic("username", "password")
+.when()
+    .get("https://api.example.com/users")
+.then()
+    .statusCode(200);
+
+🔹 Digest Authentication
+
+More secure than basic (hash-based challenge–response).
+
+given()
+    .auth()
+    .digest("username", "password")
+.when()
+    .get("https://api.example.com/secure-data")
+.then()
+    .statusCode(200);
+
+🔹 Bearer Token / OAuth2 Token
+
+Most common for modern APIs.
+
+given()
+    .auth()
+    .oauth2("your_access_token_here")
+.when()
+    .get("https://api.example.com/user/profile")
+.then()
+    .statusCode(200);
+
+
+Or manually set header:
+
+given()
+    .header("Authorization", "Bearer " + token)
+.when()
+    .get("https://api.example.com/data");
+
+🔹 API Key
+
+Some APIs use API keys (passed as header or query param).
+
+// Header-based key
+given()
+    .header("x-api-key", "your_api_key_here")
+.when()
+    .get("https://api.example.com/data");
+
+// Query param-based key
+given()
+    .queryParam("api_key", "your_api_key_here")
+.when()
+    .get("https://api.example.com/data");
+
+🧩 3️⃣ Authorization (Access Control)
+
+Once you’re authenticated, authorization is verified by the API itself.
+
+Example:
+
+given()
+    .auth()
+    .oauth2(adminToken)
+.when()
+    .get("/admin/dashboard")
+.then()
+    .statusCode(200); // authorized
+
+given()
+    .auth()
+    .oauth2(userToken)
+.when()
+    .get("/admin/dashboard")
+.then()
+    .statusCode(403); // forbidden (not authorized)
+
+🧠 Summary
+Type	Example Method	Common Use
+Basic Auth	.auth().basic("u","p")	Internal or legacy APIs
+Digest Auth	.auth().digest("u","p")	Secure internal APIs
+OAuth2 / Bearer	.auth().oauth2(token)	Modern secured APIs
+API Key	.header("x-api-key", key)	External APIs (like Google, AWS)
+
+Would you like me to show how to get a token dynamically (login → extract token → use in next API) using RestAssured?
+
+You said:
+sure
+ChatGPT said:
+
+Perfect 👍 — this is one of the most practical real-world use cases in API testing with RestAssured:
+you login, get a token, and then use that token in subsequent requests.
+
+Let’s go step-by-step.
+
+🧭 Goal
+
+Call the Login API (e.g., /login) with credentials.
+
+Extract the auth token from the response (usually in JSON).
+
+Pass that token in the Authorization header for the next API call.
+
+🧱 Example Scenario
+Login API
+
+POST https://api.example.com/login
+
+📤 Request Body
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+📥 Response
+
+{
+  "token": "abc123xyz456"
+}
+
+💻 Step-by-step Implementation
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+public class AuthTokenExample {
+
+    public static void main(String[] args) {
+
+        // 1️⃣ Base URI setup
+        RestAssured.baseURI = "https://api.example.com";
+
+        // 2️⃣ Login request to get token
+        Response loginResponse =
+            given()
+                .contentType("application/json")
+                .body("{\"username\": \"admin\", \"password\": \"admin123\"}")
+            .when()
+                .post("/login")
+            .then()
+                .statusCode(200)
+                .extract().response();
+
+        // 3️⃣ Extract token from response JSON
+        String token = loginResponse.path("token");
+        System.out.println("Token received: " + token);
+
+        // 4️⃣ Use token in next API call (Authorization header)
+        given()
+            .header("Authorization", "Bearer " + token)
+            .when()
+            .get("/users")
+            .then()
+            .statusCode(200)
+            .body("size()", greaterThan(0));
+    }
+}
+
+🧠 Explanation
+Step	Purpose
+.contentType("application/json")	Sets request type
+.body(...)	Sends login credentials
+.extract().response()	Captures full response object
+.path("token")	Reads the token from JSON
+.header("Authorization", "Bearer " + token)	Passes token to next API
+⚙️ Better Pattern for Frameworks
+
+In your RestAssured + TestNG framework,
+you can move this to a utility method:
+
+public class AuthUtil {
+
+    public static String getAuthToken() {
+        Response res = given()
+            .contentType("application/json")
+            .body("{\"username\":\"admin\",\"password\":\"admin123\"}")
+        .when()
+            .post("/login");
+
+        return res.path("token");
+    }
+}
+
+
+Then reuse:
+
+String token = AuthUtil.getAuthToken();
+
+given()
+    .header("Authorization", "Bearer " + token)
+.when()
+    .get("/profile")
+.then()
+    .statusCode(200);
+
+🔒 Optional: Store token in environment variable
+
+You can also store it once and reuse in multiple tests:
+
+System.setProperty("authToken", token);
+
+
+Then retrieve anywhere:
+
+String token = System.getProperty("authToken");
+
+
+Would you like me to show how to make this token fetching automatic before each test (using a @BeforeClass or @BeforeSuite in TestNG)?
+
+You said:
+is path coming from jsonpath?
+ChatGPT said:
+
+💯 Excellent observation — yes, you’re exactly right!
+
+response.path() in RestAssured is built on top of JSONPath under the hood.
+Let’s unpack that clearly 👇
+
+🧭 What is JSONPath?
+
+Think of JSONPath like XPath for JSON —
+it lets you navigate and extract specific values from a JSON structure.
+
+🧩 Example JSON
+{
+  "token": "abc123xyz",
+  "user": {
+    "id": 42,
+    "name": "Sumit",
+    "roles": ["admin", "tester"]
+  }
+}
+
+💻 How path() Works
+
+In RestAssured:
+
+String token = response.path("token");
+int id = response.path("user.id");
+String role = response.path("user.roles[0]");
+
+
+✅ Behind the scenes, RestAssured uses its own JSONPath implementation (io.restassured.path.json.JsonPath)
+to parse and evaluate those expressions.
+
+So yes — response.path("...") is a shortcut for JSONPath queries.
+
+Equivalent (explicit JSONPath usage)
+
+You could also do:
+
+JsonPath jsonPath = new JsonPath(response.asString());
+String token = jsonPath.getString("token");
+int id = jsonPath.getInt("user.id");
+
+
+Both are functionally identical:
+
+response.path("...") → quick and simple
+
+new JsonPath(response.asString()) → more flexible (especially for complex extractions or debugging)
+
+🧠 Summary
+Method	Based On	Use Case
+response.path("user.id")	✅ JSONPath	Quick value extraction
+new JsonPath(response.asString())	✅ JSONPath	Reuse / multiple reads
+response.jsonPath()	✅ JSONPath	Convenient when you want to chain .get() calls
+Example:
+String token = response.jsonPath().getString("token");
+int id = response.jsonPath().getInt("user.id");
+
+
+Would you like me to show a mini JSONPath cheatsheet for RestAssured (covering arrays, nested objects, filters, etc.)?
+It’s super handy for complex payloads.

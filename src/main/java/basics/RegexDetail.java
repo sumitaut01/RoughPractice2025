@@ -1,5 +1,7 @@
 package basics;
 
+import org.testng.annotations.Test;
+
 import java.util.regex.*;
 public class RegexDetail {
 
@@ -32,5 +34,33 @@ public class RegexDetail {
 			
 		
 	}
+
+
+	@Test
+	public void Rough(){
+
+
+		String str="sumit raut";
+		String pattern="t";
+
+
+		Pattern p=Pattern.compile(pattern);
+		Matcher m=p.matcher(str);
+
+		int count=0;
+		while(m.find()){
+
+			System.out.println(m.start() + " "+m.end());
+			count++;
+		}
+
+		System.out.println(count);
+	}
+
+
+	//4 5
+	//9 10
+	//2
+
 
 }

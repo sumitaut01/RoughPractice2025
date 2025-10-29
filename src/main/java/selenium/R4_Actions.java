@@ -13,8 +13,6 @@ public class R4_Actions {
 
         WebDriver driver=new ChromeDriver();
         Actions actions=new Actions(driver);
-
-
         actions.moveToElement(driver.findElement(By.xpath("somexpath"))).build().perform();
         driver.quit();
     }

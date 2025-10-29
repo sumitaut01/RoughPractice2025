@@ -13,7 +13,8 @@ public class R1_FlunentWait {
         FluentWait<String> fluentWait=new FluentWait<String>(s);
         fluentWait.ignoring(Exception.class)
                 .pollingEvery(Duration.ofSeconds(1))
-                .withTimeout(Duration.ofSeconds(10)).withMessage("waiting---");
+                .withTimeout(Duration.ofSeconds(10))
+                .withMessage("waiting---");
 
         for(int i=0;i<5;i++){
             s=s+i;

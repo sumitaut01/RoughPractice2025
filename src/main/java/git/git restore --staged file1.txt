@@ -1,0 +1,28 @@
+Context — “git add” and staging area
+
+When you run:
+git add file.txt
+
+You move file.txt from the working directory → staging area.
+Now the file is staged for commit.
+
+🧹 What git restore --staged does
+git restore --staged file.txt
+
+
+✅ This unstages the file — it removes it from the staging area and puts it back in the working directory,
+but it keeps your file changes intact.
+
+So after this command:
+
+The file is no longer staged,
+
+The file’s edits are still there on disk (not lost).
+
+
+
+Summary Table
+Command	What it affects	Keeps file edits?	Description
+git add file.txt	Moves to staging area	✅	Prepares for commit
+git restore --staged file.txt	Moves back to working dir	✅	Unstages file
+git restore file.txt	Reverts to HEAD version	❌	Discards changes

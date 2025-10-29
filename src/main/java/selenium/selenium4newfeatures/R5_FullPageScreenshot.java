@@ -15,23 +15,18 @@ public class R5_FullPageScreenshot {
     //works on firefox only
     public static void main(String[] args) throws IOException, IOException {
 
-
-
         WebDriver driver = new ChromeDriver();
         driver.get("https://way2automation.com");
         driver.manage().window().maximize();
 
         if(driver instanceof FirefoxDriver) {
-
             //Full Page
             File fullPage = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(fullPage, new File("./screenshot/fullpage.jpg"));
 
-
         }else if(driver instanceof ChromeDriver) {
             File pageScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(pageScreenshot, new File("./screenshot/page.jpg"));
-
 
         }
     }

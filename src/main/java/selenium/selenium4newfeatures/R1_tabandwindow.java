@@ -9,9 +9,7 @@ public class R1_tabandwindow {
     public static void main(String[] args) throws InterruptedException {
 
         WebDriver driver=new ChromeDriver();
-
         driver.get("http://www.google.com");
-
 
         // Open a new tab and switch to it
         driver.switchTo().newWindow(WindowType.TAB);

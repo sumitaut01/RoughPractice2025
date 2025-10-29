@@ -19,7 +19,7 @@ import java.io.*;
 import java.time.Duration;
 
 public class Test1 extends  BaseTest{
-    @Test
+    @Test(groups = "smoke")
     public void googleTest() {
 
         ExtentLogger.logInfo("Test Execution started");

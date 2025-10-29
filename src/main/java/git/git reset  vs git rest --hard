@@ -1,0 +1,16 @@
+
+so we did git add .
+
+now we do git reset   ( which is git reset=mixed)
+then files get unstaged...
+whetever we had written stays intact
+
+
+
+vs:
+git reset --hard
+=>it takes you to last commit
+then everything (staging + working) would reset to last commit, meaning:
+
+❌ All edits are gone — files restored to what they looked like in the last commit.
+

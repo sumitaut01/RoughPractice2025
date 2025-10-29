@@ -5,13 +5,16 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import io.restassured.RestAssured;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 
 /**
@@ -54,4 +57,36 @@ public class BrokenLinks {
 			System.err.println(brokenLinkUrl);
 		}
 	}
+
+
+
+	@Test
+	public void validateAllLinksOnPage() {
+		WebDriver driver=new ChromeDriver();
+		driver.get("https://www.hyrtutorials.com/");
+
+		SoftAssert softAssert=new SoftAssert();
+
+		List<WebElement> allLinks = driver.findElements(By.tagName("a"));
+		List<String> urls = allLinks.stream()
+				.map(e -> e.getAttribute("href"))
+				.filter(u -> u != null && !u.isEmpty())
+				.toList();
+
+		for (String link : urls) {
+			int code = RestAssured
+					.given()
+					.relaxedHTTPSValidation()
+					.when()
+					.head(link)   //head is faster
+					.then()
+					.extract()
+					.statusCode();
+
+			softAssert.assertTrue(code < 400, "Broken link detected: " + link + " -> " + code);
+		}
+
+		softAssert.assertAll();
+	}
+
 }

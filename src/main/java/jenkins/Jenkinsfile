@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        MY_ENV_VAR = "somevalue"
+    }
+
+    triggers {
+        cron('25 17 17 10 *') // runs at 5:25 PM on October 17 every year
+    }
+
+    parameters {
+        choice(
+            name: 'BROWSER',
+            choices: ['chrome', 'firefox'],
+            description: 'Choose Browser'
+        )
+    }
+
+    stages {
+
+        stage('Testing Build Parameters') {
+            steps {
+                echo "🧪 Build Parameter Selected: ${params.BROWSER}"
+                echo "🌱 Environment Variable: ${env.MY_ENV_VAR}"
+            }
+        }
+
+        stage('Testing') {
+            steps {
+                echo "🚀 Running Maven tests on ${params.BROWSER}"
+                bat "mvn clean test -Dbrowser=${params.BROWSER}"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '📊 Publishing Cucumber Report...'
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'target',
+                reportFiles: 'report.html',
+                reportName: 'Cucumber HTML Report'
+            ])
+        }
+    }
+}

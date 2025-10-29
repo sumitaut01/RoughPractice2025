@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentReports;
 import demo.threadlocal.DriverManager;
 import myproject.Reporters.ExtentReportNew;
 import myproject.driverfactory.DriverFactory;
+import org.apache.http.io.SessionOutputBuffer;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 import reporters.ExtentLogger;
@@ -32,6 +33,14 @@ public class BaseTest {
         driver = DriverFactory.initDriver();
         DriverManager.setDriver(driver);
         ExtentReportNew.createTest(m.getName());
+
+
+        System.out.println("-------------------------------");
+
+        String env = System.getenv("runmode");
+        System.out.println("Running in environment: " + env);
+
+        System.out.println("-------------------------------");
     }
 
 

@@ -3,7 +3,9 @@ package selenium;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.time.Duration;
@@ -37,6 +39,24 @@ public class FileDownload {
 
 		}
 
+	}
+
+
+
+
+
+
+	@Test
+	public void rough(){
+		File file = new File("vvv");
+		FluentWait<File>  fluentWait=new FluentWait<File>(file);
+
+		fluentWait.pollingEvery(Duration.ofSeconds(10))
+				.ignoring(Exception.class)
+				.withTimeout(Duration.ofSeconds(20))
+				.withMessage("Waiting");
+		fluentWait.until(
+				f->f.exists() && f.canRead());
 	}
 
 }

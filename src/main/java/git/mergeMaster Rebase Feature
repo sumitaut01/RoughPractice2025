@@ -1,0 +1,51 @@
+master:
+commit 1
+Commit 2
+
+created feature at this stage
+
+feature:
+commit feature 1
+commit feature 2
+
+
+swtuched master:
+added commit 3
+
+
+git merge feature:
+
+
+D:\SeleniumFrameWorks\GitHubSumitraut01\Git2025>git log --oneline --graph --all
+*   a6f41e5 (HEAD -> master) merge branch 'feature'
+|\
+| * d6b4a01 (feature)  commit 2 feature branch
+| * 30e0f21  commit 1 feature branch
+* | e12288e  commit 3 master
+|/
+* f5ac4b5  commit 2
+* d201523  commit 1
+
+
+
+
+
+
+Reverting the merge:
+
+D:\SeleniumFrameWorks\GitHubSumitraut01\Git2025>git reset --hard HEAD~1
+HEAD is now at e12288e  commit 3 master
+
+D:\SeleniumFrameWorks\GitHubSumitraut01\Git2025>git checkout feature
+Switched to branch 'feature'
+
+D:\SeleniumFrameWorks\GitHubSumitraut01\Git2025>git rebase master
+Successfully rebased and updated refs/heads/feature.
+
+
+D:\SeleniumFrameWorks\GitHubSumitraut01\Git2025>git log --oneline --graph --all
+* 3f0fc49 (HEAD -> feature)  commit 2 feature branch
+* 0ca4561  commit 1 feature branch
+* e12288e (master)  commit 3 master
+* f5ac4b5  commit 2
+* d201523  commit 1

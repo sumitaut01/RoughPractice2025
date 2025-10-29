@@ -22,6 +22,10 @@ public class R16_DeSerializationJackson {
         System.out.println(stu);//Student{name='Sumit', age=12}
 
 
+        System.out.println(stu.getAge());
+        System.out.println(stu.getName());
+
+
 
     }
 

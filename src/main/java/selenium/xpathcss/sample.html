@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XPath Axes Practice Page</title>
+</head>
+<body>
+<div id="grandparent" class="ancestor-class">
+    <!-- ancestor-or-self example: this div is an ancestor for all nested elements -->
+    <div id="parent" data-info="parent-info">
+        <!-- parent axis: this is the parent for child1, child2, and child3 -->
+        <div id="child1" class="child-class" lang="en">
+            <!-- self, attribute, child axis demo -->
+            <span id="descendant1" class="descendant-class">
+                    Descendant 1
+                </span>
+            <span id="descendant2" class="descendant-class">
+                    Descendant 2
+                </span>
+        </div>
+        <div id="child2" class="child-class" lang="fr">
+            <div>
+                    <span id="descendant3" class="descendant-class">
+                        Descendant 3
+                    </span>
+            </div>
+        </div>
+        <div id="child3" class="child-class" lang="de">
+                <span id="descendant4" class="descendant-class">
+                    Descendant 4
+                </span>
+        </div>
+    </div>
+    <div id="uncle" class="ancestor-sibling">
+        <!-- following/following-sibling and preceding/preceding-sibling demo -->
+        <div id="cousin1">Cousin 1</div>
+        <div id="cousin2">Cousin 2</div>
+    </div>
+</div>
+<p id="namespace-example" xmlns:ex="http://example.com/schema">
+    <!-- For namespace axis testing, few browsers/tools may support this -->
+    Namespace example
+</p>
+<footer id="footer-node">
+    Footer Information
+</footer>
+</body>
+</html>

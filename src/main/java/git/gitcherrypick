@@ -1,0 +1,60 @@
+git cherry-pick — “copy specific commits elsewhere”
+🧩 Definition
+
+git cherry-pick lets you pick one or more specific commits from any branch and apply them onto your current branch, creating new commits with new hashes.
+It’s like saying:
+“I just want that one change from another branch — not everything.”
+
+⚙️ Syntax
+git cherry-pick <commit-hash>
+You can also pick multiple commits:
+git cherry-pick <hash1> <hash2> <hash3>
+
+
+
+Example Scenario
+Let’s say you have:
+main:    C1 --- C2 --- C3
+              \
+feature:        F1 --- F2 --- F3
+
+
+Now suppose you realize that commit F2 fixes a bug, and you want just that fix in main without merging the whole feature branch.
+You do:
+git checkout main
+git cherry-pick F2
+
+
+Now your history looks like:
+
+main:    C1 --- C2 --- C3 --- F2'
+              \
+feature:        F1 --- F2 --- F3
+
+
+🧠 Key point:
+
+F2' is a new commit with the same changes as F2 but a different hash.
+Other feature commits (F1, F3) remain untouched.
+
+💡 When to use git cherry-pick
+Use Case	Example
+Hotfix / bug fix	Take one bug fix from a feature branch and apply to production branch
+Backporting	Apply a fix from main to an older release branch
+Selective feature	You only want a subset of commits from a long feature branch
+🚨 When not to use it
+Situation	Why
+The branch will eventually be merged	You’ll end up with duplicate commits (since merge later will reintroduce them)
+The commits are dependent on earlier ones	May cause conflicts or broken builds, since dependencies are missing
+🧠 Pro Tip
+
+You can also do interactive cherry-picking for a range:
+
+git cherry-pick A..B
+➡ Picks all commits after A up to and including B.
+
+🔸 Summary
+Action	Purpose	Changes Commit Hash?	Creates Merge Commit?	Common Use
+git merge	Combine full branch history	❌	✅	Merge feature into main
+git rebase	Replay commits on top of another branch	✅	❌	Linearize history
+git cherry-pick	Copy one/few specific commits	✅	❌	Apply selective changes

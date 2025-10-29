@@ -1,0 +1,4 @@
+git reset and git revert both “undo” changes,
+but they do it in very different ways — one rewrites history, the other creates new history.
+
+Let’s break it down step-by-step 👇

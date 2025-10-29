@@ -1,0 +1,42 @@
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.5.3</version>
+      <configuration>
+        <suiteXmlFiles>
+          <suiteXmlFile>testng.xml</suiteXmlFile>
+        </suiteXmlFiles>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+
+Then you run:
+
+mvn test -Dgroups=smoke
+
+
+
+//
+Setup 2: Running TestNG Directly
+
+For local or IDE runs, no Surefire needed.
+
+You can run:
+
+java -cp "target/classes;target/test-classes;path/to/libs/*" org.testng.TestNG testng.xml
+
+
+or in IntelliJ → Run TestNG Suite.
+
+✅ Pros
+
+Quick for local debugging
+❌ Cons
+
+Maven lifecycle ignored (no clean/test/report hooks)
+
+Won’t work cleanly in CI/CD
