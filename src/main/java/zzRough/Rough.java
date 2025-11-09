@@ -1,5 +1,6 @@
 package zzRough;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.annotations.Test;
 
 import java.io.*;
@@ -88,7 +89,7 @@ public class Rough implements  Serializable {
         int curr = 0;
         int i = 0;
         int j = 0;
-        for (i = 0; i <= len - k ; i++) {
+        for (i = 0; i <= len - k; i++) {
             System.out.println("i is " + i);
             for (j = i; j < i + k; j++) {
                 System.out.println("j is " + j + "value picked is " + arr[j]);
@@ -102,7 +103,6 @@ public class Rough implements  Serializable {
     }
 
 
-
     @Test
     public void sliding_window() {
 
@@ -112,74 +112,76 @@ public class Rough implements  Serializable {
         int max = 0;
         int curr = 0;
 
-        for(int i=0;i<k;i++){
-            max+=arr[i];
-            System.out.println("intial max sum "+max);
+        for (int i = 0; i < k; i++) {
+            max += arr[i];
+            System.out.println("intial max sum " + max);
         }
 
-        for(int j=k;j<len;j++){
-            curr=max+arr[j]-arr[j-k];
-            max=Math.max(max,curr);
+        for (int j = k; j < len; j++) {
+            curr = max + arr[j] - arr[j - k];
+            max = Math.max(max, curr);
         }
         System.out.println(max);//11
     }
 
 
     @Test
-    public void ChapterCountMap(){
+    public void ChapterCountMap() {
 
-        String st="sumitraut";
+        String st = "sumitraut";
         int[] data = new int[256]; //0 to 255
         for (int i = 0; i < st.length(); i++) {
-            data[(int)st.charAt(i)]++;
+            data[(int) st.charAt(i)]++;
         }
 
 
-       for(int j=0;j<data.length;j++){
-           if(data[j]!=0){
-               char c=(char)j;
-               int count=data[j];
-               System.out.println(c+" "+count);
-           }
-       }
+        for (int j = 0; j < data.length; j++) {
+            if (data[j] != 0) {
+                char c = (char) j;
+                int count = data[j];
+                System.out.println(c + " " + count);
+            }
+        }
     }
 
     @Test
-    public void enumTest(){
+    public void enumTest() {
 
-      enum myEnum{
-          QA("qaurl"),
-          UAT("uaturl");
-          String url;
-          myEnum(String str){
-              this.url=str;
-          }
-          public String getStr(){
-              return url;
-          }
-      }
+        enum myEnum {
+            QA("qaurl"),
+            UAT("uaturl");
+            String url;
+
+            myEnum(String str) {
+                this.url = str;
+            }
+
+            public String getStr() {
+                return url;
+            }
+        }
         myEnum qa = myEnum.QA;
         System.out.println(qa.getStr());//qaurl
 
     }
 
     @Test
-    public void dummy(){
+    public void dummy() {
 
-      for(int i=0;i<256;i++){
-          System.out.println((char)i);
-      }
+        for (int i = 0; i < 256; i++) {
+            System.out.println((char) i);
+        }
 
     }
 
 
     @Test
-    public void Streams(){
+    public void Streams() {
 
-        ArrayList<String> str=new ArrayList<>();
+        ArrayList<String> str = new ArrayList<>();
         str.add("sumit");
 
-        Supplier<List<String>> sup=()-> str;
+        Supplier<List<String>> sup = () -> str;
         sup.get().stream()
                 .map(String::toUpperCase)
                 .forEach(System.out::println);
@@ -187,43 +189,43 @@ public class Rough implements  Serializable {
 //SUMIT
 
 
-
-
     }
 
 
     class P implements Serializable {
-    int age;
-    String name;
+        int age;
+        String name;
 
-    public P(int age,String name){
-        this.age=age;
-        this.name=name;
+        public P(int age, String name) {
+            this.age = age;
+            this.name = name;
+        }
     }
-    }
+
     @Test
     public void RoughX() throws IOException, ClassNotFoundException {
 
         //Serialation
-       P p =new P(35,"Sumit");
-        ObjectOutputStream objectOutputStream=new ObjectOutputStream(new FileOutputStream("P.ser"));
+        P p = new P(35, "Sumit");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("P.ser"));
         objectOutputStream.writeObject(p);
 
 
         //Desri
 
-        ObjectInputStream inputStream=new ObjectInputStream(new FileInputStream("P.ser"));
-        P px= (P) inputStream.readObject();
+        ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("P.ser"));
+        P px = (P) inputStream.readObject();
 
-        System.out.println(px.age +" "+px.name); //35 Sumit
-
-
-
-
+        System.out.println(px.age + " " + px.name); //35 Sumit
 
 
     }
-
-
-
 }
+
+
+
+
+
+
+
+

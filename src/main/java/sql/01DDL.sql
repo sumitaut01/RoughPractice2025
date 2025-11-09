@@ -1,6 +1,6 @@
 1. Users & Profiles
 CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+    user_id SERIAL PRIMARY KEY, -- serial means auto increment
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
@@ -9,11 +9,8 @@ CREATE TABLE users (
 
 
 SERIAL → auto-increment primary key.
-
 CHECK constraint → allows only active or inactive.
-
 UNIQUE ensures no duplicate usernames or emails.
-
 DEFAULT NOW() auto-fills timestamp.
 
 CREATE TABLE profiles (
@@ -26,7 +23,6 @@ CREATE TABLE profiles (
 
 
 One-to-one with users (UNIQUE on user_id).
-
 ON DELETE CASCADE → deleting a user deletes profile automatically.
 
 2. Products
@@ -43,7 +39,6 @@ CREATE INDEX idx_products_category ON products(category);
 
 
 Index on category for faster filtering.
-
 CHECK ensures no negative prices/stock.
 
 3. Orders & Order Items
@@ -59,14 +54,12 @@ CREATE TABLE order_items (
     product_id INT REFERENCES products(product_id),
     quantity INT NOT NULL CHECK (quantity > 0),
     price NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY(order_id, product_id)
+    PRIMARY KEY(order_id, product_id)-- notice this is  double primary key
 );
 
 
 Orders: linked to a user.
-
 Order items: composite PK (order_id, product_id).
-
 ON DELETE CASCADE ensures when an order is deleted → its items are removed.
 
 4. Payments
@@ -80,7 +73,6 @@ CREATE TABLE payments (
 
 
 One-to-one with order (UNIQUE order_id).
-
 Supports only valid methods.
 
 5. Audit Logs
@@ -94,7 +86,6 @@ CREATE TABLE audit_logs (
 
 
 Stores history of changes in JSON format.
-
 Trigger function logs INSERT/UPDATE/DELETE for multiple tables.
 
 6. Tags
@@ -118,7 +109,6 @@ CREATE TABLE sales (
 
 
 Data split into partitions (2025_q1, 2025_q2 etc.) for query performance.
-
 Each partition stores rows based on date ranges.
 
 8. Triggers & Audit Function
@@ -141,7 +131,6 @@ $$ LANGUAGE plpgsql;
 
 
 Automatically captures changes in JSON format.
-
 Applied to users, products, orders, order_items, payments.
 
 9. Views
@@ -158,7 +147,6 @@ GROUP BY u.user_id, u.username;
 
 
 Shows each user’s total orders & amount spent.
-
 Dynamic view → updates with new data.
 
 10. Materialized View
@@ -175,9 +163,7 @@ ORDER BY total_quantity_sold DESC;
 
 
 Pre-computes expensive queries (e.g. best sellers).
-
 Needs manual refresh:
-
 REFRESH MATERIALIZED VIEW best_selling_products;
 
 
@@ -188,11 +174,7 @@ Constraints (PRIMARY KEY, UNIQUE, CHECK)
 Relationships (REFERENCES, ON DELETE CASCADE)
 
 Indexes
-
 JSON & arrays
-
 Partitioning
-
 Triggers & audit logging
-
 Views & materialized views

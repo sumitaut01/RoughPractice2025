@@ -79,10 +79,6 @@ public class DriverFactory {
                 options.addArguments("--user-data-dir=" + userDataDir.toAbsolutePath().toString());
 
                 return new RemoteWebDriver(new URL(gridUrl), options);
-
-
-
-
             case FIREFOX:
                 return new RemoteWebDriver(new URL(gridUrl), new FirefoxOptions());
             default:

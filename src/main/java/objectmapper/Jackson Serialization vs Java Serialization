@@ -1,0 +1,61 @@
+1. Jackson ≠ Java Serialization
+
+Serializable is used by Java’s built-in serialization (e.g., writing objects to disk or sending them over sockets via ObjectOutputStream).
+
+Jackson, on the other hand, uses reflection and introspection to convert objects to/from JSON.
+It doesn’t care about Serializable — it looks for:
+
+Public fields
+Getters/setters
+Or fields annotated / visible by configuration.
+
+✅ 2. When Serializable Might Still Appear
+You may still see classes implementing Serializable for reasons unrelated to Jackson, such as:
+You want to store objects in HTTP sessions, caches, etc.
+You use frameworks that require it (like old-school Java EE or some Spring session setups).
+But Jackson doesn’t require or use it.
+
+💡 3. Example (without Serializable)
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        TestObject obj = new TestObject("Alice", 25);
+        String json = mapper.writeValueAsString(obj);
+        System.out.println(json);
+    }
+}
+
+class TestObject {
+    private String name;
+    private int age;
+
+    public TestObject(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() { return name; }
+    public int getAge() { return age; }
+}
+
+
+✅ Output:
+
+{"name":"Alice","age":25}
+
+No implements Serializable needed — it works perfectly.
+
+🧠 Summary
+Purpose	Needs Serializable?	Example
+Jackson JSON serialization	❌ No	ObjectMapper.writeValueAsString(obj)
+Java native serialization	✅ Yes	ObjectOutputStream.writeObject(obj)
+Storing in HTTP session	⚙️ Often yes	Framework dependent
+
+So:
+➡️ For Jackson → Not required.
+➡️ Only needed for Java’s native object serialization mechanisms.
+
+Would you like me to show an example of what happens if you try to serialize a non-serializable object using Java’s native serialization (for comparison)?
