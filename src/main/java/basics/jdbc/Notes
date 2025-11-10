@@ -1,18 +1,185 @@
+Step 1: Basic JDBC Setup
 
-Drivermanager.getconnection( conection string.....)
+✅ Add PostgreSQL driver dependency to pom.xml (Maven):
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.7.1</version>
+</dependency>
 
-Statement:
-connection.createstatement
+🧩 Step 2: Database example
+Assume you have this table in PostgreSQL:
+CREATE TABLE employee (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    dept VARCHAR(50),
+    salary NUMERIC(10,2)
+);
 
-Preprared Statement --Prepared staemtn for parameter
-connection.preparestatment("select * from emp where dept_num=?"
-int dept=10;
-stm.setInt(1,dept)
+🔹 Step 3: Common connection code
+import java.sql.*;
+public class DBUtil {
+    private static final String URL = "jdbc:postgresql://localhost:5432/mydb";
+    private static final String USER = "postgres";
+    private static final String PASS = "root";
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASS);
+    }
+}
 
 
+✅ DriverManager.getConnection() automatically loads the PostgreSQL JDBC driver
+(no need for Class.forName() since JDBC 4+).
+
+🧩 Step 4: Using Statement (simple SQL, unsafe)
+💡 When to use:
+For static SQL queries (no parameters)
+For quick tests, DDLs (create, drop), etc.
+❌ Not safe for dynamic user input (risk of SQL injection)
+
+Example:
+import java.sql.*;
+public class UsingStatement {
+    public static void main(String[] args) {
+        String query = "SELECT * FROM employee";
+
+        try (Connection con = DBUtil.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " | "
+                        + rs.getString("name") + " | "
+                        + rs.getString("dept") + " | "
+                        + rs.getDouble("salary"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
 
 
-ExequteQuery()     --Select
-ExecuteUpdate()  ---DML
+✅ Output (example):
 
-Callable  ( for stored procedures)
+1 | Sumit | QA | 85000.00
+2 | Neha  | Dev | 90000.00
+
+
+🔹 Step 5: Using PreparedStatement (safe, parameterized)
+💡 When to use:
+Whenever you have dynamic data (user input, parameters)
+Prevents SQL injection
+Improves performance for repeated queries
+
+Example 1 — Insert data
+import java.sql.*;
+
+public class UsingPreparedStatement {
+    public static void main(String[] args) {
+        String insert = "INSERT INTO employee (name, dept, salary) VALUES (?, ?, ?)";
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(insert)) {
+            ps.setString(1, "Amit");
+            ps.setString(2, "QA");
+            ps.setDouble(3, 75000.0);
+            int rows = ps.executeUpdate();
+            System.out.println(rows + " record(s) inserted.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+✅ Output:
+1 record(s) inserted.
+Example 2 — Read data with a condition
+String query = "SELECT * FROM employee WHERE dept = ?";
+PreparedStatement ps = con.prepareStatement(query);
+ps.setString(1, "QA");
+ResultSet rs = ps.executeQuery();
+while (rs.next()) {
+    System.out.println(rs.getString("name") + " | " + rs.getDouble("salary"));
+}
+✅ Output:
+
+Amit | 75000.0
+Sumit | 85000.0
+
+Example 3 — Update data
+String update = "UPDATE employee SET salary = ? WHERE id = ?";
+PreparedStatement ps = con.prepareStatement(update);
+
+ps.setDouble(1, 95000.0);
+ps.setInt(2, 2);
+
+int rows = ps.executeUpdate();
+System.out.println(rows + " record(s) updated.");
+
+Example 4 — Delete data
+String delete = "DELETE FROM employee WHERE id = ?";
+PreparedStatement ps = con.prepareStatement(delete);
+ps.setInt(1, 3);
+ps.executeUpdate();
+
+🔹 Step 6: Differences Between Statement and PreparedStatement
+Feature	Statement	PreparedStatement
+SQL syntax	Static	Dynamic (parameterized)
+Performance	Slower for repeated queries	Faster (precompiled SQL)
+Safety	❌ Prone to SQL Injection	✅ Prevents SQL Injection
+Parameter binding	❌ Not supported	✅ ? placeholders
+Use case	DDLs, fixed queries	CRUD ops with user input
+🔹 Step 7: Example — SQL Injection Problem
+
+❌ Using Statement:
+
+String dept = "QA' OR '1'='1";
+String query = "SELECT * FROM employee WHERE dept = '" + dept + "'";
+ResultSet rs = stmt.executeQuery(query);
+
+
+➡️ This query becomes:
+
+SELECT * FROM employee WHERE dept = 'QA' OR '1'='1';
+
+
+and returns all employees — injected!
+
+✅ Using PreparedStatement fixes this:
+
+PreparedStatement ps = con.prepareStatement("SELECT * FROM employee WHERE dept = ?");
+ps.setString(1, dept);
+
+
+Here, 'QA' OR '1'='1' is treated as plain text, not executable SQL.
+
+🔹 Step 8: Cleanup best practices
+
+Always use try-with-resources for JDBC:
+
+try (Connection con = DBUtil.getConnection();
+     PreparedStatement ps = con.prepareStatement(sql);
+     ResultSet rs = ps.executeQuery()) {
+    ...
+}
+
+
+It automatically closes all resources, even if an exception occurs.
+
+✅ Step 9: Summary
+Task	Recommended API	Example
+Simple fixed SQL	Statement	stmt.executeQuery("SELECT * FROM emp")
+Dynamic SQL with params	PreparedStatement	ps.setString(1, "QA")
+Batch insert/update	PreparedStatement	ps.addBatch()
+Prevent SQL Injection	✅ PreparedStatement	WHERE dept = ?
+
+In short:
+
+Use Statement for static queries.
+
+Use PreparedStatement for dynamic, secure, reusable queries.
+
+Both require a Connection, but PreparedStatement is preferred in 99% of real-world code.
+
+Would you like me to add batch insert/update examples next (using addBatch() and executeBatch())?
+That’s a common follow-up in JDBC interviews and performance tuning discussions.

@@ -7,6 +7,10 @@ public class R1_functionalInterface {
         r1.demo();//I am running
 
 
+        runAgain.staticMethod(); //static method is accessible directly
+        //static allowed
+
+
 
     }
 
@@ -25,6 +29,7 @@ public class R1_functionalInterface {
             System.out.println("static allowed");
         }
 
+        //default method
         public default void defaultMethod(){
             System.out.println("default allowed");
         }

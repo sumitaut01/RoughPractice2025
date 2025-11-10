@@ -19,6 +19,8 @@ class UST_CreditCardMasking {
             // add dash after every 4 digits except at the end
             if ((i + 1) % 4 == 0 && i != card.length() - 1) {
                 sb.append("-");
+
+                System.out.println(sb);
             }
         }
 

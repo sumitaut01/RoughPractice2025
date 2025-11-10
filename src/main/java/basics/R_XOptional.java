@@ -13,8 +13,6 @@ public class R_XOptional {
 
         String age=Optional.ofNullable(t.name).orElse("no");
         String college=Optional.ofNullable(t.college).orElse("no");//no
-
-
     }
 }
 

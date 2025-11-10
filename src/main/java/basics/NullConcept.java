@@ -6,7 +6,7 @@ public class NullConcept {
 
 		// 1 //Null can be assigned to Wrapper classes.
 		// Ex. Integer class can have null as a value.
-		// However primitive numeric  can't hold null value. 
+		// However, primitive numeric  can't hold null value.
 		Integer i = null;
 		// int i= null; // Not Allowed System.out.println(name.concat("test"));
 

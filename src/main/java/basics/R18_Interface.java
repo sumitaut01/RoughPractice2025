@@ -39,6 +39,19 @@ public class R18_Interface implements I1, I2 {
         System.out.println(R18_Interface.min_bal);
 
 
+        //Accessing Private Method:
+
+
+
+
+        R18_Interface ii=new R18_Interface();
+        ii.mul(2,3);
+        ii.sum(2,4);
+
+
+
+
+
 
 
 
@@ -62,9 +75,17 @@ interface I1 {
  int min_bal=500;// its public static by default
     public void sum(int a, int b);
 
+
+    //private Method in interface I1. It more of helper method inside interface
+    private void showMsg(){
+        System.out.println("-------from interface-----");
+    }
+
 }
 
 interface I2 {
+
+
     public void mul(int a, int b);
 }
 

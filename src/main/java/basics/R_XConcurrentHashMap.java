@@ -23,7 +23,7 @@ public class R_XConcurrentHashMap {
         System.out.println(chm);//{New=Neha, LastName=Raut, Name=Sumit}
 
 
-        //Notice one thing, unlike hashmap, one null key is not allowed in concurrent hashmap
+        //Notice one thing, unlike hashmap, one null key is NOT allowed in concurrent hashmap
       //  chm.put(null,null);
        // System.out.println(chm);//Exception in thread "main" java.lang.NullPointerException
 

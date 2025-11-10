@@ -26,6 +26,7 @@ ObjectOutputStream objectOutputStream=new ObjectOutputStream(fos);
 
 }
 
+//note when jackson is used we dont need this implements or object i/o stream
 class Student implements Serializable {
 
     int age;

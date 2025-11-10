@@ -40,14 +40,10 @@ package basics;
 //        System.out.println("Cleanup runs here");
 //        }
 
-//        Even if you:
-//
+//        Even if you
 //        throw an exception,
-//
 //        return from a method,
-//
 //        or break from a loop…
-//
 //        …the finally block will still execute.
 
 

@@ -1,20 +1,0 @@
-
-b
-java:S1192("GDefine a constant instead of duplicating this literal "fruits" 3 times.(êù€×þÿÿÿÿ
-g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(˜Ýƒåÿÿÿÿÿ
-P	java:S125"<This block of commented-out lines of code should be removed.(Ö‚œ1
-N	java:S106"9Replace this use of System.out or System.err by a logger.(ÖÔ—‰
-Q	java:S125"<This block of commented-out lines of code should be removed.(ÖÔ—‰
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ÁÃ…ûÿÿÿÿ
-V	java:S125"<This block of commented-out lines of code should be removed.(ÁÃ…ûÿÿÿÿ
-S	java:S106 "9Replace this use of System.out or System.err by a logger.(”õ«ýÿÿÿÿ
-N	java:S106!"9Replace this use of System.out or System.err by a logger.(ÖÔ—‰
-N	java:S106""9Replace this use of System.out or System.err by a logger.(÷€‹á
-Q	java:S125!"<This block of commented-out lines of code should be removed.(ÖÔ—‰
-Q	java:S125""<This block of commented-out lines of code should be removed.(÷€‹á
-S	java:S106*"9Replace this use of System.out or System.err by a logger.(¬Ó‰ˆþÿÿÿÿ
-V	java:S125*"<This block of commented-out lines of code should be removed.(¬Ó‰ˆþÿÿÿÿ
-S	java:S106/"9Replace this use of System.out or System.err by a logger.(Êž²—ýÿÿÿÿ
-S	java:S106="9Replace this use of System.out or System.err by a logger.(õÚÑªùÿÿÿÿ
-N	java:S106>"9Replace this use of System.out or System.err by a logger.(òÓËƒ
-P	java:S125?"<This block of commented-out lines of code should be removed.(ìçÝ
