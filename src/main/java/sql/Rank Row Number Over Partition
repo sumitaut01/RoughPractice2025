@@ -1,0 +1,176 @@
+The three ranking functions — what they do
+1) ROW_NUMBER()
+
+Assigns a unique sequential number to each row in the window, even when values tie.
+Use when you need a deterministic unique ordering (e.g., pick top-N rows and break ties by secondary column).
+SQL (Postgres / Oracle identical):
+
+SELECT id, name, dept, salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC, name) AS rn
+FROM employees;
+
+Result (overall ORDER BY salary DESC, name):
+name	salary	rn
+Alice	300	1
+Eve	300	2
+Bob	200	3
+Carol	200	4
+Frank	200	5
+Dave	100	6
+Grace	100	7
+
+
+2) RANK()
+
+Gives same rank to tied values, but leaves gaps after ties.
+Gap = number of tied rows. Useful when you want “competition-style” ranks where the next rank reflects the count of preceding rows.
+
+SQL:
+SELECT name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS rnk
+FROM employees;
+
+Result:
+name	salary	rnk
+Alice	300	1
+Eve	300	1
+Bob	200	3
+Carol	200	3
+Frank	200	3
+Dave	100	6
+Grace	100	6
+
+
+3)DENSE_RANK()
+Gives same rank to ties, without gaps (next rank is incremented by 1 regardless of how many tied rows).
+Useful when you want distinct rank positions (1,2,3...) for distinct values.
+SQL:
+SELECT name, salary,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dr
+FROM employees;
+Result:
+
+name	salary	dr
+Alice	300	1
+Eve	300	1
+Bob	200	2
+Carol	200	2
+Frank	200	2
+Dave	100	3
+Grace	100	3
+
+
+Partitioning example (PARTITION BY)
+
+To reset ranking within each department:
+
+SELECT id, name, dept, salary,
+       ROW_NUMBER()   OVER (PARTITION BY dept ORDER BY salary DESC, name) AS rn_dept,
+       RANK()        OVER (PARTITION BY dept ORDER BY salary DESC)      AS rank_dept,
+       DENSE_RANK()  OVER (PARTITION BY dept ORDER BY salary DESC)      AS dr_dept
+FROM employees
+ORDER BY dept, rn_dept;
+
+
+Example result (HR partition):
+
+dept	name	salary	rn_dept	rank_dept	dr_dept
+HR	Alice	300	1	1	1
+HR	Bob	200	2	2	2
+HR	Carol	200	3	2	2
+HR	Dave	100	4	4	3
+
+(IT partition similarly)
+
+Practical interview/QA examples
+Get top 1 per department (highest salary per dept)
+
+Use ROW_NUMBER() and filter:
+
+WITH ranked AS (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC, name) AS rn
+  FROM employees
+)
+SELECT * FROM ranked WHERE rn = 1;
+
+
+This returns one row per department. Use RANK() if you want all ties for top value (then use rank = 1 — but multiple rows may be returned).
+
+Get 2nd highest salary overall
+
+With DENSE_RANK():
+
+SELECT salary FROM (
+  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS dr
+  FROM employees
+) t
+WHERE dr = 2;
+
+
+With RANK() this would return salary where rank = 2; but note RANK() may skip a rank when ties exist — choose the function per desired semantics.
+
+PostgreSQL vs Oracle — any differences?
+
+Syntax is the same for ROW_NUMBER(), RANK(), DENSE_RANK() and OVER (PARTITION BY ... ORDER BY ...).
+
+Both support window functions and behave identically for ranking semantics shown above.
+
+Small differences exist in other window features or optimizer behavior, but for ranking you can use the exact same queries in both DBs.
+
+Important practical notes (QA & interview points)
+
+Window functions cannot be used in the outer WHERE directly — use subquery/CTE to filter on computed rank.
+
+Use ROW_NUMBER() when you need exactly one deterministic row per partition.
+Use RANK() when you want competition-style numbering and gaps indicate tied counts.
+Use DENSE_RANK() when you want compact ranks (no gaps) for distinct values.
+
+Ordering inside OVER matters; if ties aren’t deterministic, add secondary ORDER BY columns (e.g., ORDER BY salary DESC, name ASC) to stabilize results.
+Performance: window functions scan rows and sort partitions — on very large datasets ensure proper indexes and test with EXPLAIN ANALYZE.
+
+So the output of your full query
+SELECT id, name, dept, salary,
+       ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC, name) AS rn_dept,
+       RANK()        OVER (PARTITION BY dept ORDER BY salary DESC)      AS rank_dept,
+       DENSE_RANK()  OVER (PARTITION BY dept ORDER BY salary DESC)      AS dr_dept
+FROM employees
+ORDER BY dept, rn_dept;
+
+
+Result:
+dept	name	salary	rn_dept	rank_dept	dr_dept
+                    HR	Alice	    300	1	1	1
+                    HR	Bob	        200	2	2	2
+                    HR	Carol	    200	3	2	2
+                    HR	Dave	    100	4	4	3
+                    IT	Eve	        300	1	1	1
+                    IT	Frank	    200	2	2	2
+                    IT	Grace	    100	3	3	3
+
+
+
+
+Without PARTITION BY
+SELECT name, dept, salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn_global
+FROM employees;
+
+
+Result (single list, no grouping):
+
+name	dept	salary	rn_global
+Alice	HR	300	1
+Eve	IT	300	2
+Bob	HR	200	3
+Carol	HR	200	4
+Frank	IT	200	5
+Dave	HR	100	6
+Grace	IT	100	7
+
+Here, HR and IT mixed together — no restart.
+
+
+In one line (interview answer):
+
+PARTITION BY divides the result set into groups and applies the window function independently within each group. Without it, ranking is done over the entire dataset.
+

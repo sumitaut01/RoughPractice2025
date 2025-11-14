@@ -1,6 +1,12 @@
 package zzRough;
 
+import com.aventstack.extentreports.AnalysisTypeConfigurable;
+import myproject.enums.BrowserType;
+import org.apache.groovy.json.internal.Chr;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.Test;
 
 import java.io.*;
@@ -10,6 +16,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static zzRough.ExcelReader.CreateExcel;
+import static zzRough.ExcelReader.xReadExcel;
 
 public class Rough implements  Serializable {
     @Test
@@ -220,7 +229,137 @@ public class Rough implements  Serializable {
 
 
     }
+
+
+
+    //main
+
+
+    public static void main(String[] args) throws Exception {
+
+
+        CreateExcel();
+        xReadExcel();
+        DriverManagerTL.getDriver().get("http://www.google.com");
+        DriverManagerTL.unload();
+        }
+    }
+
+
+
+
+
+
+
+
+
+interface  DriverManager{
+    WebDriver getDriver();
 }
+
+
+class ChromeDriverManager implements  DriverManager{
+    @Override
+    public  WebDriver getDriver() {
+        return new ChromeDriver();
+    }
+}
+
+
+enum BrowserTypeX{
+    CHROME,
+    EDGE
+}
+
+class DriverFactory{
+     static WebDriver getDriver(BrowserTypeX browserType) throws Exception {
+         BrowserTypeX type = BrowserTypeX.valueOf("CHROME");
+
+
+         if (type == BrowserTypeX.CHROME) {
+             return new ChromeDriverManager().getDriver();
+         } else if (type == BrowserTypeX.EDGE) {
+//            driver=new EdgeDriverManager().getDriver();
+         } else {
+             throw new Exception("Invalid Browser Type Provided");
+         }
+         return null;
+     }
+     }
+ class DriverManagerTL {
+
+    private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
+
+    public static void setDriver(BrowserTypeX browserType) throws Exception {
+        WebDriver driver = DriverFactory.getDriver(browserType);
+        driverThreadLocal.set(driver);
+    }
+
+    public static WebDriver getDriver() {
+        return driverThreadLocal.get();
+    }
+
+    public static void unload() {
+        driverThreadLocal.get().quit();
+        driverThreadLocal.remove();
+    }
+}
+
+
+class ExcelReader{
+
+
+    static void xReadExcel(){
+
+
+
+    }
+
+    static void CreateExcel() throws IOException {
+
+        String fileName="CreateExcel.xlsx";
+        FileOutputStream fileOutputStream=new FileOutputStream(fileName);
+        Workbook workbook=new XSSFWorkbook();
+        Sheet sheet=workbook.createSheet("First");
+        Row row=sheet.createRow(0);
+        Cell cell=row.createCell(0);
+        cell.setCellValue("sumit");
+        workbook.write(fileOutputStream);
+        fileOutputStream.close();
+
+
+
+
+
+
+
+    }
+
+
+    static void ReadExcel() throws IOException {
+        String fileName="CreateExcel.xlsx";
+        FileInputStream fileInputStream=new FileInputStream(fileName);
+
+        Workbook workbook=new XSSFWorkbook(fileInputStream);
+        String s=workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue();
+        System.out.println(s);
+    }
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

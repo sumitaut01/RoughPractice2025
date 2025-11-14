@@ -4,6 +4,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 
 public class R1_FlunentWait {
@@ -28,6 +30,7 @@ public class R1_FlunentWait {
         //	at org.openqa.selenium.support.ui.FluentWait.timeoutException(FluentWait.java:265)
         //	at org.openqa.selenium.support.ui.FluentWait.until(FluentWait.java:228)
         //	at selenium.waits.R1_FlunentWait.main(R1_FlunentWait.java:21)
+
 
 
 

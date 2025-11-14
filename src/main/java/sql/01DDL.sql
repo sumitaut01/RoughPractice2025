@@ -1,6 +1,8 @@
 1. Users & Profiles
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY, -- serial means auto increment
+    --SERIAL is shorthand in PostgreSQL
+      --It automatically creates a sequence and uses it to auto-increment id
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,12 @@ public class R_01ReadJson {
         TT ttx=new TT(34,"Sumit",14);
 
         System.out.println(objx.writeValueAsString(ttx));//{"age":34,"name":"Sumit","salary":14}
+
+
+
+       TT ttx11= objx.readValue(objx.writeValueAsString(ttx), TT.class);
+
+        System.out.println(ttx11);
 
 
 
@@ -89,6 +96,8 @@ public class R_01ReadJson {
 
 
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 
 class TT{
    int age;

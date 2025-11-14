@@ -1,13 +1,0 @@
-
-u	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(¥Û«
-8Ó¢’ÿ¡3
-j
-java:S2095"MUse try-with-resources or close this "FileInputStream" in a "finally" clause.( ¹ÑÐ8—î’ÿ¡3
-l
-java:S2095"JUse try-with-resources or close this "XSSFWorkbook" in a "finally" clause.(¿ûÃ³þÿÿÿÿ8—î’ÿ¡3
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(Ãò˜—ûÿÿÿÿ8è¢’ÿ¡3
-Z	java:S106 "9Replace this use of System.out or System.err by a logger.(Öš®Ðÿÿÿÿÿ8è¢’ÿ¡3
-]	java:S125"<This block of commented-out lines of code should be removed.(•¬¼Ïùÿÿÿÿ8è¢’ÿ¡3
-Z	java:S106#"9Replace this use of System.out or System.err by a logger.(ÞžÒ—üÿÿÿÿ8˜Ò“ÿ¡3
-\
-java:S1128":Remove this unused import 'java.io.FileNotFoundException'.(·î™ùÿÿÿÿ8¥î’ÿ¡3

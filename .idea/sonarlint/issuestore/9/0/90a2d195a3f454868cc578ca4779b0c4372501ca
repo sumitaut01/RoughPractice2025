@@ -1,7 +1,0 @@
-
-S	java:S106"9Replace this use of System.out or System.err by a logger.(²àÒîøÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ˆ¢Ûßüÿÿÿÿ
-S	java:S106 "9Replace this use of System.out or System.err by a logger.(€Ö©Šøÿÿÿÿ
-S	java:S106'"9Replace this use of System.out or System.err by a logger.(«®Îÿÿÿÿÿ
-V	java:S8991"<Do something with the "boolean" value returned by "hasNext".(æÚİ¤øÿÿÿÿ
-M	java:S1067"9Replace this use of System.out or System.err by a logger.(ìÇ†#

@@ -73,6 +73,12 @@ package selenium;
 //    WebElement username;
 //}
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
+import org.openqa.selenium.support.PageFactory;
+import selenium.mywebdriver.WebElement;
+
 //Without:
 //PageFactory.initElements(driver, this);
 //👉 username will stay null, because no initialization happened.
@@ -121,4 +127,20 @@ package selenium;
 //@FindBy says "what to find",
 //PageFactory says "I’ll find it for you when you need it."
 public class R_XPageFactory {
+
+}
+
+
+
+
+
+
+//rough
+class XDummy{
+@FindBy(id="username")
+public WebElement myButton;
+WebDriver driver;
+public XDummy(WebDriver driver){
+    PageFactory.initElements(driver, XDummy.class);
+}
 }

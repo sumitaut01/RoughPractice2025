@@ -1,6 +1,8 @@
 package basics.javapgms.rough;
 
 import org.apache.http.io.SessionOutputBuffer;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -265,38 +267,81 @@ public class Rough {
         }
     }
 
+    //failing
     @Test
-    public void ustccmasking() {
+    public void ustccmaskingtryaagin() {
         String card = "1234567890123456";
 
         StringBuffer sb = new StringBuffer();
 
 
-        for(int i=0;i<card.length();i++){
-         if(i>=12){
-          sb.append(card.charAt(i));
-         }
-         else{
-             sb.append("*");
-         }
+        for (int i = 0; i < card.length(); i++) {
+            if (i >= 12) {
+                sb.append(card.charAt(i));
+            } else {
+                sb.append("*");
+            }
         }
 
         System.out.println(sb);
-        for(int i=0;i<sb.length()-1;i++){
-          if((i+1)%4==0){
-              sb.insert(i+1,"-");
-          }
+        for (int i = 0; i < sb.length() - 1; i++) {
+            if ((i + 1) % 4 == 0) {
+                sb.insert(i + 1, "-");
+            }
         }
 
         System.out.println(sb);
-
-
-
 
     }
 
 
+    @Test(dataProvider = "mine")
+    public void dataRun(String un,String password) {
+        System.out.println(un +" "+password);
+        //Sumit Sumtpws
+        //Amit AmitPwd
+    }
 
+
+    @DataProvider (name = "mine")
+    public Object[][] myprovider() {
+        Object[][] data = new Object[2][2];
+        data[0][0] = "Sumit";
+        data[0][1] = "Sumtpws";
+        data[1][0] = "Amit";
+        data[1][1] = "AmitPwd";
+        return data;
+    }
+
+
+//    @DataProvider (name = "mineIterator")
+//    public Iterator<Object> myprovider2() {
+//        Object[][] data = new Object[2][2];
+//        data[0][0] = "Sumit";
+//        data[0][1] = "Sumtpws";
+//        data[1][0] = "Amit";
+//        data[1][1] = "AmitPwd";
+//
+//        data.
+//    }
+
+
+    @Test
+    public void StringImmutable(){
+
+      String s1="sumit"; //scp
+        String s2="sumit";//scp  s1,s2 point to same
+
+        String s3=new String("Sumit");// heap
+
+
+        System.out.println(System.identityHashCode(s1));
+        System.out.println(System.identityHashCode(s2));
+        System.out.println(System.identityHashCode(s3));
+
+
+
+    }
 }
 
 

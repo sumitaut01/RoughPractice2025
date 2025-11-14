@@ -14,7 +14,6 @@ public class JavaScriptExecutor {
         WebDriver driver;
         driver=new ChromeDriver();
         JavascriptExecutor js=(JavascriptExecutor)driver;
-
         WebElement button= driver.findElement(By.xpath("somexpth"));
         // Click an element using JavaScript
         js.executeScript("arguments[0].click();", button);

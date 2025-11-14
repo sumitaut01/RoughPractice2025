@@ -66,7 +66,8 @@ public class jsonPathDemo {
 		
 		
 		
-		
+		//we can use from method also
+
 		
 		
 		

@@ -1,12 +1,0 @@
-
-g	java:S101	"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(‚†Áªùÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(“¥»úÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(ŠëÂäøÿÿÿÿ
-V	java:S125"<This block of commented-out lines of code should be removed.(“¥»úÿÿÿÿ
-V	java:S125"<This block of commented-out lines of code should be removed.(ŠëÂäøÿÿÿÿ
-U
-java:S1128"?Remove this unused import 'io.restassured.mapper.ObjectMapper'.(…Ù”Á
-p
-java:S1128"URemove this unused import 'io.restassured.mapper.ObjectMapperDeserializationContext'.(ÈØ—ùÿÿÿÿ
-n
-java:S1128"SRemove this unused import 'io.restassured.mapper.ObjectMapperSerializationContext'.(¦Ä²½ùÿÿÿÿ
