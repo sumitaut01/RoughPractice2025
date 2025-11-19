@@ -1,8 +1,0 @@
-
-k
-java:S1149"VReplace the synchronized class "Hashtable" by an unsynchronized one such as "HashMap".(‰ïÜ"
-N	java:S106"9Replace this use of System.out or System.err by a logger.(»¡Ñ
-N	java:S106"9Replace this use of System.out or System.err by a logger.(ÚÛóš
-S	java:S106"9Replace this use of System.out or System.err by a logger.(Õ£• ÿÿÿÿÿ
-V	java:S125"<This block of commented-out lines of code should be removed.(Õ£• ÿÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(Â½–üÿÿÿÿ

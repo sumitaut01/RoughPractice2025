@@ -10,8 +10,6 @@ import java.io.IOException;
 public class ExcelReader {
 
     public static void main(String[] args) throws IOException {
-
-
         FileInputStream fis=new FileInputStream("ReadExcel.xlsx");
         Workbook workbook=new XSSFWorkbook(fis);
 

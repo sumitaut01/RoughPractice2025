@@ -3,7 +3,9 @@ package selenium;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,10 +13,24 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 
 public class RoughAll {
+
+
+    @Test
+    public void Remote() throws MalformedURLException {
+
+        ChromeOptions options=new ChromeOptions();
+        WebDriver driver = new RemoteWebDriver(
+                new URL("http://localhost:4444/wd/hub"), options);
+        driver.get("http://www.google.com");
+        driver.quit();
+
+    }
 
 
     @Test
@@ -193,5 +209,25 @@ public class RoughAll {
         wait.pollingEvery(Duration.ofMillis(500))
                 .ignoring(NotFoundException.class);
       return  wait.until(ExpectedConditions.elementToBeClickable(by));
+    }
+
+
+
+    public void practice(){
+
+     WebDriver driver=new ChromeDriver();
+
+        driver.get("someurl");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+
+
+
+
+
+
+
+
+
     }
 }

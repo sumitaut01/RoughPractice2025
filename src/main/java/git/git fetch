@@ -8,10 +8,7 @@ Let’s go step-by-step — what git fetch actually does, what it doesn’t, and
 🧠 1️⃣ What git fetch Really Does
 
 When you run:
-
 git fetch
-
-
 Git contacts your remote repository (e.g., origin) and downloads all new commits, branches, and tags that exist remotely —
 but it does not automatically update your local working branch.
 
@@ -19,18 +16,13 @@ So yes, your local repo brings down those changes,
 but your local branch (like main) doesn’t move yet.
 
 🔍 Example:
-
 Let’s say your history looks like this:
-
 Local main:   A --- B
 Remote main:  A --- B --- C --- D
 
 
 You run:
-
 git fetch
-
-
 Now Git has downloaded commits C and D,
 but your local main still points to B.
 
@@ -39,34 +31,25 @@ Remote/main:  A --- B --- C --- D
 
 
 They both exist in your local repo now — but your main hasn’t “merged” yet.
-
 🧩 2️⃣ Where the Fetched Data Goes
-
 When you fetch, Git updates a special hidden branch called:
-
 origin/main
 
 
 That’s a local copy of the remote branch.
-
 You can view it with:
-
 git log origin/main
 
 🧭 3️⃣ To See the New Code
 
 If you want to see what’s new after fetching:
-
 git diff main origin/main
 
 
 Or if you want to update your local main to match remote main, then run:
-
 git merge origin/main
 
-
 or simply:
-
 git pull    # which is git fetch + git merge
 
 ⚙️ 4️⃣ Visual Summary

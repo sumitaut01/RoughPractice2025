@@ -35,11 +35,8 @@ public class FailSafeExample {
 
 
     //Notice:
-    //
     //It didn’t throw an exception.
-    //
     //The iterator used an internal copy (snapshot), so modifications happened on the actual list separately.
-
 //    A
 //            B
 //    C
@@ -62,6 +59,6 @@ public class FailSafeExample {
         cmap.put(4, "D");
     }
 
-        System.out.println("Final Map: " + cmap);
+        System.out.println("Final Map: " + cmap);//Final Map: {1=A, 2=B, 3=C}
 }
 }

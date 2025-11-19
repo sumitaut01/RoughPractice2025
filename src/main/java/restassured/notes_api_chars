@@ -1,0 +1,128 @@
+Characteristics of a RESTful API
+
+REST (Representational State Transfer) is an architectural style with specific rules.
+An API is considered RESTful only if it follows these principles:
+
+✅ 1. Stateless
+
+Most important rule.
+
+Server does not store client session or context.
+
+Every request must contain all needed information.
+
+The server treats every request as independent.
+
+➡️ No session, no JSESSIONID, no server memory → pure REST
+➡️ Uses JWT/OAuth tokens, not cookies.
+
+✅ 2. Client–Server Separation
+
+The client (frontend/UI) and server (backend/API) must be independent.
+
+Client handles UI logic
+
+Server handles data/business logic
+
+Both can develop independently
+
+✅ 3. Uniform Interface
+
+REST API must use consistent patterns:
+
+🔹 Resource-based URLs (nouns, not verbs)
+
+✔ /users
+✔ /users/10/orders
+
+❌ /getUsers
+❌ /createUser
+
+🔹 HTTP methods follow CRUD:
+Operation	HTTP Method
+Create	POST
+Read	GET
+Update	PUT/PATCH
+Delete	DELETE
+🔹 Proper use of HTTP status codes
+
+Examples:
+
+200 (OK)
+201 (Created)
+400 (Bad Request)
+401/403 (Authentication/Authorization)
+404 (Not Found)
+500 (Server error)
+503(Service Unavailable)
+
+✅ 4. Cacheable
+REST should leverage caching for performance.
+Server indicates if responses can be cached using headers:
+Cache-Control: max-age=3600
+
+
+Helps reduce load and speed up responses.
+✅ 5. Layered System
+
+The client should not know whether it's connected to:
+Main server
+Load balancer
+Proxy
+Authentication server
+Architecture can have multiple layers, but the client sees it as one.
+
+✅ 6. Resource Representation
+
+Data is treated as resources, not actions.
+
+Resources must be represented in a standard format, commonly:
+
+JSON (most common)
+XML
+HTML
+YAML
+
+Example:
+
+{
+  "id": 10,
+  "name": "John"
+}
+
+✅ 7. HATEOAS (Optional in modern APIs)
+
+Hypermedia as the Engine of Application State — links inside JSON pointing to next possible actions.
+
+Example:
+
+{
+  "user": 10,
+  "name": "John",
+  "links": [
+     { "rel": "orders", "href": "/users/10/orders" }
+  ]
+}
+
+
+Not strictly used in modern APIs, but part of REST theory.
+
+⭐ Summary Table (Quick Revision)
+Characteristic	Meaning
+Stateless	No session stored, each request independent
+Client–Server	Separation of UI & backend
+Uniform Interface	Resource-based URLs + HTTP methods
+Cacheable	Uses caching for performance
+Layered system	Multiple layers allowed
+Resource Representation	JSON/XML-based resources
+HATEOAS	Links inside responses (optional)
+⭐ How to identify a RESTful API?
+
+If the API uses:
+✔ Tokens instead of sessions
+✔ Resource-based URLs
+✔ Stateless communication
+✔ Standard HTTP methods
+✔ Standard HTTP response codes
+
+➡️ Then it is RESTful

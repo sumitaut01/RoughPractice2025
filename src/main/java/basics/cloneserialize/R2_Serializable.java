@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import java.beans.Transient;
 import java.io.*;
 
-// add transient field as well which wont get serialized
+// add transient field as well which won't get serialized
 public class R2_Serializable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {

@@ -1,0 +1,54 @@
+What normalize-space() Does
+
+normalize-space():
+Removes leading spaces
+Removes trailing spaces
+Converts multiple spaces to a single space
+
+Useful for text that has irregular spacing.
+
+⭐ Correct Ways to Use It
+✅ 1. Match element text exactly (common usage)
+//div[normalize-space() = 'Login']
+
+
+This finds:
+<div>   Login   </div>
+or
+<div>Login</div>
+or
+<div>   Login Page    </div>  <!-- WRONG: if exact match needed -->
+
+✅ 2. Contains text, ignoring extra spaces
+//div[contains(normalize-space(), 'Login')]
+
+Matches:
+"Login"
+
+" Login Page "
+
+"Login Successful"
+
+✅ 3. Based on an attribute
+//div[@class='button' and normalize-space(text()) = 'Submit']
+
+✅ 4. Use with text() explicitly
+//div[normalize-space(text()) = 'Start Now']
+
+⭐ Common Patterns
+Find button by text:
+//button[normalize-space()='Submit']
+
+Find any element ignoring extra spaces:
+//*[normalize-space()='Continue']
+
+Find <span> containing text:
+//span[contains(normalize-space(),'Profile')]
+
+
+
+nested:
+//span[normalize-space()='Samsung']
+
+//direct--- only will target one span
+//span[normalize-space(text())='Samsung']

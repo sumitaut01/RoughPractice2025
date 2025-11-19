@@ -46,8 +46,6 @@ public class R_XPageFactoryMore {
 //    @FindBy(tagName = "input")
 //})
 //private List<WebElement> inputFields;
-//
-//
 //👉 Meaning:
 //
 //Find the element with class="form-container".
@@ -58,9 +56,11 @@ public class R_XPageFactoryMore {
 //If either one fails → element not found.
 //
 //✅ Use when: you want an AND condition — nested or scoped searching.
-//
+
+
+
+
 //🔹 3. @FindAll
-//
 //This is used for an OR condition — i.e., the element can be found by any of the given locators.
 //
 //Example:
@@ -69,37 +69,27 @@ public class R_XPageFactoryMore {
 //    @FindBy(xpath = "//button[text()='Login']")
 //})
 //private WebElement loginButton;
-//
-//
 //👉 Meaning:
-//
 //Find an element either with id="loginBtn" OR with the XPath matching the text “Login”.
-//
 //So if either locator works, Selenium will use that element.
-//
 //✅ Use when: the same element may appear under different locators in different contexts (e.g., multiple versions of a page).
-//
+
+
+
 //🔹 4. @FindDistinct
-//
 //⚠️ Not part of Selenium!
 //This comes from a different library — org.checkerframework.checker.interning.qual.FindDistinct.
-//
 //It’s related to the Checker Framework (used for static analysis of Java code).
-//
 //It has nothing to do with Selenium or web element locating.
-//
 //You can safely ignore it in the context of Page Factory.
-//
+
+
+
 //🔹 5. PageFactoryFinder
-//
 //Also not an annotation you use directly.
 //It’s an internal helper annotation that Selenium uses to link locator annotations (@FindBy, @FindBys, @FindAll) with their corresponding By builder implementations.
-//
 //So you’ll see:
-//
 //@PageFactoryFinder(FindBy.FindByBuilder.class)
-//
-//
 //inside Selenium’s source code for @FindBy.
 //
 //You don’t use PageFactoryFinder in your test code — it’s for Selenium’s internal mechanism to map annotations to By locators.

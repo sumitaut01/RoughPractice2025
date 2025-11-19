@@ -1,9 +1,7 @@
 Bonus Tip: If You’ve Pushed Already
 
 If you already pushed the bad commit to remote:
-
 Prefer git revert instead — it makes a new commit that undoes the changes, preserving history.
-
 git revert <commit-hash>
 
 

@@ -1,0 +1,141 @@
+
+one should not we forced to use iterface even though most of the methods are not useful for implementor:
+-> blank method is also bad design
+
+nterface Segregation Principle (ISP)
+
+Definition (from SOLID):
+
+A client should not be forced to depend on methods it does not use.
+Instead of one big, “fat” interface, create smaller, more specific interfaces.
+
+This makes code easier to maintain, test, and extend.
+
+❌ Bad Example — Violating ISP
+public interface Worker {
+    void work();
+    void eat();
+    void sleep();
+}
+
+
+Now you have two types of “workers”:
+
+A human:
+public class HumanWorker implements Worker {
+    public void work() { ... }
+    public void eat() { ... }
+    public void sleep() { ... }
+}
+
+A robot:
+public class RobotWorker implements Worker {
+    public void work() { ... }
+
+    // These make NO sense for a robot:
+    public void eat() { /* Not applicable */ }
+    public void sleep() { /* Not applicable */ }
+}
+
+
+Problem:
+RobotWorker is forced to implement methods it does not need.
+This is exactly what ISP tells us to avoid.
+
+✅ Good Example — Following ISP
+
+Split the big interface into smaller, focused ones.
+
+public interface Workable {
+    void work();
+}
+
+public interface Eatable {
+    void eat();
+}
+
+public interface Sleepable {
+    void sleep();
+}
+
+Human now implements what it actually needs:
+public class HumanWorker implements Workable, Eatable, Sleepable {
+    public void work() { ... }
+    public void eat() { ... }
+    public void sleep() { ... }
+}
+
+Robot only implements work:
+public class RobotWorker implements Workable {
+    public void work() { ... }
+}
+
+
+✔ No unused methods
+✔ Each class depends only on what it needs
+✔ Interfaces are small and meaningful
+
+💡 Why ISP Matters
+1. Prevents unnecessary methods
+
+Classes don’t get stuck with meaningless or empty method implementations.
+
+2. Makes code flexible
+
+Adding new class types is easier because they only implement what they need.
+
+3. Promotes high cohesion
+
+Each interface is focused on one thing.
+
+4. Reduces coupling
+
+Clients depend only on interfaces they use.
+
+🟦 Another Real-Life Example: Printing System
+❌ Bad Interface
+public interface Printer {
+    void printDocument();
+    void scanDocument();
+    void faxDocument();
+}
+
+
+Now a simple “Print-Only” machine must implement useless methods like scanDocument() and faxDocument()…
+
+✅ Good ISP Version
+public interface Printable {
+    void printDocument();
+}
+
+public interface Scannable {
+    void scanDocument();
+}
+
+public interface Faxable {
+    void faxDocument();
+}
+
+
+Implementation for a Basic Printer:
+
+public class BasicPrinter implements Printable {
+    public void printDocument() { ... }
+}
+
+
+Implementation for an All-in-one Printer:
+
+public class AllInOnePrinter implements Printable, Scannable, Faxable {
+    public void printDocument() { ... }
+    public void scanDocument() { ... }
+    public void faxDocument() { ... }
+}
+
+
+Everyone implements only what they need → perfect ISP.
+
+🎯 Quick Summary
+Principle	Meaning
+ISP	Don’t force classes to depend on methods they don’t use
+How?	Split big interfaces into smaller, specific ones

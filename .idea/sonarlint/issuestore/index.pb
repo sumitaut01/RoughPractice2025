@@ -27,8 +27,6 @@ d
 4src/main/java/basics/restassured/R1_ThreadLocal.java,8\1\81260dce2cb8b3e2b63a16f1b202ed430198045d
 w
 Gsrc/main/java/restassured/fakerapiproject/endpoints/R1_GetProducts.java,d\8\d864b54c7ab657dd9f918d81ca2cdd4c8efbd8f7
-…
-Usrc/main/java/basics/exceptiohandling/R_XTrywithoutCatchPossibleIfFinallyisThere.java,b\f\bf1f312992720796cbe2cc1697271af956c73c7b
 d
 4src/main/java/basics/collections/queue/R1_QueUe.java,2\f\2f1238f0d75ef588226511fc6629b438db32c76e
 e
@@ -117,26 +115,14 @@ d
 4src/main/java/basics/javapgms/R11_LeaderInArray.java,f\9\f9ddf5111ad9042fcd70fc91d693ba6ff0d3cab7
 d
 4src/main/java/basics/javapgms/R7_SecondMaxArray.java,1\c\1c300f313165cd6f68320932d3688dbf20ce47ee
-b
-2src/test/java/myproject/tests/AwsSeleniumTest.java,4\3\43b7f6a9530770408c32e43ac41d7f70728a2d63
-i
-9src/main/java/basics/collections/list/ComparatorDemo.java,c\b\cb1c940d8c25f763f00d125cb01c7efd6b4507cb
 _
 /src/main/java/basics/collections/list/hierarchy,a\0\a078d92636d414661e0ecaed8fc15d057487a084
-b
-2src/main/java/basics/collections/list/SetDemo.java,0\f\0fa539bc599c1e541ca00015a20980526c5f5496
-`
-0src/main/java/basics/collections/map/theory.java,6\4\64bba2448f84bf8c59e2e1819366781a553d9760
-d
-4src/main/java/basics/collections/ArrayDequeDemo.java,e\3\e35f9cbe7e30e9b3ce563c9a10b8154d83f4be69
 e
 5src/main/java/basics/filehandling/FileReaderDemo.java,9\5\95620fef85e9869e8d79fb316e379df237fcc04b
 _
 /src/main/java/basics/filehandling/FilesNio.java,a\d\ad4b0b89fd69c04418906775cb0103b64d1bf4cd
 e
 5src/main/java/basics/filehandling/FileWriterDemo.java,0\6\065ea1af51eb7c909be66db0efbbc704483025e4
-[
-+src/main/java/basics/manualandmatrices/Info,7\1\7123572fb4c94e2487ebb60fa31bdb31055654c7
 S
 #src/main/java/basics/R12_Stack.java,b\3\b3dbb4099032649ebddfb43632cedba174c3c93b
 b
@@ -145,12 +131,6 @@ d
 4src/main/java/basics/streams/R3_streamsadvanced.java,7\1\71e838fe9f09a4b2e53774ff6cf3d0453cd49b93
 d
 4src/main/java/basics/streams/R4_ParallelStreams.java,a\4\a422ef3f5e464abc731f3119fe8a886d8102986a
-\
-,src/main/java/basics/arraysParallelSort.java,4\f\4f04e2653dcbf27b1d782099ab79a92e0478bd67
-V
-&src/main/java/basics/ChromeDriver.java,6\a\6a1069cbf815fbd7ff4e96faff428df67b94a271
-V
-&src/main/java/basics/DeepCopyDemo.java,6\5\65999f00689a8b462b3b4523ef4c1f170a0f2956
 c
 3src/main/java/basics/OverRidingCovarintObject2.java,3\7\37cd81faf8791bdccfedceafa731b3bf3cadb402
 c
@@ -181,10 +161,6 @@ c
 3src/main/java/basics/R_XVariableShadowingSuper.java,8\a\8a164611739e925eef4b7ab21962fbb647dae8bb
 h
 8src/main/java/basics/Rxx_FactoryPatterLooseCoupling.java,3\6\36d949db8a03506b6a4909d6f0aeaf643aafc103
-W
-'src/main/java/basics/RegexExamples.java,9\4\943a05a7aaff957cbe5ffd42879e0086af5fbf08
-T
-$src/main/java/basics/ArraysSort.java,a\9\a9123ff0d70bbb91463bdd66d8c7b1669c20dc61
 e
 5src/main/java/basics/datastructure/R2_BubbleSort.java,2\7\275cf71c9ad8e6ff9d59202cee987491a42da8e5
 g
@@ -203,32 +179,14 @@ X
 (src/main/java/restassured/Rx_Cookie.java,5\2\52f52f6873bf93fcf20a504ee4856379d32d5e52
 ^
 .src/main/java/selenium/misc/SavePageAsPDF.java,c\9\c9e8ce50a38d5cf79ea973a06c378ae4bdb3a128
-f
-6src/main/java/basics/collections/CollectionsClass.java,a\b\ab454a1811ec49f8fa06beae25cc5d5a4b9e5ef3
-e
-5src/main/java/basics/collections/map/HashMapDemo.java,9\a\9a33c6b47d7dbf6b36c5345be602957cd86e7a3d
-a
-1src/main/java/basics/collections/map/loopmap.java,5\8\5859845695915b6b041ffec4860ff939b56b4126
-k
-;src/main/java/basics/collections/map/LinkedHashMapDemo.java,3\8\38877498ce22147d245fa0503f054135d84a68c2
-g
-7src/main/java/basics/collections/map/HashtableDemo.java,b\4\b4a242a05dc54ae9c266e6a1271398d739aab8ff
-e
-5src/main/java/basics/collections/map/TreeMapDemo.java,e\5\e56f83d8ae1b101c59de63999a40902bf321da3b
 h
 8src/main/java/basics/bitwiseoperator/R1_AndOperator.java,d\9\d911bd587a780ab62dc61fb95e6d6da54d6dc31c
-i
-9src/main/java/basics/collections/list/ComparableDemo.java,6\c\6c1a186ce272d659c90e96c808395d6f01646211
 Y
 )src/main/java/zzRough/PropertiesDemo.java,6\f\6f3964c40287c4558b9e1c3afa804e9897d116b4
-h
-8src/main/java/basics/collections/list/ArrayListDemo.java,a\2\a252d94a79c2be4ed6d68d0f02ead3e74e179aab
 h
 8src/main/java/basics/R_XScopeWideningWhenOverriding.java,6\f\6f2d42262ce2a2a2a09ff5519f05bc1b55b1dc62
 `
 0src/main/java/basics/R_XStaticHiding_Parent.java,7\e\7e147f2875296b861f7eeb5be6c91aae04423eb7
-R
-"src/main/java/basics/Ramakant.java,4\2\42e8760c279a85d7d9c4d9d921b5212f1ad6ec94
 X
 (src/main/java/basics/RegexExamples2.java,f\c\fc8ff5241114dab4928d8a8dc761374f78a3bb1c
 f
@@ -261,8 +219,6 @@ g
 7src/main/java/basics/javapgms/R14_LeftShiftOnPlace.java,9\c\9c8a0dd8e59ba0aa509a9eaa12776481ca9d68ad
 c
 3src/main/java/basics/javapgms/R_8ReverseString.java,1\b\1b5c66ac638d4d95ebc7bd90fc81235f7dc934c0
-m
-=src/main/java/basics/javapgms/R_xMethodReferenceOperator.java,b\5\b56e9db8cfb92669ca520dcf21271a41eec1d526
 l
 <src/main/java/basics/javapgms/R_5CountofAlphabetofArray.java,e\7\e7e83baa8aed23bc6f9bf8e41c290f8055099d89
 g
@@ -281,27 +237,16 @@ m
 =src/main/java/basics/comparablecomparator/ComparableDemo.java,4\1\41e60c926247e7b05799402680d909cbd7f843f1
 g
 7src/main/java/basics/datastructure/R1_ArrayasStack.java,8\b\8b3fad84c38c327301bae6ddabecc0a56587b740
-Z
-*src/main/java/basics/RX_PriorityQueUe.java,3\6\363e051e9fb9caad5ba7efce55174a53caa5deea
 T
 $src/main/java/oopsbank/BankMain.java,4\4\44a64ba82dbbe743052c3be5b77e11836e473bfb
 8
 demo.txt,c\6\c6d0d7b9e0bc514f5223d7c3b26d3a55234a79df
 F
 byteArrayResponse.json,3\9\39013eaeff3b2ed5fd6d9a6168b6b17daf8797fe
-U
-%src/main/java/selenium/R1_Basics.java,d\a\da266d794cfb0849626fbfcd478e41cdfac0e3e7
 W
 'src/main/java/selenium/myWebDriver.java,7\7\77c77de9c483eb3570999edc772af803ade0bc83
-q
-Asrc/main/java/selenium/svggraphandshadowdom/HandlingSVGGraph.java,6\b\6b00d5ecfee450e42dd55785049675509b63515c
 E
 testngthreadlocal.xml,6\6\6621145188e95c3ce7a0def6cd8795fdd4cd5f72
-:
-
-Dockerfile,6\6\6651ddff6eb82c840ced7c1dddee15c6e1913dd4
-Y
-)src/main/java/zzRough/R1_MapPractice.java,9\a\9abf54690ed40137ddb689ce8620b084363e04f8
 Y
 )src/main/java/oopsbank/rough/Account.java,1\3\13f1862e33243909f7fff9f4574c9e2ca31b40d0
 \
@@ -310,16 +255,10 @@ Q
 !src/main/java/jenkins/Jenkinsfile,1\6\164f8760756c51b9ac4f5b4c8168c3a207561744
 {
 Ksrc/main/java/basics/comparablecomparable/comparator/R2_ComparableDemo.java,a\9\a98b27a37e7ec7ac201dfe9a6331885e63a56de9
-U
-%src/main/java/selenium/R2_Frames.java,2\6\26e9e354235bcfac30d7d5bd21438f54760ea538
-h
-8src/main/java/basics/cloneserialize/R2_Serializable.java,d\7\d74e72ba941f82cbfc36a8e5e8a678cbca964fdc
 {
 Ksrc/main/java/basics/comparablecomparator/comparable/R_1ComparableDemo.java,d\d\ddbc1557410d90340659edb61110ca9a5596f8df
 [
 +src/main/java/selenium/xpathcss/sample.html,0\6\063c9345e458ebc3bc4d63a3aeaa331f7f9f510f
-U
-%src/main/java/selenium/xpathcss/xpaht,8\1\810b41d7d0b64a538317e66701d4111c17665156
 @
 testnggroups.xml,d\f\df8b7d09f58324f12a4d9d1a714dbdab2ffe154a
 c
@@ -344,8 +283,6 @@ m
 =src/main/java/basics/javapgms/R_30PAirWithSumSortedArray.java,e\f\ef4d26071779ccf541edfd3d14f9e49fae6d8b14
 d
 4src/main/java/basics/javapgms/R_28AnagramString.java,4\f\4f4d1bba0ccb42f890f8fe716652b9fb9e2b09c9
-X
-(src/test/java/myproject/tests/Test1.java,f\c\fc14f7a465225a8ea8588e054fceee6dc001d66f
 |
 Lsrc/main/java/basics/javapgms/R_35LongesSubsctringWithoutRepeatingChars.java,e\8\e846256b3fa3146f14b568e97d24d19ad13ba4eb
 f
@@ -354,8 +291,6 @@ f
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 C
 testngmyproject.xml,2\d\2d0be2e01d2532dd5cd380e70498a67d999a02df
-[
-+src/test/java/myproject/tests/BaseTest.java,f\5\f513e9ff98a6e96f6c3e782d42ae9206399dd559
 M
 src/main/java/cicd/azure/file,4\c\4c1bd321ef38e2976dd5b0366aec2b0ffbd54102
 X
@@ -390,28 +325,12 @@ L
 src/main/java/reporters/Info,a\a\aa8b619a093861538ab03f4d8fe42bf69689024d
 \
 ,src/main/java/reporters/ScreenShotUtils.java,f\f\ff821de7326aac714268fe6f3b37f05beb843afb
-R
-"src/main/java/git/git reset revert,d\5\d59261845deeea81d2cdc9b081b6739eb3d211c1
-L
-src/main/java/git/git revert,7\f\7f0cd2dccb6b5ccf4b8c8c823fc97ae6f5dd7115
-V
-&src/main/java/git/git revert git reset,3\1\31885ef1d31c9e583c2d9d7717d311b8b7d8dcbc
-N
-src/main/java/git/git checkout,7\2\72dbe7c9857dd67135b95559f0e74c219459f540
 `
 0src/main/java/git/git restore --staged file1.txt,9\d\9dde9c6ba4a9c875b8daf106cb10acf99b3c050e
-_
-/src/main/java/git/git reset  vs git rest --hard,3\5\35e7fd66713a7ffdeb7271fd59cba68f1a38c2b2
-\
-,src/main/java/git/mergeMaster Rebase Feature,1\f\1f9ce00d5cca5362bdcb7c1d5df9c66a2902684d
 \
 ,src/main/java/basics/javapgms/R2_TwoSum.java,9\f\9f87bd2cee814a9ea30a589509d885302406f5d3
-M
-src/main/java/basics/git/Info,8\5\85a43efba0b83ee09a9c2eeff7939a7d04448455
 i
 9src/main/java/restassured/Authentication Vs Authorization,d\2\d2735cd9c5373334d3eb09d7ab4c58d3d10af2e3
-W
-'src/main/java/restassured/RoughAll.java,f\6\f6f35a223d5f3f7769fee61ecef68e7e57243a8e
 n
 >src/main/java/selenium/loginbypass/R1_ExtractLocalStorage.java,6\2\62fc6d4cc789883454033bfbf8e11cf2834e1f1f
 j
@@ -430,8 +349,6 @@ a
 1src/main/java/selenium/mywebdriver/WebDriver.java,9\5\9577b1dd011ca4c6ce15159d105ab440554ff0f0
 b
 2src/main/java/selenium/mywebdriver/WebElement.java,1\f\1ff1128f802575d2a9cdea7194e97f25406b5b13
-j
-:src/main/java/selenium/svggraphandshadowdom/ShadowDOM.java,1\b\1bf570c02787c5a63d169d5da8a3de6d1c69edf5
 `
 0src/main/java/selenium/W3CWebdriverProtocol/info,c\0\c079ee5a70b611556ac514a16de272c0b55738dc
 \
@@ -446,15 +363,7 @@ Z
 *src/main/java/seleniumutils/WebVerify.java,1\e\1e0d29714988e6825fbe67b67d85792b2d674dff
 W
 'src/main/java/selenium/BrokenLinks.java,9\8\9878d6cbdc058a9b480822b2885d165780c8bc11
-K
-src/main/java/git/git fetch,e\1\e18198eef3b005b04344b781b3e5bab32690a50e
 _
 /src/main/java/selenium/designpatternnaveen/info,2\9\29825b6af0ff3a672de1f031c8fedcdf3dc68c28
-e
-5src/main/java/selenium/R_XJavascriptArgumentZero.java,f\d\fd197da69da0178080d5f6bf2178bfd27e3936fb
-\
-,src/main/java/selenium/ShadowDomHandler.java,d\f\df626e21ae9f498e54a45d0d635d217fee21166e
 Y
 )src/main/java/seleniumutils/WebWaits.java,5\9\595dc2e6f877b666a299c7a4fe815e02f63bcd9d
-Q
-!src/main/java/sql/02DataEntry.sql,5\6\56c555922078890d015ab3865d5f8cce6547c871

@@ -17,6 +17,7 @@ public class TreeMapDemo {
 
 
 
+        //custom comparator
         TreeMap<String, String> tm2 = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {

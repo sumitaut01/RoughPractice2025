@@ -6,7 +6,7 @@ public class MainInterviewQuetions {
 	//#2 We cant OVERRIDE static methods. @Override when added will throw error. It would be considered a separate method 
 	//     in such cases
 	
-	//#3 Sequence of static public can be altered
+	//#3 Sequence.sql of static public can be altered
 	// if we remove public  and try running run as java is not visible. 
 	// From CMD we will get this "Error: Could not find or load main class MainInterviewQuetions.java"
 	

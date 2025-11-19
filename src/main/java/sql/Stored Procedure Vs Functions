@@ -1,0 +1,124 @@
+Absolutely — let’s start from scratch and build up your understanding of functions and stored procedures in PostgreSQL in the clearest way possible.
+
+🎯 Lesson 1: What are Functions and Stored Procedures in PostgreSQL?
+🔹 Functions
+A function:
+
+Returns a value (single value, table, record, etc.)
+Can be used inside SQL queries
+Must have a RETURN type
+Can be used like:
+SELECT my_function(10);
+Functions are the most commonly used programmable database objects.
+
+🔹 Stored Procedures
+A stored procedure:
+Does NOT return a value (but can output with OUT parameters)
+Is called using CALL
+Can commit / rollback transactions (unlike functions)
+Good for multi-step operations
+Called like this:
+
+CALL my_procedure(10);
+
+🎯 Lesson 2: Learning PostgreSQL Functions (Step-by-Step)
+🔸 1. Simple Function With Return
+Example: Add two numbers
+
+CREATE OR REPLACE FUNCTION add_numbers(a INT, b INT)
+RETURNS INT
+AS $$
+BEGIN
+    RETURN a + b;
+END;
+$$ LANGUAGE plpgsql;
+
+Run it:
+SELECT add_numbers(10, 5);
+
+🔸 2. Function that returns TEXT
+CREATE OR REPLACE FUNCTION greet(name TEXT)
+RETURNS TEXT
+AS $$
+BEGIN
+    RETURN 'Hello ' || name;
+END;
+$$ LANGUAGE plpgsql;
+
+🔸 3. Function with IF / ELSE
+CREATE OR REPLACE FUNCTION check_salary(sal INT)
+RETURNS TEXT
+AS $$
+BEGIN
+    IF sal > 50000 THEN
+        RETURN 'High salary';
+    ELSE
+        RETURN 'Normal salary';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+🔸 4. Function Returning a Table
+CREATE OR REPLACE FUNCTION get_high_salaries()
+RETURNS TABLE(empid INT, sal INT)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT empid, sal FROM employee WHERE sal > 50000;
+END;
+$$ LANGUAGE plpgsql;
+
+
+Call it like:
+
+SELECT * FROM get_high_salaries();
+
+🎯 Lesson 3: Stored Procedures
+🔸 1. Basic Stored Procedure
+CREATE OR REPLACE PROCEDURE raise_sal(empid INT, percent NUMERIC)
+AS $$
+BEGIN
+    UPDATE employee
+    SET sal = sal + (sal * percent / 100)
+    WHERE employee.empid = raise_sal.empid;
+END;
+$$ LANGUAGE plpgsql;
+
+
+Call it:
+
+CALL raise_sal(101, 10);
+
+🔸 2. Stored Procedure With Transaction Control
+(Functions cannot do this!)
+
+CREATE OR REPLACE PROCEDURE transfer_salary(e1 INT, e2 INT, amt INT)
+AS $$
+BEGIN
+    UPDATE employee SET sal = sal - amt WHERE empid = e1;
+    UPDATE employee SET sal = sal + amt WHERE empid = e2;
+    COMMIT;  -- allowed only in procedures
+END;
+$$ LANGUAGE plpgsql;
+
+
+Call:
+CALL transfer_salary(101, 102, 5000);
+
+🎯 Lesson 4: When to Use What?
+Use Case	Use Function?	Use Stored Procedure?
+Needs to return a value	✅ Yes	❌ No
+Needs to be used in SELECT	✅ Yes	❌ No
+Needs transactions (COMMIT/ROLLBACK)	❌ No	✅ Yes
+Used for business workflows	⚠️ Maybe	✅ Yes
+Small calculations	✅ Yes	❌ No
+🎯 Lesson 5: Your Learning Path (What I will teach next)
+
+If you want, next I can teach you:
+
+✔ Variables
+✔ Loops (FOR, WHILE)
+✔ Cursors inside functions
+✔ Error handling (EXCEPTION block)
+✔ Performance tips
+✔ Real employee database examples

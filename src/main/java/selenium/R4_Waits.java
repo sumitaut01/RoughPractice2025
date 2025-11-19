@@ -4,7 +4,10 @@ import groovy.transform.ASTTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
 
@@ -20,6 +23,33 @@ public class R4_Waits {
         WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.titleIs("somr random text"));
         driver.quit();
+    }
+
+
+
+
+
+
+    @Test
+    public void Test(){
+
+
+        WebDriver driver=new ChromeDriver();
+
+
+        Wait<WebDriver> wait=new FluentWait<WebDriver>(driver).ignoring(Exception.class)
+                .pollingEvery(Duration.ofSeconds(1))
+                .ignoring(Exception.class)
+                .withTimeout(Duration.ofSeconds(10))
+                .withMessage("--failed to find something");
+
+        wait.until(ExpectedConditions.titleIs("some title"));
+
+
+        driver.get("http://www.google.com");
+        wait.until(ExpectedConditions.titleIs("some title"));
+        driver.quit();
+
     }
 }
 

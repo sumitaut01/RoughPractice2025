@@ -1,0 +1,81 @@
+Here is one of the most important topics in SQL and PostgreSQL — transaction control.
+
+I’ll explain COMMIT, ROLLBACK, and SAVEPOINT in a simple, clear way with examples.
+
+⭐ What is a Transaction?
+
+A transaction is a group of SQL statements that run together as one unit.
+Example:
+Deduct money from one account
+Add to another
+You don’t want only one of them to succeed.
+So you wrap these steps inside a transaction.
+
+🔹 1. COMMIT
+✔ Meaning:
+Save all the changes made in the current transaction permanently to the database.
+
+After COMMIT:
+Changes cannot be undone
+Data becomes visible to everyone
+
+✔ Example:
+BEGIN;
+UPDATE employee SET sal = sal + 1000 WHERE empid = 101;
+COMMIT;
+This permanently saves the update.
+
+🔹 2. ROLLBACK
+✔ Meaning:
+Undo all changes made in the current transaction, back to the state before BEGIN.
+Use when something goes wrong.
+✔ Example:
+BEGIN;
+UPDATE employee SET sal = sal - 500 WHERE empid = 102;
+-- Oops, wrong update
+ROLLBACK;
+
+
+The salary deduction is cancelled.
+🔹 3. SAVEPOINT
+✔ Meaning:
+
+A savepoint lets you mark a point inside a transaction so you can roll back part of the transaction — not the whole thing.
+Think of it like “undo only from this point, not everything.”
+✔ Example:
+BEGIN;
+UPDATE employee SET sal = sal + 1000 WHERE empid = 101;
+SAVEPOINT sp1;
+
+UPDATE employee SET sal = sal + 2000 WHERE empid = 102;
+-- Oh no, mistake on emp 102
+ROLLBACK TO sp1;
+COMMIT;
+
+What happens?
+
+Salary of emp 101 is kept
+Salary of emp 102 update is undone
+
+Transaction is committed successfully
+
+🎯 Summary Table
+Command	What it does	Use case
+COMMIT	Permanently save changes	When everything is correct
+ROLLBACK	Undo entire transaction	When something goes wrong
+SAVEPOINT	Mark a spot; rollback partially	Undo only some statements
+📌 Real-world example (Bank Transfer)
+BEGIN;
+
+UPDATE account SET balance = balance - 500 WHERE accno = 1;
+SAVEPOINT deduct;
+
+UPDATE account SET balance = balance + 500 WHERE accno = 2;
+
+-- Mistake in destination account
+ROLLBACK TO deduct;
+
+COMMIT;
+
+
+Only the deduction is undone.

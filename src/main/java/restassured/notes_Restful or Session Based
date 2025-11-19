@@ -1,0 +1,141 @@
+how we will no if the api can be used for session filter or not.. in otherwords how to know if restful o rnot
+
+
+Great question — and this is something many testers get confused about.
+
+To know whether an API needs SessionFilter (i.e., uses sessions) or is truly RESTful (stateless), you must identify how the API handles authentication and state.
+
+Here’s the breakdown.
+
+⭐ How to Know Whether an API Needs SessionFilter?
+
+You check how the API authenticates the user.
+
+If the API uses session-based authentication, then you should use SessionFilter.
+
+If the API uses token-based authentication, you don’t need SessionFilter.
+
+⭐ 🔹 1. If the API returns a session cookie → Use SessionFilter
+
+You can detect this by looking at:
+
+Postman response cookies
+
+Browser Network tab
+
+API documentation
+
+Response headers
+
+If you see cookies like:
+Set-Cookie: JSESSIONID=ABCD1234;
+Set-Cookie: SESSIONID=xyz789;
+Set-Cookie: PHPSESSID=asdfgh1234;
+
+
+➡️ This is a session-based API. Use SessionFilter.
+
+Example:
+
+When you call the login API, and the response contains:
+
+Set-Cookie: JSESSIONID=abcd123xyz; HttpOnly; Path=/;
+
+
+This means the server expects you to maintain a session.
+REST Assured does not store cookies automatically → SessionFilter is needed.
+
+⭐ 🔹 2. If the API returns a token (JWT/OAuth/API key) → Do NOT use SessionFilter
+
+If the response contains something like:
+
+{
+  "token": "eyGHSJSJH.897dasjjd.UHJDSGJ"
+}
+
+
+OR headers like:
+
+Authorization: Bearer <token>
+
+
+➡️ This means the API is stateless
+➡️ No server-side session is maintained
+➡️ This is real RESTful architecture
+➡️ You should NOT use SessionFilter
+
+Instead, send token on every request:
+
+given()
+    .header("Authorization", "Bearer " + token)
+
+⭐ How to Know if an API Is RESTful (Stateless)?
+
+A truly RESTful API will have these characteristics:
+
+✔ 1. No session tracking
+
+No JSESSIONID
+
+No session cookie
+
+No stored user state
+
+✔ 2. Uses tokens
+
+JWT
+
+OAuth 2.0
+
+API Keys
+
+✔ 3. Each request contains all info needed
+
+Server does not remember previous request
+
+✔ 4. Stateless communication
+
+Server doesn’t store user context
+
+⭐ How to Identify This Practically?
+🔹 Method 1: Use Postman → Check "Cookies" tab for the response
+
+If you see cookies → session-based
+
+🔹 Method 2: Look at Response Headers
+
+Check for:
+
+Set-Cookie
+JSESSIONID
+SESSIONID
+PHPSESSID
+
+🔹 Method 3: Check API Documentation
+
+You may see terms like:
+
+Session-based auth
+
+Cookie auth
+
+Form login
+
+"Keep user logged in"
+
+➡️ This is NOT RESTful.
+
+🔹 Method 4: Browser Network Tab
+
+If the app you test has a login, and you see cookies after login:
+➡️ Backend uses session auth
+
+🔹 Method 5: Developer confirmation
+
+“Do we use cookie-based session authentication or token-based?”
+
+⭐ Final Summary (Interview-Friendly Answer)
+
+If the API returns session cookies (JSESSIONID, PHPSESSID, etc.), it uses session-based authentication.
+In that case, we use SessionFilter to store and reuse the session.
+If the API uses tokens (JWT/OAuth), it's stateless RESTful, so SessionFilter is not needed — we pass the token manually.

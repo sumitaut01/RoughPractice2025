@@ -31,6 +31,15 @@ public class CollectionsClass {
         /*
         Returns a synchronized (thread-safe) collection backed by the specified collection. In order to guarantee serial access, it is critical that all access to the backing collection is accomplished through the returned collection.
          */
+
+        System.out.println("------Using Sorting----");
+        Collections.sort(alist);
+        System.out.println(alist);
+        alist.sort(Collections.reverseOrder());
+        System.out.println(alist);
+
+        //[afirst, bnth, bsecond]
+        //[bsecond, bnth, afirst]
     }
 
 }

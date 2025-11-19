@@ -5,11 +5,8 @@ import java.io.IOException;
 
 //What is Exception Chaining?
 //        Exception chaining is the practice of wrapping one exception inside another to preserve the original cause of the error.
-//
 //        This is useful when:
-//
 //        You want to abstract low-level details but still retain root cause
-//
 //        You’re converting checked to unchecked or throwing a custom exception
 
 

@@ -2,3 +2,114 @@ git reset and git revert both “undo” changes,
 but they do it in very different ways — one rewrites history, the other creates new history.
 
 Let’s break it down step-by-step 👇
+
+
+
+Git Reset vs Git Revert
+
+Both commands are used to undo changes, but they work very differently.
+
+⭐ 1. Git Reset
+📌 Changes the commit history
+
+git reset moves the HEAD pointer and can remove commits from the current branch.
+
+⚠️ Dangerous for shared repos
+Because it rewrites history, others may lose commits.
+
+Types:
+🔹 Soft Reset
+git reset --soft <commit>
+
+
+Moves HEAD to the given commit
+Keeps changes in staging area
+Useful for redoing commits
+
+🔹 Mixed Reset (default)
+git reset <commit>
+
+
+Moves HEAD
+Removes commits
+Moves changes to working directory
+
+Not staged
+🔹 Hard Reset
+git reset --hard <commit>
+
+
+Deletes commits
+Deletes changes
+
+Restores files to that commit
+Cannot be undone easily
+
+✔ Use When:
+Changes not pushed yet
+You want to rewrite or remove local commits
+
+⭐ 2. Git Revert
+📌 Does NOT modify history — creates a new commit
+git revert adds a new commit that undoes the changes of an old commit.
+
+👍 Safe for shared branches (remote)
+Because history is preserved.
+
+Example:
+git revert <commit>
+
+
+This creates a new commit like:
+Revert "Some previous commit"
+
+✔ Use When:
+Change is already pushed to remote
+You want to undo safely
+You want to preserve history
+
+⭐ Comparison Table
+Feature	git reset	git revert
+Changes history?	✔ Yes	❌ No (safe)
+Removes commits?	✔ Yes	❌ No (adds new commit)
+Safe for shared repo?	❌ No	✔ Yes
+Types	soft, mixed, hard	single type
+Best for	Local edits	Public branches
+Can undo push?	No	Yes
+Keeps commit history?	No	Yes
+⭐ Simple Explanation
+🔥 git reset
+
+“Erase commits like they never happened.”
+🍃 git revert
+
+“Undo a commit but keep the history clean.”
+⭐ Practical Example
+Scenario 1: You committed by mistake locally
+
+✔ Use:
+git reset --soft HEAD~1
+
+Scenario 2: You pushed a bad commit to GitHub
+
+✔ Use:
+git revert <commit>
+
+Because revert won’t break others’ work.
+⭐ Visual Understanding
+RESET (rewrites history)
+A - B - C - D   (current branch)
+            ↑ HEAD
+git reset --hard B
+A - B        ← commits C and D vanish
+
+REVERT (new opposite commit)
+A - B - C - D - E   (current branch)
+             ↑ bad commit
+git revert D
+A - B - C - D - E - R   (R = revert commit)
+
+History is intact.
+⭐ Interview-Friendly Answer (Short)
+git reset rewrites history by moving HEAD to an earlier commit and discarding subsequent commits. It is unsafe for shared branches.
+git revert creates a new commit that undoes a previous commit without modifying history. It is safe for public/shared repositories.

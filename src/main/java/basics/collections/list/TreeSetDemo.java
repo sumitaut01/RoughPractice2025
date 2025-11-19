@@ -1,5 +1,6 @@
 package basics.collections.list;
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,5 +32,29 @@ public class TreeSetDemo {
         //at java.base/java.util.Objects.requireNonNull(Objects.java:233)
 
         System.out.println(str);//[amit, juhi, neha, sumit]
+
+
+
+
+        // using custom comparator. Notice - sign for negative sorting
+        TreeSet<String> ts=new TreeSet<>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+               return - o1.compareTo(o2);
+            }
+        });
+
+        System.out.println("--Before Using comparator---");
+        System.out.println(str);
+        ts.addAll(str);
+        System.out.println("--After Using comparator---");
+        System.out.println(ts);
+
+        //--Before Using comparator---
+        //[amit, juhi, neha, sumit]
+        //--After Using comparator---
+        //[sumit, neha, juhi, amit]
+
+
     }
 }

@@ -7,7 +7,6 @@ Yes, you can absolutely move your repo to a particular commit state — and git 
 Let’s break it down properly 👇
 
 🧭 Goal
-
 You want your working directory and HEAD to reflect how the repo looked at a specific commit.
 
 ✅ Option 1: Temporary Move (Detached HEAD)
@@ -17,13 +16,9 @@ git switch --detach <commit-hash>
 
 
 🔹 What happens:
-
 Git moves your HEAD directly to that commit (not to a branch).
-
 You enter detached HEAD state — meaning, you’re not on any branch.
-
 The files in your working directory now look exactly as they were at that commit.
-
 💡 You can browse, build, test, or even create a new branch from this state.
 
 🧩 Example:
@@ -48,17 +43,12 @@ git reset --hard <commit-hash>
 
 
 💥 Be careful:
-
 This rewrites history.
-
 Commits after that hash are deleted from your local branch.
-
 Don’t use this on a branch that’s already pushed/shared.
 
 🪄 Option 3: Create a New Branch From That Commit
-
 If you want to explore that commit safely:
-
 git checkout -b old_state <commit-hash>
 # or
 git switch -c old_state <commit-hash>
@@ -75,11 +65,8 @@ You are in 'detached HEAD' state.
 
 
 This means:
-
 You’re no longer on a branch.
-
 If you make commits now, they will be orphaned unless you create a new branch to keep them:
-
 git checkout -b fix-old-state
 
 🧠 Summary Table

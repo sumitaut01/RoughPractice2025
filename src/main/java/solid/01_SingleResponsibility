@@ -1,0 +1,220 @@
+https://tcsglobal.udemy.com/course/solid-design/learn/lecture/16273944#overview
+
+Class and class components should have single or related responsibilut:
+
+Cohesion: related methods
+Square:
+  calculatexx
+  calculateyy:
+
+  //this might be unrelated and shoud be in sepsaret class callled squareUI
+  draw()
+  rotate()
+
+
+Coupling:
+
+
+
+
+Below is a clear, Java-focused explanation of the Single Responsibility Principle (SRP) along with Cohesion and Coupling.
+I’ll also give simple code examples so it’s easy to understand.
+
+✅ Single Responsibility Principle (SRP)
+
+Definition:
+
+A class should have only one reason to change.
+It should do only one thing (one responsibility).
+
+This makes the class easier to test, maintain, reuse, and understand.
+
+❌ Example of violating SRP
+public class UserService {
+
+    public void createUser(String name) {
+        System.out.println("Saving user...");
+    }
+
+    public void sendWelcomeEmail(String name) {
+        System.out.println("Sending email...");
+    }
+
+    public void auditAction(String action) {
+        System.out.println("Audit log: " + action);
+    }
+}
+
+
+What’s wrong?
+
+Class handles 3 responsibilities:
+
+User creation
+
+Sending emails
+
+Auditing
+
+So it has 3 reasons to change → violates SRP.
+
+✅ Correct SRP Implementation
+
+Split responsibilities:
+
+public class UserService {
+    private EmailService emailService;
+    private AuditService auditService;
+
+    public UserService(EmailService emailService, AuditService auditService) {
+        this.emailService = emailService;
+        this.auditService = auditService;
+    }
+
+    public void createUser(String name) {
+        System.out.println("Saving user...");
+        emailService.sendWelcomeEmail(name);
+        auditService.audit("Created user: " + name);
+    }
+}
+
+
+Separate classes with single responsibilities:
+
+public class EmailService {
+    public void sendWelcomeEmail(String name) {
+        System.out.println("Sending welcome email to " + name);
+    }
+}
+
+public class AuditService {
+    public void audit(String message) {
+        System.out.println("AUDIT: " + message);
+    }
+}
+
+
+Now:
+
+UserService → user operations only
+
+EmailService → email responsibilities only
+
+AuditService → auditing only
+
+This follows SRP.
+
+🟦 Cohesion (Inside a Class)
+
+Definition:
+
+Cohesion describes how closely the responsibilities of a class are related.
+High cohesion = good.
+Low cohesion = bad.
+
+✔ High Cohesion
+
+A class does one well-defined job.
+
+Example:
+
+public class PasswordEncryptor {
+    public String encrypt(String password) { ... }
+    public boolean validateStrength(String password) { ... }
+}
+
+
+Both methods relate to password security → high cohesion.
+
+✘ Low Cohesion
+
+Totally unrelated responsibilities in one class:
+
+public class Utility {
+    public void sortList() { }
+    public void sendEmail() { }
+    public void generateReport() { }
+}
+
+
+These have nothing to do with each other → low cohesion → bad design.
+
+🟥 Coupling (Between Classes)
+
+Definition:
+
+Coupling describes how much one class depends on another.
+Low coupling = good.
+High coupling = bad.
+
+✔ Low Coupling (Good)
+
+Depend on abstractions, not concrete classes.
+
+public interface EmailService {
+    void send(String message);
+}
+
+public class UserService {
+    private EmailService emailService;
+
+    public UserService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+}
+
+
+UserService depends on an interface, not a concrete implementation → low coupling.
+
+✘ High Coupling (Bad)
+public class UserService {
+    private GmailEmailService emailService = new GmailEmailService();
+}
+
+
+Problems:
+
+Harder to change email provider
+
+Harder to test (you can't mock GmailEmailService easily)
+
+UserService is tightly tied to GmailEmailService
+
+🟩 How SRP, Cohesion, and Coupling Relate
+Concept	Meaning	Goal
+SRP	A class should have one reason to change	Simplify class responsibilities
+Cohesion	How related the tasks inside a class are	Higher cohesion
+Coupling	How dependent classes are on each other	Lower coupling
+Relationship:
+
+Following SRP increases cohesion naturally
+
+Following SRP often reduces coupling (because responsibilities split)
+
+🎯 Simple Summary
+Single Responsibility Principle (SRP)
+
+➡ A class does one thing and has one reason to change.
+
+Cohesion
+
+➡ How focused a class is on one task.
+
+High cohesion = good
+
+Low cohesion = bad
+
+Coupling
+
+➡ How much a class depends on others.
+
+Low coupling = good
+
+High coupling = bad
+
+If you want, I can also explain:
+✔ All SOLID principles
+✔ Give a real project example (API, automation framework, microservice)
+✔ Show how SRP, cohesion, and coupling apply in Selenium / Cucumber
+
+Just tell me!

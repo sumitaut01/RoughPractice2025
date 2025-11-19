@@ -1,0 +1,69 @@
+What is git blame?
+
+git blame is a Git command used to see who last modified each line of a file, along with:
+
+Author name
+
+Commit ID
+
+Timestamp
+
+The exact change
+
+This helps you understand who wrote what in the code.
+
+⭐ Why is it called “blame”?
+
+Because it helps you “blame” (or identify 😅) the person responsible for a particular change.
+But it's actually helpful, not negative.
+
+⭐ Usage Example
+git blame filename.java
+
+
+Output example:
+
+a9f1234 (John Doe   2024-01-15)  int total = 0;
+12bdab3 (Jane Smith 2024-02-03)  total = total + price;
+
+
+For each line, you get:
+
+Commit hash (a9f1234)
+
+Author (John Doe)
+
+Date
+
+Code line
+
+⭐ Why is git blame useful?
+✔ 1. Debugging
+
+Find who changed a line that caused a bug.
+
+✔ 2. Understanding logic
+
+Helps see history of how code evolved.
+
+✔ 3. Collaboration
+
+Talk to the right developer when clarifying something.
+
+✔ 4. Code review
+
+Know the context of each line of code.
+
+⭐ Common Options
+🔹 Blame a specific line range
+git blame -L 50,80 app.py
+
+🔹 Ignore whitespace changes
+git blame -w file.txt
+
+🔹 Show blame with commit message
+git blame -p file.txt
+
+⭐ Summary (Interview-ready)
+
+git blame is a Git command that shows who last modified each line in a file, along with the commit hash and timestamp. It helps trace changes, understand code history, and debug issues.

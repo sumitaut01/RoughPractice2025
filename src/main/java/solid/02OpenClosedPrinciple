@@ -1,0 +1,36 @@
+
+Example:
+
+
+int calculateDiscount( HealthInsuranceCustomerProfile obj){
+obj.isLoyal(){
+return 20;
+}
+return 0
+}
+
+
+//now company doing vehicle insurance also:
+
+we will need CustomerProfile interface
+int CustomerProfile{
+obj.isLoyal();
+}
+
+
+HealthInsuranceCustomerProfile implements CustomerProfile{
+
+}
+
+VehicleInsuranceCustomerProfile implements CustomerProfile{
+
+}
+
+// and code it to Interface
+int calculateDiscount( CustomerProfile obj){
+obj.isLoyal(){
+return 20;
+}
+return 0
+}
+

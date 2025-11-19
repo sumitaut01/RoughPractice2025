@@ -92,6 +92,15 @@ public class R20_StreamsMore {
         //SASWAT
         //SUMIT
 
+
+        //first letter Capital
+        System.out.println("---first letter");
+        myList.stream().filter(s->s.startsWith("S")).map(s->s.substring(0, 1).toUpperCase()+s.substring(1)).forEach(System.out::println);
+        //---first letter
+        //Sumit
+        //Saswat
+        //Sumit
+
         //map with function
         System.out.println("-------");
         Function<String,String> func=a->a.toUpperCase();

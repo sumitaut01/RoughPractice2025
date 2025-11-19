@@ -1,0 +1,586 @@
+Defect Slippage
+Definition:
+Defect slippage occurs when bugs escape QA testing and are found after release (UAT, Production).
+
+Example:
+QA tested login feature but missed a security bug → customer finds it after release.
+
+✅ Defect Leakage
+Definition:
+Defect leakage happens when bugs escape from one testing phase to the next testing phase.
+➡️ Slippage = escaped to PRODUCTION
+➡️ Leakage = escaped to NEXT PHASE (e.g., Unit → Integration, QA → UAT)
+
+Example:
+Bug missed in System Testing, found in UAT = defect leakage.
+⭐ Difference (Simple)
+Term	Escaped To
+Defect Leakage	Escapes to next test phase
+Defect Slippage	Escapes to production
+
+
+✅ Manual Testing Types
+1️⃣ Black Box Testing
+
+Tester doesn’t know internal code.
+Examples: Functional testing, regression testing, system testing.
+
+2️⃣ White Box Testing
+Tester knows internal logic, paths.
+
+3️⃣ Grey Box Testing
+Partial internal knowledge.
+
+
+Common Manual Functional Testing Types:
+Type	Purpose
+Smoke Testing	Quick check: “Is build stable?”
+Sanity Testing	After fixes: “Does it work now?”
+Regression Testing	Ensure old functionality still works
+Re-testing	Verify bug fixes
+Functional Testing	Test features as per requirements
+Integration Testing	Test interactions between modules
+System Testing	Complete system test
+UAT Testing	User/business testing
+Ad-hoc Testing	Informal, no documentation
+🟦 Boundary Value Analysis (BVA)
+Definition:
+
+Test boundaries of input ranges because bugs often occur at edges.
+
+Example:
+
+Age must be 18–60
+Test: 17, 18, 60, 61
+
+🟦 Equivalence Partitioning (EP)
+Definition:
+Divide input into valid and invalid partitions; test one input from each.
+
+Example:
+Age 18–60
+Valid: 18–60 → test 30
+Invalid partition 1: <18 → test 10
+Invalid partition 2: >60 → test 70
+
+🟦 Experience-Based Testing
+Definition:
+Testing based on tester’s experience, intuition, domain knowledge.
+
+Examples:
+Guessing where bugs usually occur
+Prior failed modules
+
+Risk areas
+
+🟦 Ad-hoc Testing
+Definition:
+
+Informal, unstructured testing without test cases.
+Used to quickly explore and find defects.
+
+Example: Randomly trying combinations, invalid inputs, quick checks.
+
+⭐ Root Cause Analysis (RCA) Techniques
+
+RCA helps identify why the defect occurred.
+
+Common RCA methods:
+1️⃣ 5 Whys
+
+Ask “Why?” repeatedly until you find the root cause.
+
+2️⃣ Fishbone Diagram (Ishikawa)
+
+Categorizes possible causes:
+People
+Process
+Tools
+Environment
+Requirements
+
+3️⃣ Pareto Analysis (80/20 Rule)
+80% issues come from 20% causes.
+
+4️⃣ Failure Mode & Effects Analysis (FMEA)
+Analyze failure types → severity → detectability.
+
+⭐ Definition of Done (DoD)
+Definition:
+A checklist of criteria that must be met before a task/user story is considered complete.
+
+Example DoD:
+Code completed
+Unit tested
+Functionally tested
+Regression tested
+Documentation updated
+Accepted by PO
+
+DoD ensures consistent quality across sprints.
+
+⭐ Shift Left Testing
+Definition:
+
+Testing earlier in the SDLC to catch defects early.
+Why?
+Reduced cost
+Faster delivery
+Higher quality
+Examples:
+
+Testers involved in requirement discussions
+Early test case creation
+Early automation
+API contract testing before UI is ready
+
+📌 Summary Sheet (quick memory)
+Concept	Meaning
+Defect Slippage	Bug found in production
+Defect Leakage	Bug found in next test phase
+BVA	Test boundaries
+EP	Divide input into partitions
+Ad-hoc	Informal testing
+Experience-based	Intuition-based testing
+RCA	Finding root cause of defect
+Definition of Done	Checklist for completion
+Shift Left	Test earlier to reduce defects
+
+
+
+
+
+
+NEXT TOPICS:
+SDLC Models
+STLC Phases
+Agile & Scrum Concepts
+Test Case Design Techniques
+Severity vs Priority
+Bug/Defect Life Cycle
+
+Let’s go step by step.
+
+✅ 1. SDLC Models (Software Development Life Cycle)
+⭐ 1. Waterfall Model
+
+Linear, sequential
+Each phase completed before next
+Requirements need to be stable
+
+➡️ Good: Simple, structured
+➡️ Bad: No flexibility, late testing
+
+⭐ 2. V-Model (Validation & Verification)
+
+Testing activities happen in parallel to development phases
+
+Test planning starts early
+
+➡️ Good: Test early
+➡️ Bad: Still rigid like waterfall
+
+⭐ 3. Iterative / Incremental Model
+
+Build software in pieces (increments)
+
+Each build adds new functionality
+
+➡️ Good: Early delivery
+➡️ Bad: Requires good planning
+
+⭐ 4. Agile Model (Most used today)
+Iterative + incremental
+Work in small cycles (sprints)
+Continuous feedback & improvement
+
+➡️ Good: Flexible, customer involvement
+➡️ Bad: Needs strong communication
+
+✅ 2. STLC (Software Testing Life Cycle)
+STLC Phases:
+
+Requirement Analysis
+Understand requirements
+Identify testable items
+Identify test types
+Test Planning
+
+Estimate effort
+
+Resource planning
+
+Risk analysis
+
+Strategy preparation
+
+Test Case Design
+Create test cases
+Prepare test data
+Environment Setup
+Get hardware/software ready
+
+Deploy build
+
+Test Execution
+
+Run test cases
+
+Log defects
+
+Defect Reporting
+
+Raise bugs with details
+
+Test Cycle Closure
+
+Test summary report
+
+Metrics
+
+Lessons learned
+
+✅ 3. Agile & Scrum Concepts
+⭐ Agile Principles
+
+Early & continuous delivery
+Welcome changes
+Frequent delivery
+Communication
+Working software > documentation
+
+⭐ Scrum Terminology
+Term	Meaning
+Product Owner (PO)	Defines requirements, sets priority
+Scrum Master	Removes blockers, facilitator
+Development Team	Dev + QA team
+Sprint	1–4 week time-box
+Sprint Planning	Decide sprint work
+Daily Scrum	15-min stand-up meeting
+Sprint Review	Show completed work
+Sprint Retrospective	Improve process
+⭐ Scrum Artifacts
+Artifact	Meaning
+Product Backlog	List of all requirements
+Sprint Backlog	Tasks for the sprint
+Increment	Completed + tested product
+✅ 4. Test Case Design Techniques
+
+You already saw BVA, EP, Adhoc, Experience-based.
+Here are others:
+
+⭐ 1. Decision Table Testing
+
+Used when there are multiple conditions and multiple outcomes.
+
+Example: Login with combinations of username/password valid/invalid.
+
+⭐ 2. State Transition Testing
+
+Used when output depends on previous state.
+
+Example:
+
+ATM: card inserted → PIN → withdraw
+
+User states: Active → Locked → Disabled
+
+⭐ 3. Use Case Testing
+
+User-flow based testing.
+
+⭐ 4. Error Guessing
+
+Based on experience, guess where bugs may occur.
+
+✅ 5. Severity vs Priority
+Term	Meaning	Decided By
+Severity	Impact of defect on system	Tester
+Priority	Order in which defect must be fixed	Product Owner / Manager
+⭐ Examples
+
+App crashes → High severity
+
+Typo on homepage → Low severity but may be High priority
+
+✅ 6. Bug/Defect Life Cycle
+Typical defect states:
+
+New
+
+Assigned
+
+Open
+
+Fixed
+
+Retest
+
+Verified
+
+Closed
+
+If not fixed:
+
+Rejected
+
+Duplicate
+
+Deferred
+
+Not a bug
+
+📌 Quick Summary Sheet
+⭐ SDLC
+
+Waterfall, V-model, Iterative, Agile
+
+⭐ STLC
+
+Requirement → Planning → Design → Setup → Execution → Closure
+
+⭐ Agile/Scrum
+
+Sprint, PO, SM, Review, Retro, Backlogs
+
+⭐ Test Techniques
+
+BVA, EP, Decision table, State transition, Use-case, Adhoc, Experience-based
+
+⭐ Severity vs Priority
+
+Impact vs urgency
+
+⭐ Bug Life Cycle
+
+New → Assigned → Open → Fixed → Retest → Verified → Closed
+
+
+
+NEXT TOPICS:
+
+Testing Metrics
+
+Performance Testing Basics
+
+Security Testing Basics
+
+Test Scenario vs Test Case vs Test Condition
+
+Types of Test Environments
+
+Top Manual Testing Interview Questions (with answers)
+
+Let’s begin.
+
+✅ 1. Testing Metrics (Very Important!)
+
+Metrics help measure testing progress, quality, and effectiveness.
+
+⭐ 1. Test Coverage
+
+How much of the application is tested.
+
+Formula:
+
+Test Coverage = (Number of requirements tested / Total requirements) × 100
+
+⭐ 2. Defect Density
+
+Number of defects per size unit (module size, LOC, function points).
+
+Formula:
+
+Defect Density = Defects / Size
+
+⭐ 3. Defect Removal Efficiency (DRE)
+
+Measures how many defects were caught before release.
+
+DRE = (Defects found during testing / Total defects) × 100
+
+⭐ 4. Test Execution Metrics
+
+Passed test cases
+
+Failed test cases
+
+Blocked test cases
+
+Not executed test cases
+
+⭐ 5. Defect Leakage %
+
+Defects escaped to UAT or Production.
+
+Leakage % = (Defects leaked / Total defects) × 100
+
+✅ 2. Performance Testing Basics
+⭐ Types of performance testing:
+Type	Purpose
+Load Testing	Check system behavior under expected load
+Stress Testing	Push system beyond limits
+Spike Testing	Sudden large increase in load
+Endurance / Soak Testing	Test long-duration stability
+Scalability Testing	Increase users gradually
+⭐ Key performance metrics:
+
+Response time
+
+Throughput
+
+Latency
+
+Error rate
+
+CPU/memory usage
+
+✅ 3. Security Testing Basics
+⭐ Common types:
+
+Authentication testing
+
+login, password rules, MFA
+
+Authorization testing
+
+users should not access others’ data
+
+Input validation testing
+
+SQL injection
+
+XSS
+
+Session management
+
+timeout
+
+cookie testing
+
+Data encryption testing
+
+https, TLS
+
+Broken access control
+
+manually changing URLs or IDs
+
+✅ 4. Test Scenario vs Test Case vs Test Condition
+⭐ Test Scenario
+
+High-level end-user activity.
+
+Example:
+
+“Verify user can log into the application.”
+
+⭐ Test Case
+
+Detailed steps + expected results.
+
+Example:
+
+Enter username
+
+Enter password
+
+Click login
+
+Expected: dashboard opens
+
+⭐ Test Condition
+
+Requirement or rule to be tested.
+
+Example:
+
+User must enter valid credentials
+
+Password must be encrypted
+
+✅ 5. Types of Test Environments
+⭐ 1. DEV Environment
+
+Developers test their code
+
+Unstable, frequently changing
+
+⭐ 2. QA / TEST Environment
+
+QA executes test cases
+
+Stable build provided for testing
+
+⭐ 3. UAT Environment
+
+Client tests application
+
+Real-world business validation
+
+⭐ 4. Pre-Prod Environment
+
+Final testing before deployment
+
+Mirrors production setup
+
+⭐ 5. Production Environment
+
+Live system used by end users
+
+✅ 6. Top Manual Testing Interview Questions (with answers)
+⭐ 1. What is the difference between verification and validation?
+
+Verification: Are we building the product right?
+
+Validation: Are we building the right product?
+
+⭐ 2. What is the difference between functional and non-functional testing?
+
+Functional: tests features, behavior
+
+Non-functional: performance, security, usability
+
+⭐ 3. What is sanity testing?
+
+Sanity = Quick testing of a specific module after bug fixes.
+
+⭐ 4. What is regression testing?
+
+Testing to ensure new changes didn't break existing features.
+
+⭐ 5. What are entry and exit criteria?
+
+Entry criteria: what must be ready before testing starts
+
+Exit criteria: what must be done before testing ends
+
+⭐ 6. What would you do if the developer rejects your bug?
+
+Provide logs, screenshots, steps
+
+Reproduce with developer
+
+Compare with requirement
+
+Escalate if needed
+
+⭐ 7. What are high severity & low priority defects?
+
+App crash on a rare page = high severity, low priority.
+
+🎯 Summary Sheet
+
+Test metrics measure effectiveness
+
+Performance testing checks speed & stability
+
+Security testing checks risks & vulnerabilities
+
+Test scenario = high level
+
+Test case = detailed
+
+Test environment types: DEV → QA → UAT → PROD
+
+Common interview questions covered
