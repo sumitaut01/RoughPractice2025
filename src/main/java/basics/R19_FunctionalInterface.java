@@ -10,10 +10,17 @@ public class R19_FunctionalInterface {
             }
         };
         test.run();;//Method implemented
-
         test.test();//default method
-
         TestInterface.staticMethod();//static method
+
+
+        //with lambda
+        TestInterface testx= () -> System.out.println("Method implemented");
+        test.run();;//Method implemented
+        test.test();//default method
+        TestInterface.staticMethod();//static method
+
+
     }
 }
 

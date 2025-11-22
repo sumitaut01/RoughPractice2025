@@ -1,4 +1,4 @@
-package basics;
+package basics.javapgms;
 
 import org.testng.annotations.Test;
 

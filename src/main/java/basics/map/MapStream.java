@@ -14,6 +14,12 @@ public class MapStream {
         data.put("college", "Kits");
 
 
+        data.keySet().stream().
+                filter(k->data.get(k).equalsIgnoreCase("sumit"))
+                .forEach(k-> System.out.println(k+" "+data.get(k)));
+        //name sumit
+
+
 
 
 

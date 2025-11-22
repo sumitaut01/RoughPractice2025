@@ -4,8 +4,6 @@ public class R9_InstanceBlock {
 //    An instance block is a block of code without any name or keyword like static, that runs:
 //    Every time an object is created.
 //    Just before the constructor is called.
-
-
 //    🔹 Why Use Instance Block?
 //    Purpose	Example
 //    Common code for all constructors	Avoid duplication

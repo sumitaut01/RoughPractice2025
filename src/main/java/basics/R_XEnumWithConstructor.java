@@ -21,8 +21,6 @@ enum Personel{
         this.role=role;
     }
 
-
-
     public String getName() {
         return name;
     }

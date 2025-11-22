@@ -9,7 +9,6 @@ public class R14_GarbageCollector {
         System.out.println(obj.name);
         obj.name="sumit";
         System.out.println(obj.name);
-
         obj=null;
     }
 

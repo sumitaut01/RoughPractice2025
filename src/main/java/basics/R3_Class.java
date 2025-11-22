@@ -1,7 +1,6 @@
 package basics;
 
 public class R3_Class {
-
     int count;
     static int  staticCount;
     public  void  method1(){

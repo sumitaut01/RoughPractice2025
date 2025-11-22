@@ -3,7 +3,6 @@ package basics;
 public class R8_StaticBlock {
 
 //    A static block in Java is a block of code that:
-//
 //    Runs once when the class is loaded into memory (before main() runs).
     //Is used to initialize static variables or perform setup tasks.
 
@@ -14,11 +13,8 @@ public class R8_StaticBlock {
 //    Run code when the class is loaded	Used in frameworks, JDBC drivers
 
     // A class can have multiple static blocks, and they run in order of appearance.
-
 //    Static block is run only once per class, regardless of how many objects you create.
-//
-//    It cannot access non-static (instance) members.
-//
+//    It cannot access non-static (instance) members
 //            No return, no parameters.
 
 

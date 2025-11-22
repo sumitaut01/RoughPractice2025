@@ -1,7 +1,6 @@
 package basics;
 
 public class R16_Overloading_Promotion_3 {
-
 //    Now What About byte, short, char?
 //    These types are automatically promoted to int if there's no exact match.
     public static void main(String[] args) {

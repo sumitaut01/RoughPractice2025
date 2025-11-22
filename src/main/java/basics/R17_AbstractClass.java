@@ -8,11 +8,8 @@ import java.util.Set;
 
 public abstract  class R17_AbstractClass {
 //    Can have both abstract and concrete methods
-//
 //    Cannot be instantiated (no new R17_AbstractClass())
-//
 //    May have constructors, fields, static methods
-//
 //    Used when classes share common code + contract
     R17_AbstractClass(String name){
         System.out.println("original name:"+name);
@@ -71,7 +68,6 @@ class abstractimpl extends R17_AbstractClass {
 //
 //    public class HashMap<K,V> extends java.util.AbstractMap<K,V>
 //            implements Map<K,V>, Cloneable, Serializable {
-//
 //}
 
 

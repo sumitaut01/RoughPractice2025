@@ -9,7 +9,6 @@ public class R1_Class {
 
 
 class Default{
-
     void print(){
         System.out.println("From package 1: Default Class");
     }

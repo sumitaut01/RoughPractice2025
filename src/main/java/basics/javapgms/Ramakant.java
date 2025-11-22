@@ -1,4 +1,4 @@
-package basics;//Eg Input - Ramakant
+package basics.javapgms;//Eg Input - Ramakant
 //output - R1a1m1a1k1a2n1t1
 // R1a1m1a2k1a3n1t1
 

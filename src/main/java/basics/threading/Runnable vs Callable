@@ -1,0 +1,85 @@
+Runnable and Callable are both used to define tasks for threads or thread pools in Java — but they have key differences.
+
+🔥 Quick comparison
+Feature	Runnable	Callable<V>
+Returns a value	❌ No	✔️ Yes (V)
+Can throw checked exception	❌ No	✔️ Yes
+Method to implement	run()	call()
+Future support	Indirect	Direct (via Future)
+Introduced in	Java 1.0	Java 5
+🧩 Runnable example
+class MyTask implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Running task");
+    }
+}
+
+
+Usage:
+
+Thread t = new Thread(new MyTask());
+t.start();
+
+
+Runnable.run():
+
+cannot return a result
+
+cannot throw a checked exception
+
+If you want a result, you'd need to store it manually somewhere (e.g., shared variable), which can be unsafe.
+
+🧩 Callable example
+import java.util.concurrent.Callable;
+
+class MyTask implements Callable<Integer> {
+    @Override
+    public Integer call() throws Exception {
+        return 10;
+    }
+}
+
+
+Used with ExecutorService:
+
+ExecutorService service = Executors.newFixedThreadPool(2);
+Future<Integer> future = service.submit(new MyTask());
+Integer result = future.get(); // waits and returns 10
+
+
+Here:
+
+result comes from call()
+
+future.get() waits for completion and retrieves return value
+
+🎯 When to use what?
+Use case	Interface to choose
+Fire-and-forget task	Runnable
+Task that needs to return result	Callable
+Task that may throw checked exception	Callable
+Using raw Thread	Runnable
+Using ExecutorService thread pool	Callable is ideal, but Runnable also supported
+🔥 In a nutshell
+Runnable = do work
+Callable = do work AND return something
+
+Bonus: Runnable vs Callable with ExecutorService
+ExecutorService executor = Executors.newSingleThreadExecutor();
+
+// Runnable
+executor.submit(() -> System.out.println("Hello"));  // no result
+
+// Callable
+Future<String> f = executor.submit(() -> "Hello from Callable");
+System.out.println(f.get());  // prints: Hello from Callable
+
+
+If you want, next we can explore:
+
+How Future, FutureTask, and CompletableFuture build on Callable
+
+Thread pool internals (how submit() handles Runnable vs Callable)
+
+Common interview pitfalls

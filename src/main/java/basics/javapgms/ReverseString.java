@@ -1,4 +1,4 @@
-package basics;
+package basics.javapgms;
 
 public class ReverseString {
 	static String rev = "";

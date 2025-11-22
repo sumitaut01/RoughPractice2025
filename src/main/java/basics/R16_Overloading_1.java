@@ -10,15 +10,12 @@ public class R16_Overloading_1 {
 
     }
     public void sum(int a,int b){
-
         System.out.println("Integer based method called");
 
 
     }
 
     public void sum(double a,double b){
-
         System.out.println("Double based method called");
-
     }
 }

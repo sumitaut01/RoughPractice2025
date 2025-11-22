@@ -11,8 +11,6 @@ public class R_XShortHand {
 // public ShortHandWork(String name){
 //        this.name=name;
 //    }
-
-
         Function<String,ShortHandWork> func=ShortHandWork::new;
         ShortHandWork shortHandWork=func.apply("Sumit");
 

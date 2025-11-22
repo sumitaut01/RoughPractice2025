@@ -1,17 +1,0 @@
-
-b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(½õü©
-Q
-java:S1854"6Remove this useless assignment to local variable "en".(ù¿Ì«ûÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(óœœüÿÿÿÿ
-C
-java:S1125"(Remove the unnecessary boolean literals.(óœœüÿÿÿÿ
-_
-java:S3358	"DExtract this nested ternary operation into an independent statement.(¯²ıØşÿÿÿÿ
-S	java:S106
-"9Replace this use of System.out or System.err by a logger.(®ıáëûÿÿÿÿ
-Z
-java:S3358"DExtract this nested ternary operation into an independent statement.(Ãéèı
-_
-java:S3358"DExtract this nested ternary operation into an independent statement.(ÌšÎ‰ûÿÿÿÿ
-B
-java:S1481"'Remove this unused "en" local variable.(ù¿Ì«ûÿÿÿÿ

@@ -18,7 +18,6 @@ public class R15_PolyMorphism {
 //        this is from child:walk
 //        this is child only method
 
-
         Animal a1=new Dog();
         a1.walk();// overriden child
         a1.nonOverride();

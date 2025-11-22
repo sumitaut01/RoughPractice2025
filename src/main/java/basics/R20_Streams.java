@@ -44,7 +44,7 @@ public class R20_Streams {
                 .map(String::toUpperCase)
                 .sorted()
                 .forEach(System.out::println);
-    }
+
 //    Output:
 //
 //    nginx
@@ -54,7 +54,12 @@ public class R20_Streams {
 //    SUMIT
 
 
+        List<Integer> data = List.of(1,2,3,4,5,10,20);
+
+        Integer result=data.stream().filter(x->x>5).map(x->x*10).reduce(0, Integer::sum);
+
+        System.out.println(result);
 
 
-
+    }
 }

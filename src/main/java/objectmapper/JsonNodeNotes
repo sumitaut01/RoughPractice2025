@@ -1,0 +1,314 @@
+Great — JsonNode is one of the most powerful features of Jackson, especially when you don’t want to create POJO classes for every nested structure.
+
+Let’s go deep with a complex real-world JSON example and break it step by step.
+
+🌳 Complex JSON Example
+
+Imagine this JSON:
+
+{
+  "id": 101,
+  "name": "Sumit",
+  "address": {
+    "city": "Pune",
+    "pincode": 411001,
+    "geo": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    }
+  },
+  "skills": [
+    {
+      "name": "Java",
+      "experience": 5
+    },
+    {
+      "name": "Selenium",
+      "experience": 4
+    }
+  ],
+  "projects": [
+    {
+      "title": "Automation Framework",
+      "completed": true
+    },
+    {
+      "title": "Pricing Engine",
+      "completed": false
+    }
+  ],
+  "active": true
+}
+
+⭐ Step 1: Read JSON as JsonNode
+ObjectMapper mapper = new ObjectMapper();
+
+JsonNode root = mapper.readTree(jsonString); // jsonString is the above JSON
+
+
+root is the full tree.
+
+⭐ Step 2: Extract Simple Fields
+int id = root.get("id").asInt();
+String name = root.get("name").asText();
+boolean active = root.get("active").asBoolean();
+
+System.out.println(id);     // 101
+System.out.println(name);   // Sumit
+System.out.println(active); // true
+
+⭐ Step 3: Extract Nested Object Fields
+Address → city, pincode
+JsonNode addressNode = root.get("address");
+
+String city = addressNode.get("city").asText();
+int pincode = addressNode.get("pincode").asInt();
+
+System.out.println(city);    // Pune
+System.out.println(pincode); // 411001
+
+⭐ Step 4: Extract Deep Nested Object
+address → geo → lat/lng
+JsonNode geoNode = root.get("address").get("geo");
+
+double lat = geoNode.get("lat").asDouble();
+double lng = geoNode.get("lng").asDouble();
+
+System.out.println(lat);  // 18.5204
+System.out.println(lng);  // 73.8567
+
+⭐ Step 5: Extract Array → skills
+JsonNode skillsArray = root.get("skills");
+
+for(JsonNode skill : skillsArray) {
+    String skillName = skill.get("name").asText();
+    int exp = skill.get("experience").asInt();
+    System.out.println(skillName + " -> " + exp);
+}
+
+
+Output:
+
+Java -> 5
+Selenium -> 4
+
+⭐ Step 6: Extract Another Array → projects
+JsonNode projectsArray = root.get("projects");
+
+for(JsonNode project : projectsArray) {
+    String title = project.get("title").asText();
+    boolean completed = project.get("completed").asBoolean();
+    System.out.println(title + " | " + completed);
+}
+
+
+Output:
+
+Automation Framework | true
+Pricing Engine | false
+
+⭐ Step 7: Modify the JsonNode
+Add new field
+((ObjectNode) root).put("role", "QA Engineer");
+
+Modify existing field
+((ObjectNode) root.get("address")).put("city", "Mumbai");
+
+Add a new skill
+ObjectNode newSkill = mapper.createObjectNode();
+newSkill.put("name", "DevOps");
+newSkill.put("experience", 2);
+
+((ArrayNode) root.get("skills")).add(newSkill);
+
+⭐ Step 8: Convert back to JSON String
+String updatedJson = mapper.writerWithDefaultPrettyPrinter()
+                           .writeValueAsString(root);
+
+System.out.println(updatedJson);
+
+⭐ Step 9: Convert any JsonNode → POJO
+User u = mapper.treeToValue(root, User.class);
+
+//if it was array
+//List<User> users = mapper.convertValue(
+//          root,
+//          new TypeReference<List<User>>() {}
+//  );
+
+
+Or convert nested node:
+
+CityGeo geo = mapper.treeToValue(root.get("address").get("geo"), CityGeo.class);
+
+🚀 When to Use JsonNode Instead of POJOs?
+Use Case	JsonNode	POJO
+Dynamic JSON	✅ Best	❌
+Unknown fields	✅	❌
+Partial parsing	✅	❌
+Heavy validation	✅	⚠️
+Strict schema	❌	✅ Best
+Easy coding / readability	❌	✅
+📌 Summary of Powerful Operations You Can Do With JsonNode
+✔ Read any complex JSON without POJO
+✔ Navigate deep nested structure
+✔ Loop arrays without defining inner classes
+✔ Modify JSON dynamically
+✔ Merge JSON
+✔ Remove fields
+✔ Convert node <→ POJO
+✔ Validate values
+✔ Search for fields by name
+✔ Handle missing nodes without crashes
+
+If you want, I can also show:
+
+✅ A real API response parsed using JsonNode
+✅ How to validate fields using JsonNode in RestAssured
+✅ How to search for values anywhere in JSON (recursive search)
+
+Tell me which one you want next.
+
+
+
+
+
+
+JsonNode feels like JSONPath because both allow navigating complex JSON.
+But they are NOT the same, and each has strengths in different areas.
+
+Let’s break it down in the clearest way ever 👇
+
+🔥 JsonNode vs JSONPath — Side-by-Side
+Feature	JsonNode (Jackson)	JSONPath (RestAssured / Jayway)
+Type	Tree representation	Query language (XPath-like for JSON)
+Style	root.get("a").get("b")	"a.b" or "$..b"
+Requires POJO?	❌ No	❌ No
+Query arrays	Manual loop	One-line querying
+Search anywhere	❌ Hard (requires recursion)	✅ $..key built-in
+Modify JSON	✅ Yes	❌ No
+Add fields	✅ Yes	❌ No
+Delete fields	✅ Yes	❌ No
+Strong typing	Medium	Weak (always Object)
+Fast	Very fast	Slower than JsonNode
+Best for	Editing JSON, dynamic JSON	Extracting values easily
+⭐ 1. JsonNode Style (Tree Navigating)
+JsonNode root = mapper.readTree(json);
+
+int age = root.get("user").get("details").get("age").asInt();
+
+
+Works like a DOM tree.
+
+⭐ 2. JSONPath Style (Query Language)
+int age = JsonPath.read(json, "$.user.details.age");
+
+
+Or in RestAssured:
+
+int age = response.jsonPath().getInt("user.details.age");
+
+
+Very compact.
+
+🧠 BEST WAY TO UNDERSTAND THE DIFFERENCE
+JsonNode = Manual navigation through JSON
+
+Like:
+
+root -> address -> geo -> lat
+
+JSONPath = SQL-like search system for JSON
+$..lat
+$.address.geo.lat
+$.[*].skills[?(@.name=='Java')]
+
+🔥 Real Example Comparison
+
+Given JSON:
+
+{
+  "users": [
+    { "name": "Sumit", "age": 30 },
+    { "name": "Amit", "age": 25 }
+  ]
+}
+
+⭐ Using JsonNode (Tree)
+JsonNode users = root.get("users");
+
+for (JsonNode user : users) {
+    System.out.println(user.get("name").asText());
+}
+
+⭐ Using JSONPath (Query)
+List<String> names = JsonPath.read(json, "$.users[*].name");
+
+
+Much shorter.
+
+🔧 Where Each Is Best
+✔ Use JsonNode when
+
+You need to modify JSON
+
+You want to construct JSON dynamically
+
+You have deep unpredictable structures
+
+You want maximum performance
+
+You want to convert JsonNode → POJO later
+
+✔ Use JSONPath when
+
+You only want to extract values
+
+You are validating values inside RestAssured API tests
+
+You need to query like:
+
+All names
+
+All ages > 20
+
+All values of a field anywhere
+
+You like compact XPath-style syntax
+
+🎯 Example: Getting all "age" values anywhere
+JSONPath (1 line)
+List<Integer> ages = JsonPath.read(json, "$..age");
+
+JsonNode
+
+You must manually recurse through the node tree:
+
+List<Integer> ages = new ArrayList<>();
+searchForKey(root, "age", ages);
+
+
+(You need a helper method)
+
+🏆 TL;DR
+If your goal is…	Use
+Extract values in API tests	JSONPath
+Modify JSON	JsonNode
+Build JSON dynamically	JsonNode
+Work with huge JSON safely	JsonNode
+Query deeply with simple syntax	JSONPath
+Want Next?
+
+I can show:
+
+🔹 JSONPath advanced usage
+
+(e.g., filters, predicates, deep search, list operators)
+
+🔹 JsonNode advanced tricks
+
+(recursive search, merging, diffing, modifying arrays)
+
+🔹 How to use both together in RestAssured
+
+(best practice for API automation)

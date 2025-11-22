@@ -1,5 +1,8 @@
 package basics;
 
+import org.testng.annotations.Test;
+import selenium.mywebdriver.WebDriver;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static java.lang.Thread.sleep;
@@ -49,4 +52,35 @@ public class R_XThreadlocal {
         // Shutdown the executor
         executor.shutdown();
     }
+
+
+
+
+}
+
+
+
+
+
+class RR{
+    public static ThreadLocal<Integer> myInt=new ThreadLocal<>();
+
+
+    public static Integer getInt(){
+     return   myInt.get();
+    }
+
+    public static void setMyInt(Integer intData){
+        myInt.set(intData);
+    }
+
+    public static void clear() {
+        myInt.remove();
+    }
+
+
+
+
+
+
 }

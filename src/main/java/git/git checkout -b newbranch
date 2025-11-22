@@ -1,0 +1,62 @@
+when we create branch 2 from branch 1, and when we switch on branch 2, does branch 2 shows git logs of  branch 1 also.. meaning does it have the trail of how branch 1 was created
+
+
+Short answer: Yes — when you create branch 2 from branch 1, branch 2 will show the Git log/history of branch 1 up to the point it was created.
+
+🔍 Why?
+
+A new branch in Git is not a copy of files — it's a pointer to a commit.
+
+So when you run:
+
+git checkout branch1
+git checkout -b branch2
+
+
+branch2 points to the same latest commit on branch1.
+
+Therefore:
+
+git log   # on branch2
+
+
+will display all commits from branch1 up to the branching commit.
+
+🧩 But what happens after branching?
+Action	Branch 1 log	Branch 2 log
+Before divergence	Same history	Same history
+After commits on branch 1 only	Shows new commits	Does NOT show new commits
+After commits on branch 2 only	Does NOT show those	Shows new commits
+
+So the histories diverge after new commits.
+
+💡 Does branch2 store how branch1 was created?
+
+Indirectly, yes.
+
+Git stores commit ancestry, not actual “branch creation metadata”.
+Because branch2 starts at a commit that belonged to branch1, the commit chain inherently shows the trail.
+
+Example commit graph:
+
+A ── B ── C  ← branch1 HEAD (after 1 more commit)
+         \
+          D ── E  ← branch2 HEAD
+
+
+Here:
+
+branch2 was created at commit C
+
+Git log of branch2 contains A → B → C → D → E
+
+So you can see when it branched, by the point where commits diverge.
+
+🧪 Quick command to visualize divergence
+git log --graph --oneline --all
+
+🔔 Final summary
+Question	Answer
+Does branch2 show history of branch1?	Yes, up to the branching commit
+Does history automatically continue as branch1 evolves?	No
+Does Git store “branch was created from X”?	Not explicitly — but commit ancestry shows it

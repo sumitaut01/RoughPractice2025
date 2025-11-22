@@ -14,8 +14,6 @@ public class R12_Stack {
         int a = 10; // stored in stack
         Student s = new Student(); // 's' stored in stack, object in heap
     }
-
-
 }
 
 class Student{}

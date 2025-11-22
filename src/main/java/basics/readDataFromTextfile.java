@@ -1,5 +1,7 @@
 package basics;
 
+import org.testng.annotations.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,5 +40,11 @@ public class readDataFromTextfile {
 		sc.close();
 		
 	}
+
+
+
+
+
+
 
 }
