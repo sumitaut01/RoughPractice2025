@@ -13,16 +13,21 @@ import java.io.IOException;
 
 public class R7_XExceptionPropogation {
 
-    public static void main(String[] args) throws FileReadException {
+    public static void main(String[] args) throws FileReadException, IOException {
         readFile();
 
     }
-    public static void readFile() throws FileReadException {
+    public static void readFile() throws FileReadException, IOException {
+        FileReader reader=null;
         try {
-            FileReader reader = new FileReader("data.txt");
+             reader = new FileReader("data.txt");
         } catch (IOException e) {
             throw new FileReadException("Failed to read file", e);
         }
+        finally {
+       reader.close();
+        }
+
     }
 }
 

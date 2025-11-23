@@ -189,8 +189,6 @@ g
 -src/main/java/restassured/auth/R2_Bearer.java,a\9\a9458618292ddb1580f1ef2a0d8237734582ddc3
 `
 0src/main/java/basics/accesstypes/PublicDemo.java,5\6\56274b7743b4baac0e0d27d3bccec01430aa265c
-m
-=src/main/java/basics/comparablecomparator/ComparableDemo.java,4\1\41e60c926247e7b05799402680d909cbd7f843f1
 g
 7src/main/java/basics/datastructure/R1_ArrayasStack.java,8\b\8b3fad84c38c327301bae6ddabecc0a56587b740
 8
@@ -207,10 +205,6 @@ Y
 ,src/main/java/oopsbank/rough/BankTester.java,0\b\0bac22f9fdb69912d6f5946600b99f20562c0e32
 Q
 !src/main/java/jenkins/Jenkinsfile,1\6\164f8760756c51b9ac4f5b4c8168c3a207561744
-{
-Ksrc/main/java/basics/comparablecomparable/comparator/R2_ComparableDemo.java,a\9\a98b27a37e7ec7ac201dfe9a6331885e63a56de9
-{
-Ksrc/main/java/basics/comparablecomparator/comparable/R_1ComparableDemo.java,d\d\ddbc1557410d90340659edb61110ca9a5596f8df
 [
 +src/main/java/selenium/xpathcss/sample.html,0\6\063c9345e458ebc3bc4d63a3aeaa331f7f9f510f
 @

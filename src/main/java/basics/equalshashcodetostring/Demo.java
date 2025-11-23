@@ -11,12 +11,8 @@ public class Demo {
         System.out.println(stu);//basics.equalshashcodetostring.Student@7dc5e7b4
         System.out.println(stu.toString());//basics.equalshashcodetostring.Student@7dc5e7b4
 
-
-
         StudentWithEquals stux=new StudentWithEquals("KITS", 30, "Sumit", "Raut") ;
         System.out.println(stux);//StudentWithEquals(college=KITS, age=30, firstName=Sumit, lastName=Raut)
-
-
     }
 
 }

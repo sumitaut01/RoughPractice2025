@@ -2,16 +2,12 @@ package basics.exceptiohandling;
 
 public class R_02customResources {
     public static void main(String[] args) {
-
-
         try (MyResource r = new MyResource()) {
             r.use();
         }
 
 //        Using resource
 //        Closed resource
-
-
     }
 }
 

@@ -39,21 +39,12 @@ public class CharacterDemo {
 
         char c='c';
         //Character ch=new Character(c);
-
-
-
-
-
-
-
     }
 
     @Test
     public void Rough(){
         String name="sumit raut";
-
         int [] aChar=new int[256];
-
         for( char c: name.toCharArray()){
          aChar[(int)c]++;
         }

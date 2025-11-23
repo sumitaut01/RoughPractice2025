@@ -1,5 +1,4 @@
 package basics.filehandling;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +12,5 @@ public class BufferedReaderDemo {
         while ((line = reader.readLine()) != null) {
             System.out.println(line);//firstsecond
         }
-
-
     }
 }

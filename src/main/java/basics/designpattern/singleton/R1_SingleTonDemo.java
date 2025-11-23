@@ -5,11 +5,8 @@ public class R1_SingleTonDemo {
     }
 
     //notice that we have used synchronized as it will prevent below problem
-
     //If two threads call getSingleTonDemo() at the same time when singleTonDemo == null,
     //they could both create separate instances momentarily.
-
-
     public static synchronized R1_SingleTonDemo getSingleTonDemo() {
         if (singleTonDemo == null) {
             singleTonDemo = new R1_SingleTonDemo();
@@ -17,9 +14,6 @@ public class R1_SingleTonDemo {
         return singleTonDemo;
     }
     //
-
-
-
     //Option 2: Double-checked locking (better)
     public static R1_SingleTonDemo getSingleTonDemo_DoubleChecked() {
         if (singleTonDemo == null) {
@@ -44,8 +38,6 @@ public class R1_SingleTonDemo {
     //        return INSTANCE;
     //    }
     //}
-    //
-    //
     //✅ Thread-safe (created when class loads)
     //❌ Always initialized, even if never used.
 
@@ -53,13 +45,9 @@ public class R1_SingleTonDemo {
 //public enum Singleton {
 //    INSTANCE;
 //}
-//
-//
 //✅ Thread-safe
 //✅ Serialization-safe
 //✅ Simplest possible singleton form in Java.
-
-
 
     public static void main(String[] args) {
 
@@ -74,8 +62,6 @@ public class R1_SingleTonDemo {
         //2104457164
         //2104457164
     }
-
-
 //✅ Summary
 //Approach	Lazy?	Thread-safe?	Recommended?
 //Basic (yours)	✅ Yes	❌ No	Only for single-threaded
@@ -88,11 +74,5 @@ public class R1_SingleTonDemo {
 //
 //✅ Your class is a Singleton (works fine in single-threaded programs).
 //⚠️ For production or multi-threaded code, prefer double-checked locking or an enum Singleton.
-
-
-
-
-
-
 
 }
