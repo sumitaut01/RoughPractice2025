@@ -39,8 +39,6 @@ public class R_10ScreenShot {
         driver.findElements(lnkAll).forEach(ele -> System.out.println(ele.getText()));
 
         System.out.println(js.executeScript("return document.title"));
-
-
         driver.quit();
 
 

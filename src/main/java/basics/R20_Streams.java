@@ -32,7 +32,11 @@ package basics;
 //        allMatch()	Checks if all elements match
 //        findFirst()	Gets the first element (Optional)
 
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class R20_Streams {
     public static void main(String[] args) {
@@ -62,4 +66,47 @@ public class R20_Streams {
 
 
     }
+
+
+
+    @Test
+    public void Rough(){
+
+
+        List<MyClassXX> lst=new ArrayList<>();
+        lst.add(new MyClassXX(20,"Sumit"));
+        lst.add(new MyClassXX(40,"Amit"));
+        Supplier<List<MyClassXX>> xx=()->lst;
+        System.out.println(xx.get()); //[20 Sumit, 40 Amit]
+
+
+
+
+        Supplier<MyClassXX> obj=MyClassXX::new; // with method reference
+
+        Supplier<MyClassXX> obj2=()->new MyClassXX();//with lambda
+
+
+
+
+    }
+}
+
+
+class MyClassXX{
+    int age;
+    String name;
+
+    public MyClassXX(int age,String name){
+        this.age=age;
+        this.name=name;
+    }
+
+    public MyClassXX(){
+    }
+    @Override
+    public String toString(){
+        return  age +" "+name;
+    }
+
 }

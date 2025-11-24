@@ -3,7 +3,6 @@ Why use a cursor?
 Cursors are helpful when:
 
 You need to process large result sets without loading everything into memory.
-
 You need to perform some logic on each row one at a time.
 
 You are writing loops in PL/pgSQL.
@@ -11,11 +10,8 @@ You are writing loops in PL/pgSQL.
 🔹 Basic Cursor Workflow
 
 Declare the cursor
-
 Open it
-
 Fetch rows from it
-
 Close it
 
 🔹 Example: Using a cursor in psql (SQL shell)

@@ -26,4 +26,20 @@ public class ExtentRough {
     }
 
 
+
+
+    public void Rought(){
+
+      extentReports=new ExtentReports();
+
+      extentSparkReporter=new ExtentSparkReporter("somehtml");
+
+      extentReports.attachReporter(extentSparkReporter);
+
+      ExtentTest test=extentReports.createTest("sometestname");
+
+      test.log(Status.INFO,"someinfo");
+      extentReports.flush();
+
+    }
 }

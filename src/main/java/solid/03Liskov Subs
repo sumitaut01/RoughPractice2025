@@ -1,0 +1,183 @@
+What is Liskov Substitution Principle?
+
+Liskov Substitution Principle is the L in SOLID principles.
+
+It says:
+
+If class B is a subtype (child) of class A (parent), then objects of class A should be replaceable with objects of class B without breaking the application.
+
+In other words:
+A child class must be able to do everything the parent does, without changing behavior or causing errors.
+
+🔍 Why is it important?
+
+It helps ensure:
+
+Correct inheritance
+
+Reusable code
+
+Polymorphism works safely
+
+No surprises when replacing a parent with a child
+
+💡 Easy example (Good — follows LSP)
+class Bird {
+    void fly() { }
+}
+
+class Sparrow extends Bird {
+    void fly() { }
+}
+
+
+You can replace:
+
+Bird b = new Sparrow(); // Works fine
+
+
+Sparrow supports flying exactly like Bird → ✔ Follows LSP
+
+❌ Bad example (Violates LSP)
+class Bird {
+    void fly() { }
+}
+
+class Penguin extends Bird {
+    void fly() {
+        throw new RuntimeException("Penguin cannot fly!");
+    }
+}
+
+
+If you do:
+
+Bird b = new Penguin();
+b.fly(); // Crashes
+
+
+The child breaks the behavior of the parent → ❌ Violates LSP
+
+🔧 How to fix such a violation
+
+Instead of forcing all birds to fly, redesign:
+
+class Bird { }
+
+class FlyingBird extends Bird {
+    void fly() { }
+}
+
+class Sparrow extends FlyingBird { }
+
+class Penguin extends Bird { }
+
+
+Now:
+
+Flying birds can fly
+
+Non-flying birds don’t break anything
+→ ✔ LSP respected
+
+🧠 Interview-ready answer
+
+Liskov Substitution Principle means that a subclass should be replaceable for its superclass without changing the system’s behavior. Child classes must honor the expectations of the parent class and not remove functionality or throw unexpected errors. If replacing a parent object with a child breaks the application, LSP is violated.
+
+
+
+
+
+
+Where LSP is used in Selenium Test Automation
+
+LSP appears naturally when we use inheritance + interface-based design in Page Object Model and driver setup.
+
+Example: WebDriver reference with different browser drivers
+WebDriver driver = new ChromeDriver();
+
+
+Later you can replace it with:
+
+WebDriver driver = new FirefoxDriver();
+
+
+or
+
+WebDriver driver = new EdgeDriver();
+
+
+The code still works without breaking because:
+
+All browser driver classes extend RemoteWebDriver and implement WebDriver
+
+So they can substitute WebDriver safely
+
+📌 This is Liskov Substitution Principle in real automation practice.
+
+🔹 Another Practical Example in Page Object Model
+Base Page (Parent)
+public class BasePage {
+    WebDriver driver;
+    public BasePage(WebDriver driver) { this.driver = driver; }
+
+    public void click(By locator) { driver.findElement(locator).click(); }
+}
+
+Child Pages
+public class LoginPage extends BasePage {
+    public LoginPage(WebDriver driver) { super(driver); }
+
+    public void login(String u, String p) { /* login logic */ }
+}
+
+public class HomePage extends BasePage {
+    public HomePage(WebDriver driver) { super(driver); }
+
+    public void openMenu() { /* open menu logic */ }
+}
+
+
+Now this works perfectly:
+
+BasePage page = new LoginPage(driver);
+page.click(btnLogin); // No issues
+
+
+Then later:
+
+page = new HomePage(driver);
+page.click(btnMenu); // Still works
+
+
+📌 We substituted the parent (BasePage) reference with child classes without breaking behavior → LSP respected.
+
+🔥 Real test execution example (TestNG)
+public class LoginTest {
+    WebDriver driver;
+    BasePage page;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();  // later can be changed to FirefoxDriver
+        page = new LoginPage(driver);
+    }
+
+    @Test
+    public void verifyLogin() {
+        page.click(By.id("loginButton"));
+    }
+}
+
+
+Even if you later change:
+
+driver = new FirefoxDriver();
+page = new HomePage(driver);
+
+
+The code still behaves correctly → LSP in action.
+
+🎯 Interview-ready short answer
+
+LSP is used in Selenium automation when we refer to objects using their parent type (like WebDriver, BasePage, or interface), and later replace them with child classes such as ChromeDriver, LoginPage, or HomePage without breaking code functionality. This ensures reusability and safe polymorphism in automation framework design.

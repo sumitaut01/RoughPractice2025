@@ -18,7 +18,5 @@ public class FilesLinesDemo {
 
         System.out.println(lines);
 
-
-
     }
 }

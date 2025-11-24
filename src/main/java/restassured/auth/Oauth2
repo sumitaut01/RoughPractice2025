@@ -5,8 +5,6 @@
 #generate #3 using 1 and 2
 #3Secret
 
-
-
 Resource owner – An entity capable of granting access to a protected resource.
 Resource server – The server hosting the protected resources that is capable of accepting and responding to protected resource requests using access tokens.
 Client –  An application making protected resource requests on behalf of the resource owner and with its authorization.
@@ -38,15 +36,10 @@ Issuing an Authorization Code and then an Access Token to BookMyShow.
 🔄 Flow (Simplified)
 
 You click “Sign in with Google” on BookMyShow.
-
 BookMyShow redirects you to Google’s Authorization Server (login + consent).
-
 You approve → Google sends back an Authorization Code to BookMyShow.
-
 BookMyShow exchanges that code with Google for an Access Token.
-
 BookMyShow uses the Access Token to call Google’s Resource Server and get your profile/email.
-
 BookMyShow logs you in (or creates your account) using that info.
 
 ⚡ Quick Mapping Table

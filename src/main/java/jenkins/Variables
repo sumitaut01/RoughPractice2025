@@ -1,0 +1,106 @@
+In a Jenkinsfile (Declarative Pipeline):
+
+Type	How to access	Example
+Environment variables	env.*	env.MY_ENV_VAR
+Parameters (Pipeline parameters)	params.*	params.BRANCH_NAME
+🌍 Environment variables (env)
+
+These come from:
+
+Jenkins global environment
+
+Agent machine OS env vars
+
+environment {} block in Jenkinsfile
+
+Example:
+
+environment {
+    MY_ENV_VAR = "HelloWorld"
+}
+
+
+Access in pipeline:
+
+echo "Value = ${env.MY_ENV_VAR}"
+
+🎛️ Parameters (params)
+
+These are values passed by the user via Build With Parameters.
+
+Example:
+
+parameters {
+    string(name: 'USERNAME', defaultValue: 'sumit')
+    booleanParam(name: 'RUN_TESTS', defaultValue: true)
+}
+
+
+Access in pipeline:
+
+echo "User = ${params.USERNAME}"
+echo "Run tests? = ${params.RUN_TESTS}"
+
+🔥 Very simple memory rule
+Prefix	Means
+env.	Environment variable
+params.	Parameter chosen by user
+
+Example usage difference:
+
+echo "Environment Workspace = ${env.WORKSPACE}"
+echo "Selected branch = ${params.GIT_BRANCH}"
+
+🧪 Quick real-life Jenkins example
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main')
+    }
+
+    environment {
+        URL = "https://google.com"
+    }
+
+    stages {
+        stage('Show Values') {
+            steps {
+                echo "PARAM value = ${params.BRANCH}"
+                echo "ENV value = ${env.URL}"
+            }
+        }
+    }
+}
+
+🧠 Common mistakes to avoid
+
+❌ Wrong — missing prefix:
+
+echo "${MY_ENV_VAR}"
+echo "${BRANCH}"
+
+
+✔ Correct:
+
+echo "${env.MY_ENV_VAR}"
+echo "${params.BRANCH}"
+
+
+❌ Wrong — mixing up env and params
+
+echo "${env.BRANCH}"  // BRANCH is a parameter, not env
+
+
+✔ Correct:
+
+echo "${params.BRANCH}"
+
+⭐ Final takeaway
+
+| env. | for environment variables |
+| params. | for Jenkins pipeline parameters |
+
+So your understanding is correct:
+
+“global environment is accessed via env, and parameters via params.”

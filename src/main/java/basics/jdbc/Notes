@@ -44,7 +44,7 @@ public class UsingStatement {
         String query = "SELECT * FROM employee";
 
         try (Connection con = DBUtil.getConnection();
-             Statement stmt = con.createStatement();
+             Statement stmt = con.createStatement(); //--******
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 System.out.println(rs.getInt("id") + " | "
@@ -82,7 +82,7 @@ public class UsingPreparedStatement {
             ps.setString(1, "Amit");
             ps.setString(2, "QA");
             ps.setDouble(3, 75000.0);
-            int rows = ps.executeUpdate();
+            int rows = ps.executeUpdate();  //********
             System.out.println(rows + " record(s) inserted.");
         } catch (SQLException e) {
             e.printStackTrace();

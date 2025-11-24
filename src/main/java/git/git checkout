@@ -38,7 +38,6 @@ Now your working directory looks like it did at that commit.
 🔁 Option 2: Move Your Branch Pointer There Permanently
 
 If you want your current branch (say main) to actually move back to that commit:
-
 git reset --hard <commit-hash>
 
 

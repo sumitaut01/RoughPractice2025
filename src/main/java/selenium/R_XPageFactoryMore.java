@@ -21,13 +21,10 @@ public class R_XPageFactoryMore {
 //@FindBy(xpath = "//button[@type='submit']")
 //private WebElement submitButton;
 //
-//
 //Here Selenium knows:
-//
 //usernameInput is found by id="username".
 //
 //submitButton is found by the given xpath.
-//
 //You then initialize it using:
 //
 //PageFactory.initElements(driver, this);

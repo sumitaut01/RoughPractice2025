@@ -215,14 +215,67 @@ public class RoughAll {
 
     public void practice(){
 
-     WebDriver driver=new ChromeDriver();
-
-        driver.get("someurl");
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
 
-
-
+//        WebDriver driver=new ChromeDriver();
+//
+//
+//        driver.get("some");
+//        driver.manage().window().maximize();
+//        driver.manage().deleteAllCookies();
+//
+//
+//
+//        String parent=driver.getWindowHandle();
+//
+//
+//        driver.findElement("").click();
+//
+//
+//
+//        Set<String> sHandles=driver.getWindowHandles();
+//        String child="";
+//        for(String s:sHandles){
+//
+//         if(!s.equalsIgnoreCase(parent)){
+//             driver.switchTo().window(s);
+//
+//             child=driver.getWindowHandle();
+//             driver.getTitle();
+//             driver.close();
+//
+//         }
+//
+//        }
+//
+//
+//        driver.switchTo().window(parent);
+//
+//
+//
+//        Actions act=new Actions(driver);
+//
+//        act.moveToElement("").click();
+//
+//
+//        Select sel=new Select("we");
+//
+//        sel.selectByVisibleText();
+//        sel.selectByValue();
+//        sel.selectByIndex();
+//
+//
+//
+//
+//
+//        WebElement chk= driver.findElement("");
+//                //input[@type='checkbox']/
+//
+//
+//
+//
+//
+//     driver.switchTo().newWindow(WindowType.WINDOW)
 
 
 

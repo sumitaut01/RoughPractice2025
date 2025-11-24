@@ -1,7 +1,5 @@
 
 Example:
-
-
 int calculateDiscount( HealthInsuranceCustomerProfile obj){
 obj.isLoyal(){
 return 20;

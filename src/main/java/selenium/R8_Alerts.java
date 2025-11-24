@@ -34,8 +34,6 @@ public class R8_Alerts {
         driver.get("https://www.selenium.dev/");
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
-
-
         driver.switchTo().alert().accept();
         driver.switchTo().alert().dismiss();
         driver.switchTo().alert().sendKeys("");

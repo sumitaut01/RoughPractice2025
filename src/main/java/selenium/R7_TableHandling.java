@@ -16,10 +16,8 @@ public class R7_TableHandling {
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(13));
 
-
         By tblHeader= By.xpath("//table//th");
         By tblRw= By.xpath("//table//tr");
-
 
         for (int i=0;i< driver.findElements(tblRw).size();i++) {
             for (int j = 0; j < driver.findElements(tblHeader).size(); j++) {

@@ -6,7 +6,6 @@ Let’s break it down step-by-step 👇
 
 
 Git Reset vs Git Revert
-
 Both commands are used to undo changes, but they work very differently.
 
 ⭐ 1. Git Reset
@@ -59,7 +58,6 @@ Because history is preserved.
 Example:
 git revert <commit>
 
-
 This creates a new commit like:
 Revert "Some previous commit"
 
@@ -91,7 +89,6 @@ Scenario 1: You committed by mistake locally
 git reset --soft HEAD~1
 
 Scenario 2: You pushed a bad commit to GitHub
-
 ✔ Use:
 git revert <commit>
 

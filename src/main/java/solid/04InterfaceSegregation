@@ -1,8 +1,8 @@
 
-one should not we forced to use iterface even though most of the methods are not useful for implementor:
+one should not we forced to use interface even though most of the methods are not useful for implementor:
 -> blank method is also bad design
 
-nterface Segregation Principle (ISP)
+interface Segregation Principle (ISP)
 
 Definition (from SOLID):
 

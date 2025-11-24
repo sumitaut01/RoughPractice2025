@@ -23,15 +23,11 @@ Meaning: Client is not authenticated.
 The server thinks you’re not logged in / didn’t provide valid credentials.
 
 Example:
-
 Missing Authorization header.
-
 Invalid username/password.
-
 Expired or malformed token.
 
 In RestAssured, this often happens when you don’t set .auth().preemptive().basic(user, pass) or the bearer token is wrong.
-
 given()
     .auth().none() // no auth
 .when()
@@ -42,15 +38,10 @@ given()
 🛑 403 Forbidden
 
 Meaning: Client is authenticated but not authorized.
-
 The server knows who you are, but says you don’t have permission for that resource.
-
 Example:
-
 A normal user tries to access an admin-only endpoint.
-
 Valid token, but role/permissions don’t allow access.
-
 given()
     .auth().oauth2(validUserToken) // authenticated user
 .when()
@@ -65,7 +56,6 @@ Code	When it happens	Analogy
 🛠️ In API Testing with RestAssured
 
 Use 401 tests → to validate missing/invalid credentials handling.
-
 Use 403 tests → to validate role-based access control.
 
 Both should be part of negative testing scenarios.

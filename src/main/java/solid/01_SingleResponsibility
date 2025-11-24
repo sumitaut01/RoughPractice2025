@@ -26,7 +26,6 @@ Definition:
 
 A class should have only one reason to change.
 It should do only one thing (one responsibility).
-
 This makes the class easier to test, maintain, reuse, and understand.
 
 ❌ Example of violating SRP
@@ -49,11 +48,8 @@ public class UserService {
 What’s wrong?
 
 Class handles 3 responsibilities:
-
 User creation
-
 Sending emails
-
 Auditing
 
 So it has 3 reasons to change → violates SRP.

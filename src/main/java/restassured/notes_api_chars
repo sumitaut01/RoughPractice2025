@@ -6,32 +6,22 @@ An API is considered RESTful only if it follows these principles:
 ✅ 1. Stateless
 
 Most important rule.
-
 Server does not store client session or context.
-
 Every request must contain all needed information.
-
 The server treats every request as independent.
 
 ➡️ No session, no JSESSIONID, no server memory → pure REST
 ➡️ Uses JWT/OAuth tokens, not cookies.
 
 ✅ 2. Client–Server Separation
-
 The client (frontend/UI) and server (backend/API) must be independent.
-
 Client handles UI logic
-
 Server handles data/business logic
-
 Both can develop independently
 
 ✅ 3. Uniform Interface
-
 REST API must use consistent patterns:
-
 🔹 Resource-based URLs (nouns, not verbs)
-
 ✔ /users
 ✔ /users/10/orders
 

@@ -1,1 +1,79 @@
 https://substack.com/home/post/p-163701798
+
+header.payload.signature
+
+What is JWT?
+
+JWT (JSON Web Token) is a secure and compact way to transmit information between client and server.
+It is commonly used for authentication and authorization in modern web applications.
+
+When a user logs in, the server generates a token (JWT) and sends it to the client.
+The client then sends this token in every request to prove its identity—so the server does not need to store session information.
+
+🔥 Why JWT is used
+
+Stateless authentication (no server-side session storage)
+
+Scalable for microservices, mobile apps, APIs
+
+Secure if properly signed
+
+🧩 Structure of JWT
+
+A JWT has three parts, separated by dots:
+
+Header.Payload.Signature
+
+
+Example:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJzdWIiOiIxMjM0NTYiLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MzI1NzU4MDh9
+.
+hC1bEicx2MMvVlqdkjshTI5sBv7IZ8x2bpEwtnlhg8k
+
+Part	Meaning
+Header	Algorithm + token type
+Payload	User claims/data (e.g., userId, email, role, expiration)
+Signature	Verifies the token is not changed by anyone
+🔁 How JWT works (simple flow)
+
+User enters credentials and logs in
+
+Server validates credentials
+
+Server sends back a JWT
+
+Client stores the JWT (normally in localStorage or cookies)
+
+For every API request, client sends:
+
+Authorization: Bearer <token>
+
+
+Server verifies signature + expiration inside JWT
+
+If valid → user gets access; if invalid/expired → request rejected
+
+❌ JWT is NOT encrypted by default
+
+Important note for interview:
+
+JWT is signed, not encrypted.
+So don’t store sensitive information (like passwords) in the payload.
+
+🔥 Short interview-ready answer
+
+JWT stands for JSON Web Token. It is a secure way for a client to prove its identity to the server after login. Instead of storing session information on the server, the server generates a signed token and sends it to the client. The client sends this token in the Authorization header for every request. The server validates the token signature and expiration to allow or deny access. JWT helps in building scalable, stateless authentication especially in REST APIs and microservices.
+
+🧪 Bonus — what to test in API testing (if asked)
+Test	Example
+Token should be generated after successful login	POST /login
+Token should not be generated for invalid credentials	Wrong password
+Token should be required for protected APIs	Missing token → 401
+Token with wrong signature should be rejected	401 / 403
+Expired token should be rejected	after exp time
+Token should not contain sensitive data	no password
+
+
