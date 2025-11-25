@@ -8,8 +8,7 @@ public class R2_Bearer {
     public static void main(String[] args) {
 
 //Because email should be unique
-        String str= """
-                
+        String str= """            
                 {
                     "name": "Tenali Ramakrishna",
                     "gender": "male",
@@ -17,11 +16,9 @@ public class R2_Bearer {
                     "status": "active"
                 }
                 """;
-
         str=str.replace("#RANDOM#", String.valueOf((int)Math.random()));
 
         System.out.println(str);
-
         RestAssured.given()
                 .baseUri("https://gorest.co.in")
                 .basePath("/public/v2/users")

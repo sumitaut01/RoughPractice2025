@@ -1,7 +1,6 @@
 https://substack.com/home/post/p-163701798
 
 header.payload.signature
-
 What is JWT?
 
 JWT (JSON Web Token) is a secure and compact way to transmit information between client and server.
@@ -11,20 +10,13 @@ When a user logs in, the server generates a token (JWT) and sends it to the clie
 The client then sends this token in every request to prove its identity—so the server does not need to store session information.
 
 🔥 Why JWT is used
-
 Stateless authentication (no server-side session storage)
-
 Scalable for microservices, mobile apps, APIs
-
 Secure if properly signed
 
 🧩 Structure of JWT
-
 A JWT has three parts, separated by dots:
-
 Header.Payload.Signature
-
-
 Example:
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
@@ -40,18 +32,11 @@ Signature	Verifies the token is not changed by anyone
 🔁 How JWT works (simple flow)
 
 User enters credentials and logs in
-
 Server validates credentials
-
 Server sends back a JWT
-
 Client stores the JWT (normally in localStorage or cookies)
-
 For every API request, client sends:
-
 Authorization: Bearer <token>
-
-
 Server verifies signature + expiration inside JWT
 
 If valid → user gets access; if invalid/expired → request rejected

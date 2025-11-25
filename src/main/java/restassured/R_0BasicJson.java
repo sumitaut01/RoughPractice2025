@@ -17,6 +17,8 @@ public class R_0BasicJson {
 
         JsonPath jsonPath=new JsonPath(new File("src/main/java/restassured/BasicJson.json"));
 
+       // JsonPath jsonPath=JsonPath.from(new File("src/main/java/restassured/BasicJson.json"));
+
         //    //1. Print No of courses returned by API
         System.out.println("----1----");
         System.out.println((jsonPath.getList("courses").size()));

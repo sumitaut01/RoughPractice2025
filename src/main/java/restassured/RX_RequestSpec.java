@@ -11,6 +11,7 @@ import io.restassured.specification.ResponseSpecification;
 public class RX_RequestSpec {
 
 
+    // notice that methods have setXXX  unlike directly baseURL . setBaseUri
     public static void main(String[] args) {
 
         //Create user

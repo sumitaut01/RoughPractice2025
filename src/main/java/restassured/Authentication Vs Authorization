@@ -17,7 +17,6 @@ In short:
 ⚙️ 2️⃣ Authentication Types in RestAssured
 
 RestAssured supports many types of authentication out of the box.
-
 🔹 Basic Authentication
 
 Used when API requires username & password.

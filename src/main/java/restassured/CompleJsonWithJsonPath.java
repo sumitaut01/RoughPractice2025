@@ -131,5 +131,37 @@ public class CompleJsonWithJsonPath {
 //                .body("string").post();
 //        System.out.println(response.jsonPath());
 //        System.out.println(response.asString());
+
+
+        //get the projects who have 'API' is their project name
+        System.out.println(jsonPath.getList("projects.findAll { it.projectName.contains('API') }"));
+
+        //Extract only projectId where name contains API
+        System.out.println(jsonPath.getList("projects.findAll { it.projectName.contains('API') }.projectId"));
+
+        //Case-insensitive contains search
+        //If you want "api", "API", "Api" etc. to match:
+        System.out.println(jsonPath.getList("projects.findAll { it.projectName.toLowerCase().contains('api') }"));
+
+
+//        Why this works?
+//                Because RestAssured JSONPath supports Groovy closures, enabling:
+//        contains()
+//        startsWith()
+//        endsWith()
+//        matches regex
+//        Extra: Regex match (if needed)
+        jsonPath.getList("projects.findAll { it.projectName =~ /.*API.*/ }");
+
+
+        // below one fails because not every recentActivity is having  title and it getting into null pointer
+       // System.out.println(jsonPath.getList("recentActivity.details.findAll{it.title.toLowerCase().contains('to')}"));
+
+       //below one works
+        System.out.println(
+                jsonPath.getList("recentActivity.details.findAll { it.title != null && it.title.toLowerCase().contains('to') }")
+        );
+
+
     }
 }

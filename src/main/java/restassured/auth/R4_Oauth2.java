@@ -8,7 +8,8 @@ public class R4_Oauth2 {
 //1
 
         RestAssured.given()
-                .auth().oauth2("<access_token>")//  resuassured internally adds this Authorization: Bearer <token>
+                .auth()
+                .oauth2("<access_token>")//  resuassured internally adds this Authorization: Bearer <token>
                 .when()
                 .get("https://yourapi.com/protected-endpoint")
                 .then()

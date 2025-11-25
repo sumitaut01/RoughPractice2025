@@ -10,8 +10,6 @@ public class R2_RestAssuredBasic {
 
 
     public static void main(String[] args) {
-
-
         RequestSpecification request=RestAssured.given();
         request.baseUri("https://stapi.co/");
         request.basePath("api/v1/rest/season/search");

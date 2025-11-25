@@ -7,8 +7,6 @@ i
 9src/main/java/basics/multithreading/R_4RaceSolvedSyn.java,c\f\cf66e7040c7fcbb21326560123c7ada42b87528b
 d
 4src/main/java/basics/multithreading/R_SyncBlock.java,d\e\dea4f66dc8e8d65ea8aca474c8b0e5c14e6410a2
-Z
-*src/main/java/restassured/validations/Info,9\0\90a39cbafeb66e2ae00d69d9b927f6cdd4afeef9
 h
 8src/main/java/basics/javapgms/patterns/R3_Triangle3.java,9\8\989bcc9f1028a6ba862a26d12ae55c59af9e4843
 x
@@ -23,8 +21,6 @@ d
 4src/main/java/basics/restassured/R1_ThreadLocal.java,8\1\81260dce2cb8b3e2b63a16f1b202ed430198045d
 ]
 -src/main/java/basics/restassured/Student.java,6\2\6232127fc2049294680068bc256ca2aade47f8f0
-w
-Gsrc/main/java/restassured/fakerapiproject/endpoints/R1_GetProducts.java,d\8\d864b54c7ab657dd9f918d81ca2cdd4c8efbd8f7
 d
 4src/main/java/basics/collections/queue/R1_QueUe.java,2\f\2f1238f0d75ef588226511fc6629b438db32c76e
 e
@@ -61,8 +57,6 @@ d
 4src/main/java/basics/javapgms/R34_IsSubsequence.java,d\7\d725b305558d3cae1e3b9ecee2718407793215ac
 `
 0src/main/java/basics/comparablecomparator/Theory,6\8\681afd49c4bcad1ce1cde22fa3ad13d3199fd584
-e
-5src/main/java/restassured/RX_JsonAnySetterGetter.java,1\1\11e4f080e963bd170ae3297266d2c6df70847b7f
 s
 Csrc/main/java/restassured/R24_RequestDataHashmapTextJsonString.java,3\3\331d7ca04ed849b9e787aadcc8de53d2c75d8d64
 p
@@ -73,8 +67,6 @@ o
 ?src/main/java/basics/javapgms/R_39RemoveDuplicateFromArray.java,0\8\086eceadc06d847b252c362d47a15f0ca95e3bc5
 s
 Csrc/main/java/basics/javapgms/R_43RemoveSpecialCharsfromString.java,3\e\3e193592ed71db598881319f2e0d031bda51df6b
-s
-Csrc/main/java/restassured/fakerapiproject/endpoints/R_0Generic.java,c\2\c2dd4c5f3902a8e60ef740ae375d8ea49eac7efd
 c
 3src/main/java/basics/multithreading/R1_1thread.java,8\0\80c117ed4db0bf4b7ece0af1f2be510114ae5bbf
 c
@@ -109,10 +101,6 @@ d
 4src/main/java/restassured/R20_JsonIgnoreUnknown.java,e\c\ec29551b662ae94fb9d71d8a3546dcb34fc5b40a
 ]
 -src/main/java/restassured/R21_JsonSchema.json,7\6\76db5214b6c32a0369ce258ae2e419cacbb22e74
-s
-Csrc/main/java/restassured/RX_BigReposponsesTimeoutsInputStream.java,0\5\055d379cd63fdd3cd60f4678ece8df564a2ab1fe
-X
-(src/main/java/restassured/Rx_Cookie.java,5\2\52f52f6873bf93fcf20a504ee4856379d32d5e52
 h
 8src/main/java/basics/bitwiseoperator/R1_AndOperator.java,d\9\d911bd587a780ab62dc61fb95e6d6da54d6dc31c
 Y

@@ -1,0 +1,159 @@
+PUT vs PATCH (Simple & Practical)
+✅ PUT
+
+Replaces the entire resource.
+You send the full object, even if you want to update only one field.
+If fields are missing in the payload → they are usually overwritten or removed.
+
+PUT is idempotent.
+Example
+
+Resource (User):
+{
+  "name": "Sumit",
+  "email": "a@a.com",
+  "age": 25
+}
+
+
+PUT payload:
+{
+  "name": "Sumit Sagar"
+}
+
+
+Server may update user to:
+{
+  "name": "Sumit Sagar",
+  "email": null,
+  "age": null
+}
+
+
+Because you replaced the entire document.
+When to use:
+
+✔ Full update
+✔ Replace existing resource
+✔ Create resource if server supports PUT as upsert
+
+🟦 PATCH
+
+Partial update.
+You send only the fields you want to modify.
+Server updates only those fields.
+PATCH is not guaranteed to be idempotent (depends on implementation).
+
+Example
+PATCH payload:
+{
+  "age": 26
+}
+
+Server updates only age, leaving others untouched.
+When to use:
+
+✔ Update a single field
+✔ Update few fields
+✔ JSON Patch or JSON Merge Patch operations
+
+🟩 Idempotency — What It Means
+✨ Idempotent = repeated calls have the same effect as one call
+More clearly:
+
+If you call the same API 1 time, or 10 times, the system result remains the same.
+
+🟩 Which HTTP methods are idempotent?
+Method	Idempotent?	Why
+GET	✔️ Yes	same fetch always same effect
+PUT	✔️ Yes	replacing resource with same body repeatedly → same result
+DELETE	✔️ Yes	deleting same resource repeatedly → after 1st time, nothing changes
+HEAD	✔️ Yes	metadata only
+OPTIONS	✔️ Yes	metadata only
+PATCH	❌ Not guaranteed	repeated patch may keep changing values
+POST	❌ No	creates new resources every time
+🟦 Example to Understand Idempotency
+GET (idempotent)
+
+Calling GET 100 times does NOT change the resource.
+
+PUT (idempotent)
+PUT /user/10 with payload:
+{
+  "name": "Sumit",
+  "age": 26
+}
+
+Call it 1 time → user updated
+Call it 10 times → still the same user data
+
+➡ No side effects → idempotent
+
+PATCH (not idempotent)
+
+PATCH /balance/add with:
+
+{ "amount": 100 }
+
+Call PATCH 1 time → +100
+Call PATCH 10 times → +1000
+
+➡ Resource changes every time → not idempotent
+POST (not idempotent)
+POST /users with:
+{
+  "name": "Sumit"
+}
+
+
+Calling 10 times creates 10 users.
+➡ Not idempotent
+
+🟦 DELETE (idempotent but not safe)
+
+1st call → deletes resource
+2nd call → resource already deleted (no change)
+3rd call → still nothing changes
+
+➡ This is why DELETE is idempotent.
+
+🧪 Idempotency in API Testing (RestAssured)
+
+✔️ Idempotent call test:
+
+given().body(user)
+.put("/user/10")
+.then().statusCode(200);
+
+given().body(user)
+.put("/user/10")
+.then().statusCode(200);
+
+
+Both calls should produce same final state.
+
+🟦 Quick Interview Summary
+
+PUT
+
+Full update / replace
+
+Idempotent
+
+Requires full body
+
+PATCH
+
+Partial update
+
+Not always idempotent
+
+Only send changed fields
+
+Idempotent
+
+Multiple identical calls → same result
+
+GET, PUT, DELETE = idempotent
+
+POST, PATCH = not idempotent
