@@ -7,7 +7,8 @@ Connection con = DriverManager.getConnection(url, user, password);
 This line looks simple — but inside, massive complexity is hidden.
 
 🧠 Key Roles
-ComponentResponsibilityDriverDB vendor–specific class that knows how to talk to the databaseDriverManagerDecides which driver to use and creates the connectionUser codeOnly calls DriverManager.getConnection()
+ComponentResponsibilityDriverDB vendor–specific class that knows how to talk to the databaseDriverManagerDecides which driver
+to use and creates the connectionUser codeOnly calls DriverManager.getConnection()
 
 ⛳ Where abstraction happens?
 Java programmers do not interact with database driver classes directly.
@@ -15,10 +16,7 @@ Instead → they interact with the DriverManager.
 
 
 The Driver object understands the low-level protocol of Oracle / MySQL / PostgreSQL.
-
-
 The DriverManager hides that complexity and provides a simple method getConnection().
-
 
 That is abstraction.
 
@@ -110,11 +108,9 @@ Would you like that? 😊
 
 
 Yes — you got the correct idea, but let’s phrase it exactly and clearly:
-
 ✔ DriverManager.getConnection(...) is a static method
 
 Correct.
-
 We always call it like:
 
 Connection con = DriverManager.getConnection(url, user, password);
@@ -139,7 +135,6 @@ But your code always refers to:
 
 Connection con; // abstraction
 
-
 You don’t care whether it's OracleConnection or PgConnection or MysqlConnectionImpl.
 
 That is abstraction + polymorphism.
@@ -151,17 +146,12 @@ DriverManager.getConnection(url, user, password)   → STATIC METHOD
 Internally does:
 
 Checks registered drivers
-
 Finds the matching driver for the URL
-
 Calls driver-specific connect() inside
 
 Example:
-
 return new com.mysql.cj.jdbc.ConnectionImpl(...);   // If MySQL
 return new oracle.jdbc.driver.OracleConnection(...); // If Oracle
-
-
 and gives it to you as:
 
 Connection (interface reference)
@@ -188,9 +178,7 @@ Class.forName("com.mysql.cj.jdbc.Driver");
 Because this line:
 
 loads the driver class
-
 and the driver’s static block registers itself with DriverManager via:
-
 DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 
 

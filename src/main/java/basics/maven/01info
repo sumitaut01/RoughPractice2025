@@ -53,9 +53,7 @@ If you pass -DsuiteXmlFile=... → use that file
 If not, it will look for default test sources under src/test/java
 
 ✅ 4. Multiple Suites Example
-
 You can run multiple suites like this:
-
 mvn test -DsuiteXmlFile="src/test/resources/smoke.xml,src/test/resources/regression.xml"
 
 

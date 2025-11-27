@@ -9,18 +9,12 @@ d
 4src/main/java/basics/multithreading/R_SyncBlock.java,d\e\dea4f66dc8e8d65ea8aca474c8b0e5c14e6410a2
 h
 8src/main/java/basics/javapgms/patterns/R3_Triangle3.java,9\8\989bcc9f1028a6ba862a26d12ae55c59af9e4843
-x
-Hsrc/main/java/basics/collections/list/implemeting/R1_SinglyListImpl.java,3\5\35b01ba35c8329899450da3e50399eb35bb17fd7
 v
 Fsrc/main/java/basics/collections/list/implemeting/R2_DoublyLLImpl.java,5\b\5b451ec74fe0f04a03e428920d4b27526c0c3d81
 d
 4src/main/java/basics/collections/queue/R2_Deque.java,8\d\8d34f5748ea5b512e59f852a74d6dffefb0cbcda
 e
 5src/main/java/basics/multithreading/R2_JoinSleep.java,1\e\1eab0af246e51f4a81bab72dbfdb43dd1d895692
-d
-4src/main/java/basics/restassured/R1_ThreadLocal.java,8\1\81260dce2cb8b3e2b63a16f1b202ed430198045d
-]
--src/main/java/basics/restassured/Student.java,6\2\6232127fc2049294680068bc256ca2aade47f8f0
 d
 4src/main/java/basics/collections/queue/R1_QueUe.java,2\f\2f1238f0d75ef588226511fc6629b438db32c76e
 e
@@ -81,8 +75,6 @@ d
 4src/main/java/basics/javapgms/R11_LeaderInArray.java,f\9\f9ddf5111ad9042fcd70fc91d693ba6ff0d3cab7
 d
 4src/main/java/basics/javapgms/R7_SecondMaxArray.java,1\c\1c300f313165cd6f68320932d3688dbf20ce47ee
-_
-/src/main/java/basics/collections/list/hierarchy,a\0\a078d92636d414661e0ecaed8fc15d057487a084
 _
 /src/main/java/basics/filehandling/FilesNio.java,a\d\ad4b0b89fd69c04418906775cb0103b64d1bf4cd
 e
@@ -157,8 +149,6 @@ h
 8src/main/java/basics/javapgms/R_XSubstringForString.java,e\a\ea795d4d78aabe53aaae1b341fbc7042cad6830b
 g
 7src/main/java/basics/javapgms/R_XStreamCapitalList.java,b\6\b6d1a33e738dd9582966d86721d6a8cfb3bb4832
-`
-0src/main/java/basics/javapgms/R_XPrimeCheck.java,5\9\59682464474b0d25534b3739a9052a90d4295c10
 c
 3src/main/java/basics/javapgms/R_41Zpermuations.java,c\7\c7a1fd24abcaf481bcaf3c9f437a5d9b7397aade
 c
@@ -195,7 +185,5 @@ Z
 ,src/main/java/reporters/EdgeOptionsList.java,5\b\5ba0a9582723df46e26b15feafc8f38a9e073a6d
 X
 (src/main/java/reporters/extentconfig.xml,0\8\08b6bc0f89d0ba9ea91f63657f473ab5de9a9183
-\
-,src/main/java/basics/javapgms/R2_TwoSum.java,9\f\9f87bd2cee814a9ea30a589509d885302406f5d3
 W
 'src/main/java/selenium/BrokenLinks.java,9\8\9878d6cbdc058a9b480822b2885d165780c8bc11

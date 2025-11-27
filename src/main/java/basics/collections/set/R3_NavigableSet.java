@@ -9,7 +9,6 @@ public class R3_NavigableSet {
 
     public static void main(String[] args) {
 
-
         NavigableSet<String> str=new TreeSet<>();
         str.add("Sumit");
         str.add("Neha");

@@ -43,13 +43,11 @@ Integration Testing	Test interactions between modules
 System Testing	Complete system test
 UAT Testing	User/business testing
 Ad-hoc Testing	Informal, no documentation
+
 🟦 Boundary Value Analysis (BVA)
 Definition:
-
 Test boundaries of input ranges because bugs often occur at edges.
-
 Example:
-
 Age must be 18–60
 Test: 17, 18, 60, 61
 

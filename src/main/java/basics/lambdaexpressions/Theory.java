@@ -6,6 +6,20 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Theory {
+
+    //Why lambdas were added
+    //Before Java 8, you had to write anonymous classes:
+    //
+    //Runnable r = new Runnable() {
+    //    public void run() {
+    //        System.out.println("Running");
+    //    }
+    //};
+
+    //With a lambda:
+    //Runnable r = () -> System.out.println("Running");
+    //
+    //Much cleaner and readable.
     public static void main(String[] args) {
         //Without Lambda
         @FunctionalInterface
@@ -18,13 +32,12 @@ public class Theory {
                 System.out.println("test");
             }
         };
-
         i1.demo();//test
 
 
         //With Lambda
-
-       // i1 ii = data -> System.out.println(data);
+       i1 ii = () -> System.out.println("something");
+        ii.demo();
 
 
         //consumer

@@ -56,11 +56,8 @@ public class ArrayListDemo {
 
         System.out.println(lStr);//[Sumit, Amit]
 
-
-
         System.out.println(lStr.indexOf("Sumit"));//0
         System.out.println(lStr.indexOf("kkk"));//-1 as kkk does not exist
-
 
         System.out.println(lStr.set(0,"first"));// give element which got replaced-- sumit is this case
 
