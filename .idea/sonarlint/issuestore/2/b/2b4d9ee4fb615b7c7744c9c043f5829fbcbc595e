@@ -1,18 +1,0 @@
-
-i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(Ç¢ØÑ8ƒæèºž3
-X	java:S125
-"<This block of commented-out lines of code should be removed.(îï‡8‡æèºž3
-X
-java:S1854+"6Remove this useless assignment to local variable "m1".(£êêÌüÿÿÿÿ8ˆæèºž3
-R
-java:S1854)"5Remove this useless assignment to local variable "m".(Õñ° 8ä¯éºž3
-Q
-java:S1854("5Remove this useless assignment to local variable "m".(¢öæb8ˆæèºž3
-B
-java:S1481("&Remove this unused "m" local variable.(¢öæb8ˆæèºž3
-I
-java:S1481+"'Remove this unused "m1" local variable.(£êêÌüÿÿÿÿ8‰æèºž3
-g
-java:S6206@"ERefactor this class declaration to use 'record MyImmutable(int age)'.(Çã¥Œÿÿÿÿÿ8‰æèºž3
-T
-java:S1128"7Remove this unused import 'groovy.transform.Immutable'.(º›æÝ8‰æèºž3

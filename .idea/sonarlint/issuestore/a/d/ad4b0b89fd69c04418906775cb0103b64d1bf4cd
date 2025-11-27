@@ -1,7 +1,0 @@
-
-g
-java:S1223"LRename this method to prevent any misunderstanding or make it a constructor.(ÞÊ  øÿÿÿÿ
-Q	java:S125"<This block of commented-out lines of code should be removed.(çòº‚
-h	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÞÊ  øÿÿÿÿ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(¯Š•™øÿÿÿÿ
-V	java:S125"<This block of commented-out lines of code should be removed.(§ä¿øÿÿÿÿ

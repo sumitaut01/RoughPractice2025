@@ -1,9 +1,0 @@
-
-j	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(µà›¥8ìÃ·ˆ3
-U	java:S106"9Replace this use of System.out or System.err by a logger.(£ê¥ı8îÃ·ˆ3
-o	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¹åòÃüÿÿÿÿ8îÃ·ˆ3
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(ùäÿãùÿÿÿÿ8îÃ·ˆ3
-U	java:S106%"9Replace this use of System.out or System.err by a logger.(¶çÑ8ïÃ·ˆ3
-o	java:S100)"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ø‡úÿÿÿÿ8ïÃ·ˆ3
-Z	java:S106*"9Replace this use of System.out or System.err by a logger.(Âï…Şøÿÿÿÿ8ïÃ·ˆ3
-]	java:S125Z"<This block of commented-out lines of code should be removed.(ï…ÃÔùÿÿÿÿ8ïÃ·ˆ3
