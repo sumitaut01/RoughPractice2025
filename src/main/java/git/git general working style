@@ -1,0 +1,394 @@
+Branches:
+
+main (or master) = primary branch
+
+feature/login
+
+feature/payment
+
+feature/discount
+
+✅ THE REAL INDUSTRY WORKFLOW (Merge-based)
+🔹 Step 1: Developer creates feature branch
+git checkout -b feature/login
+
+🔹 Step 2: Developer works normally (commit, push, etc.)
+D1 → D2 → D3
+
+🔹 Step 3: While developing, main gets updated by other developers
+main: A → B → C
+feature: D1 → D2 → D3
+
+🔹 Step 4: Developer syncs latest main INTO their feature branch
+
+This is the correct place to merge ⬇
+
+git checkout feature/login
+git merge main
+
+
+Now:
+
+main:    A → B → C
+feature:      \→ D1 → D2 → D3 → M
+
+
+(M = merge commit)
+
+✔ Conflict resolved early
+✔ Feature stays updated
+✔ No surprises during PR
+
+🔹 Step 5: Developer pushes updated feature branch:
+git push
+
+🔹 Step 6: Create Pull Request (PR)
+
+Feature branch → main
+
+When PR is approved:
+
+🔹 Step 7: Merge feature into main
+
+This creates:
+
+A → B → C → (Merge feature/login) → D1 → D2 → D3
+
+🔥 This is the most common workflow.
+🧠 So overall merge order looks like this:
+
+You asked:
+
+“Do they merge while on feature then merge main… and later merge feature into master?”
+
+YES — EXACTLY THIS:
+
+Work on feature
+
+Merge main → feature (to stay updated)
+
+Push branch
+
+Create PR
+
+Merge feature → main
+
+This is the safest and most used method in the world.
+
+🥈 2. Rebase Workflow (Cleaner but riskier)
+
+Used by teams who want clean commit history.
+
+Flow:
+
+Checkout feature
+
+Rebase main → feature
+
+Push force (if never shared!)
+
+PR
+
+Merge feature → main
+
+This produces a clean history (no merge commits).
+
+BUT dangerous if feature branch is already shared with team.
+
+🔥 FINAL ANSWER (Sumit Edition 😄)
+✔ What devs ideally do?
+
+They regularly pull latest main and merge it into their feature branch.
+
+✔ Why?
+
+To avoid future conflicts and keep feature branch updated.
+
+✔ What happens later?
+
+When the feature is ready →
+They create PR →
+Branch gets merged back into main.
+
+✔ The flow is:
+feature <-- merge main
+feature --> merge to main (via PR)
+
+🎯 TL;DR:
+
+YES — developers work on feature, merge main into feature to stay updated, and finally merge feature into main through PR.
+
+
+
+
+
+
+
+
+
+
+Nice — here’s a compact, practical cheat-sheet + ASCII diagram + commands you can hand to your team. Quick, no-fluff, exactly what people do in real projects.
+
+1) Fast ASCII diagram (merge-based — the common way)
+main:    A --- B --- C -------------------------------> (main)
+                 \                                \
+feature:           D --- E --- F --- M  (merge commit) ---> (feature)
+                                              \
+                                               (PR merged) -> main
+
+
+Flow:
+
+Create feature from main at commit C
+
+Work: commits D,E,F on feature
+
+Periodically: git merge main into feature → creates merge commit M (resolves conflicts early)
+
+Push feature, open PR → merge feature → main
+
+2) Commands you’ll actually run
+
+Create feature:
+
+git checkout main
+git pull origin main
+git checkout -b feature/awesome
+
+
+Work / commit / push:
+
+git add .
+git commit -m "WIP: do awesome"
+git push -u origin feature/awesome
+
+
+Keep feature up-to-date (merge main into feature — safe):
+
+git checkout feature/awesome
+git fetch origin
+git merge origin/main        # resolves conflicts on feature branch
+git push
+
+
+Alternative: rebase main onto feature (cleaner history, only if NOT shared):
+
+git checkout feature/awesome
+git fetch origin
+git rebase origin/main       # rewrites commits D,E,F -> D',E',F'
+# fix conflicts, then:
+git push --force-with-lease  # only if you are sure branch is private
+
+
+Open PR → Merge into main (options explained below).
+
+3) How to merge the PR on GitHub (3 options)
+
+Create a merge commit (keeps full history) — default in many teams.
+
+Squash and merge (squashes feature commits into single commit) — keeps main tidy, loses individual feature commits.
+
+Rebase and merge (replays commits onto main) — linear history, but rewrites commit SHAs.
+
+Team pick depends on preference. My recommendation:
+
+Small teams: merge commit or squash.
+
+Libraries / long-term projects: rebase/squash to keep history clean.
+
+4) Best practices / rules to follow
+
+Always sync main into your feature BEFORE opening PR (catch conflicts early).
+
+If you rebase, only rebase branches that are not shared or already reviewed by others.
+
+Use git pull --rebase origin main if you prefer rebase when fetching upstream changes.
+
+Use --force-with-lease instead of --force when pushing rewritten history.
+
+Protect main (require PR, CI checks, required reviewers) — prevents accidental force-pushes.
+
+5) Quick decision guide
+
+Want safety + simple team workflow → merge main into feature, then merge PR (merge commit).
+
+Want clean linear history and you work alone on branch → rebase locally, then push (careful).
+
+Want tidy main with one commit per feature → squash merge at PR merge.
+
+
+
+
+Great — here is a clean, ready-to-paste, team-friendly “Git Workflow Guide (Feature Branch Model)” that you can put into your repo as GIT-WORKFLOW.md.
+
+No canvas used unless you want it there — just tell me.
+
+📘 GIT WORKFLOW GUIDE (Feature Branch Model)
+
+For teams using main/master as the primary branch
+
+🧭 Overview
+
+This guide defines how developers should branch, sync, and merge code into main.
+It prevents conflicts, ensures clean PRs, and keeps your Git history consistent.
+
+1️⃣ Branching Strategy
+main (or master)
+
+Always stable
+
+Always deployable
+
+Protected (no direct pushes)
+
+Feature branches
+
+Named as:
+
+feature/<jira-ticket>
+feature/<small-summary>
+
+
+Examples:
+
+feature/LOGIN-142-add-captcha
+feature/cart-discount-logic
+
+2️⃣ Creating a Feature Branch
+git checkout main
+git pull origin main
+git checkout -b feature/your-branch-name
+
+3️⃣ Working on the Feature Branch
+
+Regular workflow:
+
+git add .
+git commit -m "Meaningful commit message"
+git push -u origin feature/your-branch-name
+
+
+Push frequently.
+
+4️⃣ Keeping Your Feature Branch Updated (VERY IMPORTANT)
+
+While working, main always moves due to other developers.
+
+✔ Correct way (SAFE): Merge main → feature
+git checkout feature/your-branch-name
+git fetch origin
+git merge origin/main
+git push
+
+
+Resolves conflicts early
+
+Safe for shared branches
+
+NEVER breaks team history
+
+➡️ This is recommended for most teams.
+
+5️⃣ (Optional) Keeping History Clean: Rebase Instead of Merge
+
+⚠️ Use only if no one else uses your feature branch.
+
+git checkout feature/your-branch-name
+git fetch origin
+git rebase origin/main
+# resolve conflicts
+git add .
+git rebase --continue
+git push --force-with-lease
+
+
+Linear history
+
+No merge commits
+
+Requires caution
+
+➡️ Good for solo developers or small features.
+
+6️⃣ Opening a Pull Request (PR)
+
+When feature is ready:
+
+Push your branch
+
+Open PR: feature → main
+
+CI runs tests
+
+Reviewers approve
+
+Resolve comments
+
+7️⃣ Merging the PR into Main
+
+Choose one of the following (team standard):
+
+✔ Option 1 (Recommended): Merge Commit
+
+Keeps full history
+
+No rewriting
+
+Safe for all teams
+
+✔ Option 2: Squash and Merge
+
+Converts all feature commits → 1 clean commit
+
+Good for keeping main tidy
+
+✔ Option 3: Rebase and Merge
+
+Linear history in main
+
+Great for clean projects
+
+Should not rebase after PR is opened
+
+8️⃣ Deleting the Branch
+
+After merge:
+
+Delete branch on GitHub
+git branch -d feature/your-branch-name
+
+9️⃣ Quick Decision Guide
+Scenario	Recommended Action
+Team project	Merge main → feature
+Personal feature branch	Rebase main → feature
+Branch already shared	NEVER rebase
+Want clean main	Use Squash merge
+Want full history	Use Merge Commit
+🔟 Common Commands Cheat Sheet
+Sync feature with main (safe)
+git merge origin/main
+
+Rebase feature onto main (advanced)
+git rebase origin/main
+
+Abort rebase
+git rebase --abort
+
+Continue rebase after conflict
+git add .
+git rebase --continue
+
+Push rewritten history safely
+git push --force-with-lease
+
+🏁 Final Visual Summary
+main:    A --- B --- C ---- D ---- E ----- F
+                 \                    \
+feature:          X --- Y --- Z ------- M -----> (PR merged)
+
+
+Developer works on X, Y, Z
+
+Sometimes merges main → feature (C, D updates)
+
+Eventually PR merges feature → main (M)

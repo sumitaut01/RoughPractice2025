@@ -1,0 +1,112 @@
+GUICE IN 6 SIMPLE STEPS (BEGINNER FLOW)
+
+This is all you need to start using Guice in Selenium.
+
+✅ STEP 1: What is Guice? (1 line)
+
+Guice = A simple tool that creates objects for you.
+You don’t write new ClassName() everywhere.
+
+✅ STEP 2: Learn @Inject (1 line)
+
+@Inject → "Guice, please give me this object."
+
+Example:
+
+@Inject
+WebDriver driver;
+
+
+You didn't create the driver—Guice will.
+
+✅ STEP 3: Learn Module (the brain)
+
+A Module tells Guice HOW to create objects.
+
+Example: tell Guice how to create WebDriver:
+
+public class SeleniumModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(WebDriver.class).toInstance(new ChromeDriver());
+    }
+}
+
+
+So now, when you write:
+
+@Inject WebDriver driver;
+
+
+Guice gives you a ChromeDriver.
+
+✅ STEP 4: Learn @Guice (TestNG-specific)
+
+TestNG needs to know:
+
+"Hey, use Guice injection for this test."
+
+So we write:
+
+@Guice(moduleFactory = SeleniumModuleFactory.class)
+public class LoginTest { }
+
+✅ STEP 5: ModuleFactory (TestNG requirement)
+
+ModuleFactory loads your module.
+
+public class SeleniumModuleFactory implements IModuleFactory {
+    @Override
+    public Module createModule(ITestContext context, Class testClass) {
+        return new SeleniumModule();
+    }
+}
+
+
+Now TestNG can use Guice.
+
+✅ STEP 6: Use @Inject in the Test
+@Guice(moduleFactory = SeleniumModuleFactory.class)
+public class LoginTest {
+
+    @Inject
+    WebDriver driver;
+
+    @Test
+    public void testGoogle() {
+        driver.get("https://google.com");
+    }
+}
+
+
+You did not write:
+
+new ChromeDriver()
+
+
+Guice handled it.
+
+🎯 FINAL FLOW SUMMARY (BEGINNER VERSION)
+✔ Step 1 → Create Module
+
+Defines how Guice creates WebDriver, Pages, Utilities.
+
+✔ Step 2 → Create ModuleFactory
+
+So TestNG can load Guice module.
+
+✔ Step 3 → Add @Guice to test class
+
+Tells TestNG: “Use Guice DI here.”
+
+✔ Step 4 → Add @Inject fields
+
+Guice now provides objects automatically.
+
+🧠 Your mental model (easy to remember)
+@Module       = How objects are created
+@Guice        = TestNG enable Guice
+@Inject       = Get objects without new
+
+
+That’s literally 90% of Guice.

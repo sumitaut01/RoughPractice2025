@@ -31,8 +31,6 @@ f7g8h9i Initial commit
 
 git checkout d4e5f6g
 # HEAD is now detached at commit "Add feature"
-
-
 Now your working directory looks like it did at that commit.
 
 🔁 Option 2: Move Your Branch Pointer There Permanently
@@ -51,14 +49,10 @@ If you want to explore that commit safely:
 git checkout -b old_state <commit-hash>
 # or
 git switch -c old_state <commit-hash>
-
-
 ✅ Creates a new branch old_state pointing to that commit — no danger to main.
 
 ⚠️ Important: Detached HEAD
-
 When you checkout a commit hash (not a branch), Git says something like:
-
 Note: switching to 'd4e5f6g'.
 You are in 'detached HEAD' state.
 

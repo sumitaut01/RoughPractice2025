@@ -1,25 +1,20 @@
-when we create branch 2 from branch 1, and when we switch on branch 2, does branch 2 shows git logs of  branch 1 also.. meaning does it have the trail of how branch 1 was created
+when we create branch 2 from branch 1, and when we switch on branch 2, does branch 2 shows git logs of  branch 1 also..
+meaning does it have the trail of how branch 1 was created
 
 
-Short answer: Yes — when you create branch 2 from branch 1, branch 2 will show the Git log/history of branch 1 up to the point it was created.
+Short answer: Yes — when you create branch 2 from branch 1, branch 2 will show the Git log/history of branch 1 up to the point
+it was created.
 
 🔍 Why?
-
 A new branch in Git is not a copy of files — it's a pointer to a commit.
-
 So when you run:
 
 git checkout branch1
 git checkout -b branch2
 
-
 branch2 points to the same latest commit on branch1.
-
 Therefore:
-
 git log   # on branch2
-
-
 will display all commits from branch1 up to the branching commit.
 
 🧩 But what happens after branching?

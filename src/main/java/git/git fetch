@@ -2,7 +2,6 @@ when i do git fetch, does my local repo brings that change down from upstream
 ChatGPT said:
 
 Excellent 👏 — this is one of those subtle but super important Git questions that every developer needs to get clear on.
-
 Let’s go step-by-step — what git fetch actually does, what it doesn’t, and how it differs from git pull.
 
 🧠 1️⃣ What git fetch Really Does

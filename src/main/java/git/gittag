@@ -1,0 +1,151 @@
+What is git tag? (Super Simple Explanation)
+
+A git tag is like putting a bookmark or label on a specific commit.
+
+You use it when you want to mark an important point in your project, such as:
+
+A release: v1.0.0
+
+A milestone: beta-1
+
+A production deployment: prod-2025-11-27
+
+Tags NEVER move.
+They always stick to the SAME commit — unlike branches, which keep moving.
+
+🎯 Why do we use git tags?
+
+Because they help you:
+
+✔ Mark releases
+git tag v1.0.0
+
+✔ Go back to a stable version anytime
+git checkout v1.0.0
+
+✔ Deploy a specific version in CI/CD
+git checkout tags/v2.3.1
+
+✔ Compare versions
+git diff v1.0.0 v2.0.0
+
+🧠 Types of Tags
+1️⃣ Lightweight Tag (simple bookmark)
+
+Just a label, no metadata.
+
+git tag v1.0.0
+
+2️⃣ Annotated Tag (recommended)
+
+Contains:
+
+Tag message
+
+Tagger name
+
+Email
+
+Timestamp
+
+git tag -a v1.0.0 -m "First stable release"
+
+🔧 Useful Git Tag Commands
+👉 List all tags
+git tag
+
+👉 Create annotated tag
+git tag -a v2.0 -m "Release version 2.0"
+
+👉 Tag a specific commit
+git tag -a v2.1 3c9e1d4 -m "Hotfix"
+
+👉 Push tags to GitHub
+git push origin --tags
+
+👉 Push a single tag
+git push origin v1.0.0
+
+👉 Delete a local tag
+git tag -d v1.0.0
+
+👉 Delete a remote tag
+git push origin :refs/tags/v1.0.0
+
+🧨 Real-Life Example (You will use this a lot)
+You finished a release and want to mark it:
+git tag -a v3.5.1 -m "Production release"
+git push origin v3.5.1
+
+
+Your CI/CD pipeline can now deploy v3.5.1.
+
+If Prod crashes due to new changes?
+Just roll back:
+
+git checkout v3.5.1
+
+🏆 TL;DR (Sumit Edition 😄)
+
+git tag = Permanent bookmark on a commit.
+Used mainly to mark releases.
+Tags don’t move. Branches do.
+
+
+
+
+when you are creating a proper release tag, you should ALWAYS use:
+git tag -a <tagname> -m "message"
+
+
+Let’s break it down cleanly 👇
+
+✅ Two Ways to Create Tags
+1️⃣ Lightweight Tag (NOT recommended for releases)
+
+Just a name pointing to a commit.
+git tag v1.0
+
+
+❌ No message
+❌ No metadata
+❌ Not good for release history
+❌ Not used in real projects
+
+2️⃣ Annotated Tag (RECOMMENDED for all real use)
+This stores:
+
+✔ Tag message
+✔ Author name
+✔ Email
+✔ Timestamp
+✔ The commit it points to
+
+To create it:
+git tag -a v1.0 -m "Production release version 1.0"
+
+Or without quotes:
+git tag -a v1.0
+
+Git will open an editor to type message.
+
+🚀 So what should YOU use?
+👉 Always use annotated tags:
+git tag -a v1.2 -m "Release for QA"
+
+🧪 Tagging a specific commit
+git tag -a v1.2 43bd10c -m "Stable version"
+
+📌 Pushing tags to GitHub
+Push all tags:
+git push origin --tags
+
+Push single tag:
+git push origin v1.2
+
+🧠 TL;DR (Sumit Edition 😄)
+
+To create proper tags, use git tag -a <tagname> -m "message".
+
+-a = annotated tag
+git tag <tag> without -a creates a weak, lightweight tag (avoid it).

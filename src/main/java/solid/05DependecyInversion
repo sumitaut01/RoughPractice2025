@@ -369,3 +369,127 @@ If you want, I can also:
 
 Just tell me!
 
+
+
+
+#################################Other Example#################################3
+
+
+
+Dependency Inversion Principle (DIP)
+
+The D in SOLID, DIP says two important things:
+
+High-level modules should not depend on low-level modules.
+Both should depend on abstractions.
+
+Abstractions should not depend on details.
+Details (implementations) should depend on abstractions.
+
+In simple terms:
+👉 Don’t make your business logic depend directly on concrete classes.
+👉 Instead, depend on interfaces or abstract classes.
+
+
+
+Without Dependency Inversion (Tight Coupling)
+// Low-level module
+class EmailService {
+    public void sendEmail(String message) {
+        System.out.println("Email sent: " + message);
+    }
+}
+
+// High-level module
+class Notification {
+    private EmailService emailService = new EmailService(); // ❌ Direct dependency
+
+    public void send(String message) {
+        emailService.sendEmail(message);
+    }
+}
+
+Problems
+
+Notification class cannot work without EmailService.
+
+You cannot switch to SMS, WhatsApp, Push, etc.
+
+Hard to unit-test (needs real EmailService).
+
+Code becomes rigid and harder to extend.
+
+
+
+
+With Dependency Inversion (Loose Coupling)
+Step 1 — Create an abstraction (interface)
+interface MessageService {
+    void sendMessage(String message);
+}
+
+Step 2 — Low-level modules implement the abstraction
+class EmailService implements MessageService {
+    public void sendMessage(String message) {
+        System.out.println("Email sent: " + message);
+    }
+}
+
+class SMSService implements MessageService {
+    public void sendMessage(String message) {
+        System.out.println("SMS sent: " + message);
+    }
+}
+
+Step 3 — High-level module depends on the interface, not the class
+class Notification {
+    private MessageService service;   // ✔ depends on abstraction
+
+    public Notification(MessageService service) {
+        this.service = service;       // Inject implementation
+    }
+
+    public void send(String message) {
+        service.sendMessage(message);
+    }
+}
+
+Step 4 — Instantiate using dependency injection
+public class Main {
+    public static void main(String[] args) {
+        MessageService service = new EmailService(); // or new SMSService()
+        Notification notif = new Notification(service);
+
+        notif.send("Hello!");
+    }
+}
+
+🎉 Benefits of Using DIP
+✔ Loose Coupling
+
+High-level modules don’t care about low-level details.
+
+✔ Easier to Extend
+
+Add new types of messaging (WhatsApp, Push, Telegram) without changing Notification class.
+
+✔ Testability
+
+You can use a mock object during unit testing.
+
+class MockService implements MessageService {
+    public void sendMessage(String message) {
+        System.out.println("Mock: " + message);
+    }
+}
+
+✔ Aligns with Dependency Injection frameworks
+
+Such as Spring, Guice, CDI.
+
+⭐ Quick Summary (Simple)
+Without DIP	With DIP
+High-level depends on low-level	Both depend on abstractions
+Hard to change	Easy to replace implementations
+Hard to test	Easy to mock
+Tight coupling	Loose coupling

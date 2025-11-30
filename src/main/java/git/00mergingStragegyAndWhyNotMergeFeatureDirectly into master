@@ -1,0 +1,353 @@
+What happens internally in GitHub when you create a PR
+How PR merge types work (Merge Commit vs Squash vs Rebase)
+Why “pulling feature into master” creates dangerous commit history
+
+
+
+
+
+
+Here is the deepest but clearest explanation you’ll ever read —
+What GitHub does internally, why PRs exist, and why pulling feature → master is dangerous.
+
+I’ll break it into 3 sections:
+
+🧩 1. What happens internally in GitHub when you create a Pull Request (PR)
+
+When you create a PR from:
+
+feature/login → main
+
+
+GitHub performs SEVEN internal operations automatically.
+
+✅ STEP 1 — GitHub compares the two branches
+
+GitHub creates an internal temporary diff:
+
+diff(main, feature)
+
+
+It finds:
+
+Every commit in feature that’s not in main
+
+Every line-of-code changed
+
+Renames, deletions, insertions
+
+Merge conflicts (if any)
+
+This becomes the diff view you see.
+
+✅ STEP 2 — CI/CD triggers automatically
+
+GitHub tells your pipeline:
+
+"Run tests on this PR"
+
+
+CI runs:
+
+build
+
+unit tests
+
+lint/Sonar
+
+integration tests
+
+security checks
+
+Only when ALL PASS → PR becomes green.
+
+✅ STEP 3 — GitHub checks branch protection rules
+
+GitHub checks:
+
+Does main allow direct pushes? (usually no)
+
+Does it require PR? (yes)
+
+Does it require approvals?
+
+Does CI need to pass?
+
+Are review comments resolved?
+
+If any rule is violated →
+GitHub LOCKS the merge button.
+
+✅ STEP 4 — GitHub attaches metadata
+
+A PR is not just "merge code".
+It stores:
+
+Title
+
+Description
+
+Jira link
+
+Author
+
+All commits
+
+All comments
+
+All reviewers
+
+Who approved
+
+Which checks passed
+
+Which files changed
+
+This becomes audit history forever.
+
+✅ STEP 5 — Inline code review system activates
+
+Reviewers can:
+
+Comment on individual lines
+
+Suggest edits
+
+Request changes
+
+Approve changes
+
+GitHub stores all conversations.
+
+✅ STEP 6 — GitHub creates a temporary merge view
+
+Before merging, GitHub simulates:
+
+merged-main = main + feature
+
+
+It checks:
+
+Is the merge clean?
+
+Are there conflicts?
+
+Does the branch build?
+
+Does CI pass on merged branch?
+
+If conflict exists →
+GitHub shows “This branch has conflicts that must be resolved”.
+
+✅ STEP 7 — When you press “Merge”, GitHub does the actual Git operation
+
+Depending on merge type (explained next), GitHub runs:
+
+git merge OR git rebase OR git squash
+
+
+in the server and updates main.
+
+🏆 2. How PR Merge Types Work (Visually & Internally)
+
+Let’s assume:
+
+MAIN:    A --- B --- C
+FEATURE:           \--- D --- E
+
+1️⃣ Merge Commit (default, safest)
+
+Command GitHub runs internally:
+
+git checkout main
+git merge feature --no-ff
+
+
+Result:
+
+A --- B --- C ------ M
+            \       /
+             D --- E
+
+
+Where M = merge commit.
+
+✔ Full history
+✔ Easiest to audit
+✔ No rewrite
+✔ Best for teams
+
+2️⃣ Squash and Merge
+
+GitHub compresses all feature commits into one commit:
+
+D + E → FEAT-123: Login module complete
+
+
+Result:
+
+A --- B --- C --- S
+
+
+Where S is a single “squashed” commit.
+
+✔ Clean main
+✔ One commit per feature
+❌ Loses individual commits (D & E vanish)
+
+3️⃣ Rebase and Merge
+
+GitHub replays (re-writes) the feature branch commits on top of main:
+
+git rebase main feature
+
+
+Result:
+
+A --- B --- C --- D' --- E'
+
+
+D' and E' are NEW commits (SHA changed).
+
+✔ Beautiful linear history
+❌ Rewrites history
+❌ Can break CI if not used carefully
+
+🧨 3. Why pulling feature → master is dangerous
+
+You asked the BEST question here.
+
+Doing:
+
+git checkout main
+git pull origin feature/login
+
+
+is the worst possible action because:
+
+❌ 1. It bypasses ALL GitHub protection checks
+
+No reviewer approvals
+
+No CI checks
+
+No conflict checks
+
+No blocking rules
+
+No required sign-offs
+
+No Jira traceability
+
+You bypass the entire safety system.
+
+❌ 2. Conflicts happen directly on main (disaster)
+
+If there’s a conflict inside main,
+you might break the main branch for everyone.
+
+Where should conflicts be resolved?
+
+✔ In the feature branch,
+❌ NOT inside the main branch.
+
+❌ 3. Audit trail is destroyed
+
+Direct pull leaves no PR record:
+
+No "what changed"
+
+No "who approved"
+
+No "who reviewed"
+
+No conversations
+
+No traceability
+
+For enterprise teams, this is unacceptable.
+
+❌ 4. CI/CD does NOT run automatically
+
+So you may merge:
+
+Failing tests
+
+Security vulnerabilities
+
+Incorrect logic
+
+Syntax errors
+
+… directly into main.
+
+❌ 5. You may accidentally fast-forward main
+
+If your branch is ahead and you do:
+
+git pull origin feature
+
+
+You might make:
+
+A --- B --- C --- D --- E   (feature becomes main)
+
+
+Even if feature is HALF DONE!
+
+❌ 6. Direct pulls can corrupt history
+
+Git might:
+
+Rewrite commits
+
+Create weird merges
+
+Break bisect
+
+Make revert harder
+
+PR merges keep history consistent.
+
+❌ 7. Almost all companies LOCK the main branch
+
+Rules in GitHub:
+
+✔ No pushes to main
+✔ PR required
+✔ CI required
+✔ Approvals required
+
+So you cannot directly pull into master anyway.
+
+🎯 TL;DR (Sumit Edition 😄)
+✔ What happens inside GitHub when you create a PR?
+
+GitHub runs:
+
+diff
+
+CI checks
+
+protection rule checks
+
+review system
+
+conflict detection
+
+metadata logging
+
+final merge command
+
+✔ Merge types?
+
+Merge Commit → safe, full history
+
+Squash → clean, one commit
+
+Rebase → linear, rewrite history
+
+✔ Why not pull feature → master?
+
+It bypasses ALL safety, protection, review, CI, testing, and auditing →
+You can break main and entire team loses productivity.

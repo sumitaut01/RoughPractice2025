@@ -16,6 +16,19 @@ public class Rx_Base {
     }
 
 
+    @BeforeGroups
+    public void BeforeGroups(){
+        System.out.println("From Rx_Base  @BeforeGroups" );
+    }
+
+
+    @AfterGroups
+    public void AfterGroups(){
+        System.out.println("From Rx_Base  @AfterGroups" );
+
+    }
+
+
     @BeforeTest
     public void beforeTest(){
         System.out.println("From Rx_Base  @beforeTest" );

@@ -1,7 +1,8 @@
 package selenium;
 
 //What is arguments[0] in JavaScriptExecutor?
-//In JavaScript, the arguments object is an array-like object available inside functions that contains the values of the arguments passed to that function.
+//In JavaScript, the arguments object is an array-like object available inside functions
+// that contains the values of the arguments passed to that function.
 //
 //✅ In Selenium JavaScriptExecutor:
 //js.executeScript("arguments[0].click();", someWebElement);

@@ -10,7 +10,7 @@ public class R_XChild extends Rx_Base{
     public void beforeMethod(){
         System.out.println("BeforeMethod in R_XDemo");//Testing
     }
-    @Test
+    @Test(groups = "grptest")
     public void demo(){
         System.out.println("Testing");//Testing
     }

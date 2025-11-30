@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Store with Event Listeners</title>
+    <style>
+        /* Basic CSS for the hover effect */
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .highlight {
+            background-color: #f0f0f0;
+            border-color: #007bff;
+        }
+    </style>
+</head>
 <body>
     <header>
         <h1>Welcome to Our Store</h1>
@@ -20,8 +37,43 @@
             </div>
         </div>
     </main>
+
+    <script>
+        // 1. Event Delegation for Clicks (Click on any product to see an alert)
+        const productList = document.getElementById('product-list');
+
+        productList.addEventListener('click', function(event) {
+            // Find the closest parent element with the class 'product'
+            const productDiv = event.target.closest('.product');
+            
+            // Check if a product was actually clicked
+            if (productDiv) {
+                const productName = productDiv.querySelector('.name').textContent;
+                const productId = productDiv.id;
+                alert(`You clicked on: ${productName} (ID: ${productId})`);
+            }
+        });
+
+        // 2. Event Listeners for Hover (Highlight product on mouseover)
+        const products = document.querySelectorAll('.product');
+
+        products.forEach(product => {
+            // Add a class when the mouse enters the product div
+            product.addEventListener('mouseover', function() {
+                product.classList.add('highlight');
+            });
+
+            // Remove the class when the mouse leaves the product div
+            product.addEventListener('mouseout', function() {
+                product.classList.remove('highlight');
+            });
+        });
+    </script>
 </body>
 </html>
 
 //div[@id='product-list']/descendant::div
 //span[@class='name' and text()='Mouse']/ancestor::div
+//span[@class='name' and text()='Laptop']/following::span      Selects all siblings after the current node
+//span[@class='name' and text()='Laptop']/following-sibling::span
+//span[@class='name' and text()='Mouse']/preceding::span

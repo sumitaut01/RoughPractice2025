@@ -1,0 +1,42 @@
+what does this line imply mvn exec:java -Dexec.mainClass="GuiceTest"
+This command is used to execute a specific Java class within a Maven project environment. It relies on the Exec Maven Plugin, which allows you to run Java programs using the libraries and dependencies defined in your project's pom.xml.
+
+Here is the breakdown of the command:
+
+1. The Breakdown
+mvn: This invokes the Maven build tool.
+
+exec:java: This tells Maven to run the java goal of the exec plugin.
+
+Plugin: exec-maven-plugin (This plugin allows you to execute system and Java programs).
+
+Goal: java (This specific goal runs a Java class with the current project's classpath).
+
+-D: This syntax is used to pass a system property or parameter to the plugin.
+
+exec.mainClass="GuiceTest": This is the specific parameter telling the plugin which class contains the public static void main(String[] args) method you want to run.
+
+In this case, it is trying to run a class named GuiceTest.
+
+2. What actually happens when you run this?
+Dependency Resolution: Maven looks at your pom.xml and downloads/verifies all the JARs (libraries) your project needs (e.g., Google Guice, JUnit, etc.).
+
+Classpath Construction: Maven builds the classpath automatically, including your source code and all those downloaded libraries.
+
+Why this is useful: You don't have to manually type java -cp library1.jar;library2.jar;... GuiceTest. Maven handles the classpath mess for you.
+
+Execution: It locates the GuiceTest class and executes its main() method.
+
+3. Important Note on Class Names
+In your command, the class is listed simply as "GuiceTest".
+
+If the class is in the default package: This command will work as written.
+
+If the class is inside a package (e.g., com.example.GuiceTest): You must provide the fully qualified name. If GuiceTest.java is in the com.example package, the command must be: mvn exec:java -Dexec.mainClass="com.example.GuiceTest"
+
+Summary Table
+Component	Function
+mvn	The command line tool.
+exec	The Maven plugin being called.
+:java	The specific action (goal) to perform.
+-Dexec.mainClass	The argument specifying the entry point.
