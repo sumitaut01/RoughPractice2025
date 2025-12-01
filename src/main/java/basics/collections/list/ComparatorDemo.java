@@ -19,6 +19,22 @@ public class ComparatorDemo {
 
 
 
+        Comparator<D>  strComp= (a,b)->  a.getName().compareTo(b.getName());
+        //
+        System.out.println("before name sorting");
+        System.out.println(dl);
+
+        dl.sort(strComp);
+        System.out.println("after name sorting");
+        System.out.println(dl);
+
+        //before name sorting
+        //[D{age=2, name='Amit'}, D{age=12, name='Sumit'}, D{age=20, name='Neha'}]
+        //after name sorting
+        //[D{age=2, name='Amit'}, D{age=20, name='Neha'}, D{age=12, name='Sumit'}]
+
+
+
     }
 }
 

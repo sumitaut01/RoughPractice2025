@@ -342,6 +342,66 @@ public class Rough {
 
 
     }
+
+
+
+
+    // extra
+
+    @Test
+    public void rev(){
+
+        String str="sumit";
+        String rev="";
+        for(int i=str.length()-1;i>=0;i--){
+            rev=rev+str.charAt(i);
+        }
+        System.out.println(rev);//timus
+    }
+
+    @Test
+    public void firsNonRepeated(){
+        String str="software services";
+
+        LinkedHashMap<Character,Integer> lhm=new LinkedHashMap<>();
+        for(Character c: str.toCharArray()){
+          lhm.put(c,lhm.getOrDefault(c, 0)+1);
+        }
+        System.out.println(lhm);
+
+        for(Map.Entry<Character,Integer> es:lhm.entrySet()){
+
+            if(es.getValue()==1){
+                System.out.println(es.getKey()+" "+es.getValue());
+                break;
+            }
+        }
+
+        //{s=3, o=1, f=1, t=1, w=1, a=1, r=2, e=3,  =1, v=1, i=1, c=1}
+        //o 1
+
+    }
+
+
+    @Test
+    public void RemoveDuplicates(){
+
+
+        String str="banaans";
+        // bans
+
+        String woDups="";
+
+
+        for(char c:str.toCharArray()){
+
+            if(woDups.indexOf(c)==-1){
+                woDups=woDups+c;
+            }
+        }
+
+        System.out.println(woDups);//bans
+    }
 }
 
 

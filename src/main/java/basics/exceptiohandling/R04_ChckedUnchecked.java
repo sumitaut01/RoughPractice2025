@@ -1,11 +1,9 @@
 package basics.exceptiohandling;
 
-
 //What Are Checked and Unchecked Exceptions?
 //        Type	Defined by
 //        Checked	Subclasses of Exception (but not RuntimeException)
 //        Unchecked	Subclasses of RuntimeException
-
 
 //Throwable
 //        ├── Error                   (JVM errors like OutOfMemoryError)

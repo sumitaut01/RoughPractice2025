@@ -14,9 +14,7 @@ public class HashtableDemo {
         ht.put("Neha", "EC");
 
         System.out.println(ht.get("random"));//null
-
         System.out.println(ht.get("Sumit"));//It
-
         System.out.println(ht);//{Neha=EC, Sumit=It}
 
         ht.forEach((k,v)-> System.out.println(k+" =>"+v));

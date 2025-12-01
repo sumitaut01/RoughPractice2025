@@ -5,7 +5,6 @@ Let’s go step-by-step 👇
 ✅ 1. Basic Command
 
 If you have a testng.xml file, you can run it directly using Maven:
-
 mvn test -DsuiteXmlFile=testng.xml
 
 
@@ -47,7 +46,6 @@ Make sure your pom.xml has the Surefire plugin configured to use TestNG and acce
 
 
 This tells Maven:
-
 If you pass -DsuiteXmlFile=... → use that file
 
 If not, it will look for default test sources under src/test/java

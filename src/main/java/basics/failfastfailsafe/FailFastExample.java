@@ -19,7 +19,6 @@ public class FailFastExample {
             list.add("D"); // ❌ Structural modification
         }
 
-
 //    A
 //    Exception in thread "main" java.util.ConcurrentModificationException
 //    at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1095)

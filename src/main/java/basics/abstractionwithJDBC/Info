@@ -33,20 +33,13 @@ Connection con = my.openMySqlConnection("mysql-host", "user", "pwd");
 
 🌟 With abstraction (JDBC way)
 Connection con = DriverManager.getConnection(url, user, password);
-
-
-
 You don’t create OracleDriver, MySQLDriver, PostgresDriver, etc.
 
 
 JDBC automatically loads the correct driver based on url.
-
-
 This is abstraction → you see the simple layer; the internal driver logic stays hidden.
 
 💡 How does it really work internally? (Simplified)
-
-
 DB vendor registers its driver inside DriverManager:
 
 
@@ -67,20 +60,12 @@ DriverManager does:
 
 
 Loops through all loaded drivers
-
-
 Checks which one supports given URL
-
-
 Calls the driver’s internal low-level connect() method
-
-
 Returns the Connection object
-
 
 So real internal call is like:
 driver.connect(url, props);
-
 But you never deal with this — management of drivers is abstracted.
 
 🎯 Final view — Layer diagram
@@ -96,7 +81,8 @@ You use only DriverManager, everything else is hidden — hence abstraction.
 
 🔥 One-line summary
 
-JDBC abstraction means that the programmer interacts with DriverManager instead of vendor-specific Driver classes — hiding the complex internal database communication.
+JDBC abstraction means that the programmer interacts with DriverManager instead of vendor-specific
+Driver classes — hiding the complex internal database communication.
 
 
 If you want, next I can show:
@@ -114,7 +100,6 @@ Correct.
 We always call it like:
 
 Connection con = DriverManager.getConnection(url, user, password);
-
 
 No object of DriverManager is created.
 
@@ -134,7 +119,6 @@ PostgreSQL	org.postgresql.jdbc.PgConnection
 But your code always refers to:
 
 Connection con; // abstraction
-
 You don’t care whether it's OracleConnection or PgConnection or MysqlConnectionImpl.
 
 That is abstraction + polymorphism.

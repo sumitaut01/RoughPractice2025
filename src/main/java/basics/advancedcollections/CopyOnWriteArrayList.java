@@ -1,5 +1,6 @@
 package basics.advancedcollections;
 
+
 import java.util.Iterator;
 
 public class CopyOnWriteArrayList {
@@ -7,7 +8,7 @@ public class CopyOnWriteArrayList {
     public static void main(String[] args) {
 
 
-        java.util.concurrent.CopyOnWriteArrayList<Integer> lst=new java.util.concurrent.CopyOnWriteArrayList<>();
+        java.util.concurrent.CopyOnWriteArrayList<Integer> lst=new java.util.concurrent.CopyOnWriteArrayList<Integer>();
 
         System.out.println("Before Adding Data ");
         System.out.println(lst);

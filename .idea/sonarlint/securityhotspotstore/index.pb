@@ -13,8 +13,6 @@ v
 Fsrc/main/java/basics/collections/list/implemeting/R2_DoublyLLImpl.java,5\b\5b451ec74fe0f04a03e428920d4b27526c0c3d81
 d
 4src/main/java/basics/collections/queue/R2_Deque.java,8\d\8d34f5748ea5b512e59f852a74d6dffefb0cbcda
-e
-5src/main/java/basics/multithreading/R2_JoinSleep.java,1\e\1eab0af246e51f4a81bab72dbfdb43dd1d895692
 d
 4src/main/java/basics/collections/queue/R1_QueUe.java,2\f\2f1238f0d75ef588226511fc6629b438db32c76e
 e
@@ -61,8 +59,6 @@ o
 ?src/main/java/basics/javapgms/R_39RemoveDuplicateFromArray.java,0\8\086eceadc06d847b252c362d47a15f0ca95e3bc5
 s
 Csrc/main/java/basics/javapgms/R_43RemoveSpecialCharsfromString.java,3\e\3e193592ed71db598881319f2e0d031bda51df6b
-c
-3src/main/java/basics/multithreading/R1_1thread.java,8\0\80c117ed4db0bf4b7ece0af1f2be510114ae5bbf
 c
 3src/main/java/basics/javapgms/R6_ReverseNumber.java,c\a\cae0c737997769f35af785710428e4c106c5228a
 `
@@ -139,8 +135,6 @@ Y
 )src/main/java/oopsbank/rough/Account.java,1\3\13f1862e33243909f7fff9f4574c9e2ca31b40d0
 \
 ,src/main/java/oopsbank/rough/BankTester.java,0\b\0bac22f9fdb69912d6f5946600b99f20562c0e32
-c
-3src/main/java/basics/accesstypes/ProtectedDemo.java,6\6\660b5715705d5dd2b0773b32b20b2211d12412a5
 h
 8src/main/java/basics/javapgms/R_XSubstringForString.java,e\a\ea795d4d78aabe53aaae1b341fbc7042cad6830b
 g

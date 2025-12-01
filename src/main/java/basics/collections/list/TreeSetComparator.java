@@ -46,6 +46,57 @@ public class TreeSetComparator {
 }
 
 
+//TreeSet can work with BOTH: Comparable and Comparator
+//1️⃣ If you do NOT give a Comparator → TreeSet uses Comparable
+//
+//Meaning:
+//
+//Your objects must implement Comparable<T>
+//
+//TreeSet will use the object’s compareTo() method to sort
+//
+//Example:
+//
+//class Person implements Comparable<Person> {
+//    int age;
+//    public Person(int age) { this.age = age; }
+//
+//    @Override
+//    public int compareTo(Person o) {
+//        return this.age - o.age;
+//    }
+//}
+//
+//TreeSet<Person> set = new TreeSet<>();
+//
+//
+//Here, TreeSet sorts using compareTo().
+//
+//2️⃣ If you give a Comparator → TreeSet ignores Comparable
+//
+//Example:
+//
+//TreeSet<Person> set = new TreeSet<>(
+//        (p1, p2) -> p1.age - p2.age
+//);
+//
+//
+//You don't need Comparable
+//
+//If Comparable exists, it will be ignored
+//
+//Comparator has higher priority
+//
+//⭐ Summary Table
+//Scenario	Comparable needed?	Comparator used?	Who decides sorting?
+//No Comparator passed	✔ Yes	❌ No	compareTo()
+//Comparator passed in constructor	❌ No	✔ Yes	The Comparator
+//Class has both Comparable + Comparator provided	✔ Exists but ignored	✔ Yes	Comparator
+//💡 Key Rule (Interview Line):
+//
+//TreeSet needs some way to compare elements — either Comparable or Comparator.
+//If Comparator is provided, it always overrides Comparable.
+
 
 class Box{
     int height;
