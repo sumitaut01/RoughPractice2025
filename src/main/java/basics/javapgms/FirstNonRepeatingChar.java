@@ -8,7 +8,7 @@ public class FirstNonRepeatingChar {
 
     public static void main(String[] args) {
 
-        String str="aabbcdefcac";
+        String str="aabbcdefcac";  // o/p d1
 
         LinkedHashMap<Character,Integer> hm=new LinkedHashMap<>();
         for(Character ch: str.toCharArray()){

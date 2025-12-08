@@ -1,0 +1,51 @@
+Absolutely, there's a bit more to it! Once you’ve got the basics down, one of the main things to understand is the different log levels you can use in Log4j.
+The common log levels are:
+
+
+TRACE: This is the most detailed level. It’s usually only used when you really want to see everything that’s happening, like every tiny step in a method.
+
+
+DEBUG: A bit less detailed than TRACE, but still used for development time. It’s great when you’re trying to diagnose issues or understand the flow of your tests.
+
+
+INFO: This is what you’d use for general runtime events. For example, logging that a test has started or that you’ve navigated to a certain page.
+
+
+WARN: This level is for things that aren’t necessarily errors but are maybe a bit concerning or unusual. Like if an element took too long to appear, you might log a warning.
+
+
+ERROR: This is for actual errors that occur, like a test step that failed or an exception that was thrown.
+
+
+FATAL: This is the most severe level. It’s rarely used, but you’d log something as FATAL if it’s a critical error that’s going to stop your whole application or test suite.
+
+
+In practice, once you set your log level in the configuration, Log4j will only log messages at that level and above. So if you set it to INFO, it’ll log INFO, WARN, ERROR, and FATAL messages but skip DEBUG and TRACE messages.
+So that’s the gist of it! Once you know how to configure these levels and use them, you’ve pretty much got the hang of Log4j for your Selenium framework.
+
+
+
+
+
+Exactly, you’ve got it! That status="WARN" attribute in the <Configuration> tag is actually setting the internal Log4j status level. This is kind of like a self-diagnostic log level for Log4j itself. It means Log4j will only print out its own internal warnings or more severe issues.
+
+For your actual test logging, the levels like INFO, DEBUG, ERROR are defined in the <Loggers> section of the configuration. That’s where you decide the actual logging level for your test runs.
+
+So in short, yes, that’s the place where you’re telling Log4j how chatty it should be about its own internal workings. But for controlling the log level of your Selenium tests themselves, you’ll use the logger settings in the configuration.
+
+
+
+
+Good question! So these two levels actually serve different purposes and don’t really conflict.
+
+The status="WARN" in the <Configuration> is just for Log4j’s own internal diagnostics. It’s like saying, “Hey Log4j, only tell me if you run into a problem that’s a warning or worse about your own setup.”
+
+Meanwhile, the log levels you set for your actual test loggers—like INFO or DEBUG— control what gets logged from your Selenium tests themselves. So your test log level is about what details you see in your test logs, and the status level is about how much Log4j talks about itself.
+
+In other words, they don’t override each other. You’ll set your test log level to control what you see in your test logs, and the status is just a separate internal detail for Log4j’s own behavior.
+
+
+
+Exactly, you’ve got it! They both use the same kind of level names—INFO, WARN, ERROR, and so on—but they apply to different things. The levels themselves have the same meaning, it’s just that one set of levels is for Log4j’s internal logging about its own operations, and the other set is for the logs that your Selenium tests produce.
+
+So even though the names are the same, they’re just controlling two separate layers of logging. But you’ve got the concept down perfectly!

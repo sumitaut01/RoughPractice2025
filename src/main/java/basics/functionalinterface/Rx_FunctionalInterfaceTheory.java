@@ -16,10 +16,8 @@ import java.util.function.Supplier;
 //        BiConsumer<T,U>	void accept(T,U)	Takes 2 inputs, returns nothing
 //        UnaryOperator<T>	T apply(T)	Function where input and output are same type
 //        BinaryOperator<T>	T apply(T, T)	Two same-type inputs → same-type output
-public class Rx_FunctionaInterfaceTheory {
+public class Rx_FunctionalInterfaceTheory {
     public static void main(String[] args) {
-
-
     }
 }
 

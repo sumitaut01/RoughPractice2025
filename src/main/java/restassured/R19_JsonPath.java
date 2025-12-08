@@ -124,5 +124,13 @@ public class R19_JsonPath {
 
         //How to validate that JSON array contains object with specific key-value?
         //.body("find { it.id == 10 }.name", equalTo("John"));
+
+
+
+
+
+
+        System.out.println(jsonpath3.getString("address.findAll{it->it.type}.type"));
+        //[[permanent, temp], [communication, old]]
     }
 }

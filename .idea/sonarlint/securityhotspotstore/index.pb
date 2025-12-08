@@ -21,8 +21,6 @@ e
 5src/main/java/basics/javapgms/R33_NeedInHaystack.java,1\9\198a8133fcdadefa3cb19df682ab81065cf4d23d
 o
 ?src/main/java/basics/javapgms/R31_SmallandLongWordInString.java,d\d\dd4d4774e5162e3082d0cd3d3afc8c67177b0c2a
-g
-7src/main/java/basics/javapgms/bytype/slidingwindow/info,d\0\d0252d91e38348094cfa366563dd5da075eac7f8
 c
 3src/main/java/basics/javapgms/patterns/Pattern.java,1\7\178d7c08409c8ec0eee51411b5f268df3381ce54
 d
@@ -57,10 +55,6 @@ k
 ;src/main/java/basics/javapgms/R29_Write1000WithoutLoop.java,c\4\c4915f003ef49435ffbe48db4296fbf1409f6cb0
 o
 ?src/main/java/basics/javapgms/R_39RemoveDuplicateFromArray.java,0\8\086eceadc06d847b252c362d47a15f0ca95e3bc5
-s
-Csrc/main/java/basics/javapgms/R_43RemoveSpecialCharsfromString.java,3\e\3e193592ed71db598881319f2e0d031bda51df6b
-c
-3src/main/java/basics/javapgms/R6_ReverseNumber.java,c\a\cae0c737997769f35af785710428e4c106c5228a
 `
 0src/main/java/basics/javapgms/R31_Fibonacci.java,5\6\56d5b9bb8f961e7ed73f0f7576a1ed640fea0101
 k
@@ -87,8 +81,6 @@ l
 <src/main/java/restassured/R17_JsonIncludeIngoreDefaults.java,3\9\394a696d2f3de0896044312f42ced8d5943ee3cb
 d
 4src/main/java/restassured/R20_JsonIgnoreUnknown.java,e\c\ec29551b662ae94fb9d71d8a3546dcb34fc5b40a
-]
--src/main/java/restassured/R21_JsonSchema.json,7\6\76db5214b6c32a0369ce258ae2e419cacbb22e74
 h
 8src/main/java/basics/bitwiseoperator/R1_AndOperator.java,d\9\d911bd587a780ab62dc61fb95e6d6da54d6dc31c
 Y
@@ -135,10 +127,6 @@ Y
 )src/main/java/oopsbank/rough/Account.java,1\3\13f1862e33243909f7fff9f4574c9e2ca31b40d0
 \
 ,src/main/java/oopsbank/rough/BankTester.java,0\b\0bac22f9fdb69912d6f5946600b99f20562c0e32
-h
-8src/main/java/basics/javapgms/R_XSubstringForString.java,e\a\ea795d4d78aabe53aaae1b341fbc7042cad6830b
-g
-7src/main/java/basics/javapgms/R_XStreamCapitalList.java,b\6\b6d1a33e738dd9582966d86721d6a8cfb3bb4832
 c
 3src/main/java/basics/javapgms/R_41Zpermuations.java,c\7\c7a1fd24abcaf481bcaf3c9f437a5d9b7397aade
 c
@@ -173,5 +161,3 @@ Z
 ,src/main/java/reporters/EdgeOptionsList.java,5\b\5ba0a9582723df46e26b15feafc8f38a9e073a6d
 X
 (src/main/java/reporters/extentconfig.xml,0\8\08b6bc0f89d0ba9ea91f63657f473ab5de9a9183
-W
-'src/main/java/selenium/BrokenLinks.java,9\8\9878d6cbdc058a9b480822b2885d165780c8bc11

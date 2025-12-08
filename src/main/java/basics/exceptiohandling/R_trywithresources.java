@@ -9,8 +9,6 @@ import java.io.IOException;
 
 public class R_trywithresources {
     public static void main(String[] args) {
-
-
         FileInputStream fis = null;
         try {
             fis = new FileInputStream("data.txt");

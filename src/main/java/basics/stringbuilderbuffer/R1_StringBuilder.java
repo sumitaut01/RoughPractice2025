@@ -22,6 +22,8 @@ package basics.stringbuilderbuffer;
 //        capacity()	Shows current buffer capacity
 
 
+import org.testng.annotations.Test;
+
 class R1_StringBuilder{
     public static void main(String[] args) {
 
@@ -49,5 +51,37 @@ class R1_StringBuilder{
 
 
 
+
+
+        //rough
+
+        System.out.println("=---Separator-------");
+        StringBuilder sbx=new StringBuilder();
+
+        sbx.append("a");//a
+        System.out.println(sbx);
+        sbx.insert(0,'0');//0a
+
+        System.out.println(sbx);//0a
+
+
+        System.out.println(sbx.indexOf("g"));//-1
+
+
+        sbx.delete(0, 1);
+        System.out.println(sbx);//a
+
+
+        sbx.append("bc");
+
+        System.out.println(sbx);//abc
+        sbx.reverse();
+        System.out.println(sbx);//cba
+
+
     }
+
+
+
+
 }

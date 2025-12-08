@@ -3,10 +3,13 @@ package selenium.waits;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 public class R1_FlunentWait {
     public static void main(String[] args) throws InterruptedException {
@@ -38,12 +41,35 @@ public class R1_FlunentWait {
 
 
     }
+
+
+    @Test
+    public void Rough() throws InterruptedException {
+    Integer i=0;
+        FluentWait<Integer> fw= new FluentWait<>(i)
+                .ignoring(Exception.class)
+                .pollingEvery(Duration.ofMillis(500))
+                .withMessage("Still not 5")
+                .withTimeout(Duration.ofSeconds(3));
+
+        Function<Integer,Boolean> bf=  a->a==5;
+        for(int j=0;j<6;j++) {
+            Thread.sleep(1000);
+            bf.apply(j);
+        }
+
+
+
+        fw.until(bf);// actual call
+    }
 }
 
 //Generic Interface
 //public interface Wait<F> {
 //    <T> T until(Function<? super F, T> isTrue);
 //}
+
+
 
 
 

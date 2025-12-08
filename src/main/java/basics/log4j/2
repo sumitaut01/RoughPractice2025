@@ -1,0 +1,63 @@
+All right, let’s jump in and learn it!
+
+So, to get started with Log4j in a Selenium Java project, here’s a simple step-by-step.
+
+First, you’ll add the Log4j dependency. If you’re using Maven, you’d put something like this in your pom.xml:
+
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.17.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.17.2</version>
+</dependency>
+
+
+Next, you’d create a configuration file, usually log4j2.xml, in your resources folder.
+This file tells Log4j how to handle your logs—like whether to print them to the console, write them to a file,
+ and what level of detail to include.
+
+A very basic log4j2.xml might look like this:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="File" fileName="logs/selenium-tests.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
+
+Then in your Java test classes, you can use it like this:
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class MySeleniumTest {
+    private static final Logger logger = LogManager.getLogger(MySeleniumTest.class);
+
+    public void exampleTest() {
+        logger.info("Starting the test...");
+        // Your Selenium code here
+        logger.info("Test completed.");
+    }
+}
+
+
+And that’s pretty much it! Once you have it set up, you’ll start seeing nicely formatted logs that
+help you track what’s happening in your tests.
+
+Let me know if you’d like to go deeper into any part of this or if you have any questions as you try it out!

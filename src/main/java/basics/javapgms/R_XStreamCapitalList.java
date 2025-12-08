@@ -18,6 +18,7 @@ public class R_XStreamCapitalList {
 
         System.out.println(lst);//[Sumit, Neha, Raj]
 
+        // get all names with length >3 ,make them uppercase,collect to list
         lst.stream().filter(s->s.length()>3).map(String::toUpperCase).collect(Collectors.toList()).
                 forEach(x-> System.out.println(x));
         //SUMIT
