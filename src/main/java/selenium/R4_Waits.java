@@ -33,12 +33,12 @@ public class R4_Waits {
     @Test
     public void Test(){
         WebDriver driver=new ChromeDriver();
-        Wait<WebDriver> wait=new FluentWait<WebDriver>(driver).ignoring(Exception.class)
-                .pollingEvery(Duration.ofSeconds(1))
+        Wait<WebDriver> wait=new FluentWait<>(driver)
                 .ignoring(Exception.class)
+                .pollingEvery(Duration.ofSeconds(1))
                 .withTimeout(Duration.ofSeconds(10))
                 .withMessage("--failed to find something");
-        wait.until(ExpectedConditions.titleIs("some title"));
+
 
         driver.get("http://www.google.com");
         wait.until(ExpectedConditions.titleIs("some title"));

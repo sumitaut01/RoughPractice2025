@@ -14,6 +14,10 @@ public class R1_AndOperator {
     public static void main(String[] args) {
         System.out.println( 3&6);//2==>0010
 
+
+        //anding same number
+        System.out.println(3&3);
+
     }
 
 }

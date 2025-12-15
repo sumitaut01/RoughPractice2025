@@ -19,5 +19,11 @@ package basics.bitwiseoperator;
 public class R3_XOR {
     public static void main(String[] args) {
         System.out.println( 3^6);//5==>0101
+
+        // XOR  ^ on same number will give you 0
+        System.out.println( 3^3);//0
     }
+
+
+
 }

@@ -1,6 +1,6 @@
 https://tcsglobal.udemy.com/course/solid-design/learn/lecture/16273944#overview
 
-Class and class components should have single or related responsibilut:
+Class and class components should have single or related responsibility:
 
 Cohesion: related methods
 Square:

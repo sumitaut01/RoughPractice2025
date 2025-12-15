@@ -22,6 +22,17 @@ sale_id|sale_date |amount  |
          OFFSET 1 LIMIT 1;
 
 
+
+
+         SELECT sal
+         FROM (
+             SELECT sal, DENSE_RANK() OVER(ORDER BY sal DESC) rnk
+             FROM emp
+         ) x
+         WHERE rnk = 2;
+
+
+
 --Group By
 @. Select * from products
 product_id|name      |category   |price   |stock|created_at             |

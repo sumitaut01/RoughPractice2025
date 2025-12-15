@@ -2,6 +2,10 @@ package reporters;
 
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chromium.ChromiumDriver;
+import org.testng.annotations.Test;
 
 import static com.google.common.base.Throwables.getStackTraceAsString;
 
@@ -15,7 +19,18 @@ public final class ScreenShotUtils {
             return "";
         }
     }
+
+
+
+
+
+    //Rough Ignore
+
+
+
 }
+
+
 
 
 

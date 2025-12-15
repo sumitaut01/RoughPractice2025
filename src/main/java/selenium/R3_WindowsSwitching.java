@@ -19,6 +19,7 @@ public class R3_WindowsSwitching {
         driver.manage().deleteAllCookies();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
+        String sParent=driver.getWindowHandle();
 
         Set<String> sHandles = driver.getWindowHandles();
         for (String s : sHandles) {

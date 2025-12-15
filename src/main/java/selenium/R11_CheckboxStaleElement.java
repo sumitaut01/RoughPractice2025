@@ -77,4 +77,30 @@ public class R11_CheckboxStaleElement {
         driver.quit();
 
     }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+

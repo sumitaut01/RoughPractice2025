@@ -1,5 +1,9 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,6 +28,26 @@ public class R_XHighetOccuringChar {
         }
 
         System.out.println(ch+"  "+ count);//v 8
+
+    }
+
+
+
+    @Test
+    public void Rough(){
+        String str="aaaaxxxxccdddvvvvvvvv";
+
+
+        LinkedHashMap<Character,Integer> lhm=new LinkedHashMap<>();
+        int max=0;
+        int currMax=0;
+        for(Character c:str.toCharArray()){
+            lhm.put(c,lhm.getOrDefault(c, 0)+1);
+        }
+
+
+
+
 
 
 

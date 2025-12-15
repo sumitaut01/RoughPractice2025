@@ -1,0 +1,78 @@
+API vs Web Services — Simple Interview Breakdown
+1. Definition
+
+API (Application Programming Interface)
+A set of rules that allows one software to interact with another.
+
+Web Service
+A type of API that works only over the network, typically using HTTP.
+
+2. Relation
+
+All Web Services are APIs
+
+But NOT all APIs are Web Services
+
+Example:
+Java Collections API, JDBC API → APIs but NOT Web Services.
+
+3. Communication
+
+API → Can work:
+
+Within same machine
+
+Across network
+
+Between modules/classes
+
+Web Service → MUST use a network (HTTP, SOAP, XML-RPC).
+
+4. Data Format
+
+API → Can use JSON, XML, binary, anything
+
+Web Service → Traditionally XML (SOAP), modern ones can be JSON (REST)
+
+5. Protocols
+
+API → Any protocol or none
+
+Web Service → Must use web-based protocols
+
+HTTP
+
+SOAP
+
+REST
+
+6. Examples
+
+API Examples
+
+JDBC API
+
+Chrome Extension API
+
+Java String API
+
+Facebook Graph API (also web service)
+
+Web Service Examples
+
+SOAP Web Service
+
+REST Web Service
+
+Weather API over HTTP
+
+⭐ One-Liner Difference (Most important)
+
+API is a broad concept of enabling communication between software components.
+Web service is a specific kind of API that communicates over the web using HTTP/SOAP.
+
+⭐ 10-Second Interview Answer
+
+APIs may or may not use the internet.
+Web services must use the internet.
+All web services are APIs, but all APIs are not web services.

@@ -42,4 +42,27 @@ public class ExtentRough {
       extentReports.flush();
 
     }
+
+
+
+
+    public void rough3(){
+
+        ExtentReports extentReports=new ExtentReports();
+
+        ExtentSparkReporter extentSparkReporter=new ExtentSparkReporter("reports.html");
+
+        extentReports.attachReporter(extentSparkReporter);
+
+        ExtentTest test=extentReports.createTest("sometest");
+
+        test.log(Status.INFO,"somedetails");
+
+
+        extentReports.flush();
+
+
+
+
+    }
 }

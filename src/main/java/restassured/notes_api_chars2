@@ -1,0 +1,100 @@
+Here is the cleanest, interview-ready answer for “What are the characteristics of REST API?”
+
+Memorize this — it will impress interviewers.
+
+✅ REST API – Key Characteristics
+1. Client–Server Architecture
+
+UI (client) and data/service (server) are separate.
+
+Loose coupling → easy to scale, develop, and deploy.
+
+2. Stateless
+
+Each API request must contain all necessary information.
+
+Server does not store client session.
+
+Easy horizontal scaling and no session dependency.
+
+3. Cacheable
+
+Responses can be cached to improve performance.
+
+HTTP headers control caching:
+
+Cache-Control
+
+ETag
+
+Expires
+
+4. Uniform Interface (Standard Methods)
+
+REST depends on a consistent contract:
+
+HTTP methods: GET, POST, PUT, DELETE, PATCH
+
+Standard status codes: 200, 201, 400, 404, 500
+
+Media types: JSON, XML
+
+Consistent resource naming: /users/101/orders
+
+This makes APIs predictable.
+
+5. Resource-Based (Not Action-Based)
+
+Everything is treated as a resource.
+
+Resources identified using URIs:
+
+/employees
+
+/employees/123
+
+Think nouns, not verbs.
+
+6. Layered System
+
+Client doesn't know if it's talking to:
+
+the main server
+
+a load balancer
+
+a proxy
+
+a cache server
+
+Abstraction improves security and scalability.
+
+7. Representations
+
+A resource can be represented in multiple formats:
+
+JSON (most common)
+
+XML
+
+HTML
+
+CSV
+
+Client chooses via Accept header.
+
+8. Code-on-Demand (Optional)
+
+Server can send executables to client (rarely used).
+
+Example: JavaScript snippet returned to a client app.
+
+🧠 Super Short Interview Answer (30 seconds)
+
+REST APIs follow client-server architecture, are stateless, cacheable, and use a uniform interface with standard HTTP methods and resource-based URIs. They support multiple representations, can be layered, and optionally support code-on-demand.
+
+🎯 BONUS: If interviewer asks "Why REST?"
+
+Answer:
+
+REST is simple, scalable, stateless, uses standard HTTP, supports caching natively, and is easy for clients to consume.

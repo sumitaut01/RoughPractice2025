@@ -50,7 +50,8 @@ public class R24_RequestDataHashmapTextJsonString {
         //curl -X POST 'https://fakestoreapi.com/users' -H 'Content-Type: application/json' -d '{"username": "john_doe", "email": "john@example.com", "password": "pass123"}'
         Response response = RestAssured.given().contentType(ContentType.JSON)
                 .baseUri("https://fakestoreapi.com")
-                .body(hm).post("/users");
+                .body(hm)
+                .post("/users");
         System.out.println(response.asString());//{"id":1}
 
     }

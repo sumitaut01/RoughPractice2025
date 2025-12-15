@@ -1,6 +1,8 @@
 package basics.javapgms.bytype.hashmapset;
 
 
+import org.testng.annotations.Test;
+
 import java.util.HashMap;
 
 //admirer
@@ -53,5 +55,49 @@ public class R1_Anagram {
 
         // If the code reaches here, it means all checks passed.
         System.out.println("Anagrams!");
+    }
+
+
+
+
+
+    @Test
+    public void Rough(){
+
+        String str1 = "admirer";
+        String str2 = "married";
+
+        HashMap<Character,Integer> hm=new HashMap<>();
+        for(Character c:str1.toCharArray()){
+          hm.put(c,hm.getOrDefault(c,0)+1);
+        }
+
+        System.out.println(hm);//{a=1, r=2, d=1, e=1, i=1, m=1}
+
+        for(Character c2:str2.toCharArray()){
+
+           if(!hm.containsKey(c2) || (hm.get(c2)==0)){
+               System.out.println(c2+ " not present in ");
+               return;
+           }
+
+           else{
+               hm.put(c2,hm.get(c2)-1 );
+           }
+        }
+
+        for(Integer i:hm.values()){
+            if(i!=0){
+                System.out.println("not an anagram");
+            }
+        }
+
+
+       //it will be 0 if anagram
+        System.out.println(hm);//{a=0, r=0, d=0, e=0, i=0, m=0}
+
+
+
+
     }
 }

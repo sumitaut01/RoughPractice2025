@@ -1,0 +1,67 @@
+Here is the cleanest, interview-ready difference between REST & SOAP, short + crisp + clear.
+
+✅ REST vs SOAP — Interview Version
+1. Architecture
+
+REST → Architectural style
+
+SOAP → Strict protocol
+
+2. Format
+
+REST → Works with JSON, XML, HTML, CSV
+
+SOAP → Only XML
+
+3. Complexity
+
+REST → Simple, lightweight
+
+SOAP → Heavy, strict, formal
+
+4. Communication
+
+REST → Uses HTTP verbs (GET, POST, PUT, DELETE)
+
+SOAP → Uses service operations defined under WSDL
+
+5. Data Transfer Style
+
+REST → Resource-based (URI driven)
+
+SOAP → Contract-based (WSDL driven)
+
+6. Statefulness
+
+REST → Stateless
+
+SOAP → Can be stateful or stateless
+
+7. Use Cases
+
+REST → Web/mobile APIs, microservices
+
+SOAP → Banking, payments, legacy enterprise (strict security)
+
+8. Performance
+
+REST → Fast (JSON, caching, lightweight)
+
+SOAP → Slower (heavy XML, envelope)
+
+9. Security
+
+REST → Basic Auth, OAuth, JWT
+
+SOAP → WS-Security (enterprise-level security)
+
+10. Error Handling
+
+REST → HTTP status codes
+
+SOAP → SOAP Faults
+
+⭐ Short 15-Second Interview Summary
+
+REST is lightweight, flexible, uses JSON, and is ideal for modern web/mobile APIs.
+SOAP is a strict XML-based protocol with high security & formal contracts, used mainly in enterprise or financial systems.

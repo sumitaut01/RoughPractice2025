@@ -75,22 +75,19 @@ Merge feature → main
 
 This is the safest and most used method in the world.
 
+
+
 🥈 2. Rebase Workflow (Cleaner but riskier)
-
 Used by teams who want clean commit history.
-
 Flow:
 
 Checkout feature
-
 Rebase main → feature
-
 Push force (if never shared!)
 
 PR
 
 Merge feature → main
-
 This produces a clean history (no merge commits).
 
 BUT dangerous if feature branch is already shared with team.

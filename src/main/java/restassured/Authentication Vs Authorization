@@ -279,7 +279,6 @@ it lets you navigate and extract specific values from a JSON structure.
 💻 How path() Works
 
 In RestAssured:
-
 String token = response.path("token");
 int id = response.path("user.id");
 String role = response.path("user.roles[0]");

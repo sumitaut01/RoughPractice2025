@@ -9,5 +9,8 @@ public class R2_OrOperator {
 
         System.out.println( 3|6);//7==>0111
 
+        //oring same
+        System.out.println(3|3);//3
+
     }
 }

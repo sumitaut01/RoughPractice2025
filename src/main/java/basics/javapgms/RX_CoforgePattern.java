@@ -31,4 +31,26 @@ public class RX_CoforgePattern {
 //a2b2c2a1d2
 
 
+
+    @Test
+    public void Rough(){
+        String str = "aabbccadd";
+        int count;
+        for(int i=0;i<str.length();i=i+count){
+            count=0;
+            for(int j=i;j<str.length();j++){
+                if(str.charAt(i)==str.charAt(j)){
+                    count++;
+                }
+                else{
+                    break;
+                }
+            }
+            System.out.println(str.charAt(i)+""+count);
+
+        }
+
+
+    }
+
 }

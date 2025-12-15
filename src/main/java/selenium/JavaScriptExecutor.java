@@ -17,6 +17,7 @@ public class JavaScriptExecutor {
         WebElement button= driver.findElement(By.xpath("somexpth"));
         // Click an element using JavaScript
         js.executeScript("arguments[0].click();", button);
+
         TakesScreenshot sc=(TakesScreenshot) driver;
         File file=sc.getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(file, new File("D:\\Resurrection 2025.png"));
