@@ -30,3 +30,8 @@ public class PropertiesDemo {
 
     }
 }
+
+enum week{
+   FIRST,
+    SECOND;
+}

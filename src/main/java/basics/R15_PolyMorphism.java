@@ -33,7 +33,6 @@ public class R15_PolyMorphism {
 class Animal{
 
     public void walk(){
-
         System.out.println("this is from parent:walk");
 
     }

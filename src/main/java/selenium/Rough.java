@@ -11,7 +11,9 @@ import org.openqa.selenium.support.ui.*;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Rough {
 
@@ -86,7 +88,7 @@ public class Rough {
         driver.findElement(firstName).sendKeys("s", "u", "m");
 
         String enteredText = driver.findElement(firstName).getAttribute("value");//keypoint
-        Assert.assertEquals( "sum",enteredText);
+        Assert.assertEquals("sum", enteredText);
 
         //radio
         By radioBtnMale = By.id("male");
@@ -109,7 +111,6 @@ public class Rough {
         System.out.println(driver.findElement(checkboxMonday).isSelected());
 
 
-
         //drop downs//select
         WebElement country = driver.findElement(By.id("country"));
         Select sel = new Select(country);
@@ -119,21 +120,18 @@ public class Rough {
         List<WebElement> els = sel.getAllSelectedOptions();
 
 
-        for(WebElement el:els){
+        for (WebElement el : els) {
             System.out.println(el.getText());
             System.out.println(el.isSelected());
         }
 
 
-
-
         //pop ups
-        By popupPrompt=By.id("promptBtn");
+        By popupPrompt = By.id("promptBtn");
         driver.findElement(popupPrompt).click();
         System.out.println(driver.switchTo().alert().getText());
         driver.switchTo().alert().accept();
         System.out.println("pop up accepted");
-
 
 
         // myFluent
@@ -142,58 +140,78 @@ public class Rough {
 //        System.out.println("dummy");
 
         //Actions
-        WebElement ele=driver.findElement(By.xpath("//button[@class='dropbtn']"));
+        WebElement ele = driver.findElement(By.xpath("//button[@class='dropbtn']"));
 
-        Actions act=new Actions(driver);
+        Actions act = new Actions(driver);
         act.moveToElement(ele).build().perform();
 
 
-       // act.contextClick()
+        // act.contextClick()
         //act.doubleClick()
 
 
-
-
-        WebElement flyOutMEnu=driver.findElement(By.xpath("//div[@class='dropdown-content']/a[text()='Mobiles']"));
+        WebElement flyOutMEnu = driver.findElement(By.xpath("//div[@class='dropdown-content']/a[text()='Mobiles']"));
         System.out.println(flyOutMEnu.isDisplayed());
         flyOutMEnu.click();
 
         System.out.println(driver.getCurrentUrl());
 
 
-
-
-
-
-
-
-
-
         driver.quit();
 
 
-
-
-
-
-
-
-
     }
 
 
-
-    public static Wait<String> fluentString(String myStr){
-        Wait<String> mywait=new FluentWait<>(myStr)
+    public static Wait<String> fluentString(String myStr) {
+        Wait<String> mywait = new FluentWait<>(myStr)
                 .pollingEvery(Duration.ofMillis(1000))
                 .withTimeout(Duration.ofSeconds(5))
                 .withMessage("waiting");
-      return mywait;
-
-
+        return mywait;
 
 
     }
 
 
+    @Test
+    public void Iteration() {
+
+        Set<Integer> str = new HashSet<>();
+
+
+        int[] arr = {1, 2, 3, 4, 6, 5, 5};
+
+
+        for (int i : arr) {
+            if (!str.add(i))
+                System.out.println("Duplicates below");
+            System.out.println(i);
+        }
+    }
+
+
+    @Test
+    public void SecondInArray() {
+        int arr[]={1,2,4,0,9,2,120,150};
+        int first=0;
+        int second=0;
+
+        for(int i=0;i<arr.length;i++){
+            if(arr[i]>first){
+                second=first;
+                first=arr[i];
+            }
+            else if(arr[i]>second) {
+                second = arr[i];
+            }
+        }
+
+        System.out.println(first);
+        System.out.println(second);
+
+    }
 }
+
+
+

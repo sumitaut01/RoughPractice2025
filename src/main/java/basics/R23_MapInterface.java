@@ -6,8 +6,6 @@ import java.util.Map;
 public class R23_MapInterface {
 
     public static void main(String[] args) {
-
-
         Map<String,Integer> hm=new HashMap<>();
         System.out.println(hm.put("Sumit",35));//null if value added first time for the key
         System.out.println(hm.put("Sumit",36));//35 old value

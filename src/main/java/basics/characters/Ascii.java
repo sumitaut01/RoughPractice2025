@@ -7,7 +7,6 @@ public class Ascii {
 
 
         for (int i=0;i<256;i++){
-
             char ch=(char)i;
             if(Character.isAlphabetic(ch)){
                 System.out.println(i +" "+ch);

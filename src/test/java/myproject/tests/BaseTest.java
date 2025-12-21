@@ -15,9 +15,6 @@ import java.lang.reflect.Method;
 public class BaseTest {
     WebDriver driver;
 
-
-
-
     @BeforeSuite
     public void setupExtent(){
         ExtentReportNew.init();
@@ -39,7 +36,6 @@ public class BaseTest {
 
         String env = System.getenv("runmode");
         System.out.println("Running in environment: " + env);
-
         System.out.println("-------------------------------");
     }
 
@@ -48,7 +44,5 @@ public class BaseTest {
     public void tearDown() {
         DriverManager.getDriver().quit();
         DriverManager.remove();
-
-
     }
 }

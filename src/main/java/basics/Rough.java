@@ -3,13 +3,13 @@ package basics;
 import myproject.enums.BrowserType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Rough {
 
@@ -88,6 +88,84 @@ public class Rough {
 
 
 
+    @Test
+    public void Rogh181201(){
+
+        System.out.println("hi");
+
+        HashMap<Character,Integer> hm=new HashMap<>();
+        hm.put('c', 1);
+        hm.put('h', 3);
+        hm.put('x', 30);
+        hm.put('d', 5);
+
+        int maxCount=0;
+        String output="";
+
+       //Method 1//x=30
+        System.out.println(hm.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toList()).get(hm.size()-1));
+
+
+        //
+        System.out.println("second----");
+        maxCount=0;
+        String result="";
+        for( Character s: hm.keySet()){
+            if(hm.get(s)>maxCount){
+                maxCount=hm.get(s);
+                result= s+" "+maxCount;
+            }
+        }
+        System.out.println(result); //x=30
+
+    }
+
+
+    @Test
+    public void Rough(){
+        TreeMap<Character,Integer> tm=new TreeMap<>();
+        tm.put('c', 10);
+        tm.put('f', 1);
+        tm.put('a', 1);
+
+        System.out.println(tm);//{a=1, c=10, f=1}
+
+    }
+
+
+    @Test(dataProvider = "data")
+    public void DataproviderDemo(String username,String password,Integer sal){
+        System.out.println(username + " "+password +" "+sal);
+
+        //sumit pwd 12
+        //Amit pwdamt 120
+        //sumit pwd 12
+
+    }
+
+
+    @DataProvider(name="data")
+    public Object[][] supply(){
+
+        Object[][] data=
+                {
+                        {"sumit","pwd",12},
+                        {"Amit","pwdamt",120},
+                        {"sumit","pwd",12}
+
+                };
+
+        return  data;
+    }
+
+
+
+
+
+
+
+ //
+
     public void RoughStreams(){
 
      List<Integer> lst=new ArrayList<>();
@@ -100,8 +178,6 @@ public class Rough {
         System.out.println(lst);
         Collections.sort(lst);
         System.out.println(lst);
-
-
     }
 
 
@@ -208,4 +284,10 @@ enum ENV {
     String getEnv() {
         return this.env;
     }
+
 }
+
+
+
+
+

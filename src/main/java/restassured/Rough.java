@@ -18,21 +18,36 @@ public class Rough {
         String str = """
                                 
                 [
-                {
-                                
+                {                            
                 "userName": "sumit",
-                 "Salary": 2000
+                 "Salary": 2000,
+                 
+                 "address":{
+                  "home":"bhandara",
+                  "office":"pune"
+              
+                 }
                 }
                 ,
                 
                 {
                  "userName": "Neha",
-                 "Salary": 10
+                 "Salary": 10,
+                  "address":{
+                  "home":"nasik",
+                  "office":"mumbai"
+              
+                 }
                 },
                 
                  {
                  "userName": "sumit",
-                 "Salary": 10
+                 "Salary": 10,
+                  "address":{
+                  "home":"bhandara",
+                  "office":"pune"
+              
+                 }
                 }
                 ]
                                 
@@ -46,6 +61,13 @@ public class Rough {
 
         System.out.println(jsonPath.getList("findAll{it->it.userName=='sumit'}.Salary"));//[2000, 10]
 
+        System.out.println(jsonPath.getList("address.findAll{it->it.home=='bhandara'}"));//
+        //[{home=bhandara, office=pune}, {home=bhandara, office=pune}]
 
+        System.out.println(jsonPath.getList("address.findAll{it->it.home=='bhandara'}.office"));
+        //[pune, pune]
     }
+
+
+
 }

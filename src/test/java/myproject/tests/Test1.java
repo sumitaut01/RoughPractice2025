@@ -128,9 +128,6 @@ public class Test1 extends  BaseTest{
             System.out.println("");
 
         }
-
-
-
         workBook.write(new FileOutputStream(new File("myExcel.xlsx")));
         workBook.close();
     }

@@ -21,6 +21,8 @@ public class RoughAll {
                 .auth().oauth2(" ")
                 .post("{pathparakey}/somemoreurl");
 
+        System.out.println("titme take is "+response.getTime());
+
 
         JsonPath jsonpath=response.jsonPath();
 

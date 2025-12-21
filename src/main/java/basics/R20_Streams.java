@@ -61,10 +61,7 @@ public class R20_Streams {
         List<Integer> data = List.of(1,2,3,4,5,10,20);
 
         Integer result=data.stream().filter(x->x>5).map(x->x*10).reduce(0, Integer::sum);
-
         System.out.println(result);
-
-
     }
 
 

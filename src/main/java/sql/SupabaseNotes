@@ -45,5 +45,5 @@ select * from products
 select distinct(p1.price) from products p1
 where 1=
 (
-select count(distinc(p2.price)) from products p2 where p2.price>p1.price
+select count(distinct(p2.price)) from products p2 where p2.price>p1.price
 )

@@ -39,7 +39,6 @@ public class HandlingSVGGraph {
  
 		Actions action = new Actions(driver);
 		for(WebElement point: graphPoints) {
-			
 			action.moveToElement(point).perform();
 			System.out.println(driver.findElement(By.xpath("//div[@class='stats is-confirmed']/div/h2")).getText());
 			
