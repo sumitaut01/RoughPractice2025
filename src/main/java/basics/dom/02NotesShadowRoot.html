@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shadow DOM – Study Canvas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    input {
+      border: 2px solid red;
+      padding: 6px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🌑 Shadow DOM – Study Canvas</h1>
+
+<div class="card">
+  <h2>1️⃣ What is Shadow DOM?</h2>
+  <p>
+    Shadow DOM provides <b>encapsulation</b> for HTML & CSS.
+    It prevents <b>CSS leakage</b> and DOM interference.
+  </p>
+  <p>
+    👉 Global CSS <b>cannot</b> style elements inside Shadow DOM.
+  </p>
+</div>
+
+<div class="card">
+  <h2>2️⃣ Normal DOM Input</h2>
+  <p>This input is affected by global CSS (red border).</p>
+  <input placeholder="Normal DOM input" />
+</div>
+
+<div class="card">
+  <h2>3️⃣ Shadow DOM Input</h2>
+  <p>
+    This input lives inside Shadow DOM and is <b>isolated</b>.
+  </p>
+  <div id="shadow-host"></div>
+</div>
+
+<div class="card">
+  <h2>4️⃣ How Shadow DOM is Created</h2>
+  <p>
+    Shadow DOM is <b>not</b> created by HTML tags.
+    It is created using JavaScript:
+  </p>
+  <pre>
+host.attachShadow({ mode: "open" });
+  </pre>
+</div>
+
+<div class="card">
+  <h2>5️⃣ Key Rules (Interview)</h2>
+  <ul>
+    <li>No special HTML tag for Shadow DOM</li>
+    <li>Requires JavaScript</li>
+    <li>One element → one shadow root</li>
+    <li>Main goal → encapsulation, not security</li>
+  </ul>
+</div>
+
+<script>
+  const host = document.getElementById("shadow-host");
+  const shadowRoot = host.attachShadow({ mode: "open" });
+
+  shadowRoot.innerHTML = `
+    <style>
+      input {
+        border: 2px solid green;
+        padding: 6px;
+      }
+    </style>
+    <input placeholder="Shadow DOM input" />
+  `;
+</script>
+
+</body>
+</html>

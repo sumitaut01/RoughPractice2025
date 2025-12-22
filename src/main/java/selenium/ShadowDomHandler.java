@@ -41,9 +41,6 @@ public class ShadowDomHandler {
         WebElement ele=  shadowRoot03.findElement(By.cssSelector("#searchInput"));
         ele.sendKeys("test");
 
-
-
-
         driver.quit();
     }
 }

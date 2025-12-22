@@ -58,5 +58,7 @@ public class R1_SoftAssert {
         Assert.assertEquals(l1, l2);//java.lang.AssertionError: Lists differ at element [0]: 2 != 1
 
 
+
+
     }
 }

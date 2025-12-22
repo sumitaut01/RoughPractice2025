@@ -12,6 +12,8 @@ package basics.bitwiseoperator;
 //---------------------------------
 // 0101
 
+import org.testng.annotations.Test;
+
 /**
  * ssssss
  */
@@ -33,12 +35,12 @@ a ^ 0 = a
 
 XOR is commutative & associative (order doesn’t matter)
          */
-
-
-
-
-
     }
+
+
+
+
+
 
 
 }

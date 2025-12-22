@@ -1,6 +1,6 @@
 package basics.designpattern.builder;
 
-public class Product {
+public  class Product {
 
     String productName;
     double productPrice;
