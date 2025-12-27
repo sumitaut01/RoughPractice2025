@@ -3,6 +3,7 @@ package basics.javapgms;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class R_36MaxOccurence {
 
@@ -36,22 +37,23 @@ public class R_36MaxOccurence {
     @Test
     public void rough(){
         String st = "Learning a little each dayaddsupxxxxxx";
-        int [] data=new int[256];
-        for(int i=0;i<st.length();i++){
-            data[st.charAt(i)]++;
+
+        HashMap<Character,Integer> hm=new HashMap<>();
+        for(Character c:st.toCharArray()){
+          hm.put(c, hm.getOrDefault(c, 0)+1);
         }
 
-        //then logic to print max from array
+        var result=hm.entrySet();
+        int count=0;
+        char c=' ';
+        for( var x: result){
+          if(x.getValue()>count){
+           count=x.getValue();
+           c=x.getKey();
+          }
+        }
 
-
-
-
-
-
-
-
-
-
+        System.out.println(c +" "+count); //x 6
     }
 
 

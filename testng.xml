@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true"
+          name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo/R_XChild.java">
+
+
+
+        <groups>
+            <run>
+                <include name="grptest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="demo.R_XChild">
+                <methods>
+                    <include name="demo"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

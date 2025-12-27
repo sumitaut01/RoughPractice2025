@@ -40,4 +40,7 @@ public class R3_ShiftArraytoLeft {
         System.out.println(Arrays.toString(temp));
 
     }
+
+
+
 }

@@ -1,10 +1,7 @@
 package selenium;
 
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WindowType;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
@@ -207,6 +204,112 @@ public class Rough {
 
         System.out.println(first);
         System.out.println(second);
+
+    }
+
+
+    @Test
+    public void RoughAgain(){
+
+        String url="https://testautomationpractice.blogspot.com/";
+
+        WebDriver driver=new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().deleteAllCookies();
+
+
+        driver.get(url);
+
+        WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement name=wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("name")));
+      //  WebElement name=driver.findElement(By.xpath("name"));
+
+
+        name.click();
+        name.sendKeys("sumit");
+        String enteredText=name.getAttribute("value");
+
+        WebElement table=driver.findElement(By.xpath("//table[@name='BookTable']"));
+        List<WebElement> headers= driver.findElements(By.xpath("//table[@name='BookTable']//tr//th"));
+        int intCols= headers.size();
+
+        List<WebElement> rows= driver.findElements(By.xpath("//table[@name='BookTable']//tr"));
+
+        JavascriptExecutor js= (JavascriptExecutor) driver;
+
+       // js.executeScript("arguments[0].scrollintoView(true)", table);
+        js.executeScript("arguments[0].scrollIntoView(true);", table);
+
+
+        Actions act=new Actions(driver);
+        act.scrollToElement(table);
+
+
+
+        int intRows=rows.size();
+        for(int i=2;i<=intRows;i++) {
+
+            String data="";
+            for (int j = 1; j <= intCols; j++) {
+                 data = driver.findElement(By.xpath("//table[@name='BookTable']/tbody/tr[" + i + "]/td[" + (j) + "]")).getText();
+                System.out.print(data +" ");
+            }
+
+            System.out.println("");
+        }
+
+
+        System.out.println("Parent Window handle is below");
+        String sParent=driver.getWindowHandle();
+
+        //new window
+        WebElement pop=driver.findElement(By.xpath("//button[@id='PopUp']"));
+        act.scrollToElement(pop).click().build().perform();
+
+        System.out.println("totla window handles are");
+        System.out.println(driver.getWindowHandles().size());
+
+        String sChildWindow="";
+        for (String s:driver.getWindowHandles()){
+            System.out.println(s);
+
+            if(!s.equalsIgnoreCase(sParent)){
+                sChildWindow=s;
+                driver.switchTo().window(sChildWindow);
+
+                System.out.println(driver.getTitle());
+
+                try {
+                    Thread.sleep(2000);
+                }
+                catch (Exception oEx){
+
+                    System.out.println("Exceptio");
+                }
+
+                driver.close();
+                System.out.println("switching to parent");
+                driver.switchTo().window(sParent);
+                System.out.println(driver.getTitle());
+                driver.close();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spring Boot Cheatsheet</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+    canvas { border: 1px solid #555; background: #2e2e2e; display: block; margin: 20px auto; }
+</style>
+</head>
+<body>
+<h2 style="text-align:center;">Spring Boot Cheatsheet (Visual)</h2>
+<canvas id="springCanvas" width="1000" height="3200"></canvas>
+<script>
+const canvas = document.getElementById('springCanvas');
+const ctx = canvas.getContext('2d');
+
+function drawPage(yOffset) {
+    // Page 1-4 (previous content) remains unchanged, offsets adjusted
+    // Page 5: Real DTO Example
+    ctx.fillStyle = '#3e3e3e';
+    ctx.fillRect(20, 2700+yOffset, 960, 450);
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('DTO Real Example', 400, 2730+yOffset);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '16px Arial';
+    ctx.fillText('Entity:', 40, 2760+yOffset);
+    ctx.fillText('public class User {', 60, 2780+yOffset);
+    ctx.fillText('   private Long id;', 80, 2800+yOffset);
+    ctx.fillText('   private String name;', 80, 2820+yOffset);
+    ctx.fillText('   private String password;', 80, 2840+yOffset);
+    ctx.fillText('   private String email;', 80, 2860+yOffset);
+    ctx.fillText('}', 60, 2880+yOffset);
+
+    ctx.fillText('DTO:', 40, 2910+yOffset);
+    ctx.fillText('public class UserDTO {', 60, 2930+yOffset);
+    ctx.fillText('   private String name;', 80, 2950+yOffset);
+    ctx.fillText('   private String email;', 80, 2970+yOffset);
+    ctx.fillText('}', 60, 2990+yOffset);
+
+    ctx.fillText('Mapping in Service/Controller:', 40, 3020+yOffset);
+    ctx.fillText('UserDTO dto = new UserDTO(user.getName(), user.getEmail());', 60, 3040+yOffset);
+    ctx.fillText('return ResponseEntity.ok(dto);', 60, 3060+yOffset);
+
+    ctx.fillText('Explanation:', 40, 3090+yOffset);
+    ctx.fillText('• DTO only exposes necessary fields, hides sensitive info like password', 60, 3110+yOffset);
+    ctx.fillText('• Reduces coupling between Entity and API response', 60, 3130+yOffset);
+    ctx.fillText('• Can be customized per API endpoint', 60, 3150+yOffset);
+}
+
+drawPage(0);
+</script>
+</body>
+</html>

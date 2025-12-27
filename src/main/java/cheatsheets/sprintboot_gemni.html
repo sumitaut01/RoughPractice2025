@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot Interactive Learning Sheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+        .hidden-answer { filter: blur(5px); cursor: pointer; transition: filter 0.3s ease; }
+        .hidden-answer:hover { filter: blur(0px); }
+        .glow { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        
+        .flip-card { background-color: transparent; perspective: 1000px; height: 180px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 20px; border-radius: 12px; }
+        .flip-card-front { background-color: #1f2937; color: white; border: 1px solid #374151; }
+        .flip-card-back { background-color: #065f46; color: white; transform: rotateY(180deg); border: 1px solid #059669; }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans p-4 md:p-8">
+
+    <header class="max-w-6xl mx-auto text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-green-400 mb-4">Spring Boot Mastery 2.0 ✨</h1>
+        <p class="text-gray-400 text-lg">Your AI-enhanced guide to Spring Boot architecture and success.</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto space-y-12">
+
+        <!-- 1. AI Integration: Code Explainer -->
+        <section class="bg-gray-800 p-6 rounded-2xl border-2 border-purple-500 shadow-xl">
+            <h2 class="text-2xl font-semibold mb-4 text-purple-400 flex items-center">
+                <span class="mr-2">✨</span> AI Code Explainer
+            </h2>
+            <p class="text-sm text-gray-400 mb-4">Paste code below to get a plain-English explanation of how it works.</p>
+            <textarea id="ai-input" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm font-mono text-green-300 focus:ring-2 focus:ring-purple-500 outline-none mb-4" rows="4" placeholder="e.g. @RestController public class MyController { ... }"></textarea>
+            <button onclick="explainCode()" id="explain-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-bold transition flex items-center justify-center space-x-2">
+                <span>✨ Explain Code</span>
+            </button>
+            <div id="ai-response" class="mt-4 p-4 bg-gray-900 rounded-lg hidden text-gray-300 border border-purple-900/50"></div>
+        </section>
+
+        <!-- 2. Interactive Architecture Flow -->
+        <section class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl">
+            <h2 class="text-2xl font-semibold mb-6 text-yellow-400 flex items-center justify-between">
+                <span>🏗️ The Request Flow (Click to Explore)</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                <div onclick="showTip('client')" class="cursor-pointer bg-blue-900/40 p-4 rounded-lg border border-blue-500 text-center card-hover">
+                    <p class="font-bold uppercase tracking-tight">Client</p>
+                    <p class="text-[10px] text-blue-300">Request Body/JSON</p>
+                </div>
+                <div class="text-center text-gray-500 hidden md:block">→</div>
+                <div onclick="showTip('controller')" class="cursor-pointer bg-green-900/40 p-4 rounded-lg border border-green-500 text-center card-hover">
+                    <p class="font-bold uppercase tracking-tight">Controller</p>
+                    <p class="text-[10px] text-green-300">@RestController</p>
+                </div>
+                <div class="text-center text-gray-500 hidden md:block">→</div>
+                <div onclick="showTip('service')" class="cursor-pointer bg-purple-900/40 p-4 rounded-lg border border-purple-500 text-center card-hover">
+                    <p class="font-bold uppercase tracking-tight">Service</p>
+                    <p class="text-[10px] text-purple-300">@Service (Logic)</p>
+                </div>
+            </div>
+            
+            <div id="tip-display" class="mt-6 p-6 bg-gray-900 rounded-xl border border-gray-600 min-h-[100px] flex flex-col justify-center transition-all duration-300 relative">
+                <p id="tip-text" class="italic text-gray-400 text-center">Click a component above to see its role in the ecosystem.</p>
+                <button onclick="speakTip()" id="speak-btn" class="absolute bottom-2 right-2 text-gray-500 hover:text-green-400 hidden">
+                    🔊 Listen
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. AI Mock Interviewer -->
+        <section class="bg-gray-800 p-6 rounded-2xl border-2 border-green-500/30">
+            <h2 class="text-2xl font-semibold mb-4 text-green-400 flex items-center">
+                <span class="mr-2">✨</span> AI Interview Practice
+            </h2>
+            <div class="flex flex-col md:flex-row gap-4 mb-4">
+                <select id="topic-select" class="bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none">
+                    <option value="Dependency Injection">Dependency Injection</option>
+                    <option value="Spring Data JPA">Spring Data JPA</option>
+                    <option value="AOP & Proxies">AOP & Proxies</option>
+                    <option value="Security & JWT">Security & JWT</option>
+                </select>
+                <button onclick="generateQuestion()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold transition">
+                    ✨ Generate Question
+                </button>
+            </div>
+            <div id="interview-question" class="p-4 bg-gray-900 rounded-lg text-gray-300 italic min-h-[60px] border border-gray-700">
+                Pick a topic and get a tailored interview question...
+            </div>
+        </section>
+
+        <!-- DTO vs ENTITY Comparison -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700">
+                <h2 class="text-2xl font-semibold mb-4 text-yellow-400 flex items-center">
+                    <span class="mr-2">🛡️</span> Security: DTO vs Entity
+                </h2>
+                <div class="flex items-center space-x-4 mb-6">
+                    <span id="label-entity" class="text-sm font-bold text-gray-500 uppercase">Database Entity</span>
+                    <button onclick="toggleCodeView()" id="toggle-btn" class="relative w-14 h-7 bg-green-600 rounded-full transition-colors">
+                        <div id="toggle-circle" class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform translate-x-7"></div>
+                    </button>
+                    <span id="label-dto" class="text-sm font-bold text-green-400 uppercase">Rest DTO</span>
+                </div>
+                <div class="bg-black/50 p-4 rounded-lg font-mono text-xs overflow-x-auto min-h-[200px]">
+                    <pre id="code-block" class="text-blue-300">
+public class UserDTO {
+   private String name;
+   private String email;
+   // No Password! No Internal ID!
+}</pre>
+                </div>
+            </div>
+
+            <!-- Starter Explorer -->
+            <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700">
+                <h2 class="text-2xl font-semibold mb-4 text-yellow-400 flex items-center">
+                    <span class="mr-2">🚀</span> Dependency Starters
+                </h2>
+                <div class="space-y-3">
+                    <div class="p-3 bg-gray-900 rounded border-l-4 border-green-500">
+                        <span class="font-bold">spring-boot-starter-web</span>
+                        <p class="text-xs text-gray-500">Includes Tomcat and Spring MVC for building REST APIs.</p>
+                    </div>
+                    <div class="p-3 bg-gray-900 rounded border-l-4 border-blue-500">
+                        <span class="font-bold">spring-boot-starter-data-jpa</span>
+                        <p class="text-xs text-gray-500">Includes Hibernate and Spring Data for Database access.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-6xl mx-auto text-center mt-16 pb-8 text-gray-600 text-sm">
+        Spring Boot Interactive Sheet • ✨ AI Powered • 2024
+    </footer>
+
+    <script>
+        const apiKey = ""; // Environment provided
+        const tips = {
+            client: {
+                title: "Client (Frontend/Mobile/Postman)",
+                desc: "The source of the request. It typically sends JSON data to the API and waits for an HTTP Status Code like 200 OK or 404 Not Found."
+            },
+            controller: {
+                title: "Controller (The Gatekeeper)",
+                desc: "Handled by @RestController. It interprets the URL, handles request parameters, and calls the appropriate service. It should NOT contain business logic."
+            },
+            service: {
+                title: "Service (The Brain)",
+                desc: "Where business rules live. If you're calculating a discount or checking if a user is eligible for a loan, it happens here. Annotated with @Service."
+            }
+        };
+
+        let currentTipText = "";
+
+        async function geminiFetch(payload) {
+            let retries = 5;
+            let delay = 1000;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("API Failed");
+                    return await response.json();
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        async function explainCode() {
+            const input = document.getElementById('ai-input').value;
+            const resDiv = document.getElementById('ai-response');
+            if (!input) return;
+
+            resDiv.classList.remove('hidden');
+            resDiv.innerHTML = "✨ Analyzing your code...";
+            resDiv.className = "mt-4 p-4 bg-gray-900 rounded-lg loading-shimmer text-gray-400 italic";
+
+            try {
+                const result = await geminiFetch({
+                    contents: [{ parts: [{ text: `Explain this Spring Boot code snippet in simple terms for a junior developer: ${input}` }] }]
+                });
+                const explanation = result.candidates[0].content.parts[0].text;
+                resDiv.className = "mt-4 p-4 bg-gray-900 rounded-lg text-gray-300 border border-purple-900/50";
+                resDiv.innerHTML = explanation.replace(/\n/g, '<br>');
+            } catch (err) {
+                resDiv.innerHTML = "Failed to reach the AI. Please check your connection.";
+            }
+        }
+
+        async function generateQuestion() {
+            const topic = document.getElementById('topic-select').value;
+            const qDiv = document.getElementById('interview-question');
+            qDiv.innerHTML = "✨ Generating a challenging question...";
+            qDiv.classList.add('loading-shimmer');
+
+            try {
+                const result = await geminiFetch({
+                    contents: [{ parts: [{ text: `Act as a senior software engineer. Generate one challenging interview question about Spring Boot topic: ${topic}. Keep it under 30 words.` }] }]
+                });
+                qDiv.classList.remove('loading-shimmer');
+                qDiv.innerHTML = `"${result.candidates[0].content.parts[0].text}"`;
+            } catch (err) {
+                qDiv.innerHTML = "Error generating question.";
+            }
+        }
+
+        async function speakTip() {
+            if (!currentTipText) return;
+            const btn = document.getElementById('speak-btn');
+            btn.textContent = "⌛ Generating...";
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Say clearly: ${currentTipText}` }] }],
+                        generationConfig: { 
+                            responseModalities: ["AUDIO"],
+                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                const pcmData = result.candidates[0].content.parts[0].inlineData.data;
+                const audioBlob = pcmToWav(pcmData, 24000); // 24kHz is default for TTS
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+                btn.textContent = "🔊 Playing";
+                audio.onended = () => btn.textContent = "🔊 Listen";
+            } catch (e) {
+                btn.textContent = "❌ Error";
+            }
+        }
+
+        function pcmToWav(base64, sampleRate) {
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+            const buffer = new ArrayBuffer(44 + bytes.length);
+            const view = new DataView(buffer);
+            const writeString = (offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
+            writeString(0, 'RIFF'); view.setUint32(4, 36 + bytes.length, true); writeString(8, 'WAVE'); writeString(12, 'fmt ');
+            view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); writeString(36, 'data');
+            view.setUint32(40, bytes.length, true); const pcmPayload = new Uint8Array(buffer, 44); pcmPayload.set(bytes);
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        function showTip(key) {
+            const display = document.getElementById('tip-display');
+            const text = document.getElementById('tip-text');
+            const speakBtn = document.getElementById('speak-btn');
+            
+            display.style.opacity = 0;
+            currentTipText = tips[key].title + ". " + tips[key].desc;
+
+            setTimeout(() => {
+                text.innerHTML = `<strong class="text-green-400 block mb-1 text-lg">${tips[key].title}</strong> ${tips[key].desc}`;
+                display.style.opacity = 1;
+                display.classList.add('glow');
+                speakBtn.classList.remove('hidden');
+                setTimeout(() => display.classList.remove('glow'), 500);
+            }, 200);
+        }
+
+        let isDTO = true;
+        function toggleCodeView() {
+            const btn = document.getElementById('toggle-btn');
+            const circle = document.getElementById('toggle-circle');
+            const code = document.getElementById('code-block');
+            const labelEntity = document.getElementById('label-entity');
+            const labelDto = document.getElementById('label-dto');
+            isDTO = !isDTO;
+            if (isDTO) {
+                circle.style.transform = 'translateX(28px)';
+                btn.classList.replace('bg-gray-600', 'bg-green-600');
+                labelDto.classList.replace('text-gray-500', 'text-green-400');
+                labelEntity.classList.replace('text-yellow-400', 'text-gray-500');
+                code.innerHTML = `public class UserDTO {\n   private String name;\n   private String email;\n   // HIDDEN: password, ssn, role\n}`;
+            } else {
+                circle.style.transform = 'translateX(0px)';
+                btn.classList.replace('bg-green-600', 'bg-gray-600');
+                labelEntity.classList.replace('text-gray-500', 'text-yellow-400');
+                labelDto.classList.replace('text-green-400', 'text-gray-500');
+                code.innerHTML = `public class UserEntity {\n   @Id private Long id;\n   private String name;\n   private String email;\n   private String password; // DANGEROUS\n   private String ssn;      // SENSITIVE\n}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
 public class R16_MaximumSumofSubarrayOfSizeK {
 
     public static void main(String[] args) {
@@ -57,6 +59,36 @@ public class R16_MaximumSumofSubarrayOfSizeK {
             int[] arr = {2, 1, 5, 1, 3, 2};
             bruteForce(arr);
         }
+    }
+
+
+
+
+    @Test
+    public void Rough(){
+
+        int[] arr = {2, 1, 5, 1, 3, 2};
+        int K=3;
+        int maxsum=0;
+        int curSum=0;
+
+        for(int i=0;i<=K;i++){
+            curSum=0;
+            for(int j=i;j<i+3;j++){
+                curSum=curSum+arr[j];
+            }
+            System.out.println(curSum);
+            if (curSum>maxsum){
+                maxsum=curSum;
+            }
+
+        }
+        System.out.println(maxsum);
+
+
+
+
+
     }
 
 }

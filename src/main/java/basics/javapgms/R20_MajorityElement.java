@@ -12,6 +12,7 @@ public class R20_MajorityElement {
             hm.put(num, hm.getOrDefault(num, 0) + 1);
         }
 
+
         int majorityCount = arr.length / 2;
         boolean found = false;
 

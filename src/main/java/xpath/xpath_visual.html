@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate XPath & CSS Masterclass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .node {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .node:hover {
+            outline: 2px solid #3b82f6;
+        }
+        .highlight-context {
+            background-color: #fef08a !important;
+            border: 2px solid #eab308 !important;
+            transform: scale(1.01);
+            z-index: 10;
+        }
+        .highlight-target {
+            background-color: #bbf7d0 !important;
+            border: 2px dashed #22c55e !important;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .connector {
+            border-left: 2px solid #e2e8f0;
+            margin-left: 0.5rem;
+            padding-left: 1rem;
+        }
+        .tag-name { color: #be185d; font-weight: bold; font-family: monospace; font-size: 0.75rem; }
+        .attr-name { color: #7c3aed; font-family: monospace; font-size: 0.75rem; }
+        .node-text { color: #1e293b; font-style: italic; font-size: 0.75rem; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans leading-relaxed pb-20">
+
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <header class="mb-8 border-b pb-6 flex justify-between items-end">
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">XPath & CSS Selector Master</h1>
+            <p class="text-lg text-slate-600">Master the art of locating elements using both major locator strategies.</p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="toggleMode('explore')" id="btn-explore" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-md">Explore</button>
+            <button onclick="toggleMode('quiz')" id="btn-quiz" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg font-bold hover:bg-slate-50">Quiz Mode</button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left: Visual Sandbox -->
+        <div class="lg:col-span-5">
+            <div class="sticky top-8">
+                <h2 class="text-xl font-bold mb-4 flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                            </svg>
+                            Enterprise DOM
+                        </span>
+                    <span id="quiz-score" class="hidden text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">Score: 0</span>
+                </h2>
+
+                <div id="sandbox" class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 min-h-[550px] overflow-y-auto max-h-[70vh]">
+                    <div id="node-ceo" class="node p-2 mb-2 rounded border border-slate-200 bg-slate-50" onclick="handleNodeClick('node-ceo', event)">
+                        <span class="tag-name">main</span> <span class="attr-name">#Corporate</span>
+                        <div class="connector">
+                            <div id="node-eng" class="node p-2 mb-2 rounded border border-blue-100 bg-blue-50" onclick="handleNodeClick('node-eng', event)">
+                                <span class="tag-name">section</span> <span class="attr-name">.Engineering-Dept</span>
+                                <div class="connector">
+                                    <div id="node-table" class="node p-2 mb-2 rounded border border-slate-200 bg-white" onclick="handleNodeClick('node-table', event)">
+                                        <span class="tag-name">table</span>
+                                        <div class="connector">
+                                            <div id="node-tr1" class="node p-1 mb-1 rounded bg-slate-50 border border-slate-100" onclick="handleNodeClick('node-tr1', event)">
+                                                <span class="tag-name">tr</span>
+                                                <div class="connector flex gap-2">
+                                                    <div id="node-td1" class="node p-1 rounded bg-white border border-slate-100" onclick="handleNodeClick('node-td1', event)"><span class="tag-name">td</span><div class="node-text">"ID: 101"</div></div>
+                                                    <div id="node-td2" class="node p-1 rounded bg-white border border-slate-100 highlight-context" onclick="handleNodeClick('node-td2', event)"><span class="tag-name">td</span><div class="node-text">"Dev Lead"</div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="node-list" class="node p-2 rounded border border-indigo-100 bg-indigo-50" onclick="handleNodeClick('node-list', event)">
+                                        <span class="tag-name">ul</span> <span class="attr-name">.Tech-Stack</span>
+                                        <div class="connector space-y-1">
+                                            <div id="node-li1" class="node p-1 rounded bg-white border border-slate-100" onclick="handleNodeClick('node-li1', event)"><span class="tag-name">li</span> <div class="node-text">"React JS"</div></div>
+                                            <div id="node-li2" class="node p-1 rounded bg-white border border-slate-100" onclick="handleNodeClick('node-li2', event)"><span class="tag-name">li</span> <div class="node-text">"Python"</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="node-mkt" class="node p-2 rounded border border-orange-100 bg-orange-50 mt-4" onclick="handleNodeClick('node-mkt', event)">
+                                <span class="tag-name">section</span> <span class="attr-name">.Marketing-Dept</span>
+                                <div class="connector">
+                                    <div id="node-emp3" class="node p-1 rounded bg-white border border-slate-100" onclick="handleNodeClick('node-emp3', event)">
+                                        <span class="tag-name">span</span> <span class="attr-name">.social-lead-active</span>
+                                        <div class="node-text">"Marketing Lead"</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Interactive Controls -->
+        <div class="lg:col-span-7">
+            <div id="explore-view">
+                <div class="flex border-b mb-6 gap-6 overflow-x-auto whitespace-nowrap">
+                    <button onclick="switchTab('axes')" id="tab-axes" class="pb-2 border-b-2 border-blue-600 font-bold text-blue-600">XPath Axes</button>
+                    <button onclick="switchTab('css')" id="tab-css" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-blue-600">CSS Selectors</button>
+                    <button onclick="switchTab('functions')" id="tab-functions" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-blue-600">XPath Logic</button>
+                    <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-blue-600">Cheat Sheet</button>
+                </div>
+
+                <!-- XPath Axes Panel -->
+                <div id="panel-axes" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="visualize('parent', '..')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">parent::</div>
+                        <div class="text-xs text-slate-500">Goes up one level.</div>
+                    </button>
+                    <button onclick="visualize('ancestor', 'ancestor::section')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">ancestor::</div>
+                        <div class="text-xs text-slate-500">Jump to specific container above.</div>
+                    </button>
+                    <button onclick="visualize('following', 'following::*')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-purple-600 group-hover:translate-x-1 transition-transform">following::</div>
+                        <div class="text-xs text-slate-500">Nodes after current in source.</div>
+                    </button>
+                    <button onclick="visualize('preceding-sibling', 'preceding-sibling::*')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-green-600 group-hover:translate-x-1 transition-transform">preceding-sibling::</div>
+                        <div class="text-xs text-slate-500">Sibling nodes above context.</div>
+                    </button>
+                </div>
+
+                <!-- CSS Panel (Updated with advanced attribute selectors) -->
+                <div id="panel-css" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="visualizeCSS('starts', '[class^=\'Engineering\']')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-orange-600 group-hover:translate-x-1 transition-transform">^= (Starts With)</div>
+                        <div class="text-xs text-slate-500">Match class starting with 'Engineering'.</div>
+                    </button>
+                    <button onclick="visualizeCSS('contains', '[class*=\'lead\']')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-orange-600 group-hover:translate-x-1 transition-transform">*= (Contains)</div>
+                        <div class="text-xs text-slate-500">Match partial class name anywhere.</div>
+                    </button>
+                    <button onclick="visualizeCSS('ends', '[class$=\'Dept\']')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-orange-600 group-hover:translate-x-1 transition-transform">$= (Ends With)</div>
+                        <div class="text-xs text-slate-500">Match classes ending with 'Dept'.</div>
+                    </button>
+                    <button onclick="visualizeCSS('nth', 'li:nth-child(2)')" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all group">
+                        <div class="font-bold text-orange-600 group-hover:translate-x-1 transition-transform">:nth-child(n)</div>
+                        <div class="text-xs text-slate-500">Select second item in the list.</div>
+                    </button>
+                </div>
+
+                <!-- Functions Panel -->
+                <div id="panel-functions" class="hidden space-y-4">
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all cursor-pointer" onclick="runFunc('contains')">
+                        <div class="font-mono font-bold text-pink-600">[contains(text(), 'React')]</div>
+                        <p class="text-xs text-slate-500 mt-1">XPath logic can see actual text content inside tags.</p>
+                    </div>
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all cursor-pointer" onclick="runFunc('normalize')">
+                        <div class="font-mono font-bold text-teal-600">[normalize-space()='React JS']</div>
+                        <p class="text-xs text-slate-500 mt-1">Cleans invisible spaces before/after text.</p>
+                    </div>
+                </div>
+
+                <!-- Cheat Sheet Panel -->
+                <div id="panel-cheatsheet" class="hidden space-y-4">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="bg-white border p-4 rounded-xl">
+                            <h4 class="text-xs font-bold text-slate-400 mb-3 border-b pb-1">ADVANCED MATCHING</h4>
+                            <table class="w-full text-[10px] font-mono">
+                                <tr class="border-b"><th class="text-left py-1">Type</th><th class="text-left">XPath</th><th class="text-left">CSS</th></tr>
+                                <tr><td class="py-1">Starts With</td><td>[starts-with(@c, 'val')]</td><td>[class^='val']</td></tr>
+                                <tr><td class="py-1">Contains</td><td>[contains(@c, 'val')]</td><td>[class*='val']</td></tr>
+                                <tr><td class="py-1">Ends With</td><td>(Complex logic)</td><td>[class$='val']</td></tr>
+                                <tr><td class="py-1">Index</td><td>//li[2]</td><td>li:nth-child(2)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 bg-slate-900 text-slate-300 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <span id="current-strategy" class="text-xs font-bold text-blue-400 uppercase tracking-widest">Locator Output</span>
+                    </div>
+                    <div class="space-y-3 font-mono text-sm">
+                        <div class="flex gap-2">
+                            <span class="text-slate-500">Query:</span>
+                            <span id="path-display" class="text-yellow-400 font-bold break-all">//td[text()='Dev Lead']</span>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg text-xs leading-relaxed" id="explanation">
+                            Choose a locator strategy above to see the logic.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz View -->
+            <div id="quiz-view" class="hidden space-y-6">
+                <div class="bg-white border-2 border-blue-100 p-8 rounded-3xl shadow-sm">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Challenge:</h2>
+                    <p id="quiz-question" class="text-lg text-slate-600 italic">"Find nodes ending with 'Dept'."</p>
+                    <div id="quiz-feedback" class="mt-6 hidden p-4 rounded-xl font-bold text-center text-sm"></div>
+                    <button onclick="nextQuestion()" class="mt-4 text-blue-600 font-bold hover:underline flex items-center gap-1">
+                        Skip / Next Question →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        const nodes = {
+            'node-ceo': { el: document.getElementById('node-ceo'), label: 'main#Corporate' },
+            'node-eng': { el: document.getElementById('node-eng'), label: 'section.Engineering-Dept' },
+            'node-table': { el: document.getElementById('node-table'), label: 'table' },
+            'node-tr1': { el: document.getElementById('node-tr1'), label: 'tr' },
+            'node-td1': { el: document.getElementById('node-td1'), label: 'td (ID)' },
+            'node-td2': { el: document.getElementById('node-td2'), label: 'td (Dev Lead)' },
+            'node-list': { el: document.getElementById('node-list'), label: 'ul.Tech-Stack' },
+            'node-li1': { el: document.getElementById('node-li1'), label: 'li (React)' },
+            'node-li2': { el: document.getElementById('node-li2'), label: 'li (Python)' },
+            'node-mkt': { el: document.getElementById('node-mkt'), label: 'section.Marketing-Dept' },
+            'node-emp3': { el: document.getElementById('node-emp3'), label: 'span.social-lead-active' }
+        };
+
+        let currentContext = 'node-td2';
+        let currentMode = 'explore';
+        let score = 0;
+        let currentQuestionIdx = 0;
+
+        const quizQuestions = [
+            { q: "Select the second item in the Tech Stack list using index/nth-child.", target: 'node-li2' },
+            { q: "Use a selector to find the active social lead span.", target: 'node-emp3' },
+            { q: "Select the Engineering container (starts with Engineering).", target: 'node-eng' },
+            { q: "Find the parent of the Dev Lead (td).", target: 'node-tr1' }
+        ];
+
+        function toggleMode(mode) {
+            currentMode = mode;
+            document.getElementById('explore-view').classList.toggle('hidden', mode === 'quiz');
+            document.getElementById('quiz-view').classList.toggle('hidden', mode === 'explore');
+            document.getElementById('quiz-score').classList.toggle('hidden', mode === 'explore');
+            if(mode === 'quiz') startQuiz();
+        }
+
+        function startQuiz() {
+            currentQuestionIdx = 0; score = 0; updateScore(); showQuestion(); clearHighlights();
+        }
+
+        function showQuestion() {
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-question').innerText = `"${quizQuestions[currentQuestionIdx].q}"`;
+        }
+
+        function handleNodeClick(id, e) {
+            if(e) e.stopPropagation();
+            if(currentMode === 'quiz') checkAnswer(id); else setContext(id);
+        }
+
+        function checkAnswer(id) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            if(id === quizQuestions[currentQuestionIdx].target) {
+                feedback.innerText = "Correct!";
+                feedback.className = "mt-6 p-4 rounded-xl font-bold text-center text-sm bg-green-100 text-green-700";
+                score += 10; updateScore();
+                setTimeout(nextQuestion, 800);
+            } else {
+                feedback.innerText = "Try a different node!";
+                feedback.className = "mt-6 p-4 rounded-xl font-bold text-center text-sm bg-red-100 text-red-700";
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx = (currentQuestionIdx + 1) % quizQuestions.length;
+            showQuestion();
+        }
+
+        function updateScore() {
+            document.getElementById('quiz-score').innerText = `Score: ${score}`;
+        }
+
+        function setContext(id) {
+            currentContext = id;
+            Object.values(nodes).forEach(n => n.el.classList.remove('highlight-context', 'highlight-target'));
+            nodes[id].el.classList.add('highlight-context');
+            document.getElementById('path-display').innerText = `//${nodes[id].label.split(/[.# ]/)[0]}`;
+        }
+
+        function clearHighlights() {
+            Object.values(nodes).forEach(n => n.el.classList.remove('highlight-target'));
+        }
+
+        function switchTab(tab) {
+            ['axes', 'css', 'functions', 'cheatsheet'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "pb-2 border-b-2 border-transparent text-slate-500 hover:text-blue-600";
+            });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "pb-2 border-b-2 border-blue-600 font-bold text-blue-600";
+        }
+
+        function visualize(axis, xpath) {
+            clearHighlights();
+            document.getElementById('current-strategy').innerText = "XPath Axis Output";
+            const expl = document.getElementById('explanation');
+            const path = document.getElementById('path-display');
+            path.innerText = `//${nodes[currentContext].label.split(/[.# ]/)[0]}/${xpath}`;
+
+            const targets = [];
+            if(axis === 'parent') {
+                if(currentContext === 'node-td1' || currentContext === 'node-td2') targets.push('node-tr1');
+                if(currentContext === 'node-li1' || currentContext === 'node-li2') targets.push('node-list');
+                expl.innerText = "XPath is bidirectional: it can move from child to parent effortlessly.";
+            } else if (axis === 'ancestor') {
+                if(currentContext === 'node-td2') targets.push('node-tr1', 'node-table', 'node-eng', 'node-ceo');
+                expl.innerText = "Jump to any containing element higher in the DOM tree.";
+            } else if (axis === 'following') {
+                targets.push('node-mkt', 'node-emp3');
+                expl.innerText = "Finds nodes later in the source code regardless of hierarchy.";
+            } else if (axis === 'preceding-sibling') {
+                if(currentContext === 'node-td2') targets.push('node-td1');
+                expl.innerText = "Selects peers that came before the current node.";
+            }
+            targets.forEach(t => nodes[t].el.classList.add('highlight-target'));
+        }
+
+        function visualizeCSS(type, selector) {
+            clearHighlights();
+            document.getElementById('current-strategy').innerText = "CSS Pattern Output";
+            const expl = document.getElementById('explanation');
+            const path = document.getElementById('path-display');
+            path.innerText = selector;
+
+            const targets = [];
+            if(type === 'starts') {
+                targets.push('node-eng');
+                expl.innerText = "^= matches the START of an attribute value. Similar to XPath starts-with().";
+            } else if (type === 'contains') {
+                targets.push('node-emp3');
+                expl.innerText = "*= matches the string ANYWHERE in the attribute. Similar to XPath contains().";
+            } else if (type === 'ends') {
+                targets.push('node-eng', 'node-mkt');
+                expl.innerText = "$= matches the END of the value. XPath doesn't have a simple function for this!";
+            } else if (type === 'nth') {
+                targets.push('node-li2');
+                expl.innerText = ":nth-child(2) grabs the second element. XPath uses [2] for the same logic.";
+            }
+            targets.forEach(t => nodes[t].el.classList.add('highlight-target'));
+        }
+
+        function runFunc(type) {
+            clearHighlights();
+            document.getElementById('current-strategy').innerText = "XPath Logic Output";
+            const expl = document.getElementById('explanation');
+            const path = document.getElementById('path-display');
+
+            if(type === 'contains') {
+                nodes['node-li1'].el.classList.add('highlight-target');
+                path.innerText = "//li[contains(text(), 'React')]";
+                expl.innerText = "XPath allows logic based on the text inside tags, which CSS can't do.";
+            } else if(type === 'normalize') {
+                nodes['node-li1'].el.classList.add('highlight-target');
+                path.innerText = "//li[normalize-space()='React JS']";
+                expl.innerText = "Safe matching that ignores extra spaces or line breaks.";
+            }
+        }
+    </script>
+</body>
+</html>

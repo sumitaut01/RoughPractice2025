@@ -6,7 +6,7 @@ public class R6_ReverseNumber {
 
     public static void main(String[] args) {
         int num = 5432;
-        int rev = 0;
+        int rev = Integer.MIN_VALUE;
 
         while (num > 0) {
             rev = rev * 10 + num % 10; // extract last digit and build reverse

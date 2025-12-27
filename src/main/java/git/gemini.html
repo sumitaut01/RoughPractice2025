@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Masterclass Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-primary: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --accent: #3b82f6;
+            --text-main: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+        }
+
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .command-card {
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .command-card:hover {
+            border-left-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .glass-nav {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .diagram-box {
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .danger-zone {
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            color: #991b1b;
+        }
+
+        .success-zone {
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            color: #166534;
+        }
+
+        .badge-git {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+<!-- Sidebar Navigation -->
+<nav class="w-full md:w-64 glass-nav text-slate-300 flex-shrink-0 sticky top-0 md:h-screen overflow-y-auto z-50">
+    <div class="p-6">
+        <h1 class="text-white text-2xl font-bold flex items-center gap-2">
+            <i class="fab fa-git-alt text-orange-500"></i> Git Guide
+        </h1>
+        <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Master Workflow</p>
+    </div>
+    <ul class="space-y-1 px-4 pb-10">
+        <li><a href="#basics" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-layer-group mr-2"></i> Core Components</a></li>
+        <li><a href="#sync" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-sync mr-2"></i> Syncing (Fetch vs Pull)</a></li>
+        <li><a href="#branches" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-code-branch mr-2"></i> Branching Strategy</a></li>
+        <li><a href="#undo" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-undo mr-2"></i> Undoing (Reset/Revert)</a></li>
+        <li><a href="#pr" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-file-contract mr-2"></i> Pull Request Secrets</a></li>
+        <li><a href="#merging" class="block p-3 hover:bg-slate-800 rounded-lg transition"><i class="fas fa-merge mr-2"></i> Merging Best Practices</a></li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-1 p-6 md:p-12 max-w-5xl mx-auto">
+
+    <!-- 1. Basics Section -->
+    <section id="basics" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">1</span>
+            The Three Pillars of Git
+        </h2>
+        <p class="mb-6 text-slate-600">Git isn't just a "save" button; it's a three-stage management system.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-blue-500 mb-4"><i class="fas fa-keyboard text-2xl"></i></div>
+                <h3 class="font-bold text-lg mb-2">Working Directory</h3>
+                <p class="text-sm text-slate-500 mb-4">Where you edit files. Files are untracked or modified.</p>
+                <code class="text-xs bg-slate-100 p-2 block rounded">git add &lt;file&gt;</code>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-orange-500 mb-4"><i class="fas fa-box-archive text-2xl"></i></div>
+                <h3 class="font-bold text-lg mb-2">Staging Area (Index)</h3>
+                <p class="text-sm text-slate-500 mb-4">The "Prepare to Commit" zone. Marks changes for the next snapshot.</p>
+                <code class="text-xs bg-slate-100 p-2 block rounded">git commit -m "..."</code>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-green-500 mb-4"><i class="fas fa-database text-2xl"></i></div>
+                <h3 class="font-bold text-lg mb-2">HEAD (Repository)</h3>
+                <p class="text-sm text-slate-500 mb-4">The official record. HEAD points to your current location in history.</p>
+                <code class="text-xs bg-slate-100 p-2 block rounded">git log</code>
+            </div>
+        </div>
+
+        <div class="diagram-box mt-8">
+            <h4 class="font-semibold mb-4 text-center text-slate-400 uppercase text-xs">Visual Flow</h4>
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+                <span class="px-4 py-2 bg-slate-100 rounded border">Work Dir</span>
+                <i class="fas fa-arrow-right text-slate-300"></i>
+                <span class="px-4 py-2 bg-orange-50 rounded border border-orange-200 text-orange-700">Staging</span>
+                <i class="fas fa-arrow-right text-slate-300"></i>
+                <span class="px-4 py-2 bg-green-50 rounded border border-green-200 text-green-700">HEAD</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Sync Section -->
+    <section id="sync" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">2</span>
+            The "Sync" Confusion: Fetch vs Pull
+        </h2>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="flex-1 space-y-4">
+                <div class="command-card bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-blue-600">git fetch <span class="text-xs font-normal text-slate-400 ml-2">(Safe / Inspect)</span></h4>
+                    <p class="text-sm text-slate-600">Downloads new commits/branches but <strong>does not</strong> touch your files. Updates <code>origin/main</code>.</p>
+                    <p class="text-xs italic text-blue-400 mt-2">"Checking your mail without opening the envelopes."</p>
+                </div>
+                <div class="command-card bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-orange-600">git pull <span class="text-xs font-normal text-slate-400 ml-2">(Aggressive / Merge)</span></h4>
+                    <p class="text-sm text-slate-600">Fetches <strong>+</strong> Merges automatically. Modifies your files immediately.</p>
+                    <p class="text-xs italic text-orange-400 mt-2">"Downloading and applying the changes right now."</p>
+                </div>
+            </div>
+            <div class="md:w-1/3 bg-slate-800 text-white p-6 rounded-xl flex flex-col justify-center">
+                <h4 class="font-bold mb-2">Pro Tip:</h4>
+                <p class="text-sm text-slate-400">Always <code>fetch</code> first if you want to see what others did before risking a merge conflict in your local code.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Branching Section -->
+    <section id="branches" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">3</span>
+            Branching & "Detached HEAD"
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold mb-3">Creating a Trail</h3>
+                <p class="text-sm text-slate-600 mb-4">When you branch from <code>main</code>, your new branch inherits all previous logs. Git stores commit ancestry, not copies of files.</p>
+                <pre class="bg-slate-900 text-green-400 p-4 rounded text-sm overflow-x-auto">
+git checkout -b new-feature
+# Now new-feature log == main log</pre>
+            </div>
+
+            <div class="bg-yellow-50 p-6 rounded-xl shadow-sm border border-yellow-200">
+                <h3 class="font-bold text-yellow-800 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>Detached HEAD</h3>
+                <p class="text-sm text-yellow-700">Happens when you checkout a <strong>Commit Hash</strong> instead of a branch.</p>
+                <ul class="text-xs space-y-2 mt-2 list-disc list-inside text-yellow-900">
+                    <li>You are no longer on a branch.</li>
+                    <li>Commits made here are orphaned (lost) unless you create a branch.</li>
+                    <li><strong>To fix:</strong> <code>git checkout -b fix-state</code></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Undo Section -->
+    <section id="undo" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3 text-red-600">
+            <span class="bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">4</span>
+            The "Undo" War: Reset vs Revert
+        </h2>
+
+        <div class="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+            <table class="w-full text-left bg-white border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                    <th class="p-4 font-bold">Feature</th>
+                    <th class="p-4 font-bold text-red-600">git reset</th>
+                    <th class="p-4 font-bold text-green-600">git revert</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm">
+                <tr>
+                    <td class="p-4 font-semibold">Modifies History?</td>
+                    <td class="p-4">Yes (Erase commits)</td>
+                    <td class="p-4">No (Adds new commit)</td>
+                </tr>
+                <tr>
+                    <td class="p-4 font-semibold">Safe for Remote?</td>
+                    <td class="p-4 text-red-500 font-bold">❌ Dangerous</td>
+                    <td class="p-4 text-green-600 font-bold">✅ Safe</td>
+                </tr>
+                <tr>
+                    <td class="p-4 font-semibold">Best for...</td>
+                    <td class="p-4 italic">Local cleanup before push</td>
+                    <td class="p-4 italic">Undoing public mistakes</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 bg-red-50 rounded-lg border border-red-100">
+                <h5 class="font-bold text-red-700 text-xs uppercase mb-2">Reset --hard</h5>
+                <p class="text-xs">Destroys everything in staging and working directory. Returns files to exactly how they were at that commit.</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <h5 class="font-bold text-blue-700 text-xs uppercase mb-2">Restore --staged</h5>
+                <p class="text-xs">Unstages files but <strong>keeps your edits</strong>. Moves them from Staging back to Working Dir.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. PR Section -->
+    <section id="pr" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">5</span>
+            Pull Request: Internal Operations
+        </h2>
+        <p class="text-slate-600 mb-6 italic">Why we never "Pull origin feature" directly into master.</p>
+
+        <div class="space-y-4">
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center font-bold">1</div>
+                <div>
+                    <h4 class="font-bold text-slate-800">Diff Generation</h4>
+                    <p class="text-sm text-slate-500">GitHub compares <code>main</code> vs <code>feature</code> line-by-line.</p>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center font-bold">2</div>
+                <div>
+                    <h4 class="font-bold text-slate-800">CI/CD Gatekeeping</h4>
+                    <p class="text-sm text-slate-500">Pipelines run tests automatically. Merging is blocked if tests fail.</p>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center font-bold">3</div>
+                <div>
+                    <h4 class="font-bold text-slate-800">Audit Trail</h4>
+                    <p class="text-sm text-slate-500">Direct pulls destroy the record of <strong>who approved</strong> and <strong>what conversations</strong> happened.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="danger-zone p-6 rounded-xl mt-8">
+            <h4 class="font-bold mb-2 flex items-center gap-2"><i class="fas fa-skull-crossbones"></i> The Danger of Direct Pull</h4>
+            <p class="text-sm">If you <code>git pull origin feature</code> into master, you skip all protection rules. You might accidentally merge <strong>broken code</strong> or <strong>half-finished features</strong> that haven't been reviewed.</p>
+        </div>
+    </section>
+
+    <!-- 6. Merging Section -->
+    <section id="merging" class="mb-16">
+        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">6</span>
+            Professional Merging Workflow
+        </h2>
+
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <h3 class="font-bold mb-6 border-b pb-2">Industry Standard (Merge-Based)</h3>
+
+            <div class="space-y-6">
+                <div class="flex items-start gap-4">
+                    <span class="badge-git bg-blue-100 text-blue-700">Step 1</span>
+                    <div>
+                        <p class="font-semibold text-sm">Sync Main → Feature locally first.</p>
+                        <code class="text-xs block bg-white p-2 border rounded mt-1">git checkout feature/login && git merge main</code>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <span class="badge-git bg-green-100 text-green-700">Step 2</span>
+                    <div>
+                        <p class="font-semibold text-sm">Resolve conflicts locally.</p>
+                        <p class="text-xs text-slate-500 italic">No surprises during the PR process!</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <span class="badge-git bg-purple-100 text-purple-700">Step 3</span>
+                    <div>
+                        <p class="font-semibold text-sm">Push updated feature & Create PR.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <div class="p-4 rounded-lg bg-white shadow-sm border text-center">
+                <h5 class="font-bold text-xs uppercase text-slate-400 mb-2">Merge Commit</h5>
+                <p class="text-[10px] text-slate-500">Full history preserved. Good for debugging. Safe.</p>
+            </div>
+            <div class="p-4 rounded-lg bg-white shadow-sm border text-center">
+                <h5 class="font-bold text-xs uppercase text-slate-400 mb-2">Squash & Merge</h5>
+                <p class="text-[10px] text-slate-500">Clean main branch. Combines 10 feature commits into 1.</p>
+            </div>
+            <div class="p-4 rounded-lg bg-white shadow-sm border text-center">
+                <h5 class="font-bold text-xs uppercase text-slate-400 mb-2">Rebase & Merge</h5>
+                <p class="text-[10px] text-slate-500">Linear history. No merge bubbles. Expert level.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-20 pt-10 border-t border-slate-200 text-center text-slate-400 text-xs">
+        <p>Git Masterclass Reference • Crafted for clarity and easy eyes.</p>
+    </footer>
+</main>
+
+</body>
+</html>

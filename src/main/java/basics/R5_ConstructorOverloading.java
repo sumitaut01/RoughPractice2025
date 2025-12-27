@@ -2,14 +2,12 @@ package basics;
 
 public class R5_ConstructorOverloading {
 
-
     int age;
     String college;
 
     public R5_ConstructorOverloading() {
         System.out.println("This is default Constructor");
     }
-
     public R5_ConstructorOverloading(int age, String college) {
         this.age = age;
         this.college = college;

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spring Boot Cheatsheet</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+    canvas { border: 1px solid #555; background: #2e2e2e; display: block; margin: 20px auto; }
+</style>
+</head>
+<body>
+<h2 style="text-align:center;">Spring Boot Cheatsheet (Visual)</h2>
+<canvas id="springCanvas" width="1000" height="2700"></canvas>
+<script>
+const canvas = document.getElementById('springCanvas');
+const ctx = canvas.getContext('2d');
+
+function drawPage(yOffset) {
+    // Page 1: Core, Annotations, Tips
+    ctx.fillStyle = '#3e3e3e';
+    ctx.fillRect(20, 20+yOffset, 460, 300);
+    ctx.fillRect(520, 20+yOffset, 460, 300);
+    ctx.fillRect(20, 350+yOffset, 960, 320);
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('Core Concepts', 180, 50+yOffset);
+    ctx.fillText('Annotations', 700, 50+yOffset);
+    ctx.fillText('Integration / Tips', 400, 380+yOffset);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '16px Arial';
+    ctx.fillText('• Spring Boot = Spring + Simplification', 40, 90+yOffset);
+    ctx.fillText('• Embedded Server (Tomcat/Jetty)', 40, 120+yOffset);
+    ctx.fillText('• No XML config, opinionated defaults', 40, 150+yOffset);
+    ctx.fillText('• Starters: quick dependencies setup', 40, 180+yOffset);
+    ctx.fillText('• application.properties / YAML for config', 40, 210+yOffset);
+    ctx.fillText('@SpringBootApplication → Entry Point', 540, 90+yOffset);
+    ctx.fillText('@RestController → REST APIs', 540, 120+yOffset);
+    ctx.fillText('@RequestMapping / @GetMapping / @PostMapping → URL mapping', 540, 150+yOffset);
+    ctx.fillText('@Autowired → Dependency Injection', 540, 180+yOffset);
+    ctx.fillText('@Service → Business layer', 540, 210+yOffset);
+    ctx.fillText('@Repository → DB layer', 540, 240+yOffset);
+    ctx.fillText('@Component → General Bean', 540, 270+yOffset);
+    ctx.fillText('@Configuration → Custom configs', 540, 300+yOffset);
+    ctx.fillText('• @SpringBootTest(webEnvironment=RANDOM_PORT) → load context for tests', 40, 420+yOffset);
+    ctx.fillText('• Use Selenium WebDriver against local Spring Boot server', 40, 450+yOffset);
+    ctx.fillText('• Actuator endpoints for health/metrics checks', 40, 480+yOffset);
+
+    // Page 2: Mappings, ResponseEntity, Exceptions
+    ctx.fillStyle = '#3e3e3e';
+    ctx.fillRect(20, 720+yOffset, 960, 650);
+    ctx.fillStyle = '#FFD700';
+    ctx.fillText('Mappings & Responses', 400, 750+yOffset);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('@GetMapping Example: /users → get all users', 40, 780+yOffset);
+    ctx.fillText('@PostMapping Example: /users → create new user', 40, 810+yOffset);
+    ctx.fillText('@PathVariable Example: /users/{id}', 40, 840+yOffset);
+    ctx.fillText('@RequestParam Example: /users?name=sumit', 40, 870+yOffset);
+    ctx.fillText('ResponseEntity<T> → Wraps response with HTTP status', 40, 900+yOffset);
+    ctx.fillText('Exceptions → Use @ControllerAdvice + @ExceptionHandler', 40, 960+yOffset);
+
+    // Page 3: JPA, Service, DTO flow
+    ctx.fillStyle = '#3e3e3e';
+    ctx.fillRect(20, 1380+yOffset, 960, 600);
+    ctx.fillStyle = '#FFD700';
+    ctx.fillText('UI → Controller → Service → Repository → DTO Flow', 280, 1410+yOffset);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('• UI Form submits data → Controller (@RestController)', 40, 1440+yOffset);
+    ctx.fillText('• Controller calls Service layer (@Service) for business logic', 40, 1470+yOffset);
+    ctx.fillText('• Service layer interacts with Repository (@Repository) for DB', 40, 1500+yOffset);
+    ctx.fillText('• Repository uses JPA Entities to map tables', 40, 1530+yOffset);
+    ctx.fillText('• DTO (Data Transfer Object) used to transfer only needed fields', 40, 1560+yOffset);
+
+    // Page 4: Bonus / Interview Tips
+    ctx.fillStyle = '#3e3e3e';
+    ctx.fillRect(20, 2000+yOffset, 960, 650);
+    ctx.fillStyle = '#FFD700';
+    ctx.fillText('Bonus / Interview Tips', 400, 2030+yOffset);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('• Mention hotel analogy: Controller=Waiter, Service=Chef, Repository=Ingredients', 40, 2060+yOffset);
+    ctx.fillText('• Know difference: @Controller vs @RestController', 40, 2090+yOffset);
+    ctx.fillText('• @Transactional annotation for service layer methods', 40, 2120+yOffset);
+    ctx.fillText('• Profiles: @Profile("dev") for environment-specific beans', 40, 2150+yOffset);
+    ctx.fillText('• Spring Boot DevTools for hot reload', 40, 2180+yOffset);
+    ctx.fillText('• Exception handling: GlobalExceptionHandler with @ControllerAdvice', 40, 2210+yOffset);
+    ctx.fillText('• Use DTOs to avoid exposing entity directly in API', 40, 2240+yOffset);
+    ctx.fillText('• Test with @WebMvcTest for controller only', 40, 2270+yOffset);
+    ctx.fillText('• Use @Value to inject properties', 40, 2300+yOffset);
+    ctx.fillText('• Logging: use SLF4J / Log4j2', 40, 2330+yOffset);
+    ctx.fillText('• Always mention separation of concerns for clean architecture', 40, 2360+yOffset);
+}
+
+drawPage(0);
+</script>
+</body>
+</html>
