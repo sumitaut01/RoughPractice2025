@@ -35,6 +35,7 @@ given()
 .then()
     .statusCode(401);
 
+
 🛑 403 Forbidden
 
 Meaning: Client is authenticated but not authorized.

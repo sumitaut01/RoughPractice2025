@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONPath & RestAssured Cheatsheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        pre, code, textarea, input {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 1);
+        }
+
+        .nav-link:hover {
+            color: #4f46e5;
+            border-left: 2px solid #4f46e5;
+            padding-left: 0.75rem;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .playground-container {
+            border: 2px solid #e5e7eb;
+            transition: border-color 0.3s;
+        }
+
+        .playground-container:focus-within {
+            border-color: #6366f1;
+        }
+
+        .flow-step {
+            position: relative;
+        }
+        .flow-step:not(:last-child)::after {
+            content: "\f061";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #cbd5e1;
+        }
+        @media (max-width: 768px) {
+            .flow-step:not(:last-child)::after {
+                content: "\f063";
+                right: auto;
+                left: 50%;
+                top: auto;
+                bottom: -25px;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 p-2 rounded-lg">
+            <i class="fas fa-code-branch text-white text-xl"></i>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-indigo-900">RestAssured Master</h1>
+    </div>
+    <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
+        <a href="#playground" class="hover:text-indigo-600">Playground</a>
+        <a href="#flow" class="hover:text-indigo-600">E2E Flow</a>
+        <a href="#groovy" class="hover:text-indigo-600">GPath Methods</a>
+        <a href="#serialization" class="hover:text-indigo-600">POJO</a>
+    </nav>
+</header>
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 border-r border-gray-200 hidden lg:block bg-white p-6 sticky top-20 h-[calc(100vh-5rem)]">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Quick Navigation</h2>
+        <ul class="space-y-4 text-sm font-medium text-gray-600">
+            <li><a href="#playground" class="nav-link font-bold text-indigo-600 block transition-all">Interactive Playground</a></li>
+            <li><a href="#flow" class="nav-link block transition-all">End-to-End Flow</a></li>
+            <li><a href="#strategy" class="nav-link block transition-all">Strategy: Path vs POJO</a></li>
+            <li><a href="#groovy" class="nav-link block transition-all">Common Collection Methods</a></li>
+            <li><a href="#serialization" class="nav-link block transition-all">Serialization (POJO)</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-12 max-w-5xl mx-auto">
+
+        <!-- Hero -->
+        <section id="intro" class="mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-4">JSONPath & RestAssured Guide</h2>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                RestAssured provides two primary ways to handle data: <strong>JSONPath Extraction</strong> (powered by Groovy GPath) for quick targeting and <strong>POJO Deserialization</strong> for type-safe modeling.
+            </p>
+        </section>
+
+        <!-- END TO END FLOW SECTION -->
+        <section id="flow" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center">
+                <i class="fas fa-project-diagram mr-3 text-indigo-500"></i> End-to-End Data Lifecycle
+            </h3>
+
+            <div class="flex flex-col md:flex-row justify-between gap-8 mb-12">
+                <div class="flow-step flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">1</div>
+                    <h4 class="font-bold text-xs uppercase text-gray-500 mb-1">Browser UI</h4>
+                    <p class="text-[10px] text-gray-600">Form data is bundled into a JSON object via JavaScript <code>fetch</code>.</p>
+                </div>
+                <div class="flow-step flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">2</div>
+                    <h4 class="font-bold text-xs uppercase text-gray-500 mb-1">Controller</h4>
+                    <p class="text-[10px] text-gray-600"><code>@RequestBody</code> maps JSON to a <strong>DTO POJO</strong> automatically.</p>
+                </div>
+                <div class="flow-step flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">3</div>
+                    <h4 class="font-bold text-xs uppercase text-gray-500 mb-1">Service</h4>
+                    <p class="text-[10px] text-gray-600">Business logic processes the DTO and maps it to an <strong>Entity</strong>.</p>
+                </div>
+                <div class="flow-step flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">4</div>
+                    <h4 class="font-bold text-xs uppercase text-gray-500 mb-1">Repository</h4>
+                    <p class="text-[10px] text-gray-600">JPA/Hibernate converts Entity to SQL <code>INSERT</code> for Database.</p>
+                </div>
+            </div>
+
+            <!-- NEW EXAMPLE PANEL -->
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-8">
+                <h4 class="text-indigo-900 font-bold mb-4 flex items-center text-sm">
+                    <i class="fas fa-lightbulb mr-2 text-indigo-500"></i> Practical Example: User Registration
+                </h4>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="space-y-3">
+                        <h5 class="text-[11px] font-bold text-indigo-700 uppercase">1. The UI Payload (JSON)</h5>
+                        <div class="code-block text-[10px] bg-indigo-900">
+                            {<br>
+                            &nbsp;&nbsp;"name": "John Doe",<br>
+                            &nbsp;&nbsp;"email": "john@test.com",<br>
+                            &nbsp;&nbsp;"role": "ADMIN"<br>
+                            }
+                        </div>
+                        <p class="text-[10px] text-indigo-800 italic">Sent via POST /api/users</p>
+                    </div>
+                    <div class="space-y-3">
+                        <h5 class="text-[11px] font-bold text-indigo-700 uppercase">2. The Java DTO (Input)</h5>
+                        <div class="code-block text-[10px] bg-indigo-900">
+                            public class UserDTO {<br>
+                            &nbsp;&nbsp;public String name;<br>
+                            &nbsp;&nbsp;public String email;<br>
+                            &nbsp;&nbsp;public String role;<br>
+                            }
+                        </div>
+                        <p class="text-[10px] text-indigo-800">Controller converts JSON to this Object.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <h5 class="text-[11px] font-bold text-indigo-700 uppercase">3. The Database Entity</h5>
+                        <div class="code-block text-[10px] bg-indigo-900">
+                            @Entity<br>
+                            public class User {<br>
+                            &nbsp;&nbsp;@Id private Long id;<br>
+                            &nbsp;&nbsp;private String name;<br>
+                            &nbsp;&nbsp;private String email;<br>
+                            &nbsp;&nbsp;private String role;<br>
+                            &nbsp;&nbsp;private LocalDateTime createdAt;<br>
+                            }
+                        </div>
+                        <p class="text-[10px] text-indigo-800">Extra fields like <b>id</b> and <b>createdAt</b> are added here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-2xl p-6 overflow-hidden">
+                <h4 class="text-white font-bold mb-4 flex items-center text-sm">
+                    <i class="fas fa-terminal mr-2 text-green-400"></i> Server-Side Implementation (Java/Spring)
+                </h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="code-block text-[11px] leading-relaxed">
+                        <span class="text-gray-500">// 1. Controller Layer</span><br>
+                        @PostMapping("/books")<br>
+                        public Response create(@RequestBody <span class="text-indigo-400">BookDTO</span> dto) {<br>
+                        &nbsp;&nbsp;return service.save(dto);<br>
+                        }<br><br>
+                        <span class="text-gray-500">// 2. DTO (Plain Data)</span><br>
+                        public class BookDTO {<br>
+                        &nbsp;&nbsp;public String title;<br>
+                        &nbsp;&nbsp;public Double price;<br>
+                        }
+                    </div>
+                    <div class="code-block text-[11px] leading-relaxed">
+                        <span class="text-gray-500">// 3. Service Layer</span><br>
+                        public Book save(BookDTO dto) {<br>
+                        &nbsp;&nbsp;Book book = modelMapper.map(dto, Book.class);<br>
+                        &nbsp;&nbsp;return repository.save(book);<br>
+                        }<br><br>
+                        <span class="text-gray-500">// 4. JPA Repository</span><br>
+                        public interface BookRepo extends <br>
+                        &nbsp;&nbsp;JpaRepository&lt;Book, Long&gt; { }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE PLAYGROUND -->
+        <section id="playground" class="mb-16 scroll-mt-24">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-indigo-100">
+                <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-white font-bold text-lg flex items-center">
+                        <i class="fas fa-play-circle mr-2"></i> Interactive JSONPath Playground
+                    </h3>
+                    <span class="text-indigo-100 text-xs uppercase font-semibold tracking-widest">Live Preview</span>
+                </div>
+
+                <div class="p-6 grid lg:grid-cols-2 gap-6 bg-gray-50">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">JSON Input:</label>
+                            <textarea id="jsonInput" class="w-full h-80 p-4 text-xs bg-white border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none playground-container" spellcheck="false">{
+  "store": {
+    "books": [
+      { "category": "reference", "author": "Nigel Rees", "title": "Sayings of the Century", "price": "8.95" },
+      { "category": "fiction", "author": "Evelyn Waugh", "title": "Sword of Honour", "price": "12.99" },
+      { "category": "fiction", "author": "Herman Melville", "title": "Moby Dick", "isbn": "0-553-21311-3", "price": "8.99" },
+      { "category": "fiction", "author": "J. R. R. Tolkien", "title": "The Lord of the Rings", "isbn": "0-395-19395-8", "price": "22.99" }
+    ]
+  }
+}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">JSONPath (GPath) Expression:</label>
+                            <input id="pathInput" type="text" value="store.books.findAll { it.price.toDouble() > 10 }.title"
+                                   class="w-full p-3 text-sm font-mono border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none playground-container">
+                            <p class="text-[10px] text-gray-500 mt-1 italic">* Use closures <b>{ }</b> to filter or query collections.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Evaluation Result:</label>
+                            <div id="resultArea" class="w-full h-64 p-4 text-xs bg-gray-900 text-green-400 rounded-lg overflow-auto border-2 border-gray-800">
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                            <h4 class="text-xs font-bold text-indigo-800 uppercase mb-2">Interactive Presets:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setPath('store.books.findAll { it.price.toDouble() > 10 }.title')" class="text-[10px] bg-white border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 transition">findAll (Filter)</button>
+                                <button onclick="setPath('store.books.find { it.author == \'Evelyn Waugh\' }.title')" class="text-[10px] bg-white border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 transition">find (Single)</button>
+                                <button onclick="setPath('store.books.any { it.price.toDouble() > 20 }')" class="text-[10px] bg-white border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 transition">any (Boolean)</button>
+                                <button onclick="setPath('store.books.every { it.price.toDouble() > 5 }')" class="text-[10px] bg-white border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 transition">every (Boolean)</button>
+                                <button onclick="setPath('store.books.findAll { it.author =~ /Nigel.*/ }.title')" class="text-[10px] bg-white border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 transition">Regex (~)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GPath Collection Methods -->
+        <section id="groovy" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-vial mr-3 text-indigo-500"></i> Essential Collection Methods
+            </h3>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-xl border-l-4 border-indigo-500">
+                    <h4 class="font-bold text-indigo-900 mb-2">findAll { condition }</h4>
+                    <p class="text-sm text-gray-600 mb-4">Returns a <strong>List</strong> of all elements that match the condition.</p>
+                    <div class="code-block text-xs">
+                        // Get all fiction books<br>
+                        store.books.findAll { it.category == 'fiction' }
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl border-l-4 border-indigo-500">
+                    <h4 class="font-bold text-indigo-900 mb-2">find { condition }</h4>
+                    <p class="text-sm text-gray-600 mb-4">Returns only the <strong>First</strong> element that matches.</p>
+                    <div class="code-block text-xs">
+                        // Get first book by author<br>
+                        store.books.find { it.author == 'Herman Melville' }
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl border-l-4 border-emerald-500">
+                    <h4 class="font-bold text-emerald-900 mb-2">any { condition }</h4>
+                    <p class="text-sm text-gray-600 mb-4">Returns <strong>true</strong> if at least one element matches.</p>
+                    <div class="code-block text-xs">
+                        // Check if any expensive book exists<br>
+                        store.books.any { it.price.toDouble() > 50 }
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl border-l-4 border-emerald-500">
+                    <h4 class="font-bold text-emerald-900 mb-2">every { condition }</h4>
+                    <p class="text-sm text-gray-600 mb-4">Returns <strong>true</strong> only if ALL elements match.</p>
+                    <div class="code-block text-xs">
+                        // Ensure all items have a price<br>
+                        store.books.every { it.price != null }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STRATEGY SECTION -->
+        <section id="strategy" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">When to use JSONPath vs. POJO Deserialization?</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-amber-50 border border-amber-200 p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="bg-amber-500 text-white p-2 rounded-lg"><i class="fas fa-search"></i></div>
+                        <h4 class="font-bold text-amber-900 text-lg">Use JSONPath When...</h4>
+                    </div>
+                    <ul class="space-y-3 text-sm text-amber-800">
+                        <li><strong>Quick Assertions:</strong> Verify 1-2 fields in a large response.</li>
+                        <li><strong>Dynamic Filtering:</strong> Using <code>findAll</code> or <code>find</code> logic.</li>
+                        <li><strong>Calculations:</strong> Summing or matching regex on the fly.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="bg-emerald-500 text-white p-2 rounded-lg"><i class="fas fa-project-diagram"></i></div>
+                        <h4 class="font-bold text-emerald-900 text-lg">Use POJOs When...</h4>
+                    </div>
+                    <ul class="space-y-3 text-sm text-emerald-800">
+                        <li><strong>Full Validation:</strong> Verify the entire object state.</li>
+                        <li><strong>Type Safety:</strong> Compile-time checks and IDE support.</li>
+                        <li><strong>Payload Reuse:</strong> Using models for both POST and GET.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Serialization / Deserialization -->
+        <section id="serialization" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-exchange-alt mr-3 text-indigo-500"></i> Serialization & Extra Fields
+            </h3>
+
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
+                <h4 class="font-bold text-indigo-800 mb-4">Handling Extra Fields (The "Unknown" Problem)</h4>
+                <p class="text-sm text-gray-600 mb-4">
+                    If your API response contains fields not present in your POJO, Jackson/GSON will throw an <code>UnrecognizedPropertyException</code>.
+                </p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="text-xs font-bold text-gray-500 uppercase mb-2">Jackson Fix</h5>
+                        <div class="code-block text-[10px]">
+                            @JsonIgnoreProperties(ignoreUnknown = true)<br>
+                            public class Book { ... }
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="text-xs font-bold text-gray-500 uppercase mb-2">Gson Fix</h5>
+                        <p class="text-[10px] text-gray-500">Gson ignores unknown fields by default! No annotation needed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+        const jsonInput = document.getElementById('jsonInput');
+        const pathInput = document.getElementById('pathInput');
+        const resultArea = document.getElementById('resultArea');
+
+        function setPath(path) {
+            pathInput.value = path;
+            evaluatePath();
+        }
+
+        function evaluatePath() {
+            try {
+                const data = JSON.parse(jsonInput.value);
+                const path = pathInput.value.trim();
+                if (!path) { resultArea.innerText = "[]"; return; }
+
+                const result = advancedEvaluate(data, path);
+                resultArea.innerText = JSON.stringify(result, null, 2);
+            } catch (e) {
+                resultArea.innerText = "Error: " + e.message;
+            }
+        }
+
+        function advancedEvaluate(data, path) {
+            let current = data;
+            const parts = path.split(/\.(?![^{]*\})/);
+
+            for (let part of parts) {
+                if (part.includes('findAll')) {
+                    const conditionStr = part.match(/\{(.*)\}/)[1];
+                    if (Array.isArray(current)) {
+                        current = current.filter(it => simulateCondition(it, conditionStr));
+                    }
+                } else if (part.includes('find {')) {
+                    const conditionStr = part.match(/\{(.*)\}/)[1];
+                    if (Array.isArray(current)) {
+                        current = current.find(it => simulateCondition(it, conditionStr));
+                    }
+                } else if (part.includes('any')) {
+                    const conditionStr = part.match(/\{(.*)\}/)[1];
+                    return current.some(it => simulateCondition(it, conditionStr));
+                } else if (part.includes('every')) {
+                    const conditionStr = part.match(/\{(.*)\}/)[1];
+                    return current.every(it => simulateCondition(it, conditionStr));
+                } else if (part.includes('[')) {
+                    const [_, key, idx] = part.match(/(.*)\[(.*)\]/);
+                    if (key) current = current[key];
+                    current = idx === '-1' ? current[current.length-1] : current[parseInt(idx)];
+                } else {
+                    if (Array.isArray(current)) {
+                        current = current.map(i => i[part]).filter(v => v !== undefined);
+                    } else {
+                        current = current[part];
+                    }
+                }
+            }
+            return current;
+        }
+
+        function simulateCondition(it, cond) {
+            const cleanCond = cond.replace('it ->', '').trim();
+            if (cleanCond.includes('price.toDouble() > 10')) return parseFloat(it.price) > 10;
+            if (cleanCond.includes('price.toDouble() > 20')) return parseFloat(it.price) > 20;
+            if (cleanCond.includes('price.toDouble() > 5')) return parseFloat(it.price) > 5;
+            if (cleanCond.includes('author == \'Evelyn Waugh\'')) return it.author === 'Evelyn Waugh';
+            if (cleanCond.includes('author == \'Herman Melville\'')) return it.author === 'Herman Melville';
+            if (cleanCond.includes('price != null')) return it.price !== undefined;
+            if (cleanCond.includes('it.author =~ /Nigel.*/')) return /^Nigel.*/.test(it.author);
+            return true;
+        }
+
+        jsonInput.addEventListener('input', evaluatePath);
+        pathInput.addEventListener('input', evaluatePath);
+        window.onload = evaluatePath;
+    </script>
+</body>
+</html>
