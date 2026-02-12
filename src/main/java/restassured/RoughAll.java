@@ -6,6 +6,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.testng.annotations.Test;
 
 public class RoughAll {
 
@@ -34,6 +35,34 @@ public class RoughAll {
 
 
 
+
+
+
+
+    }
+
+
+
+
+
+    @Test
+    public void roughagain(){
+
+      Response response=RestAssured.given().
+              baseUri("")
+              .basePath("")
+              .header("","")
+              .contentType(ContentType.JSON)
+              .queryParam("", "")
+              .pathParam("", "")
+              .body("")
+              .post();
+
+
+      JsonPath resp=response.jsonPath();
+
+      resp.get("");
+      resp.getMap("");
 
 
 

@@ -71,6 +71,21 @@ public class StringReverseSTACK {
 			System.out.println(sstack.pop());
 		}
 	}
+
+
+
+	@Test
+	public void Test(){
+
+   String str="sumit raut";
+   for(int i=str.length()-1;i>=0;i--){
+	   System.out.print(str.charAt(i));//tuar timus
+   }
+
+
+
+
+	}
 }
 
 

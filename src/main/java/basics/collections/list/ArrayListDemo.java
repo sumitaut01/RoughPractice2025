@@ -103,8 +103,6 @@ public class ArrayListDemo {
         Collections.reverse(names2);
         System.out.println(names2);//[D, B, A]
 
-
-
         //add same item twice.. true twixe
         List<String> names3=new ArrayList<>();
         System.out.println(names3.add("A"));//true
@@ -118,10 +116,5 @@ public class ArrayListDemo {
         System.out.println(names3);//[Z, N, A, A]
         Collections.sort(names3);
         System.out.println(names3);//[A, A, N, Z]
-
-
-
-
-
     }
 }

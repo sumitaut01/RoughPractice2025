@@ -12,19 +12,14 @@ Here’s the breakdown.
 You check how the API authenticates the user.
 
 If the API uses session-based authentication, then you should use SessionFilter.
-
 If the API uses token-based authentication, you don’t need SessionFilter.
 
 ⭐ 🔹 1. If the API returns a session cookie → Use SessionFilter
-
 You can detect this by looking at:
 
 Postman response cookies
-
 Browser Network tab
-
 API documentation
-
 Response headers
 
 If you see cookies like:
@@ -36,23 +31,18 @@ Set-Cookie: PHPSESSID=asdfgh1234;
 ➡️ This is a session-based API. Use SessionFilter.
 
 Example:
-
 When you call the login API, and the response contains:
 
 Set-Cookie: JSESSIONID=abcd123xyz; HttpOnly; Path=/;
-
 
 This means the server expects you to maintain a session.
 REST Assured does not store cookies automatically → SessionFilter is needed.
 
 ⭐ 🔹 2. If the API returns a token (JWT/OAuth/API key) → Do NOT use SessionFilter
-
 If the response contains something like:
-
 {
   "token": "eyGHSJSJH.897dasjjd.UHJDSGJ"
 }
-
 
 OR headers like:
 

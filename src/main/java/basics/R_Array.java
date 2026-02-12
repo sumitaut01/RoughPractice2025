@@ -74,4 +74,36 @@ public class R_Array {
 
 
 
+    @Test
+    public void Rough09(){
+
+        int arr[]={1,2,3,4,5};
+        System.out.println(Arrays.toString(arr));
+
+
+        //xx
+        for(int i: arr){
+            System.out.println("---separator---");
+            System.out.println(i);
+        }
+
+
+        //double arr
+        int [][] arr2d={{1,2,3},{4,5},{6,7,8,9}};
+        for( int[] a:arr2d){
+         for(int i:a){
+             System.out.print(i);
+         }
+            System.out.println("row end");
+        }
+
+        //
+        System.out.println("via looping");
+        for(int r=0;r<arr2d.length;r++){
+            for(int c=0;c<arr2d[r].length;c++){
+                System.out.print(arr2d[r][c]);
+            }
+            System.out.println(" row end loop");
+        }
+    }
 }

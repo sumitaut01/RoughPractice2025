@@ -9,7 +9,6 @@ public class R_XScopeWideningWhenOverriding {
 
 
 class Human{
-
  public void method1(){
      System.out.println("Some impl");
  }

@@ -9,10 +9,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 public class ExtentRough {
 
     static ExtentReports extentReports;
-
     static ExtentSparkReporter extentSparkReporter;
-
-
     static ExtentTest test;
 
 
@@ -31,16 +28,11 @@ public class ExtentRough {
     public void Rought(){
 
       extentReports=new ExtentReports();
-
       extentSparkReporter=new ExtentSparkReporter("somehtml");
-
       extentReports.attachReporter(extentSparkReporter);
-
       ExtentTest test=extentReports.createTest("sometestname");
-
       test.log(Status.INFO,"someinfo");
       extentReports.flush();
-
     }
 
 

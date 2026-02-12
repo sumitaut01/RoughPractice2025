@@ -20,5 +20,21 @@ public class Rough {
         lstint.add(9);
 
 
+
+
+        List<String> lst=new ArrayList<>();
+
+        lst.add("Neha");
+        lst.add("Sumit");
+        lst.add("Raj");
+        lst.add("Rashmi");
+
+        System.out.println(lst.stream().filter(s->s.startsWith("R")).map(s->s.toUpperCase()).collect(Collectors.toList()));
+
+
+
+
+
+
     }
 }

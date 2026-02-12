@@ -25,5 +25,22 @@ public class Rough {
 
 
 
+
+
+        char cx ='A';
+        System.out.println(cx);//A
+
+        cx++;
+        System.out.println(cx);//B
+
+
+
+
+
+
+
+
+
+
     }
 }

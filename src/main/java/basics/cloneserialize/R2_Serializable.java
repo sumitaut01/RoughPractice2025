@@ -76,6 +76,4 @@ class MyClass implements Serializable {
                 '}';
     }
 
-
-
 }

@@ -1,5 +1,7 @@
 package basics.javapgms;
 
+import org.testng.annotations.Test;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,5 +17,21 @@ public class ReverseNumber {
 
         String result = String.join("", list);
         System.out.println(result); // 54321
+    }
+
+
+
+
+    @Test
+    public void Rough(){
+      int num=5432;
+
+      int rev=0;
+      while(num>0){
+          rev=rev*10 + num%10;
+          num=num/10;
+      }
+        System.out.println(rev);//2345
+
     }
 }

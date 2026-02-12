@@ -26,6 +26,8 @@ public class R_10ScreenShot {
 
         JavascriptExecutor js=(JavascriptExecutor)driver;
 
+
+
         TakesScreenshot tsc = (TakesScreenshot) driver;
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 

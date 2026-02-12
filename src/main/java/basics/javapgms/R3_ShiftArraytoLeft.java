@@ -16,6 +16,8 @@ public class R3_ShiftArraytoLeft {
 
         for (int i = 0; i < arr.length; i++) {
             // Shift each element to the left by `shiftLeft` positions
+
+            System.out.println(i+"=>"+(i + shiftLeft) % arr.length);
             temp[i] = arr[(i + shiftLeft) % arr.length];
         }
 
@@ -43,4 +45,17 @@ public class R3_ShiftArraytoLeft {
 
 
 
+    @Test
+    public void Rough(){
+
+        int[] arr = {0, 1, 2, 3, 4, 5};
+        System.out.println(Arrays.toString(arr));
+        //o/p { 1 ,2,3,4,5 ,0 }
+        int []temp=new int[arr.length];
+        int shift=1;
+        for(int i=0;i<temp.length;i++){
+            temp[i]= arr[ (i+shift)% arr.length];
+        }
+        System.out.println(Arrays.toString(temp));
+    }
 }

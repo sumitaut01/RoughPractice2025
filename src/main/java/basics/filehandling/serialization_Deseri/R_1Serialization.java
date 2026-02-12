@@ -12,7 +12,6 @@ public class R_1Serialization {
 //            Skip fields	Mark them transient
 
     public static void main(String[] args) throws IOException {
-
         Student s = new Student( 25,"sumit");
         FileOutputStream fos = new FileOutputStream("student.ser");
 ObjectOutputStream objectOutputStream=new ObjectOutputStream(fos);
@@ -28,7 +27,6 @@ ObjectOutputStream objectOutputStream=new ObjectOutputStream(fos);
 
 //note when jackson is used we dont need this implements or object i/o stream
 class Student implements Serializable {
-
     int age;
     String name;
 

@@ -5,7 +5,9 @@ public class R2_ComparableDemo {
 
     public static void main(String[] args) {
 
-        Comparator<Dem> aName=(a,b)->  a.name.compareTo(b.name);
+        //Comparator<Dem> aName=(a,b)->  a.name.compareTo(b.name);
+        //or
+        Comparator<Dem> aName= Comparator.comparing(a -> a.name);
 
         Dem d1=new Dem("Sumit",12);
         Dem d2=new Dem("Amit",2);

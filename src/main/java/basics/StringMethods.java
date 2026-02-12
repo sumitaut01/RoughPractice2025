@@ -5,8 +5,6 @@ import java.util.Arrays;
 public class StringMethods {
 
     public static void main(String[] args) {
-
-
         String s1="Sumit";//SCP
         String s2="Sumit";//no new string in SCP.  s2 just points to s1
         String s3=new String("Sumit");//heap memory has "sumit" as well

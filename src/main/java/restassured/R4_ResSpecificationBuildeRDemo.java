@@ -52,9 +52,6 @@ public class R4_ResSpecificationBuildeRDemo {
         //}
 
 
-
-
-
         builder.expectStatusCode(200);
         builder.expectContentType("application/jso");
         responseSpec = builder.build();
@@ -74,7 +71,6 @@ public class R4_ResSpecificationBuildeRDemo {
         responseSpecification.contentType(ContentType.JSON);
         //responseSpecification.header("","");
         responseSpecification.statusCode(2003);
-
         request.get().then().spec(responseSpecification);
         //Exception in thread "main" java.lang.AssertionError: 1 expectation failed.
         //Expected status code <2003> but was <200>.
