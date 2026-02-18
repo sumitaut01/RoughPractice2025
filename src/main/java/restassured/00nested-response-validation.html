@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nested Response Validation — REST Assured</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:       #1a1a2e;
+  --ink2:      #16213e;
+  --ink3:      #0f3460;
+  --paper:     #f5f0e8;
+  --paper2:    #ede7d9;
+  --paper3:    #e4dccb;
+  --rust:      #c84b31;
+  --gold:      #e2b04a;
+  --teal:      #2a9d8f;
+  --sage:      #588157;
+  --slate:     #457b9d;
+  --muted:     #7a7060;
+  --border:    #d4c9b5;
+  --code-bg:   #1e2030;
+  --code-text: #cdd6f4;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--paper2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── HEADER ── */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 70px 48px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '{ }';
+  position: absolute;
+  right: -20px; top: -40px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 280px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.03);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  opacity: 0;
+  animation: rise 0.5s ease forwards 0.1s;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: rise 0.5s ease forwards 0.25s;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 300;
+}
+
+.hero-desc {
+  font-size: 16px;
+  color: rgba(245,240,232,0.65);
+  max-width: 560px;
+  opacity: 0;
+  animation: rise 0.5s ease forwards 0.4s;
+}
+
+.hero-tags {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-top: 28px;
+  opacity: 0;
+  animation: rise 0.5s ease forwards 0.55s;
+}
+
+.hero-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 5px 12px;
+  border: 1px solid rgba(245,240,232,0.2);
+  border-radius: 2px;
+  color: rgba(245,240,232,0.55);
+  letter-spacing: 0.08em;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top:0; z-index:100;
+  background: var(--ink2);
+  border-bottom: 2px solid var(--rust);
+  overflow-x: auto;
+}
+
+.nav-inner {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.nav a {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.45);
+  text-decoration: none;
+  padding: 14px 16px;
+  white-space: nowrap;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.nav a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── LAYOUT ── */
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 48px;
+}
+
+/* ── SECTION ── */
+.sec {
+  margin-bottom: 72px;
+  opacity: 0;
+  animation: rise 0.6s ease forwards;
+}
+.sec:nth-child(1){animation-delay:0.05s}
+.sec:nth-child(2){animation-delay:0.1s}
+.sec:nth-child(3){animation-delay:0.15s}
+.sec:nth-child(4){animation-delay:0.2s}
+.sec:nth-child(5){animation-delay:0.25s}
+.sec:nth-child(6){animation-delay:0.3s}
+.sec:nth-child(7){animation-delay:0.35s}
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sec-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--rust);
+  flex-shrink: 0;
+}
+
+.sec h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.sec h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 32px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.method-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 2px;
+  font-style: normal;
+}
+
+.badge-jsonpath { background: #c84b3118; color: var(--rust); border: 1px solid #c84b3133; }
+.badge-pojo     { background: #2a9d8f18; color: var(--teal); border: 1px solid #2a9d8f33; }
+.badge-map      { background: #e2b04a18; color: #a07830;     border: 1px solid #e2b04a33; }
+.badge-soft     { background: #45a04918; color: var(--sage);  border: 1px solid #45a04933; }
+.badge-schema   { background: #4578a018; color: var(--slate); border: 1px solid #4578a033; }
+.badge-groovy   { background: #6c4a9018; color: #9060c0;     border: 1px solid #6c4a9033; }
+
+p { color: var(--muted); margin-bottom: 14px; font-size: 14px; }
+
+/* ── JSON VIEWER ── */
+.json-viewer {
+  background: var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 16px 0;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.json-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.json-body {
+  padding: 18px 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.jk  { color: #89b4fa; }   /* key */
+.js  { color: #a6e3a1; }   /* string value */
+.jn  { color: #fab387; }   /* number */
+.jb  { color: #cba6f7; }   /* boolean */
+.jc  { color: #6c7086; font-style: italic; }  /* comment */
+.jp  { color: #f38ba8; }   /* punctuation / brace */
+.ji  { padding-left: 20px; display: block; }
+.ji2 { padding-left: 40px; display: block; }
+.ji3 { padding-left: 60px; display: block; }
+.ji4 { padding-left: 80px; display: block; }
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--code-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 12px 0;
+  border: 1px solid rgba(255,255,255,0.06);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.cb-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.cb-lang {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(205,214,244,0.4);
+}
+
+.cb-dots { display:flex; gap:5px; }
+.cb-dots span { width:9px; height:9px; border-radius:50%; }
+.cb-dots span:nth-child(1){ background:#f38ba8; }
+.cb-dots span:nth-child(2){ background:#f9e2af; }
+.cb-dots span:nth-child(3){ background:#a6e3a1; }
+
+pre {
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--code-text);
+}
+
+/* Syntax */
+.kw  { color: #cba6f7; }
+.cl  { color: #89b4fa; }
+.st  { color: #a6e3a1; }
+.cm  { color: #6c7086; font-style: italic; }
+.an  { color: #f9e2af; }
+.mt  { color: #89dceb; }
+.nm  { color: #fab387; }
+.op  { color: #f38ba8; }
+
+/* inline code */
+p code, li code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  background: var(--paper3);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--rust);
+}
+
+/* ── SPLIT LAYOUT ── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 16px 0;
+}
+
+@media(max-width:700px){ .split { grid-template-columns: 1fr; } }
+
+.split-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.split-head {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.split-body { padding: 16px; }
+
+/* ── CALLOUTS ── */
+.note {
+  border-left: 3px solid;
+  padding: 12px 16px;
+  margin: 14px 0;
+  border-radius: 0 5px 5px 0;
+}
+.note p { margin:0; font-size:13px; }
+.note-tip  { border-color: var(--teal); background: #2a9d8f0c; }
+.note-tip p { color: #1d6b60; }
+.note-warn { border-color: var(--gold); background: #e2b04a0c; }
+.note-warn p { color: #8a6820; }
+.note-info { border-color: var(--slate); background: #457b9d0c; }
+.note-info p { color: #2d5a7a; }
+
+/* ── TABLE ── */
+.tbl-wrap {
+  overflow-x: auto;
+  margin: 14px 0;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+
+thead { background: var(--paper2); }
+
+th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 11px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 11px 15px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--paper2); }
+
+td:first-child {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--rust);
+  white-space: nowrap;
+}
+
+/* ── PATH HIGHLIGHT ── */
+.path-demo {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 14px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+
+.path-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+
+.path-key {
+  color: #f9e2af;
+  min-width: 280px;
+}
+
+.path-arrow { color: #6c7086; }
+
+.path-result {
+  color: #a6e3a1;
+  font-style: italic;
+}
+
+/* ── METHOD CARDS ── */
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.method-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.method-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.method-card.jsonpath::before { background: var(--rust); }
+.method-card.pojo::before     { background: var(--teal); }
+.method-card.map::before      { background: var(--gold); }
+.method-card.groovy::before   { background: #9060c0; }
+.method-card.schema::before   { background: var(--slate); }
+
+.method-card:hover { transform: translateY(-2px); border-color: #b8a99a; }
+
+.method-card h4 {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.method-card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.pros-cons { font-size: 12px; }
+.pro { color: var(--sage); }
+.con { color: var(--rust); }
+
+/* ── COMPARISON TABLE ── */
+.comp-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.comp-head {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(5, 1fr);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.comp-head div, .comp-row div {
+  padding: 11px 14px;
+  font-size: 12px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.comp-head div {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.comp-row {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(5, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.comp-row:last-child { border-bottom: none; }
+.comp-row:hover { background: var(--paper2); }
+
+.comp-row div { color: var(--muted); font-size: 12px; border-right: 1px solid var(--border); }
+.comp-row div:first-child { font-weight: 500; color: var(--ink); font-size: 13px; }
+
+.tick  { color: var(--sage); font-weight: 700; }
+.cross { color: var(--rust); font-weight: 700; }
+.part  { color: var(--gold); font-weight: 700; }
+
+/* ── ANIMATIONS ── */
+@keyframes rise {
+  from { opacity:0; transform: translateY(14px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: rgba(245,240,232,0.3);
+  text-align: center;
+  padding: 32px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+@media(max-width:600px){
+  .wrap { padding: 40px 24px; }
+  .hero { padding: 50px 24px 40px; }
+  .comp-head, .comp-row { grid-template-columns: 1fr 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">// REST Assured — Deep Dive</div>
+  <h1>Validating <em>Complex</em><br>Nested Responses</h1>
+  <p class="hero-desc">Five distinct methods — JsonPath, POJO deserialization, Map extraction, GPath/Groovy, and JSON Schema — with the same response validated every way.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">JsonPath</span>
+    <span class="hero-tag">POJO + SoftAssert</span>
+    <span class="hero-tag">Map Extraction</span>
+    <span class="hero-tag">GPath / Groovy</span>
+    <span class="hero-tag">JSON Schema</span>
+    <span class="hero-tag">TestNG</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#response">The Response</a>
+    <a href="#methods">Methods Overview</a>
+    <a href="#jsonpath">JsonPath</a>
+    <a href="#pojo">POJO</a>
+    <a href="#map">Map Extraction</a>
+    <a href="#gpath">GPath / Groovy</a>
+    <a href="#schema">JSON Schema</a>
+    <a href="#combined">Combined</a>
+    <a href="#which">Which to Use</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- THE RESPONSE WE'LL USE -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="response">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2>The Response We'll Validate</h2>
+  </div>
+
+  <p>We'll use this single deeply nested JSON response across <strong>all five methods</strong> so you can compare them side by side. It has objects, arrays, arrays of objects, and deeply nested fields.</p>
+
+  <div class="json-viewer">
+    <div class="json-title">Sample API Response — GET /orders/101</div>
+    <div class="json-body">
+<span class="jp">{</span>
+<span class="ji"><span class="jk">"orderId"</span><span class="jp">:</span> <span class="jn">101</span><span class="jp">,</span></span>
+<span class="ji"><span class="jk">"status"</span><span class="jp">:</span> <span class="js">"confirmed"</span><span class="jp">,</span></span>
+<span class="ji"><span class="jk">"totalAmount"</span><span class="jp">:</span> <span class="jn">1129.98</span><span class="jp">,</span></span>
+<span class="ji"><span class="jk">"customer"</span><span class="jp">:</span> <span class="jp">{</span>                           <span class="jc">← nested object</span></span>
+<span class="ji2"><span class="jk">"id"</span><span class="jp">:</span> <span class="jn">55</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"name"</span><span class="jp">:</span> <span class="js">"Alice Kumar"</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"email"</span><span class="jp">:</span> <span class="js">"alice@example.com"</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"address"</span><span class="jp">:</span> <span class="jp">{</span>                       <span class="jc">← nested inside nested</span></span>
+<span class="ji3"><span class="jk">"street"</span><span class="jp">:</span> <span class="js">"12 MG Road"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"city"</span><span class="jp">:</span> <span class="js">"Pune"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"pincode"</span><span class="jp">:</span> <span class="js">"411001"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"geo"</span><span class="jp">:</span> <span class="jp">{</span>                           <span class="jc">← 4 levels deep</span></span>
+<span class="ji4"><span class="jk">"lat"</span><span class="jp">:</span> <span class="jn">18.5204</span><span class="jp">,</span></span>
+<span class="ji4"><span class="jk">"lng"</span><span class="jp">:</span> <span class="jn">73.8567</span></span>
+<span class="ji3"><span class="jp">}</span></span>
+<span class="ji2"><span class="jp">}</span></span>
+<span class="ji"><span class="jp">},</span></span>
+<span class="ji"><span class="jk">"items"</span><span class="jp">:</span> <span class="jp">[</span>                              <span class="jc">← array of objects</span></span>
+<span class="ji2"><span class="jp">{</span></span>
+<span class="ji3"><span class="jk">"itemId"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"name"</span><span class="jp">:</span> <span class="js">"Laptop"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"quantity"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"price"</span><span class="jp">:</span> <span class="jn">999.99</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"category"</span><span class="jp">:</span> <span class="js">"Electronics"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"featured"</span><span class="jp">,</span> <span class="js">"sale"</span><span class="jp">]</span>     <span class="jc">← array inside array of objects</span></span>
+<span class="ji2"><span class="jp">},</span></span>
+<span class="ji2"><span class="jp">{</span></span>
+<span class="ji3"><span class="jk">"itemId"</span><span class="jp">:</span> <span class="jn">2</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"name"</span><span class="jp">:</span> <span class="js">"Mouse"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"quantity"</span><span class="jp">:</span> <span class="jn">2</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"price"</span><span class="jp">:</span> <span class="jn">64.995</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"category"</span><span class="jp">:</span> <span class="js">"Electronics"</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"wireless"</span><span class="jp">]</span></span>
+<span class="ji2"><span class="jp">}</span></span>
+<span class="ji"><span class="jp">],</span></span>
+<span class="ji"><span class="jk">"payment"</span><span class="jp">:</span> <span class="jp">{</span></span>
+<span class="ji2"><span class="jk">"method"</span><span class="jp">:</span> <span class="js">"UPI"</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"status"</span><span class="jp">:</span> <span class="js">"success"</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"transactionId"</span><span class="jp">:</span> <span class="js">"TXN-9988776"</span><span class="jp">,</span></span>
+<span class="ji2"><span class="jk">"breakdown"</span><span class="jp">:</span> <span class="jp">{</span>                      <span class="jc">← nested inside nested</span></span>
+<span class="ji3"><span class="jk">"subtotal"</span><span class="jp">:</span> <span class="jn">1099.98</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"tax"</span><span class="jp">:</span> <span class="jn">30.00</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"shipping"</span><span class="jp">:</span> <span class="jn">0.00</span><span class="jp">,</span></span>
+<span class="ji3"><span class="jk">"discount"</span><span class="jp">:</span> <span class="jn">-10.00</span></span>
+<span class="ji2"><span class="jp">}</span></span>
+<span class="ji"><span class="jp">},</span></span>
+<span class="ji"><span class="jk">"timeline"</span><span class="jp">:</span> <span class="jp">[</span>                          <span class="jc">← array of status events</span></span>
+<span class="ji2"><span class="jp">{</span> <span class="jk">"event"</span><span class="jp">:</span> <span class="js">"placed"</span><span class="jp">,</span>    <span class="jk">"timestamp"</span><span class="jp">:</span> <span class="js">"2024-01-15T10:00:00"</span> <span class="jp">},</span></span>
+<span class="ji2"><span class="jp">{</span> <span class="jk">"event"</span><span class="jp">:</span> <span class="js">"confirmed"</span><span class="jp">,</span> <span class="jk">"timestamp"</span><span class="jp">:</span> <span class="js">"2024-01-15T10:05:00"</span> <span class="jp">},</span></span>
+<span class="ji2"><span class="jp">{</span> <span class="jk">"event"</span><span class="jp">:</span> <span class="js">"shipped"</span><span class="jp">,</span>   <span class="jk">"timestamp"</span><span class="jp">:</span> <span class="js">"2024-01-16T08:00:00"</span> <span class="jp">}</span></span>
+<span class="ji"><span class="jp">]</span></span>
+<span class="jp">}</span>
+    </div>
+  </div>
+
+  <h3>JsonPath Reference — All Paths in This Response</h3>
+  <div class="path-demo">
+    <div class="path-row"><span class="path-key">"orderId"</span>                           <span class="path-arrow">→</span> <span class="path-result">101</span></div>
+    <div class="path-row"><span class="path-key">"customer.name"</span>                     <span class="path-arrow">→</span> <span class="path-result">"Alice Kumar"</span></div>
+    <div class="path-row"><span class="path-key">"customer.address.city"</span>             <span class="path-arrow">→</span> <span class="path-result">"Pune"</span></div>
+    <div class="path-row"><span class="path-key">"customer.address.geo.lat"</span>          <span class="path-arrow">→</span> <span class="path-result">18.5204  (4 levels deep!)</span></div>
+    <div class="path-row"><span class="path-key">"items[0].name"</span>                     <span class="path-arrow">→</span> <span class="path-result">"Laptop"  (first array item)</span></div>
+    <div class="path-row"><span class="path-key">"items[1].price"</span>                    <span class="path-arrow">→</span> <span class="path-result">64.995   (second item)</span></div>
+    <div class="path-row"><span class="path-key">"items.name"</span>                        <span class="path-arrow">→</span> <span class="path-result">["Laptop","Mouse"]  (all names)</span></div>
+    <div class="path-row"><span class="path-key">"items[0].tags[0]"</span>                  <span class="path-arrow">→</span> <span class="path-result">"featured"  (array in array)</span></div>
+    <div class="path-row"><span class="path-key">"payment.breakdown.tax"</span>             <span class="path-arrow">→</span> <span class="path-result">30.00</span></div>
+    <div class="path-row"><span class="path-key">"timeline[0].event"</span>                 <span class="path-arrow">→</span> <span class="path-result">"placed"</span></div>
+    <div class="path-row"><span class="path-key">"timeline.event"</span>                    <span class="path-arrow">→</span> <span class="path-result">["placed","confirmed","shipped"]</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHODS OVERVIEW -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="methods">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2>Five Methods at a Glance</h2>
+  </div>
+
+  <div class="method-grid">
+    <div class="method-card jsonpath">
+      <h4>1. JsonPath</h4>
+      <p>Navigate the JSON tree using dot notation and array indexing. Fast and direct, no classes needed.</p>
+      <div class="pros-cons">
+        <div class="pro">✓ No setup required</div>
+        <div class="pro">✓ Great for spot checks</div>
+        <div class="con">✗ Verbose for many fields</div>
+        <div class="con">✗ No type safety</div>
+      </div>
+    </div>
+    <div class="method-card pojo">
+      <h4>2. POJO Deserialization</h4>
+      <p>Map the entire response to Java classes. Full IDE autocomplete and compile-time type safety.</p>
+      <div class="pros-cons">
+        <div class="pro">✓ Type safe, IDE support</div>
+        <div class="pro">✓ Best for deep validation</div>
+        <div class="con">✗ Need to create classes</div>
+        <div class="con">✗ More setup upfront</div>
+      </div>
+    </div>
+    <div class="method-card map">
+      <h4>3. Map Extraction</h4>
+      <p>Deserialize into a nested <code>Map&lt;String, Object&gt;</code>. No POJO needed but navigation is manual.</p>
+      <div class="pros-cons">
+        <div class="pro">✓ No class creation</div>
+        <div class="pro">✓ Dynamic structure</div>
+        <div class="con">✗ Lots of casting</div>
+        <div class="con">✗ Fragile with deep nesting</div>
+      </div>
+    </div>
+    <div class="method-card groovy">
+      <h4>4. GPath / Groovy</h4>
+      <p>Inline assertions using REST Assured's <code>.body()</code> with Hamcrest matchers — powerful filter expressions.</p>
+      <div class="pros-cons">
+        <div class="pro">✓ Very concise</div>
+        <div class="pro">✓ Powerful filtering</div>
+        <div class="con">✗ Harder to read for beginners</div>
+        <div class="con">✗ String-based paths</div>
+      </div>
+    </div>
+    <div class="method-card schema">
+      <h4>5. JSON Schema</h4>
+      <p>Validate the entire response structure — types, required fields, formats — in one assertion.</p>
+      <div class="pros-cons">
+        <div class="pro">✓ Validates entire structure</div>
+        <div class="pro">✓ Catches missing fields</div>
+        <div class="con">✗ Separate schema file needed</div>
+        <div class="con">✗ Doesn't check values</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHOD 1: JSONPATH -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="jsonpath">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2>Method 1 — JsonPath <span class="method-badge badge-jsonpath">jsonpath</span></h2>
+  </div>
+
+  <p>JsonPath lets you navigate any depth using dot notation for objects and bracket notation for arrays. Extract first, then assert using TestNG.</p>
+
+  <h3>Basic Nested Field Extraction</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="cl">Response</span> response = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+    .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+    .<span class="mt">extract</span>().<span class="mt">response</span>();
+
+<span class="cl">JsonPath</span> jp = response.<span class="mt">jsonPath</span>();   <span class="cm">// get the JsonPath object once, reuse it</span>
+
+<span class="cm">// ── Top level ─────────────────────────────────────────</span>
+<span class="kw">int</span>    orderId     = jp.<span class="mt">getInt</span>(<span class="st">"orderId"</span>);
+<span class="cl">String</span> status      = jp.<span class="mt">getString</span>(<span class="st">"status"</span>);
+<span class="kw">double</span> total       = jp.<span class="mt">getDouble</span>(<span class="st">"totalAmount"</span>);
+
+<span class="cm">// ── Nested object — dot notation ──────────────────────</span>
+<span class="cl">String</span> custName    = jp.<span class="mt">getString</span>(<span class="st">"customer.name"</span>);
+<span class="cl">String</span> custEmail   = jp.<span class="mt">getString</span>(<span class="st">"customer.email"</span>);
+<span class="cl">String</span> city        = jp.<span class="mt">getString</span>(<span class="st">"customer.address.city"</span>);
+<span class="cl">String</span> pincode     = jp.<span class="mt">getString</span>(<span class="st">"customer.address.pincode"</span>);
+
+<span class="cm">// ── 4 levels deep ─────────────────────────────────────</span>
+<span class="kw">float</span>  lat         = jp.<span class="mt">getFloat</span>(<span class="st">"customer.address.geo.lat"</span>);
+<span class="kw">float</span>  lng         = jp.<span class="mt">getFloat</span>(<span class="st">"customer.address.geo.lng"</span>);
+
+<span class="cm">// ── Array item by index ───────────────────────────────</span>
+<span class="cl">String</span> firstItem   = jp.<span class="mt">getString</span>(<span class="st">"items[0].name"</span>);
+<span class="kw">double</span> firstPrice  = jp.<span class="mt">getDouble</span>(<span class="st">"items[0].price"</span>);
+<span class="cl">String</span> secondItem  = jp.<span class="mt">getString</span>(<span class="st">"items[1].name"</span>);
+
+<span class="cm">// ── Array inside array of objects ─────────────────────</span>
+<span class="cl">String</span> firstTag    = jp.<span class="mt">getString</span>(<span class="st">"items[0].tags[0]"</span>);
+
+<span class="cm">// ── Collect ALL values from a field across an array ───</span>
+<span class="cl">List</span>&lt;<span class="cl">String</span>&gt; allNames  = jp.<span class="mt">getList</span>(<span class="st">"items.name"</span>);
+<span class="cl">List</span>&lt;<span class="cl">Double</span>&gt; allPrices = jp.<span class="mt">getList</span>(<span class="st">"items.price"</span>);
+<span class="cl">List</span>&lt;<span class="cl">String</span>&gt; allEvents = jp.<span class="mt">getList</span>(<span class="st">"timeline.event"</span>);
+
+<span class="cm">// ── Nested payment breakdown ──────────────────────────</span>
+<span class="cl">String</span> payMethod   = jp.<span class="mt">getString</span>(<span class="st">"payment.method"</span>);
+<span class="cl">String</span> txnId       = jp.<span class="mt">getString</span>(<span class="st">"payment.transactionId"</span>);
+<span class="kw">double</span> tax         = jp.<span class="mt">getDouble</span>(<span class="st">"payment.breakdown.tax"</span>);
+<span class="kw">double</span> discount    = jp.<span class="mt">getDouble</span>(<span class="st">"payment.breakdown.discount"</span>);</code></pre>
+  </div>
+
+  <h3>Full Test with SoftAssert</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · JsonPath + TestNG SoftAssert</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateOrder_jsonPath</span>() {
+    <span class="cl">JsonPath</span> jp = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+        .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        .<span class="mt">extract</span>().<span class="mt">jsonPath</span>();
+
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+
+    <span class="cm">// ── Top level ──────────────────────────────────────────</span>
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getInt</span>(<span class="st">"orderId"</span>),            <span class="nm">101</span>,         <span class="st">"orderId"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"status"</span>),          <span class="st">"confirmed"</span>, <span class="st">"status"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getDouble</span>(<span class="st">"totalAmount"</span>),    <span class="nm">1129.98</span>,     <span class="st">"totalAmount"</span>);
+
+    <span class="cm">// ── Nested customer ────────────────────────────────────</span>
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"customer.name"</span>),              <span class="st">"Alice Kumar"</span>, <span class="st">"customer.name"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"customer.address.city"</span>),      <span class="st">"Pune"</span>,        <span class="st">"city"</span>);
+    soft.<span class="mt">assertNotNull</span>(jp.<span class="mt">getFloat</span>(<span class="st">"customer.address.geo.lat"</span>),                  <span class="st">"geo.lat"</span>);
+
+    <span class="cm">// ── Items array ────────────────────────────────────────</span>
+    <span class="cl">List</span>&lt;<span class="cl">String</span>&gt; names = jp.<span class="mt">getList</span>(<span class="st">"items.name"</span>);
+    soft.<span class="mt">assertEquals</span>(names.<span class="mt">size</span>(),    <span class="nm">2</span>,         <span class="st">"items count"</span>);
+    soft.<span class="mt">assertEquals</span>(names.<span class="mt">get</span>(<span class="nm">0</span>),    <span class="st">"Laptop"</span>,  <span class="st">"first item"</span>);
+    soft.<span class="mt">assertEquals</span>(names.<span class="mt">get</span>(<span class="nm">1</span>),    <span class="st">"Mouse"</span>,   <span class="st">"second item"</span>);
+
+    <span class="cm">// ── Array inside array of objects ─────────────────────</span>
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"items[0].tags[0]"</span>), <span class="st">"featured"</span>, <span class="st">"first tag"</span>);
+
+    <span class="cm">// ── Payment nested breakdown ───────────────────────────</span>
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"payment.method"</span>),             <span class="st">"UPI"</span>,     <span class="st">"pay method"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getString</span>(<span class="st">"payment.status"</span>),             <span class="st">"success"</span>, <span class="st">"pay status"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getDouble</span>(<span class="st">"payment.breakdown.tax"</span>),     <span class="nm">30.00</span>,     <span class="st">"tax"</span>);
+    soft.<span class="mt">assertEquals</span>(jp.<span class="mt">getDouble</span>(<span class="st">"payment.breakdown.discount"</span>),<span class="op">-</span><span class="nm">10.00</span>,    <span class="st">"discount"</span>);
+
+    <span class="cm">// ── Timeline array ─────────────────────────────────────</span>
+    <span class="cl">List</span>&lt;<span class="cl">String</span>&gt; events = jp.<span class="mt">getList</span>(<span class="st">"timeline.event"</span>);
+    soft.<span class="mt">assertEquals</span>(events.<span class="mt">size</span>(), <span class="nm">3</span>, <span class="st">"timeline events count"</span>);
+    soft.<span class="mt">assertEquals</span>(events.<span class="mt">get</span>(<span class="nm">0</span>), <span class="st">"placed"</span>, <span class="st">"first event"</span>);
+
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+  </div>
+
+  <div class="note note-tip">
+    <p>💡 <strong>Tip:</strong> Get the <code>JsonPath</code> object once with <code>.extract().jsonPath()</code> and reuse it — avoids calling <code>response.jsonPath()</code> on every line.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHOD 2: POJO -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="pojo">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2>Method 2 — POJO Deserialization <span class="method-badge badge-pojo">pojo</span></h2>
+  </div>
+
+  <p>Map the entire JSON response to a hierarchy of Java classes. Jackson handles the mapping automatically. You get full type safety, IDE autocomplete, and the cleanest assertions.</p>
+
+  <h3>Step 1 — Create POJO Classes</h3>
+  <div class="split">
+    <div class="split-box">
+      <div class="split-head" style="background:#2a9d8f18;color:var(--teal);border-color:#2a9d8f33;">Order.java (root)</div>
+      <div class="split-body">
+        <div class="code-block" style="margin:0">
+          <div class="cb-head"><span class="cb-lang">java</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+          <pre><code><span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="an">@JsonNaming</span>(<span class="cl">PropertyNamingStrategies</span>
+    .<span class="cl">LowerCamelCaseStrategy</span>.<span class="kw">class</span>)
+<span class="kw">public class</span> <span class="cl">Order</span> {
+    <span class="kw">private int</span>        orderId;
+    <span class="kw">private</span> <span class="cl">String</span>     status;
+    <span class="kw">private double</span>     totalAmount;
+    <span class="kw">private</span> <span class="cl">Customer</span>  customer;
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">Item</span>&gt; items;
+    <span class="kw">private</span> <span class="cl">Payment</span>   payment;
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">TimelineEvent</span>&gt; timeline;
+    <span class="cm">// getters + setters</span>
+}</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="split-box">
+      <div class="split-head" style="background:#2a9d8f18;color:var(--teal);border-color:#2a9d8f33;">Customer.java</div>
+      <div class="split-body">
+        <div class="code-block" style="margin:0">
+          <div class="cb-head"><span class="cb-lang">java</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+          <pre><code><span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">Customer</span> {
+    <span class="kw">private int</span>     id;
+    <span class="kw">private</span> <span class="cl">String</span>  name;
+    <span class="kw">private</span> <span class="cl">String</span>  email;
+    <span class="kw">private</span> <span class="cl">Address</span> address;
+    <span class="cm">// getters + setters</span>
+}
+
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">Address</span> {
+    <span class="kw">private</span> <span class="cl">String</span> street, city, pincode;
+    <span class="kw">private</span> <span class="cl">Geo</span>    geo;
+    <span class="cm">// getters + setters</span>
+}
+
+<span class="kw">public class</span> <span class="cl">Geo</span> {
+    <span class="kw">private double</span> lat, lng;
+    <span class="cm">// getters + setters</span>
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · Item.java, Payment.java, TimelineEvent.java</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">Item</span> {
+    <span class="kw">private int</span>          itemId;
+    <span class="kw">private</span> <span class="cl">String</span>       name, category;
+    <span class="kw">private int</span>          quantity;
+    <span class="kw">private double</span>       price;
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">String</span>&gt; tags;
+    <span class="cm">// getters + setters</span>
+}
+
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">Payment</span> {
+    <span class="kw">private</span> <span class="cl">String</span>          method, status, transactionId;
+    <span class="kw">private</span> <span class="cl">PaymentBreakdown</span> breakdown;
+    <span class="cm">// getters + setters</span>
+}
+
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">PaymentBreakdown</span> {
+    <span class="kw">private double</span> subtotal, tax, shipping, discount;
+    <span class="cm">// getters + setters</span>
+}
+
+<span class="kw">public class</span> <span class="cl">TimelineEvent</span> {
+    <span class="kw">private</span> <span class="cl">String</span> event, timestamp;
+    <span class="cm">// getters + setters</span>
+}</code></pre>
+  </div>
+
+  <h3>Step 2 — Deserialize and Validate</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · Full POJO validation test</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateOrder_pojo</span>() {
+    <span class="cl">Order</span> order = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+        .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        .<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">Order</span>.<span class="kw">class</span>);  <span class="cm">// full response mapped</span>
+
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+
+    <span class="cm">// ── Root level ─────────────────────────────────────────</span>
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getOrderId</span>(),     <span class="nm">101</span>,         <span class="st">"orderId"</span>);
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getStatus</span>(),      <span class="st">"confirmed"</span>, <span class="st">"status"</span>);
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getTotalAmount</span>(), <span class="nm">1129.98</span>,     <span class="st">"totalAmount"</span>);
+
+    <span class="cm">// ── Nested customer object ─────────────────────────────</span>
+    <span class="cl">Customer</span> cust = order.<span class="mt">getCustomer</span>();
+    soft.<span class="mt">assertNotNull</span>(cust, <span class="st">"customer not null"</span>);
+    soft.<span class="mt">assertEquals</span>(cust.<span class="mt">getName</span>(),  <span class="st">"Alice Kumar"</span>,      <span class="st">"customer name"</span>);
+    soft.<span class="mt">assertEquals</span>(cust.<span class="mt">getEmail</span>(), <span class="st">"alice@example.com"</span>, <span class="st">"customer email"</span>);
+
+    <span class="cm">// ── Nested address ─────────────────────────────────────</span>
+    <span class="cl">Address</span> addr = cust.<span class="mt">getAddress</span>();
+    soft.<span class="mt">assertNotNull</span>(addr, <span class="st">"address not null"</span>);
+    soft.<span class="mt">assertEquals</span>(addr.<span class="mt">getCity</span>(),    <span class="st">"Pune"</span>,   <span class="st">"city"</span>);
+    soft.<span class="mt">assertEquals</span>(addr.<span class="mt">getPincode</span>(), <span class="st">"411001"</span>, <span class="st">"pincode"</span>);
+
+    <span class="cm">// ── 4 levels deep — geo ────────────────────────────────</span>
+    <span class="cl">Geo</span> geo = addr.<span class="mt">getGeo</span>();
+    soft.<span class="mt">assertNotNull</span>(geo, <span class="st">"geo not null"</span>);
+    soft.<span class="mt">assertEquals</span>(geo.<span class="mt">getLat</span>(), <span class="nm">18.5204</span>, <span class="st">"lat"</span>);
+    soft.<span class="mt">assertEquals</span>(geo.<span class="mt">getLng</span>(), <span class="nm">73.8567</span>, <span class="st">"lng"</span>);
+
+    <span class="cm">// ── Items list ─────────────────────────────────────────</span>
+    <span class="cl">List</span>&lt;<span class="cl">Item</span>&gt; items = order.<span class="mt">getItems</span>();
+    soft.<span class="mt">assertEquals</span>(items.<span class="mt">size</span>(), <span class="nm">2</span>, <span class="st">"items count"</span>);
+
+    <span class="cl">Item</span> laptop = items.<span class="mt">get</span>(<span class="nm">0</span>);
+    soft.<span class="mt">assertEquals</span>(laptop.<span class="mt">getName</span>(),     <span class="st">"Laptop"</span>,       <span class="st">"item1 name"</span>);
+    soft.<span class="mt">assertEquals</span>(laptop.<span class="mt">getPrice</span>(),    <span class="nm">999.99</span>,         <span class="st">"item1 price"</span>);
+    soft.<span class="mt">assertEquals</span>(laptop.<span class="mt">getCategory</span>(), <span class="st">"Electronics"</span>,  <span class="st">"item1 category"</span>);
+    soft.<span class="mt">assertFalse</span>(laptop.<span class="mt">getTags</span>().<span class="mt">isEmpty</span>(),            <span class="st">"item1 has tags"</span>);
+    soft.<span class="mt">assertEquals</span>(laptop.<span class="mt">getTags</span>().<span class="mt">get</span>(<span class="nm">0</span>), <span class="st">"featured"</span>,  <span class="st">"item1 tag[0]"</span>);
+
+    <span class="cm">// ── Validate ALL items with a loop ─────────────────────</span>
+    items.<span class="mt">forEach</span>(item -> {
+        soft.<span class="mt">assertNotNull</span>(item.<span class="mt">getName</span>(),     <span class="st">"item name null"</span>);
+        soft.<span class="mt">assertTrue</span>(item.<span class="mt">getPrice</span>() > <span class="nm">0</span>,  <span class="st">"price must be positive"</span>);
+        soft.<span class="mt">assertEquals</span>(item.<span class="mt">getCategory</span>(), <span class="st">"Electronics"</span>, <span class="st">"category mismatch"</span>);
+    });
+
+    <span class="cm">// ── Payment nested breakdown ───────────────────────────</span>
+    <span class="cl">Payment</span> payment = order.<span class="mt">getPayment</span>();
+    soft.<span class="mt">assertEquals</span>(payment.<span class="mt">getMethod</span>(), <span class="st">"UPI"</span>,     <span class="st">"pay method"</span>);
+    soft.<span class="mt">assertEquals</span>(payment.<span class="mt">getStatus</span>(), <span class="st">"success"</span>, <span class="st">"pay status"</span>);
+
+    <span class="cl">PaymentBreakdown</span> bd = payment.<span class="mt">getBreakdown</span>();
+    soft.<span class="mt">assertEquals</span>(bd.<span class="mt">getTax</span>(),      <span class="nm">30.00</span>,  <span class="st">"tax"</span>);
+    soft.<span class="mt">assertEquals</span>(bd.<span class="mt">getDiscount</span>(), <span class="op">-</span><span class="nm">10.00</span>, <span class="st">"discount"</span>);
+    soft.<span class="mt">assertEquals</span>(bd.<span class="mt">getShipping</span>(), <span class="nm">0.00</span>,   <span class="st">"shipping"</span>);
+
+    <span class="cm">// ── Timeline events ────────────────────────────────────</span>
+    <span class="cl">List</span>&lt;<span class="cl">TimelineEvent</span>&gt; timeline = order.<span class="mt">getTimeline</span>();
+    soft.<span class="mt">assertEquals</span>(timeline.<span class="mt">size</span>(),              <span class="nm">3</span>,           <span class="st">"event count"</span>);
+    soft.<span class="mt">assertEquals</span>(timeline.<span class="mt">get</span>(<span class="nm">0</span>).<span class="mt">getEvent</span>(), <span class="st">"placed"</span>,    <span class="st">"event[0]"</span>);
+    soft.<span class="mt">assertEquals</span>(timeline.<span class="mt">get</span>(<span class="nm">1</span>).<span class="mt">getEvent</span>(), <span class="st">"confirmed"</span>, <span class="st">"event[1]"</span>);
+
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+  </div>
+
+  <div class="note note-info">
+    <p>📌 <strong>Best practice:</strong> Assign nested objects to local variables (<code>Customer cust = order.getCustomer()</code>) before asserting. This gives a clearer <code>NullPointerException</code> message if the object is null, rather than a confusing chain error.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHOD 3: MAP EXTRACTION -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="map">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2>Method 3 — Map Extraction <span class="method-badge badge-map">map</span></h2>
+  </div>
+
+  <p>No POJO classes needed. Jackson deserializes the response into a <code>Map&lt;String, Object&gt;</code>. Nested objects become nested maps, arrays become Lists. Good for quick checks or highly dynamic responses.</p>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · Map-based validation</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateOrder_map</span>() {
+    <span class="cm">// Deserialize entire response as a Map</span>
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; order = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+        .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        .<span class="mt">extract</span>().<span class="mt">as</span>(<span class="kw">new</span> <span class="cl">TypeRef</span>&lt;<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;&gt;() {});
+
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+
+    <span class="cm">// ── Top level — direct cast ────────────────────────────</span>
+    soft.<span class="mt">assertEquals</span>((<span class="cl">Integer</span>) order.<span class="mt">get</span>(<span class="st">"orderId"</span>),  <span class="nm">101</span>);
+    soft.<span class="mt">assertEquals</span>((<span class="cl">String</span>)  order.<span class="mt">get</span>(<span class="st">"status"</span>),   <span class="st">"confirmed"</span>);
+
+    <span class="cm">// ── Navigate nested object — cast to Map ───────────────</span>
+    <span class="an">@SuppressWarnings</span>(<span class="st">"unchecked"</span>)
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; customer =
+        (<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;) order.<span class="mt">get</span>(<span class="st">"customer"</span>);
+
+    soft.<span class="mt">assertEquals</span>((<span class="cl">String</span>) customer.<span class="mt">get</span>(<span class="st">"name"</span>), <span class="st">"Alice Kumar"</span>);
+
+    <span class="cm">// ── 2 levels deep — address ────────────────────────────</span>
+    <span class="an">@SuppressWarnings</span>(<span class="st">"unchecked"</span>)
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; address =
+        (<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;) customer.<span class="mt">get</span>(<span class="st">"address"</span>);
+
+    soft.<span class="mt">assertEquals</span>((<span class="cl">String</span>) address.<span class="mt">get</span>(<span class="st">"city"</span>), <span class="st">"Pune"</span>);
+
+    <span class="cm">// ── 3 levels deep — geo ────────────────────────────────</span>
+    <span class="an">@SuppressWarnings</span>(<span class="st">"unchecked"</span>)
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; geo =
+        (<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;) address.<span class="mt">get</span>(<span class="st">"geo"</span>);
+
+    soft.<span class="mt">assertNotNull</span>(geo.<span class="mt">get</span>(<span class="st">"lat"</span>), <span class="st">"geo.lat"</span>);
+
+    <span class="cm">// ── Items list — cast to List&lt;Map&gt; ────────────────────</span>
+    <span class="an">@SuppressWarnings</span>(<span class="st">"unchecked"</span>)
+    <span class="cl">List</span>&lt;<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;&gt; items =
+        (<span class="cl">List</span>&lt;<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;&gt;) order.<span class="mt">get</span>(<span class="st">"items"</span>);
+
+    soft.<span class="mt">assertEquals</span>(items.<span class="mt">size</span>(), <span class="nm">2</span>, <span class="st">"items count"</span>);
+    soft.<span class="mt">assertEquals</span>((<span class="cl">String</span>) items.<span class="mt">get</span>(<span class="nm">0</span>).<span class="mt">get</span>(<span class="st">"name"</span>), <span class="st">"Laptop"</span>);
+    soft.<span class="mt">assertEquals</span>((<span class="cl">Double</span>) items.<span class="mt">get</span>(<span class="nm">0</span>).<span class="mt">get</span>(<span class="st">"price"</span>), <span class="nm">999.99</span>);
+
+    <span class="cm">// ── Payment breakdown ──────────────────────────────────</span>
+    <span class="an">@SuppressWarnings</span>(<span class="st">"unchecked"</span>)
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; payment   = (<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;) order.<span class="mt">get</span>(<span class="st">"payment"</span>);
+    <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt; breakdown = (<span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Object</span>&gt;) payment.<span class="mt">get</span>(<span class="st">"breakdown"</span>);
+
+    soft.<span class="mt">assertEquals</span>((<span class="cl">Double</span>) breakdown.<span class="mt">get</span>(<span class="st">"tax"</span>), <span class="nm">30.00</span>);
+
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+  </div>
+
+  <div class="note note-warn">
+    <p>⚠️ <strong>Warning:</strong> Map extraction requires many unchecked casts and becomes messy beyond 2–3 levels deep. Use JsonPath or POJO instead for deeply nested responses. Map is best for simple or dynamic structures.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHOD 4: GPATH / GROOVY -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="gpath">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2>Method 4 — GPath / Inline Hamcrest <span class="method-badge badge-groovy">gpath</span></h2>
+  </div>
+
+  <p>REST Assured's <code>.body()</code> method uses GPath expressions — a Groovy-inspired path language. Write assertions <strong>directly in the chain</strong>, no extraction needed. Extremely powerful for filtering arrays.</p>
+
+  <h3>Basic Inline Assertions</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · Inline body assertions</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+.<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+.<span class="mt">then</span>()
+    .<span class="mt">statusCode</span>(<span class="nm">200</span>)
+    <span class="cm">// ── Root ──────────────────────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"orderId"</span>,                    <span class="mt">equalTo</span>(<span class="nm">101</span>))
+    .<span class="mt">body</span>(<span class="st">"status"</span>,                     <span class="mt">equalTo</span>(<span class="st">"confirmed"</span>))
+    .<span class="mt">body</span>(<span class="st">"totalAmount"</span>,               <span class="mt">equalTo</span>(<span class="nm">1129.98f</span>))
+    <span class="cm">// ── Nested dot notation ───────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"customer.name"</span>,              <span class="mt">equalTo</span>(<span class="st">"Alice Kumar"</span>))
+    .<span class="mt">body</span>(<span class="st">"customer.address.city"</span>,      <span class="mt">equalTo</span>(<span class="st">"Pune"</span>))
+    .<span class="mt">body</span>(<span class="st">"customer.address.geo.lat"</span>,   <span class="mt">notNullValue</span>())
+    <span class="cm">// ── Array size and specific items ─────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items"</span>,                      <span class="mt">hasSize</span>(<span class="nm">2</span>))
+    .<span class="mt">body</span>(<span class="st">"items[0].name"</span>,             <span class="mt">equalTo</span>(<span class="st">"Laptop"</span>))
+    .<span class="mt">body</span>(<span class="st">"items[1].name"</span>,             <span class="mt">equalTo</span>(<span class="st">"Mouse"</span>))
+    <span class="cm">// ── Collect all values from array ─────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.name"</span>,                <span class="mt">hasItems</span>(<span class="st">"Laptop"</span>, <span class="st">"Mouse"</span>))
+    .<span class="mt">body</span>(<span class="st">"items.category"</span>,            <span class="mt">everyItem</span>(<span class="mt">equalTo</span>(<span class="st">"Electronics"</span>)))
+    <span class="cm">// ── Array inside array ────────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items[0].tags[0]"</span>,          <span class="mt">equalTo</span>(<span class="st">"featured"</span>))
+    <span class="cm">// ── Payment nested ────────────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"payment.method"</span>,            <span class="mt">equalTo</span>(<span class="st">"UPI"</span>))
+    .<span class="mt">body</span>(<span class="st">"payment.breakdown.tax"</span>,     <span class="mt">equalTo</span>(<span class="nm">30.0f</span>))
+    .<span class="mt">body</span>(<span class="st">"payment.breakdown.discount"</span>, <span class="mt">equalTo</span>(<span class="op">-</span><span class="nm">10.0f</span>))
+    <span class="cm">// ── Timeline events list ──────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"timeline"</span>,                  <span class="mt">hasSize</span>(<span class="nm">3</span>))
+    .<span class="mt">body</span>(<span class="st">"timeline.event"</span>,            <span class="mt">hasItems</span>(<span class="st">"placed"</span>, <span class="st">"confirmed"</span>, <span class="st">"shipped"</span>))
+    .<span class="mt">body</span>(<span class="st">"timeline[0].event"</span>,         <span class="mt">equalTo</span>(<span class="st">"placed"</span>));</code></pre>
+  </div>
+
+  <h3>Powerful GPath Filtering on Arrays ⭐</h3>
+  <p>This is where GPath really shines — filtering array elements by conditions, like SQL WHERE clauses on JSON arrays.</p>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · GPath filter expressions</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+.<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+.<span class="mt">then</span>()
+    <span class="cm">// ── Find all items where price > 100 ──────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.findAll { it.price > 100 }.name"</span>,
+         <span class="mt">hasItem</span>(<span class="st">"Laptop"</span>))
+
+    <span class="cm">// ── Find item by name, get its price ──────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.find { it.name == 'Laptop' }.price"</span>,
+         <span class="mt">equalTo</span>(<span class="nm">999.99f</span>))
+
+    <span class="cm">// ── Count items in a specific category ────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.findAll { it.category == 'Electronics' }.size()"</span>,
+         <span class="mt">equalTo</span>(<span class="nm">2</span>))
+
+    <span class="cm">// ── Verify ALL items have positive price ──────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.price"</span>,
+         <span class="mt">everyItem</span>(<span class="mt">greaterThan</span>(<span class="nm">0f</span>)))
+
+    <span class="cm">// ── Check max price in items ──────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.price.max()"</span>,
+         <span class="mt">equalTo</span>(<span class="nm">999.99f</span>))
+
+    <span class="cm">// ── Check event exists in timeline ───────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"timeline.find { it.event == 'shipped' }.timestamp"</span>,
+         <span class="mt">notNullValue</span>())
+
+    <span class="cm">// ── Verify no item has null name ──────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.name"</span>,
+         <span class="mt">everyItem</span>(<span class="mt">notNullValue</span>()))
+
+    <span class="cm">// ── Sum of all item prices ────────────────────────────</span>
+    .<span class="mt">body</span>(<span class="st">"items.price.sum()"</span>,
+         <span class="mt">greaterThan</span>(<span class="nm">1000f</span>));</code></pre>
+  </div>
+
+  <div class="note note-tip">
+    <p>💡 <strong>GPath filter syntax:</strong> <code>findAll { condition }</code> returns a list, <code>find { condition }</code> returns the first match. <code>it</code> refers to each element. This is the most powerful feature of inline REST Assured validation.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- METHOD 5: JSON SCHEMA -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="schema">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <h2>Method 5 — JSON Schema Validation <span class="method-badge badge-schema">schema</span></h2>
+  </div>
+
+  <p>Schema validation checks the <strong>entire response structure</strong> — field names, data types, required fields, and formats — in a single assertion. It does not check specific values, so it's used alongside the other methods.</p>
+
+  <h3>Schema File</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">json · src/test/resources/schemas/order-schema.json</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code>{
+  <span class="an">"$schema"</span>: <span class="st">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="an">"type"</span>: <span class="st">"object"</span>,
+  <span class="an">"required"</span>: [<span class="st">"orderId"</span>, <span class="st">"status"</span>, <span class="st">"totalAmount"</span>, <span class="st">"customer"</span>, <span class="st">"items"</span>, <span class="st">"payment"</span>],
+  <span class="an">"properties"</span>: {
+    <span class="an">"orderId"</span>:     { <span class="an">"type"</span>: <span class="st">"integer"</span> },
+    <span class="an">"status"</span>:      { <span class="an">"type"</span>: <span class="st">"string"</span>, <span class="an">"enum"</span>: [<span class="st">"placed"</span>, <span class="st">"confirmed"</span>, <span class="st">"shipped"</span>, <span class="st">"delivered"</span>] },
+    <span class="an">"totalAmount"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span>, <span class="an">"minimum"</span>: <span class="nm">0</span> },
+    <span class="an">"customer"</span>: {
+      <span class="an">"type"</span>: <span class="st">"object"</span>,
+      <span class="an">"required"</span>: [<span class="st">"id"</span>, <span class="st">"name"</span>, <span class="st">"email"</span>, <span class="st">"address"</span>],
+      <span class="an">"properties"</span>: {
+        <span class="an">"id"</span>:    { <span class="an">"type"</span>: <span class="st">"integer"</span> },
+        <span class="an">"name"</span>:  { <span class="an">"type"</span>: <span class="st">"string"</span>  },
+        <span class="an">"email"</span>: { <span class="an">"type"</span>: <span class="st">"string"</span>, <span class="an">"format"</span>: <span class="st">"email"</span> },
+        <span class="an">"address"</span>: {
+          <span class="an">"type"</span>: <span class="st">"object"</span>,
+          <span class="an">"required"</span>: [<span class="st">"street"</span>, <span class="st">"city"</span>, <span class="st">"pincode"</span>],
+          <span class="an">"properties"</span>: {
+            <span class="an">"street"</span>:  { <span class="an">"type"</span>: <span class="st">"string"</span> },
+            <span class="an">"city"</span>:    { <span class="an">"type"</span>: <span class="st">"string"</span> },
+            <span class="an">"pincode"</span>: { <span class="an">"type"</span>: <span class="st">"string"</span> },
+            <span class="an">"geo"</span>: {
+              <span class="an">"type"</span>: <span class="st">"object"</span>,
+              <span class="an">"properties"</span>: {
+                <span class="an">"lat"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span> },
+                <span class="an">"lng"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span> }
+              }
+            }
+          }
+        }
+      }
+    },
+    <span class="an">"items"</span>: {
+      <span class="an">"type"</span>: <span class="st">"array"</span>,
+      <span class="an">"minItems"</span>: <span class="nm">1</span>,
+      <span class="an">"items"</span>: {
+        <span class="an">"type"</span>: <span class="st">"object"</span>,
+        <span class="an">"required"</span>: [<span class="st">"itemId"</span>, <span class="st">"name"</span>, <span class="st">"price"</span>, <span class="st">"quantity"</span>],
+        <span class="an">"properties"</span>: {
+          <span class="an">"itemId"</span>:   { <span class="an">"type"</span>: <span class="st">"integer"</span> },
+          <span class="an">"name"</span>:     { <span class="an">"type"</span>: <span class="st">"string"</span>  },
+          <span class="an">"price"</span>:    { <span class="an">"type"</span>: <span class="st">"number"</span>, <span class="an">"minimum"</span>: <span class="nm">0</span> },
+          <span class="an">"quantity"</span>: { <span class="an">"type"</span>: <span class="st">"integer"</span>, <span class="an">"minimum"</span>: <span class="nm">1</span> },
+          <span class="an">"category"</span>: { <span class="an">"type"</span>: <span class="st">"string"</span>  },
+          <span class="an">"tags"</span>: {
+            <span class="an">"type"</span>: <span class="st">"array"</span>,
+            <span class="an">"items"</span>: { <span class="an">"type"</span>: <span class="st">"string"</span> }
+          }
+        }
+      }
+    },
+    <span class="an">"payment"</span>: {
+      <span class="an">"type"</span>: <span class="st">"object"</span>,
+      <span class="an">"required"</span>: [<span class="st">"method"</span>, <span class="st">"status"</span>, <span class="st">"transactionId"</span>],
+      <span class="an">"properties"</span>: {
+        <span class="an">"method"</span>:        { <span class="an">"type"</span>: <span class="st">"string"</span> },
+        <span class="an">"status"</span>:        { <span class="an">"type"</span>: <span class="st">"string"</span> },
+        <span class="an">"transactionId"</span>: { <span class="an">"type"</span>: <span class="st">"string"</span>, <span class="an">"pattern"</span>: <span class="st">"^TXN-[0-9]+"</span> },
+        <span class="an">"breakdown"</span>: {
+          <span class="an">"type"</span>: <span class="st">"object"</span>,
+          <span class="an">"properties"</span>: {
+            <span class="an">"subtotal"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span> },
+            <span class="an">"tax"</span>:      { <span class="an">"type"</span>: <span class="st">"number"</span> },
+            <span class="an">"shipping"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span> },
+            <span class="an">"discount"</span>: { <span class="an">"type"</span>: <span class="st">"number"</span> }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h3>Using Schema in Test</h3>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="kw">import static</span> io.restassured.module.jsv.JsonSchemaValidator.<span class="mt">matchesJsonSchemaInClasspath</span>;
+
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateOrderSchema</span>() {
+    <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+    .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        <span class="cm">// validates structure and types in ONE line</span>
+        .<span class="mt">body</span>(<span class="mt">matchesJsonSchemaInClasspath</span>(<span class="st">"schemas/order-schema.json"</span>));
+}
+
+<span class="cm">// What schema catches automatically:</span>
+<span class="cm">// ✓ missing required field (e.g. "orderId" not present)</span>
+<span class="cm">// ✓ wrong type (e.g. orderId is a string instead of integer)</span>
+<span class="cm">// ✓ invalid enum value (e.g. status = "cancelled" not in allowed list)</span>
+<span class="cm">// ✓ array minItems violated (e.g. items array is empty)</span>
+<span class="cm">// ✓ pattern mismatch (e.g. transactionId = "TX-99" doesn't match "^TXN-[0-9]+")</span>
+<span class="cm">// ✓ number below minimum (e.g. price = -5)</span></code></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- COMBINED APPROACH -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="combined">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <h2>Combined Approach — Best of All Methods</h2>
+  </div>
+
+  <p>In real projects, the best tests use <strong>multiple methods together</strong>. Schema validates structure, POJO handles deep business logic, GPath handles array filtering.</p>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-lang">java · Production-quality test combining all methods</span><div class="cb-dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="an">@Test</span>
+<span class="an">@Story</span>(<span class="st">"Validate confirmed order response"</span>)
+<span class="an">@Severity</span>(<span class="cl">SeverityLevel</span>.CRITICAL)
+<span class="kw">public void</span> <span class="mt">validateOrder_combined</span>() {
+
+    <span class="cm">// ── Step 1: Schema — validates structure and types ─────</span>
+    <span class="cl">Response</span> response = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/101"</span>)
+        .<span class="mt">then</span>()
+            .<span class="mt">statusCode</span>(<span class="nm">200</span>)
+            .<span class="mt">body</span>(<span class="mt">matchesJsonSchemaInClasspath</span>(<span class="st">"schemas/order-schema.json"</span>))
+        .<span class="mt">extract</span>().<span class="mt">response</span>();
+
+    <span class="cm">// ── Step 2: GPath — quick inline checks + array filter ──</span>
+    <span class="cl">ValidatableResponse</span> vr = response.<span class="mt">then</span>();
+    vr.<span class="mt">body</span>(<span class="st">"status"</span>,                           <span class="mt">equalTo</span>(<span class="st">"confirmed"</span>))
+      .<span class="mt">body</span>(<span class="st">"items.category"</span>,                   <span class="mt">everyItem</span>(<span class="mt">equalTo</span>(<span class="st">"Electronics"</span>)))
+      .<span class="mt">body</span>(<span class="st">"items.price"</span>,                      <span class="mt">everyItem</span>(<span class="mt">greaterThan</span>(<span class="nm">0f</span>)))
+      .<span class="mt">body</span>(<span class="st">"items.find { it.name == 'Laptop' }.price"</span>, <span class="mt">equalTo</span>(<span class="nm">999.99f</span>))
+      .<span class="mt">body</span>(<span class="st">"payment.status"</span>,                   <span class="mt">equalTo</span>(<span class="st">"success"</span>))
+      .<span class="mt">body</span>(<span class="st">"timeline.event"</span>,                   <span class="mt">hasItem</span>(<span class="st">"shipped"</span>));
+
+    <span class="cm">// ── Step 3: POJO — deep business logic validation ──────</span>
+    <span class="cl">Order</span> order = response.<span class="mt">as</span>(<span class="cl">Order</span>.<span class="kw">class</span>);
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+
+    <span class="cm">// Business rule: total must equal subtotal + tax + shipping + discount</span>
+    <span class="cl">PaymentBreakdown</span> bd = order.<span class="mt">getPayment</span>().<span class="mt">getBreakdown</span>();
+    <span class="kw">double</span> expected = bd.<span class="mt">getSubtotal</span>() + bd.<span class="mt">getTax</span>() + bd.<span class="mt">getShipping</span>() + bd.<span class="mt">getDiscount</span>();
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getTotalAmount</span>(), expected, <span class="nm">0.01</span>, <span class="st">"Total matches breakdown"</span>);
+
+    <span class="cm">// Business rule: all items must have at least one tag</span>
+    order.<span class="mt">getItems</span>().<span class="mt">forEach</span>(item ->
+        soft.<span class="mt">assertFalse</span>(item.<span class="mt">getTags</span>().<span class="mt">isEmpty</span>(),
+            <span class="st">"Item '"</span> + item.<span class="mt">getName</span>() + <span class="st">"' has no tags"</span>)
+    );
+
+    <span class="cm">// Business rule: timeline must start with "placed"</span>
+    soft.<span class="mt">assertEquals</span>(
+        order.<span class="mt">getTimeline</span>().<span class="mt">get</span>(<span class="nm">0</span>).<span class="mt">getEvent</span>(), <span class="st">"placed"</span>,
+        <span class="st">"First timeline event must be placed"</span>
+    );
+
+    <span class="cm">// Business rule: geo coordinates should be within India bounds</span>
+    <span class="kw">double</span> lat = order.<span class="mt">getCustomer</span>().<span class="mt">getAddress</span>().<span class="mt">getGeo</span>().<span class="mt">getLat</span>();
+    soft.<span class="mt">assertTrue</span>(lat >= <span class="nm">8.0</span> && lat <= <span class="nm">37.0</span>, <span class="st">"Lat within India bounds"</span>);
+
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- WHICH TO USE WHEN -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="sec" id="which">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <h2>Which Method to Use When</h2>
+  </div>
+
+  <div class="comp-wrap">
+    <div class="comp-head">
+      <div>Scenario</div>
+      <div>JsonPath</div>
+      <div>POJO</div>
+      <div>Map</div>
+      <div>GPath</div>
+      <div>Schema</div>
+    </div>
+    <div class="comp-row">
+      <div>Check 1–3 specific fields</div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="part">△</span></div>
+      <div><span class="part">△</span></div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Deep nested objects (4+ levels)</div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="cross">✗ Messy</span></div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Business logic validation</div>
+      <div><span class="part">△</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="part">△</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Filter arrays by condition</div>
+      <div><span class="part">△</span></div>
+      <div><span class="part">△ (loop)</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Validate all items in list</div>
+      <div><span class="part">△</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="part">△</span></div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>No POJO classes available</div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="part">△</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Validate response structure/types</div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="part">△</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Best</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Catch missing required fields</div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Best</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Dynamic / unknown response structure</div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="tick">✓ Good</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+    <div class="comp-row">
+      <div>Type safety + IDE autocomplete</div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="tick">✓ Best</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+      <div><span class="cross">✗</span></div>
+    </div>
+  </div>
+
+  <div class="note note-tip">
+    <p>⭐ <strong>Golden Rule for Real Projects:</strong> Use <strong>Schema</strong> to validate structure once, <strong>GPath</strong> for quick inline checks and array filtering, and <strong>POJO + SoftAssert</strong> for deep business rule validation. These three together give you the most complete coverage.</p>
+  </div>
+
+  <h3>Quick Decision Guide</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>If you need to...</th><th>Use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>"customer.address.geo.lat" is not null</td><td>JsonPath or GPath inline</td></tr>
+        <tr><td>All items have price &gt; 0</td><td>GPath: <code>everyItem(greaterThan(0f))</code></td></tr>
+        <tr><td>Find item named "Laptop" and check price</td><td>GPath: <code>find { it.name == 'Laptop' }.price</code></td></tr>
+        <tr><td>Validate total = subtotal + tax + discount</td><td>POJO — compute and compare with double math</td></tr>
+        <tr><td>Verify "transactionId" matches pattern TXN-XXXXX</td><td>JSON Schema with <code>pattern</code></td></tr>
+        <tr><td>Loop all orders and assert each has a customer</td><td>POJO with <code>forEach</code> + SoftAssert</td></tr>
+        <tr><td>Check "status" field is one of allowed values</td><td>JSON Schema <code>enum</code> or GPath <code>containsInAnyOrder</code></td></tr>
+        <tr><td>Response has new fields you don't know yet</td><td>JSON Schema — will catch unexpected type changes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end .wrap -->
+
+<footer>
+  Nested Response Validation Guide · REST Assured 5.4 · TestNG 7.9 · Jackson 2.16
+</footer>
+
+</body>
+</html>
