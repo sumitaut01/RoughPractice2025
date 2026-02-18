@@ -24,20 +24,15 @@ Scenario
 Purpose: Defines a single test case.
 
 Equivalent to one test method.
-
 Built with Given → When → Then flow.
-
 Scenario: Successful LogIn with Valid Credentials
   Given User is on Home Page
   When User Navigate to LogIn Page
   Then Message displayed LogIn Successfully
 
 Scenario Outline
-
 Purpose: Defines a parameterized test with examples.
-
 Uses Examples table to run the same scenario with multiple datasets.
-
 Feature: Delivery Application - delivery type selection
 
   Rule: Only capital cities are eligible for regular delivery

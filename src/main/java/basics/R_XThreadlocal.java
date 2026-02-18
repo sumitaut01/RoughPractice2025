@@ -64,8 +64,6 @@ public class R_XThreadlocal {
 
 class RR{
     public static ThreadLocal<Integer> myInt=new ThreadLocal<>();
-
-
     public static Integer getInt(){
      return   myInt.get();
     }

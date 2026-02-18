@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Clone Operations — Study Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #00e5ff;
+    --accent2: #ff6b6b;
+    --accent3: #a3e635;
+    --accent4: #fbbf24;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --shallow: #3b82f6;
+    --deep: #8b5cf6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 60px 20px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #0a2540 0%, var(--bg) 70%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+  }
+
+  .hero-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+    background: rgba(0,229,255,0.05);
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-top: 20px;
+    max-width: 480px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-grid {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .hero-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .hero-pill:hover {
+    border-color: var(--accent4);
+    background: rgba(251,191,36,0.08);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* SECTION */
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 32px 0 12px;
+    color: var(--accent4);
+  }
+
+  p { color: #94a3b8; margin-bottom: 16px; }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-accent2::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card-accent3::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+  .card-accent4::before { background: linear-gradient(90deg, var(--accent4), transparent); }
+
+  /* CODE BLOCKS */
+  pre {
+    background: #060d1a;
+    border: 1px solid #1e2d45;
+    border-radius: 12px;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: #e2e8f0;
+  }
+
+  .kw  { color: #c792ea; }
+  .type{ color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cm  { color: #546e7a; font-style: italic; }
+  .fn  { color: #82aaff; }
+  .cls { color: #ffcb6b; }
+
+  /* MEMORY DIAGRAM */
+  .memory-diagram {
+    background: #060d1a;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    overflow-x: auto;
+  }
+
+  .mem-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 10px 0;
+  }
+
+  .mem-label {
+    color: var(--muted);
+    width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+  }
+
+  .mem-box {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    min-width: 120px;
+    text-align: center;
+    color: var(--text);
+    position: relative;
+    background: var(--surface);
+  }
+
+  .mem-box.stack { border-color: var(--shallow); color: #93c5fd; }
+  .mem-box.heap  { border-color: var(--deep);    color: #c4b5fd; }
+  .mem-box.same  { border-color: var(--accent2); color: var(--accent2); }
+  .mem-box.diff  { border-color: var(--accent3); color: var(--accent3); }
+
+  .mem-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+  }
+
+  .mem-addr {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .mem-section-title {
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* COMPARISON TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.88rem;
+  }
+
+  th {
+    background: var(--surface2);
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #94a3b8;
+    vertical-align: top;
+  }
+
+  td:first-child { color: var(--text); font-weight: 600; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .tag-yes  { background: rgba(163,230,53,0.15);  color: var(--accent3); }
+  .tag-no   { background: rgba(255,107,107,0.15); color: var(--accent2); }
+  .tag-warn { background: rgba(251,191,36,0.15);  color: var(--accent4); }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(0,229,255,0.05);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 22px;
+    margin: 20px 0;
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+
+  .callout.warn {
+    border-color: var(--accent4);
+    background: rgba(251,191,36,0.05);
+  }
+
+  .callout.danger {
+    border-color: var(--accent2);
+    background: rgba(255,107,107,0.05);
+  }
+
+  .callout strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* VISUAL COMPARE */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .compare-card h4 {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare-card.shallow h4 { color: var(--shallow); border-color: rgba(59,130,246,0.3); }
+  .compare-card.deep h4    { color: var(--deep);    border-color: rgba(139,92,246,0.3); }
+
+  .check-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .check-item .dot { flex-shrink: 0; margin-top: 6px; width: 6px; height: 6px; border-radius: 50%; }
+  .shallow .dot { background: var(--shallow); }
+  .deep .dot    { background: var(--deep); }
+
+  /* QUIZ */
+  .quiz-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .quiz-section h3 { color: var(--accent); margin-top: 0; }
+
+  .quiz-q {
+    background: #060d1a;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    border-left: 3px solid var(--accent);
+  }
+
+  .quiz-q p { color: var(--text); margin-bottom: 12px; font-weight: 600; font-size: 0.9rem; }
+
+  details summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    user-select: none;
+    list-style: none;
+  }
+
+  details summary::-webkit-details-marker { display: none; }
+
+  details[open] summary { color: var(--accent4); margin-bottom: 10px; }
+
+  .answer {
+    background: rgba(163,230,53,0.05);
+    border: 1px solid rgba(163,230,53,0.2);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--accent3);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 48px 0 0;
+  }
+
+  .toc h4 {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc li {
+    counter-increment: toc;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.9rem;
+  }
+
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    min-width: 24px;
+  }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Java Study Notes</div>
+  <h1>Clone<br><span>Operations</span></h1>
+  <p class="hero-sub">Everything you need to understand object cloning in Java — from primitives to deep copy.</p>
+  <div class="hero-grid">
+    <div class="hero-pill">Why Clone?</div>
+    <div class="hero-pill">Shallow vs Deep</div>
+    <div class="hero-pill">Primitives vs Objects</div>
+    <div class="hero-pill">Cloneable Interface</div>
+  </div>
+
+  <div class="container">
+    <div class="toc">
+      <h4>Contents</h4>
+      <ol>
+        <li><a href="#why">Why Do We Need Cloning?</a></li>
+        <li><a href="#how">How Cloning Works in Java</a></li>
+        <li><a href="#primitives">Primitive vs Non-Primitive Behaviour</a></li>
+        <li><a href="#shallow">Shallow Copy</a></li>
+        <li><a href="#deep">Deep Copy</a></li>
+        <li><a href="#compare">Shallow vs Deep — Full Comparison</a></li>
+        <li><a href="#alternatives">Alternatives to clone()</a></li>
+        <li><a href="#quiz">Quick Quiz</a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1: WHY -->
+<section id="why">
+  <div class="container">
+    <div class="section-label">Section 01</div>
+    <h2>Why Do We Need Cloning?</h2>
+
+    <p>In Java, when you assign an object to another variable using <code>=</code>, you are <strong>not copying the object</strong> — you are copying the <strong>reference</strong> (memory address). Both variables now point to the exact same object in heap memory.</p>
+
+    <p>This means changing one will affect the other. Cloning solves this by creating an <strong>independent copy</strong> of an object.</p>
+
+    <div class="card card-accent2">
+      <h3 style="margin-top:0; color: var(--accent2)">The Problem — Without Cloning</h3>
+      <pre data-lang="Java"><code><span class="cls">Employee</span> emp1 = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>);
+<span class="cls">Employee</span> emp2 = emp1;  <span class="cm">// NOT a copy — both point to same object</span>
+
+emp2.<span class="fn">setName</span>(<span class="str">"Bob"</span>);
+
+<span class="cls">System</span>.out.<span class="fn">println</span>(emp1.<span class="fn">getName</span>());  <span class="cm">// Prints "Bob" 😱 — emp1 was modified!</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(emp2.<span class="fn">getName</span>());  <span class="cm">// Prints "Bob"</span></code></pre>
+    </div>
+
+    <div class="memory-diagram">
+      <div class="mem-section-title">Stack Memory</div>
+      <div class="mem-row">
+        <div class="mem-label">emp1</div>
+        <div class="mem-box stack">ref → 0x1A2B</div>
+        <div class="mem-arrow">──┐</div>
+      </div>
+      <div class="mem-row">
+        <div class="mem-label">emp2</div>
+        <div class="mem-box stack">ref → 0x1A2B</div>
+        <div class="mem-arrow">──┘</div>
+      </div>
+      <div class="mem-section-title">Heap Memory</div>
+      <div class="mem-row">
+        <div class="mem-label">0x1A2B</div>
+        <div class="mem-box same">Employee { name="Bob", salary=50000 }</div>
+      </div>
+      <div style="color: var(--accent2); font-size: 0.75rem; margin-top: 12px;">⚠ Both emp1 and emp2 point to the same heap object. Any change affects both.</div>
+    </div>
+
+    <div class="callout">
+      <strong>Key Insight</strong>
+      Cloning is needed whenever you want to <strong>work on a copy of an object without affecting the original</strong>. Common use cases: undo/redo systems, caching, prototype patterns, test data setup.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: HOW -->
+<section id="how">
+  <div class="container">
+    <div class="section-label">Section 02</div>
+    <h2>How Cloning Works in Java</h2>
+
+    <p>Java provides the <code>clone()</code> method in the <code>Object</code> class. To use it, your class must:</p>
+
+    <div class="card">
+      <div style="display:flex; gap:24px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+          <div style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:0.75rem; margin-bottom:8px;">STEP 1</div>
+          <strong>Implement Cloneable</strong>
+          <p style="margin-top:8px;">The class must implement the <code>Cloneable</code> marker interface (it has no methods — it just signals intent).</p>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <div style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:0.75rem; margin-bottom:8px;">STEP 2</div>
+          <strong>Override clone()</strong>
+          <p style="margin-top:8px;">Override the <code>clone()</code> method and call <code>super.clone()</code>. Make it <code>public</code> and handle <code>CloneNotSupportedException</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Employee</span> <span class="kw">implements</span> <span class="cls">Cloneable</span> {
+    <span class="kw">private</span> <span class="type">String</span> name;
+    <span class="kw">private</span> <span class="type">int</span>    salary;
+
+    <span class="kw">public</span> <span class="fn">Employee</span>(<span class="type">String</span> name, <span class="type">int</span> salary) {
+        <span class="kw">this</span>.name   = name;
+        <span class="kw">this</span>.salary = salary;
+    }
+
+    <span class="cm">// Getters and setters...</span>
+
+    <span class="cm">// Override clone() to make it accessible</span>
+    @<span class="cls">Override</span>
+    <span class="kw">public</span> <span class="cls">Employee</span> <span class="fn">clone</span>() {
+        <span class="kw">try</span> {
+            <span class="kw">return</span> (<span class="cls">Employee</span>) <span class="kw">super</span>.<span class="fn">clone</span>(); <span class="cm">// Object.clone() does the heavy lifting</span>
+        } <span class="kw">catch</span> (<span class="cls">CloneNotSupportedException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e);
+        }
+    }
+}
+
+<span class="cm">// Usage</span>
+<span class="cls">Employee</span> emp1 = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>);
+<span class="cls">Employee</span> emp2 = emp1.<span class="fn">clone</span>();  <span class="cm">// Separate copy!</span>
+
+emp2.<span class="fn">setName</span>(<span class="str">"Bob"</span>);
+
+<span class="cls">System</span>.out.<span class="fn">println</span>(emp1.<span class="fn">getName</span>());  <span class="cm">// "Alice" — untouched ✅</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(emp2.<span class="fn">getName</span>());  <span class="cm">// "Bob"</span></code></pre>
+
+    <div class="callout warn">
+      <strong>Important</strong>
+      If your class does <strong>not</strong> implement <code>Cloneable</code> and you call <code>clone()</code>, Java will throw <code>CloneNotSupportedException</code> at runtime.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: PRIMITIVES -->
+<section id="primitives">
+  <div class="container">
+    <div class="section-label">Section 03</div>
+    <h2>Primitives vs Non-Primitives</h2>
+
+    <p>This is the most important distinction in cloning. <strong>Primitives and non-primitives behave completely differently</strong> when cloned.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card shallow">
+        <h4>✅ Primitive Fields (int, double, boolean, char...)</h4>
+        <div class="check-item"><div class="dot"></div> Values are <strong style="color:var(--text)">copied by value</strong></div>
+        <div class="check-item"><div class="dot"></div> Clone gets its own independent copy of the value</div>
+        <div class="check-item"><div class="dot"></div> Changing clone's primitive <strong style="color:var(--text)">does NOT affect</strong> original</div>
+        <div class="check-item"><div class="dot"></div> Safe in both shallow and deep copy</div>
+      </div>
+      <div class="compare-card deep">
+        <h4>⚠️ Non-Primitive Fields (Objects, Arrays, Lists...)</h4>
+        <div class="check-item"><div class="dot"></div> References are <strong style="color:var(--text)">copied by reference</strong></div>
+        <div class="check-item"><div class="dot"></div> Clone and original share the same nested object</div>
+        <div class="check-item"><div class="dot"></div> Changing clone's nested object <strong style="color:var(--text)">DOES affect</strong> original</div>
+        <div class="check-item"><div class="dot"></div> Only safe in a full deep copy</div>
+      </div>
+    </div>
+
+    <h3>Seeing Both in Action</h3>
+
+    <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Address</span> {
+    <span class="type">String</span> city;
+    <span class="kw">public</span> <span class="fn">Address</span>(<span class="type">String</span> city) { <span class="kw">this</span>.city = city; }
+}
+
+<span class="kw">class</span> <span class="cls">Employee</span> <span class="kw">implements</span> <span class="cls">Cloneable</span> {
+    <span class="type">String</span>  name;    <span class="cm">// String (special — immutable, behaves like primitive)</span>
+    <span class="type">int</span>     salary;  <span class="cm">// primitive</span>
+    <span class="cls">Address</span> address; <span class="cm">// non-primitive object ← the tricky one</span>
+
+    <span class="kw">public</span> <span class="cls">Employee</span> <span class="fn">clone</span>() { <span class="cm">/* ... */</span> }
+}
+
+<span class="cm">// Test it</span>
+<span class="cls">Employee</span> original = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>, <span class="kw">new</span> <span class="cls">Address</span>(<span class="str">"London"</span>));
+<span class="cls">Employee</span> clone    = original.<span class="fn">clone</span>(); <span class="cm">// shallow clone</span>
+
+<span class="cm">// Modify the CLONE's salary (primitive) — safe ✅</span>
+clone.salary = <span class="num">99999</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(original.salary); <span class="cm">// 50000 — original unchanged</span>
+
+<span class="cm">// Modify the CLONE's address city (non-primitive) — dangerous ⚠️</span>
+clone.address.city = <span class="str">"Paris"</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(original.address.city); <span class="cm">// "Paris" 😱 original changed!</span></code></pre>
+
+    <div class="memory-diagram">
+      <div class="mem-section-title">After Shallow Clone — Stack</div>
+      <div class="mem-row">
+        <div class="mem-label">original</div>
+        <div class="mem-box stack">ref → 0xAAA0</div>
+      </div>
+      <div class="mem-row">
+        <div class="mem-label">clone</div>
+        <div class="mem-box stack">ref → 0xBBB0</div>
+      </div>
+      <div class="mem-section-title">Heap — Two Separate Employee Objects</div>
+      <div class="mem-row">
+        <div class="mem-label">0xAAA0</div>
+        <div class="mem-box diff">Employee { salary=50000, addr→0xCCC0 }</div>
+      </div>
+      <div class="mem-row">
+        <div class="mem-label">0xBBB0</div>
+        <div class="mem-box diff">Employee { salary=99999, addr→0xCCC0 }</div>
+        <div style="color:var(--accent3); font-size:0.7rem; margin-left:8px;">← new copy</div>
+      </div>
+      <div class="mem-section-title">Heap — ONE Shared Address Object</div>
+      <div class="mem-row">
+        <div class="mem-label">0xCCC0</div>
+        <div class="mem-box same">Address { city="Paris" }</div>
+        <div style="color:var(--accent2); font-size:0.7rem; margin-left:8px;">← shared by both! Changing it affects both.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: SHALLOW -->
+<section id="shallow">
+  <div class="container">
+    <div class="section-label">Section 04</div>
+    <h2>Shallow Copy</h2>
+
+    <p>A shallow copy creates a <strong>new object</strong> but copies all field values as-is. For primitives, this means a true copy. For object references, it copies only the reference — not the object itself.</p>
+
+    <p><code>super.clone()</code> by default performs a shallow copy.</p>
+
+    <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Department</span> {
+    <span class="type">String</span> name;
+    <span class="fn">Department</span>(<span class="type">String</span> name) { <span class="kw">this</span>.name = name; }
+}
+
+<span class="kw">class</span> <span class="cls">Employee</span> <span class="kw">implements</span> <span class="cls">Cloneable</span> {
+    <span class="type">String</span>     name;
+    <span class="type">int</span>        salary;
+    <span class="cls">Department</span> dept;
+
+    <span class="cm">// Shallow clone — default behaviour of super.clone()</span>
+    @<span class="cls">Override</span>
+    <span class="kw">public</span> <span class="cls">Employee</span> <span class="fn">clone</span>() {
+        <span class="kw">try</span> {
+            <span class="kw">return</span> (<span class="cls">Employee</span>) <span class="kw">super</span>.<span class="fn">clone</span>(); <span class="cm">// copies field values, NOT nested objects</span>
+        } <span class="kw">catch</span> (<span class="cls">CloneNotSupportedException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e);
+        }
+    }
+}
+
+<span class="cls">Employee</span> e1 = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>, <span class="kw">new</span> <span class="cls">Department</span>(<span class="str">"Engineering"</span>));
+<span class="cls">Employee</span> e2 = e1.<span class="fn">clone</span>();
+
+<span class="cm">// e1 and e2 are different objects (different reference)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(e1 == e2);           <span class="cm">// false</span>
+
+<span class="cm">// BUT their dept fields point to the SAME object</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(e1.dept == e2.dept);  <span class="cm">// true ← shared reference!</span></code></pre>
+
+    <div class="callout warn">
+      <strong>When Shallow Copy is OK</strong>
+      If your object only contains primitives, Strings (which are immutable), or other immutable fields, a shallow copy is perfectly safe and efficient. Problems only arise with mutable nested objects.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: DEEP -->
+<section id="deep">
+  <div class="container">
+    <div class="section-label">Section 05</div>
+    <h2>Deep Copy</h2>
+
+    <p>A deep copy creates a new object <strong>and recursively clones all nested objects</strong>. No two objects share any references. Modifying the clone <strong>never</strong> affects the original.</p>
+
+    <h3>Method 1 — Manual Deep Clone</h3>
+
+    <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Department</span> <span class="kw">implements</span> <span class="cls">Cloneable</span> {
+    <span class="type">String</span> name;
+
+    @<span class="cls">Override</span>
+    <span class="kw">public</span> <span class="cls">Department</span> <span class="fn">clone</span>() {
+        <span class="kw">try</span> { <span class="kw">return</span> (<span class="cls">Department</span>) <span class="kw">super</span>.<span class="fn">clone</span>(); }
+        <span class="kw">catch</span> (<span class="cls">CloneNotSupportedException</span> e) { <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e); }
+    }
+}
+
+<span class="kw">class</span> <span class="cls">Employee</span> <span class="kw">implements</span> <span class="cls">Cloneable</span> {
+    <span class="type">String</span>     name;
+    <span class="type">int</span>        salary;
+    <span class="cls">Department</span> dept;
+
+    <span class="cm">// Deep clone — manually clone nested objects too</span>
+    @<span class="cls">Override</span>
+    <span class="kw">public</span> <span class="cls">Employee</span> <span class="fn">clone</span>() {
+        <span class="kw">try</span> {
+            <span class="cls">Employee</span> copy = (<span class="cls">Employee</span>) <span class="kw">super</span>.<span class="fn">clone</span>(); <span class="cm">// shallow copy first</span>
+            copy.dept = <span class="kw">this</span>.dept.<span class="fn">clone</span>();            <span class="cm">// then deep clone nested object</span>
+            <span class="kw">return</span> copy;
+        } <span class="kw">catch</span> (<span class="cls">CloneNotSupportedException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e);
+        }
+    }
+}
+
+<span class="cls">Employee</span> e1 = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>, <span class="kw">new</span> <span class="cls">Department</span>(<span class="str">"Engineering"</span>));
+<span class="cls">Employee</span> e2 = e1.<span class="fn">clone</span>();
+
+e2.dept.name = <span class="str">"Marketing"</span>;
+
+<span class="cls">System</span>.out.<span class="fn">println</span>(e1.dept.name); <span class="cm">// "Engineering" — safe! ✅</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(e2.dept.name); <span class="cm">// "Marketing"</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(e1.dept == e2.dept); <span class="cm">// false — different objects ✅</span></code></pre>
+
+    <h3>Method 2 — Deep Copy via Serialization (Simpler for Complex Graphs)</h3>
+
+    <pre data-lang="Java"><code><span class="kw">import</span> java.io.*;
+
+<span class="kw">public static</span> &lt;<span class="cls">T</span> <span class="kw">extends</span> <span class="cls">Serializable</span>&gt; <span class="cls">T</span> <span class="fn">deepCopy</span>(<span class="cls">T</span> obj) <span class="kw">throws</span> <span class="cls">IOException</span>, <span class="cls">ClassNotFoundException</span> {
+    <span class="cls">ByteArrayOutputStream</span> bos = <span class="kw">new</span> <span class="cls">ByteArrayOutputStream</span>();
+    <span class="cls">ObjectOutputStream</span>    oos = <span class="kw">new</span> <span class="cls">ObjectOutputStream</span>(bos);
+    oos.<span class="fn">writeObject</span>(obj);           <span class="cm">// serialize to bytes</span>
+
+    <span class="cls">ByteArrayInputStream</span>  bis = <span class="kw">new</span> <span class="cls">ByteArrayInputStream</span>(bos.<span class="fn">toByteArray</span>());
+    <span class="cls">ObjectInputStream</span>     ois = <span class="kw">new</span> <span class="cls">ObjectInputStream</span>(bis);
+    <span class="kw">return</span> (<span class="cls">T</span>) ois.<span class="fn">readObject</span>();   <span class="cm">// deserialize to a brand new object graph</span>
+}
+
+<span class="cm">// Usage</span>
+<span class="cls">Employee</span> original = <span class="kw">new</span> <span class="cls">Employee</span>(...);
+<span class="cls">Employee</span> deepCopy  = <span class="fn">deepCopy</span>(original); <span class="cm">// 100% independent copy, no shared refs</span></code></pre>
+
+    <div class="callout">
+      <strong>Note</strong>
+      Serialization-based deep copy requires all objects in the graph to implement <code>Serializable</code>. It's slower than manual cloning but handles complex nested structures automatically.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: COMPARISON -->
+<section id="compare">
+  <div class="container">
+    <div class="section-label">Section 06</div>
+    <h2>Full Comparison Table</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Assignment (=)</th>
+          <th>Shallow Copy</th>
+          <th>Deep Copy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>New object created?</td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Primitive fields independent?</td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Nested objects independent?</td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-no">No (shared)</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Changing clone affects original?</td>
+          <td><span class="tag tag-no">Always</span></td>
+          <td><span class="tag tag-warn">Only nested objects</span></td>
+          <td><span class="tag tag-yes">Never</span></td>
+        </tr>
+        <tr>
+          <td>Performance</td>
+          <td>Fastest (just copy reference)</td>
+          <td>Fast</td>
+          <td>Slower (more allocations)</td>
+        </tr>
+        <tr>
+          <td>Safe for mutable nested objects?</td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Requires Cloneable?</td>
+          <td><span class="tag tag-no">No</span></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td><span class="tag tag-yes">Yes (or Serializable)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION 7: ALTERNATIVES -->
+<section id="alternatives">
+  <div class="container">
+    <div class="section-label">Section 07</div>
+    <h2>Alternatives to clone()</h2>
+
+    <p>The <code>clone()</code> mechanism is widely considered <strong>broken and error-prone</strong> in Java (even Joshua Bloch says so in Effective Java). Here are cleaner alternatives:</p>
+
+    <div class="card card-accent3">
+      <h3 style="margin-top:0; color:var(--accent3)">1. Copy Constructor</h3>
+      <p>A constructor that takes an instance of the same class and copies its fields. Simple, clear, no exceptions.</p>
+      <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Employee</span> {
+    <span class="type">String</span>     name;
+    <span class="type">int</span>        salary;
+    <span class="cls">Department</span> dept;
+
+    <span class="cm">// Copy constructor</span>
+    <span class="kw">public</span> <span class="fn">Employee</span>(<span class="cls">Employee</span> other) {
+        <span class="kw">this</span>.name   = other.name;
+        <span class="kw">this</span>.salary = other.salary;
+        <span class="kw">this</span>.dept   = <span class="kw">new</span> <span class="cls">Department</span>(other.dept.name); <span class="cm">// deep copy of nested object</span>
+    }
+}
+
+<span class="cls">Employee</span> original = <span class="kw">new</span> <span class="cls">Employee</span>(<span class="str">"Alice"</span>, <span class="num">50000</span>, <span class="kw">new</span> <span class="cls">Department</span>(<span class="str">"Engineering"</span>));
+<span class="cls">Employee</span> copy     = <span class="kw">new</span> <span class="cls">Employee</span>(original); <span class="cm">// clean and clear</span></code></pre>
+    </div>
+
+    <div class="card card-accent4">
+      <h3 style="margin-top:0; color:var(--accent4)">2. Static Factory Copy Method</h3>
+      <pre data-lang="Java"><code><span class="kw">class</span> <span class="cls">Employee</span> {
+    <span class="kw">public static</span> <span class="cls">Employee</span> <span class="fn">copyOf</span>(<span class="cls">Employee</span> other) {
+        <span class="cls">Employee</span> copy = <span class="kw">new</span> <span class="cls">Employee</span>();
+        copy.name   = other.name;
+        copy.salary = other.salary;
+        copy.dept   = <span class="kw">new</span> <span class="cls">Department</span>(other.dept.name);
+        <span class="kw">return</span> copy;
+    }
+}
+
+<span class="cls">Employee</span> copy = <span class="cls">Employee</span>.<span class="fn">copyOf</span>(original);</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">3. Libraries (Jackson / ModelMapper)</h3>
+      <pre data-lang="Java"><code><span class="cm">// Jackson deep copy — quick and easy if you already use Jackson</span>
+<span class="cls">ObjectMapper</span> mapper = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+<span class="cls">Employee</span> copy = mapper.<span class="fn">readValue</span>(mapper.<span class="fn">writeValueAsString</span>(original), <span class="cls">Employee</span>.<span class="kw">class</span>);</code></pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Approach</th><th>Pros</th><th>Cons</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>clone()</td><td>Built-in, fast</td><td>Confusing, unsafe, CloneNotSupportedException</td></tr>
+        <tr><td>Copy Constructor</td><td>Clear, flexible, type-safe</td><td>Must write manually for every class</td></tr>
+        <tr><td>Serialization</td><td>Auto deep copy</td><td>Slow, requires Serializable on all classes</td></tr>
+        <tr><td>Jackson</td><td>Easy deep copy</td><td>Library dependency, needs default constructor</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION 8: QUIZ -->
+<section id="quiz">
+  <div class="container">
+    <div class="section-label">Section 08</div>
+    <h2>Quick Quiz</h2>
+    <p>Test yourself. Click "Reveal Answer" after you've thought about each one.</p>
+
+    <div class="quiz-section">
+      <h3>Self-Check Questions</h3>
+
+      <div class="quiz-q">
+        <p>Q1. You have an Employee with a primitive field <code>int salary</code>. You do a shallow clone and set <code>clone.salary = 99999</code>. Does the original's salary change?</p>
+        <details>
+          <summary>▶ Reveal Answer</summary>
+          <div class="answer">No. Primitives are copied by value in a clone. The clone has its own copy of salary. Changing it has zero effect on the original.</div>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <p>Q2. Employee has a field <code>Address address</code>. After a shallow clone, you do <code>clone.address.setCity("Paris")</code>. What happens to the original?</p>
+        <details>
+          <summary>▶ Reveal Answer</summary>
+          <div class="answer">The original's city also becomes "Paris". Shallow copy only copies the reference to the Address object — both original and clone point to the same Address in memory.</div>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <p>Q3. What is the difference between <code>emp1 = emp2</code> and <code>emp1 = emp2.clone()</code>?</p>
+        <details>
+          <summary>▶ Reveal Answer</summary>
+          <div class="answer">With <code>=</code>, both variables point to the same object — no new object is created. With <code>clone()</code>, a new Employee object is created. emp1 and emp2 are separate objects (emp1 == emp2 is false), but they may still share nested object references (shallow copy).</div>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <p>Q4. What happens if you call <code>clone()</code> on a class that does NOT implement <code>Cloneable</code>?</p>
+        <details>
+          <summary>▶ Reveal Answer</summary>
+          <div class="answer">Java throws CloneNotSupportedException at runtime. The Cloneable interface is a marker that signals to Object.clone() that it's allowed to make a field-for-field copy.</div>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <p>Q5. When would you prefer a copy constructor over <code>clone()</code>?</p>
+        <details>
+          <summary>▶ Reveal Answer</summary>
+          <div class="answer">Copy constructors are preferred because they are more readable, don't require implementing Cloneable, don't throw checked exceptions, give you full control over what gets copied, and work cleanly with inheritance. Joshua Bloch (Effective Java) recommends copy constructors over clone().</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Java Clone Operations — Study Notes &nbsp;·&nbsp; Made for learning &nbsp;·&nbsp; <span style="color:var(--accent)">Happy Coding ☕</span>
+</footer>
+
+</body>
+</html>

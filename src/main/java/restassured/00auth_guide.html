@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication vs Authorization Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .concept-box {
+            border: 3px solid;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .authn {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #ebf8ff 0%, #dbeafe 100%);
+        }
+        .authn h2 {
+            color: #2563eb;
+            border-bottom: 2px solid #3498db;
+        }
+        .authz {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        .authz h2 {
+            color: #d97706;
+            border-bottom: 2px solid #f39c12;
+        }
+        .concept-box h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .analogy {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .analogy strong {
+            color: #1e40af;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .info-item {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        .info-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 15px 0 10px 0;
+            text-align: center;
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .tech-card {
+            background: #fff;
+            border: 2px solid;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        .tech-card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid;
+        }
+        .session-card { border-color: #10b981; }
+        .session-card h3 { color: #10b981; border-bottom-color: #10b981; }
+        
+        .jwt-card { border-color: #8b5cf6; }
+        .jwt-card h3 { color: #8b5cf6; border-bottom-color: #8b5cf6; }
+        
+        .oauth-card { border-color: #ef4444; }
+        .oauth-card h3 { color: #ef4444; border-bottom-color: #ef4444; }
+        
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            margin: 6px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        .keyword { color: #82aaff; }
+        .string { color: #c3e88d; }
+        .comment { color: #546e7a; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 7px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        .flow-diagram {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+        .step { color: #2563eb; font-weight: bold; }
+        .arrow { color: #059669; }
+        .tips {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+        .tips h3 {
+            color: #92400e;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .tips ul {
+            margin-left: 18px;
+            font-size: 10px;
+            color: #92400e;
+        }
+        .tips li {
+            margin: 3px 0;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .comparison-table {
+            background: white;
+            margin: 10px 0;
+        }
+        .pros { color: #059669; }
+        .cons { color: #dc2626; }
+        .key-point {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .oauth-flow {
+            background: #fff;
+            border: 2px solid #ef4444;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .oauth-flow h4 {
+            color: #ef4444;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Authentication vs Authorization</h1>
+        <p class="subtitle">OAuth 2.0, JWT, Sessions & Security Fundamentals</p>
+        
+        <!-- CORE CONCEPTS -->
+        <div class="comparison-grid">
+            <div class="concept-box authn">
+                <h2>🔑 Authentication (AuthN)</h2>
+                
+                <div class="info-item">
+                    <strong>Question: "WHO are you?"</strong>
+                    Verifying the identity of a user, system, or entity
+                </div>
+                
+                <div class="analogy">
+                    <strong>🏨 Hotel Analogy:</strong>
+                    Showing your ID at check-in to prove you're the person who booked the room
+                </div>
+                
+                <div class="info-item">
+                    <strong>Common Methods:</strong>
+                    • Username/Password<br>
+                    • Biometrics (fingerprint, face)<br>
+                    • Multi-Factor Authentication (MFA)<br>
+                    • Social Login (Google, Facebook)<br>
+                    • Magic Links / OTP<br>
+                    • Certificate-based authentication
+                </div>
+                
+                <div class="info-item">
+                    <strong>Example Scenarios:</strong>
+                    • Logging into your email<br>
+                    • Unlocking your phone with fingerprint<br>
+                    • Entering PIN at ATM<br>
+                    • "Sign in with Google"
+                </div>
+                
+                <div class="info-item">
+                    <strong>Technologies:</strong>
+                    • Sessions (server-side)<br>
+                    • JWT (stateless tokens)<br>
+                    • OAuth 2.0 (delegation)<br>
+                    • SAML, OpenID Connect
+                </div>
+            </div>
+            
+            <div class="concept-box authz">
+                <h2>✅ Authorization (AuthZ)</h2>
+                
+                <div class="info-item">
+                    <strong>Question: "WHAT can you do?"</strong>
+                    Determining permissions and access rights after authentication
+                </div>
+                
+                <div class="analogy">
+                    <strong>🏨 Hotel Analogy:</strong>
+                    Your room key card only opens YOUR room (not other rooms) and gives you access to the gym, but not the VIP lounge
+                </div>
+                
+                <div class="info-item">
+                    <strong>Common Models:</strong>
+                    • Role-Based Access Control (RBAC)<br>
+                    • Attribute-Based Access Control (ABAC)<br>
+                    • Access Control Lists (ACL)<br>
+                    • Permission-Based<br>
+                    • Policy-Based
+                </div>
+                
+                <div class="info-item">
+                    <strong>Example Scenarios:</strong>
+                    • Admin can delete users; users cannot<br>
+                    • Read-only vs. edit access to documents<br>
+                    • Free tier vs. Premium features<br>
+                    • Manager approving vs. employee submitting
+                </div>
+                
+                <div class="info-item">
+                    <strong>Technologies:</strong>
+                    • OAuth 2.0 scopes<br>
+                    • JWT claims (roles, permissions)<br>
+                    • API Gateway policies<br>
+                    • Database-level permissions
+                </div>
+            </div>
+        </div>
+        
+        <div class="key-point">
+            <strong>🎯 Key Difference:</strong> Authentication happens FIRST (who you are), then Authorization decides WHAT you can access. You cannot authorize someone who hasn't been authenticated!
+        </div>
+        
+        <!-- TECHNOLOGIES -->
+        <div class="section-header">
+            🛠️ Authentication & Authorization Technologies
+        </div>
+        
+        <div class="tech-grid">
+            <div class="tech-card session-card">
+                <h3>🍪 Session-Based Authentication</h3>
+                
+                <div class="info-item">
+                    <strong>Type:</strong> <span class="highlight">Stateful</span> - Server stores session data
+                </div>
+                
+                <div class="info-item">
+                    <strong>Use Case:</strong> Authentication (WHO you are)
+                </div>
+                
+                <div class="flow-diagram">
+<span class="step">1.</span> User logs in with credentials
+<span class="arrow">→</span> <span class="step">2.</span> Server validates & creates session
+<span class="arrow">→</span> <span class="step">3.</span> Session ID stored in DB/memory
+<span class="arrow">→</span> <span class="step">4.</span> Session ID sent as cookie to client
+<span class="arrow">→</span> <span class="step">5.</span> Client sends cookie with each request
+<span class="arrow">→</span> <span class="step">6.</span> Server looks up session in DB
+                </div>
+                
+                <div class="info-item">
+                    <strong class="pros">✓ Advantages:</strong>
+                    • Easy to invalidate (logout anywhere)<br>
+                    • Server has full control<br>
+                    • Can store complex user state<br>
+                    • Secure (session ID is random)
+                </div>
+                
+                <div class="info-item">
+                    <strong class="cons">✗ Disadvantages:</strong>
+                    • Requires server-side storage (RAM/DB)<br>
+                    • Hard to scale horizontally<br>
+                    • Sticky sessions or shared storage needed<br>
+                    • CSRF vulnerability (needs protection)
+                </div>
+                
+                <div class="code"><span class="comment">// Example: Express.js</span>
+<span class="keyword">const</span> session = <span class="keyword">require</span>(<span class="string">'express-session'</span>);
+app.use(session({
+  secret: <span class="string">'secret-key'</span>,
+  resave: <span class="keyword">false</span>,
+  saveUninitialized: <span class="keyword">true</span>,
+  cookie: { secure: <span class="keyword">true</span> }
+}));
+<span class="comment">// Session stored server-side</span></div>
+            </div>
+            
+            <div class="tech-card jwt-card">
+                <h3>🎫 JWT (JSON Web Token)</h3>
+                
+                <div class="info-item">
+                    <strong>Type:</strong> <span class="highlight">Stateless</span> - No server storage needed
+                </div>
+                
+                <div class="info-item">
+                    <strong>Use Case:</strong> Both Authentication & Authorization
+                </div>
+                
+                <div class="flow-diagram">
+<span class="step">1.</span> User logs in with credentials
+<span class="arrow">→</span> <span class="step">2.</span> Server validates credentials
+<span class="arrow">→</span> <span class="step">3.</span> Server creates JWT with claims
+<span class="arrow">→</span> <span class="step">4.</span> JWT signed with secret/private key
+<span class="arrow">→</span> <span class="step">5.</span> JWT sent to client (localStorage/cookie)
+<span class="arrow">→</span> <span class="step">6.</span> Client sends JWT in Authorization header
+<span class="arrow">→</span> <span class="step">7.</span> Server verifies signature & reads claims
+                </div>
+                
+                <div class="info-item">
+                    <strong>Structure:</strong> <code style="background:#f3f4f6;padding:2px 4px;border-radius:3px;">Header.Payload.Signature</code>
+                </div>
+                
+                <div class="code"><span class="comment">// Payload (claims) - base64 encoded</span>
+{
+  <span class="string">"sub"</span>: <span class="string">"1234567890"</span>,        <span class="comment">// Subject (user ID)</span>
+  <span class="string">"name"</span>: <span class="string">"John Doe"</span>,         <span class="comment">// User data</span>
+  <span class="string">"role"</span>: <span class="string">"admin"</span>,            <span class="comment">// Authorization</span>
+  <span class="string">"iat"</span>: 1516239022,          <span class="comment">// Issued at</span>
+  <span class="string">"exp"</span>: 1516242622           <span class="comment">// Expiration</span>
+}</div>
+                
+                <div class="info-item">
+                    <strong class="pros">✓ Advantages:</strong>
+                    • No server storage (stateless)<br>
+                    • Easy to scale horizontally<br>
+                    • Works across domains (CORS friendly)<br>
+                    • Self-contained (has user info)
+                </div>
+                
+                <div class="info-item">
+                    <strong class="cons">✗ Disadvantages:</strong>
+                    • Cannot invalidate before expiry<br>
+                    • Larger than session ID (bandwidth)<br>
+                    • Must implement token refresh logic<br>
+                    • XSS vulnerability if in localStorage
+                </div>
+            </div>
+        </div>
+        
+        <div class="tech-card oauth-card" style="margin-bottom: 15px;">
+            <h3>🔐 OAuth 2.0 (Open Authorization)</h3>
+            
+            <div class="key-point" style="margin: 8px 0;">
+                <strong>Type:</strong> <span class="highlight">AUTHORIZATION Framework</span> (NOT Authentication!)<br>
+                <strong>Purpose:</strong> Delegate access without sharing passwords
+            </div>
+            
+            <div class="info-item">
+                <strong>Use Case:</strong> Third-party access delegation (Authorization)
+            </div>
+            
+            <div class="analogy">
+                <strong>🔑 Valet Key Analogy:</strong>
+                You give the valet a special key that can only start your car and open the trunk, but NOT the glove box. You don't give them your full car key (password).
+            </div>
+            
+            <div class="info-item">
+                <strong>Key Components (Roles):</strong>
+                <div style="margin-left: 15px; margin-top: 5px;">
+                    1. <strong>Resource Owner</strong> - You (the user)<br>
+                    2. <strong>Client</strong> - Third-party app (e.g., Canva)<br>
+                    3. <strong>Authorization Server</strong> - OAuth provider (Google)<br>
+                    4. <strong>Resource Server</strong> - API with protected data (Google Drive)
+                </div>
+            </div>
+            
+            <div class="oauth-flow">
+                <h4>📋 Authorization Code Flow (Most Common)</h4>
+                <div class="flow-diagram">
+<span class="step">1.</span> User clicks "Sign in with Google" on Canva
+<span class="arrow">→</span> <span class="step">2.</span> Canva redirects to Google (Authorization Server)
+<span class="arrow">→</span> <span class="step">3.</span> User logs in to Google (Authentication)
+<span class="arrow">→</span> <span class="step">4.</span> Google shows: "Canva wants to access your Drive"
+<span class="arrow">→</span> <span class="step">5.</span> User approves (Authorization)
+<span class="arrow">→</span> <span class="step">6.</span> Google redirects back with authorization code
+<span class="arrow">→</span> <span class="step">7.</span> Canva exchanges code for access token
+<span class="arrow">→</span> <span class="step">8.</span> Canva uses token to access Google Drive API
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <strong>OAuth 2.0 Scopes (Permissions):</strong>
+                <div class="code">scope=read:user,write:repo,delete:project
+<span class="comment">// Fine-grained permissions</span></div>
+            </div>
+            
+            <div class="info-item">
+                <strong>Grant Types (Flows):</strong>
+                • <strong>Authorization Code</strong> - Web apps (most secure)<br>
+                • <strong>Implicit</strong> - SPAs (deprecated, use PKCE)<br>
+                • <strong>Client Credentials</strong> - Server-to-server<br>
+                • <strong>Resource Owner Password</strong> - Legacy (avoid)<br>
+                • <strong>PKCE</strong> - Mobile/SPA (modern standard)
+            </div>
+            
+            <div class="key-point">
+                ⚠️ <strong>Important:</strong> OAuth 2.0 is for AUTHORIZATION, not authentication! For authentication, use <strong>OpenID Connect (OIDC)</strong>, which is built on top of OAuth 2.0 and adds an ID token with user info.
+            </div>
+        </div>
+        
+        <!-- COMPARISON TABLE -->
+        <div class="section-header">
+            📊 Technology Comparison Matrix
+        </div>
+        
+        <table class="comparison-table">
+            <tr>
+                <th>Feature</th>
+                <th>Session</th>
+                <th>JWT</th>
+                <th>OAuth 2.0</th>
+            </tr>
+            <tr>
+                <td><strong>Primary Purpose</strong></td>
+                <td>Authentication</td>
+                <td>Authentication & Authorization</td>
+                <td>Authorization (delegation)</td>
+            </tr>
+            <tr>
+                <td><strong>State</strong></td>
+                <td>Stateful (server stores)</td>
+                <td>Stateless (self-contained)</td>
+                <td>Tokens are stateless</td>
+            </tr>
+            <tr>
+                <td><strong>Storage Location</strong></td>
+                <td>Server (DB/Redis/Memory)</td>
+                <td>Client (localStorage/cookie)</td>
+                <td>Client (access/refresh tokens)</td>
+            </tr>
+            <tr>
+                <td><strong>Scalability</strong></td>
+                <td>Harder (shared state needed)</td>
+                <td>Easy (no server state)</td>
+                <td>Easy (stateless tokens)</td>
+            </tr>
+            <tr>
+                <td><strong>Revocation</strong></td>
+                <td>Easy (delete from DB)</td>
+                <td>Hard (wait for expiry)</td>
+                <td>Refresh token can be revoked</td>
+            </tr>
+            <tr>
+                <td><strong>Size</strong></td>
+                <td>Small (just session ID)</td>
+                <td>Larger (contains data)</td>
+                <td>Varies (tokens + metadata)</td>
+            </tr>
+            <tr>
+                <td><strong>Security Risk</strong></td>
+                <td>CSRF (needs tokens)</td>
+                <td>XSS (if in localStorage)</td>
+                <td>Token leakage, scope creep</td>
+            </tr>
+            <tr>
+                <td><strong>Best For</strong></td>
+                <td>Traditional web apps</td>
+                <td>Microservices, APIs, SPAs</td>
+                <td>Third-party integrations</td>
+            </tr>
+            <tr>
+                <td><strong>Cross-Domain</strong></td>
+                <td>Limited (same domain)</td>
+                <td>Yes (CORS friendly)</td>
+                <td>Yes (designed for it)</td>
+            </tr>
+            <tr>
+                <td><strong>Contains User Info</strong></td>
+                <td>No (lookup needed)</td>
+                <td>Yes (in payload)</td>
+                <td>No (opaque token)</td>
+            </tr>
+        </table>
+        
+        <!-- WHEN TO USE WHAT -->
+        <div class="section-header">
+            🎯 Decision Guide: When to Use What?
+        </div>
+        
+        <table>
+            <tr>
+                <th>Scenario</th>
+                <th>Recommended Approach</th>
+                <th>Why?</th>
+            </tr>
+            <tr>
+                <td>Traditional monolithic web app</td>
+                <td><strong>Sessions</strong></td>
+                <td>Simple, secure, easy revocation</td>
+            </tr>
+            <tr>
+                <td>Single Page Application (SPA)</td>
+                <td><strong>JWT + HttpOnly Cookies</strong></td>
+                <td>Stateless, XSS protected, CSRF tokens</td>
+            </tr>
+            <tr>
+                <td>Mobile app authentication</td>
+                <td><strong>JWT (access + refresh tokens)</strong></td>
+                <td>Offline capability, stateless</td>
+            </tr>
+            <tr>
+                <td>Microservices architecture</td>
+                <td><strong>JWT</strong></td>
+                <td>Stateless, service-to-service auth</td>
+            </tr>
+            <tr>
+                <td>Third-party app needs your data</td>
+                <td><strong>OAuth 2.0</strong></td>
+                <td>Delegated access, no password sharing</td>
+            </tr>
+            <tr>
+                <td>"Sign in with Google/Facebook"</td>
+                <td><strong>OAuth 2.0 + OpenID Connect</strong></td>
+                <td>Social login, authentication + authorization</td>
+            </tr>
+            <tr>
+                <td>API Gateway</td>
+                <td><strong>JWT + API Keys</strong></td>
+                <td>Stateless validation, rate limiting</td>
+            </tr>
+            <tr>
+                <td>Need instant logout everywhere</td>
+                <td><strong>Sessions or JWT + Blacklist</strong></td>
+                <td>Centralized revocation control</td>
+            </tr>
+        </table>
+        
+        <!-- BEST PRACTICES -->
+        <div class="tips">
+            <h3>💡 Security Best Practices & Interview Tips</h3>
+            <ul>
+                <li><strong>Sessions:</strong> Use secure, HttpOnly cookies; implement CSRF protection; store in Redis for scalability</li>
+                <li><strong>JWT:</strong> Use short expiry (15 min access, 7 day refresh); store in HttpOnly cookies (NOT localStorage); implement refresh token rotation</li>
+                <li><strong>OAuth 2.0:</strong> Always use PKCE for mobile/SPA; validate redirect URIs; use state parameter to prevent CSRF</li>
+                <li><strong>Common Interview Q:</strong> "Why not store JWT in localStorage?" → XSS attacks can steal it. Use HttpOnly cookies instead.</li>
+                <li><strong>Remember:</strong> OAuth 2.0 alone is NOT authentication. For "Sign in with Google," you need OpenID Connect (OIDC).</li>
+                <li><strong>JWT Claims:</strong> Use 'sub' for user ID, 'iat' for issued time, 'exp' for expiry, custom claims for roles/permissions</li>
+                <li><strong>OAuth Scopes:</strong> Principle of least privilege - only request scopes you need (read:user, not admin:all)</li>
+                <li><strong>Hybrid Approach:</strong> Session for web UI, JWT for API, OAuth for third-party = valid architecture</li>
+                <li><strong>Token Refresh:</strong> When access token expires, use refresh token to get new one (without re-authentication)</li>
+                <li><strong>Revocation:</strong> Sessions: delete from DB. JWT: maintain blacklist or use short TTL. OAuth: revoke refresh token.</li>
+                <li><strong>HTTPS Required:</strong> All authentication methods MUST use HTTPS in production (prevents token interception)</li>
+                <li><strong>Multi-Tenancy:</strong> Add tenant ID to JWT claims or session data for proper isolation</li>
+            </ul>
+        </div>
+        
+        <div class="key-point">
+            <strong>🔑 Master Key Takeaway:</strong> Authentication proves WHO you are. Authorization determines WHAT you can do. Sessions and JWT are authentication mechanisms. OAuth 2.0 is an authorization framework for delegating access. They work together in modern systems!
+        </div>
+    </div>
+</body>
+</html>

@@ -32,8 +32,6 @@ public class R_XStringImmutable {
 
 
     public static void main(String[] args) {
-
-
         String s1="Sumit";//suit goes into shared string pool
 
         System.out.println(s1);//Sumit

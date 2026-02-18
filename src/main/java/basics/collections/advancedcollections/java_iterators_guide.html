@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Iterators: Fail-Fast vs Fail-Safe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            font-size: 26px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .iterator-box {
+            border: 3px solid;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        .fail-fast {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+        }
+        .fail-fast h2 {
+            color: #e74c3c;
+            border-bottom: 2px solid #e74c3c;
+        }
+        .fail-safe {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+        .fail-safe h2 {
+            color: #27ae60;
+            border-bottom: 2px solid #27ae60;
+        }
+        .iterator-box h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-item {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        .info-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            margin: 8px 0;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        .keyword { color: #82aaff; }
+        .string { color: #c3e88d; }
+        .comment { color: #546e7a; }
+        .class-name { color: #ffcb6b; }
+        .error { color: #ff5370; }
+        .collections-list {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 6px 0;
+            font-size: 11px;
+        }
+        .collections-list ul {
+            margin-left: 18px;
+            margin-top: 4px;
+        }
+        .collections-list li {
+            margin: 2px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f5576c;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+        .section-title {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 15px 0 10px 0;
+            text-align: center;
+        }
+        .tips {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin: 15px 0 0 0;
+            border-radius: 4px;
+        }
+        .tips h3 {
+            color: #1565c0;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .tips ul {
+            margin-left: 20px;
+            font-size: 11px;
+            color: #1565c0;
+        }
+        .tips li {
+            margin: 3px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .feature-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 11px;
+        }
+        .feature-box h4 {
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Fail-Fast vs Fail-Safe Iterators</h1>
+        <p class="subtitle">Java Collections Framework - Interview Guide</p>
+        
+        <div class="comparison-grid">
+            <div class="iterator-box fail-fast">
+                <h2>❌ FAIL-FAST Iterators</h2>
+                
+                <div class="info-item">
+                    <strong>Behavior:</strong>
+                    Throws <span class="highlight">ConcurrentModificationException</span> immediately when collection is modified during iteration
+                </div>
+                
+                <div class="info-item">
+                    <strong>Mechanism:</strong>
+                    Uses <span class="highlight">modCount</span> (modification count) to detect structural changes
+                </div>
+                
+                <div class="code"><span class="keyword">List</span>&lt;<span class="class-name">String</span>&gt; list = <span class="keyword">new</span> <span class="class-name">ArrayList</span>&lt;&gt;();
+list.add(<span class="string">"A"</span>);
+list.add(<span class="string">"B"</span>);
+list.add(<span class="string">"C"</span>);
+
+<span class="keyword">for</span> (<span class="class-name">String</span> item : list) {
+    System.out.println(item);
+    list.remove(item); <span class="comment">// ❌ CMException!</span>
+}</div>
+
+                <div class="info-item">
+                    <strong>Collections (java.util):</strong>
+                </div>
+                <div class="collections-list">
+                    <ul>
+                        <li><strong>ArrayList</strong> - Dynamic array</li>
+                        <li><strong>LinkedList</strong> - Doubly-linked list</li>
+                        <li><strong>HashMap</strong> - Hash table</li>
+                        <li><strong>HashSet</strong> - Hash-based set</li>
+                        <li><strong>TreeMap</strong> - Red-black tree</li>
+                        <li><strong>TreeSet</strong> - Tree-based set</li>
+                        <li><strong>Vector</strong> (legacy)</li>
+                        <li><strong>Hashtable</strong> (legacy)</li>
+                    </ul>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Advantages:</strong>
+                    <div class="collections-list">
+                        ✓ Fast detection of concurrent modification<br>
+                        ✓ Prevents data corruption<br>
+                        ✓ No memory overhead (works on original)
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Disadvantages:</strong>
+                    <div class="collections-list">
+                        ✗ Cannot modify during iteration<br>
+                        ✗ Not thread-safe<br>
+                        ✗ Exception handling needed
+                    </div>
+                </div>
+            </div>
+            
+            <div class="iterator-box fail-safe">
+                <h2>✅ FAIL-SAFE Iterators</h2>
+                
+                <div class="info-item">
+                    <strong>Behavior:</strong>
+                    Never throws exception; works on <span class="highlight">clone/snapshot</span> of collection
+                </div>
+                
+                <div class="info-item">
+                    <strong>Mechanism:</strong>
+                    Iterates over a <span class="highlight">copy</span> of the collection (original remains unchanged)
+                </div>
+                
+                <div class="code"><span class="keyword">List</span>&lt;<span class="class-name">String</span>&gt; list = 
+    <span class="keyword">new</span> <span class="class-name">CopyOnWriteArrayList</span>&lt;&gt;();
+list.add(<span class="string">"A"</span>);
+list.add(<span class="string">"B"</span>);
+list.add(<span class="string">"C"</span>);
+
+<span class="keyword">for</span> (<span class="class-name">String</span> item : list) {
+    System.out.println(item);
+    list.remove(item); <span class="comment">// ✓ No exception!</span>
+}
+<span class="comment">// Modifications not visible in iteration</span></div>
+
+                <div class="info-item">
+                    <strong>Collections (java.util.concurrent):</strong>
+                </div>
+                <div class="collections-list">
+                    <ul>
+                        <li><strong>CopyOnWriteArrayList</strong> - Thread-safe list</li>
+                        <li><strong>CopyOnWriteArraySet</strong> - Thread-safe set</li>
+                        <li><strong>ConcurrentHashMap</strong> - Concurrent map</li>
+                        <li><strong>ConcurrentSkipListMap</strong> - Concurrent sorted map</li>
+                        <li><strong>ConcurrentSkipListSet</strong> - Concurrent sorted set</li>
+                        <li><strong>ConcurrentLinkedQueue</strong> - Non-blocking queue</li>
+                        <li><strong>ConcurrentLinkedDeque</strong> - Non-blocking deque</li>
+                    </ul>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Advantages:</strong>
+                    <div class="collections-list">
+                        ✓ No ConcurrentModificationException<br>
+                        ✓ Thread-safe for concurrent access<br>
+                        ✓ Safe modification during iteration
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Disadvantages:</strong>
+                    <div class="collections-list">
+                        ✗ Memory overhead (creates copy)<br>
+                        ✗ Slower for write operations<br>
+                        ✗ Iterator may not reflect latest changes
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">📊 Key Differences Comparison</div>
+        
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th style="background: #e74c3c;">Fail-Fast</th>
+                <th style="background: #27ae60;">Fail-Safe</th>
+            </tr>
+            <tr>
+                <td><strong>Exception Thrown</strong></td>
+                <td>Yes (ConcurrentModificationException)</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>Works On</strong></td>
+                <td>Original collection</td>
+                <td>Clone/snapshot of collection</td>
+            </tr>
+            <tr>
+                <td><strong>Memory Usage</strong></td>
+                <td>Low (no extra memory)</td>
+                <td>High (creates copy)</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Faster (direct access)</td>
+                <td>Slower (copying overhead)</td>
+            </tr>
+            <tr>
+                <td><strong>Thread Safety</strong></td>
+                <td>Not thread-safe</td>
+                <td>Thread-safe</td>
+            </tr>
+            <tr>
+                <td><strong>Modification Visibility</strong></td>
+                <td>Immediate detection</td>
+                <td>Not visible during iteration</td>
+            </tr>
+            <tr>
+                <td><strong>Package</strong></td>
+                <td>java.util</td>
+                <td>java.util.concurrent</td>
+            </tr>
+            <tr>
+                <td><strong>Use Case</strong></td>
+                <td>Single-threaded, read-heavy</td>
+                <td>Multi-threaded, concurrent access</td>
+            </tr>
+        </table>
+        
+        <div class="section-title">💡 Safe Modification Patterns</div>
+        
+        <div class="grid-3">
+            <div class="feature-box">
+                <h4>1. Iterator.remove()</h4>
+                <div class="code" style="margin-top: 5px;"><span class="class-name">Iterator</span>&lt;<span class="class-name">String</span>&gt; it = 
+    list.iterator();
+<span class="keyword">while</span> (it.hasNext()) {
+    <span class="class-name">String</span> s = it.next();
+    <span class="keyword">if</span> (condition) {
+        it.remove(); <span class="comment">// ✓</span>
+    }
+}</div>
+            </div>
+            
+            <div class="feature-box">
+                <h4>2. RemoveIf (Java 8+)</h4>
+                <div class="code" style="margin-top: 5px;">list.removeIf(
+    item -&gt; item.equals(<span class="string">"X"</span>)
+);
+
+<span class="comment">// Thread-safe alternative</span></div>
+            </div>
+            
+            <div class="feature-box">
+                <h4>3. Stream API (Java 8+)</h4>
+                <div class="code" style="margin-top: 5px;"><span class="class-name">List</span>&lt;<span class="class-name">String</span>&gt; filtered = 
+    list.stream()
+        .filter(s -&gt; !s.equals(<span class="string">"X"</span>))
+        .collect(Collectors
+            .toList());</div>
+            </div>
+        </div>
+        
+        <div class="tips">
+            <h3>🎯 Interview Tips & Common Questions</h3>
+            <ul>
+                <li><strong>Q: When does ConcurrentModificationException occur?</strong><br>
+                A: When collection's structure is modified (add/remove) during iteration, and iterator detects modCount change</li>
+                
+                <li><strong>Q: Is fail-fast guaranteed?</strong><br>
+                A: No! It's best-effort. Don't rely on it for program correctness—use proper synchronization</li>
+                
+                <li><strong>Q: Can multiple threads safely iterate fail-safe collections?</strong><br>
+                A: Yes, but each thread sees a snapshot. Changes by one thread won't be visible to other iterators</li>
+                
+                <li><strong>Q: Why is CopyOnWriteArrayList slow for writes?</strong><br>
+                A: Every modification creates a new copy of the entire array—O(n) for each add/remove</li>
+                
+                <li><strong>Q: When to use ConcurrentHashMap vs HashMap?</strong><br>
+                A: Use ConcurrentHashMap for multi-threaded environments; it allows concurrent reads and segmented writes</li>
+                
+                <li><strong>Common Mistake:</strong> Modifying collection in enhanced for-loop. Always use Iterator.remove() or modern alternatives</li>
+                
+                <li><strong>Performance Tip:</strong> For read-heavy operations with rare modifications, CopyOnWriteArrayList excels</li>
+                
+                <li><strong>Remember:</strong> Collections.synchronizedList() creates fail-fast iterator, not fail-safe!</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

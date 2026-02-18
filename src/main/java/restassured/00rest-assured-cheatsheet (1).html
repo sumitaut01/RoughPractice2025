@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST Assured Cheat Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tab-container {
+            display: flex;
+            background: #34495e;
+            overflow-x: auto;
+            border-bottom: 3px solid #2c3e50;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h3 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .highlight {
+            color: #e06c75;
+        }
+
+        .string {
+            color: #98c379;
+        }
+
+        .method {
+            color: #61afef;
+        }
+
+        .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .keyword {
+            color: #c678dd;
+        }
+
+        .tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip strong {
+            color: #856404;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .example-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .example-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            border-color: #3498db;
+        }
+
+        .example-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .collapsible:hover {
+            background: #d5dbdb;
+        }
+
+        .collapsible::before {
+            content: '▶';
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.active::before {
+            transform: rotate(90deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #3498db;
+            color: white;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .quick-ref {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .quick-ref-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .quick-ref-item code {
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 REST Assured Cheat Sheet</h1>
+            <p>Complete Reference for API Testing Interview Preparation</p>
+        </header>
+
+        <div class="tab-container">
+            <button class="tab active">Basics</button>
+            <button class="tab">Requests</button>
+            <button class="tab">Validations</button>
+            <button class="tab">Authentication</button>
+            <button class="tab">Auth vs Authz</button>
+            <button class="tab">Best Practices</button>
+            <button class="tab">Advanced</button>
+            <button class="tab">Examples</button>
+            <button class="tab">Interview Q&A</button>
+        </div>
+
+        <div class="content">
+            <!-- BASICS TAB -->
+            <div id="basics" class="tab-content active">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'basics')">
+                
+                <div class="section">
+                    <h2>📦 Setup & Dependencies</h2>
+                    <h3>Maven Dependency</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">&lt;dependency&gt;</span>
+    <span class="keyword">&lt;groupId&gt;</span>io.rest-assured<span class="keyword">&lt;/groupId&gt;</span>
+    <span class="keyword">&lt;artifactId&gt;</span>rest-assured<span class="keyword">&lt;/artifactId&gt;</span>
+    <span class="keyword">&lt;version&gt;</span>5.3.0<span class="keyword">&lt;/version&gt;</span>
+    <span class="keyword">&lt;scope&gt;</span>test<span class="keyword">&lt;/scope&gt;</span>
+<span class="keyword">&lt;/dependency&gt;</span></pre>
+                    </div>
+
+                    <h3>Static Imports</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">import static</span> io.restassured.RestAssured.*;
+<span class="keyword">import static</span> io.restassured.matcher.RestAssuredMatchers.*;
+<span class="keyword">import static</span> org.hamcrest.Matchers.*;</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎯 Basic Syntax</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Simple GET request</span>
+<span class="method">given</span>()
+    .when()
+        .<span class="method">get</span>(<span class="string">"https://api.example.com/users"</span>)
+    .then()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>);
+
+<span class="comment">// BDD Style (Given-When-Then)</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Content-Type"</span>, <span class="string">"application/json"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"/api/users"</span>)
+.then()
+    .<span class="method">statusCode</span>(<span class="highlight">201</span>);</pre>
+                    </div>
+
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> REST Assured follows BDD (Behavior Driven Development) style with Given-When-Then syntax for better readability.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>⚙️ Configuration</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Base URI Configuration</span>
+RestAssured.<span class="highlight">baseURI</span> = <span class="string">"https://api.example.com"</span>;
+RestAssured.<span class="highlight">basePath</span> = <span class="string">"/v1"</span>;
+RestAssured.<span class="highlight">port</span> = <span class="highlight">8080</span>;
+
+<span class="comment">// Request Specification</span>
+RequestSpecification requestSpec = <span class="keyword">new</span> RequestSpecBuilder()
+    .setBaseUri(<span class="string">"https://api.example.com"</span>)
+    .setContentType(ContentType.JSON)
+    .build();
+
+<span class="comment">// Response Specification</span>
+ResponseSpecification responseSpec = <span class="keyword">new</span> ResponseSpecBuilder()
+    .expectStatusCode(<span class="highlight">200</span>)
+    .expectContentType(ContentType.JSON)
+    .build();</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REQUESTS TAB -->
+            <div id="requests" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'requests')">
+                
+                <div class="section">
+                    <h2>📤 HTTP Methods</h2>
+                    <div class="example-grid">
+                        <div class="example-card">
+                            <h4>GET Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">get</span>(<span class="string">"/users"</span>)
+<span class="method">get</span>(<span class="string">"/users/{id}"</span>, <span class="highlight">123</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <h4>POST Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">post</span>(<span class="string">"/users"</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <h4>PUT Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">put</span>(<span class="string">"/users/{id}"</span>, <span class="highlight">123</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <h4>PATCH Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">patch</span>(<span class="string">"/users/{id}"</span>, <span class="highlight">123</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <h4>DELETE Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">delete</span>(<span class="string">"/users/{id}"</span>, <span class="highlight">123</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <h4>HEAD Request</h4>
+                            <div class="code-block">
+                                <pre><span class="method">head</span>(<span class="string">"/users"</span>)</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📋 Request Parameters</h2>
+                    <h3>Query Parameters</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">queryParam</span>(<span class="string">"page"</span>, <span class="highlight">1</span>)
+    .<span class="method">queryParam</span>(<span class="string">"limit"</span>, <span class="highlight">10</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Multiple params at once</span>
+<span class="method">given</span>()
+    .<span class="method">queryParams</span>(<span class="string">"page"</span>, <span class="highlight">1</span>, <span class="string">"limit"</span>, <span class="highlight">10</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);</pre>
+                    </div>
+
+                    <h3>Path Parameters</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">pathParam</span>(<span class="string">"id"</span>, <span class="highlight">123</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users/{id}"</span>);
+
+<span class="comment">// Multiple path params</span>
+<span class="method">given</span>()
+    .<span class="method">pathParams</span>(<span class="string">"userId"</span>, <span class="highlight">1</span>, <span class="string">"postId"</span>, <span class="highlight">5</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users/{userId}/posts/{postId}"</span>);</pre>
+                    </div>
+
+                    <h3>Form Parameters</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">formParam</span>(<span class="string">"username"</span>, <span class="string">"john"</span>)
+    .<span class="method">formParam</span>(<span class="string">"password"</span>, <span class="string">"secret"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"/login"</span>);</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📄 Request Body</h2>
+                    <h3>JSON Body</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// String JSON</span>
+String jsonBody = <span class="string">"{ \"name\": \"John\", \"email\": \"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="046e6b6c6a44617c65697468612a676b69">[email&#160;protected]</a>\" }"</span>;
+<span class="method">given</span>()
+    .<span class="method">contentType</span>(ContentType.JSON)
+    .<span class="method">body</span>(jsonBody)
+.when()
+    .<span class="method">post</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Using POJO</span>
+User user = <span class="keyword">new</span> User(<span class="string">"John"</span>, <span class="string">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a5cfcacdcbe5c0ddc4c8d5c9c08bc6cac8">[email&#160;protected]</a>"</span>);
+<span class="method">given</span>()
+    .<span class="method">contentType</span>(ContentType.JSON)
+    .<span class="method">body</span>(user)
+.when()
+    .<span class="method">post</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Using HashMap</span>
+Map&lt;String, Object&gt; jsonMap = <span class="keyword">new</span> HashMap&lt;&gt;();
+jsonMap.put(<span class="string">"name"</span>, <span class="string">"John"</span>);
+jsonMap.put(<span class="string">"email"</span>, <span class="string">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b616463654b6e736a667b676e25686466">[email&#160;protected]</a>"</span>);
+<span class="method">given</span>()
+    .<span class="method">contentType</span>(ContentType.JSON)
+    .<span class="method">body</span>(jsonMap)
+.when()
+    .<span class="method">post</span>(<span class="string">"/users"</span>);</pre>
+                    </div>
+
+                    <h3>XML Body</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">contentType</span>(ContentType.XML)
+    .<span class="method">body</span>(<span class="string">"&lt;user&gt;&lt;name&gt;John&lt;/name&gt;&lt;/user&gt;"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"/users"</span>);</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📨 Headers & Cookies</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Single Header</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer token123"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Multiple Headers</span>
+<span class="method">given</span>()
+    .<span class="method">headers</span>(<span class="string">"Content-Type"</span>, <span class="string">"application/json"</span>, 
+             <span class="string">"Accept"</span>, <span class="string">"application/json"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Cookies</span>
+<span class="method">given</span>()
+    .<span class="method">cookie</span>(<span class="string">"session_id"</span>, <span class="string">"abc123"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALIDATIONS TAB -->
+            <div id="validations" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'validations')">
+                
+                <div class="section">
+                    <h2>✅ Response Validations</h2>
+                    <h3>Status Code</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+    .<span class="method">statusLine</span>(<span class="string">"HTTP/1.1 200 OK"</span>);</pre>
+                    </div>
+
+                    <h3>Response Body - JSON Path</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">then</span>()
+    .<span class="method">body</span>(<span class="string">"name"</span>, <span class="method">equalTo</span>(<span class="string">"John"</span>))
+    .<span class="method">body</span>(<span class="string">"age"</span>, <span class="method">greaterThan</span>(<span class="highlight">18</span>))
+    .<span class="method">body</span>(<span class="string">"email"</span>, <span class="method">containsString</span>(<span class="string">"@example.com"</span>))
+    .<span class="method">body</span>(<span class="string">"data.size()"</span>, <span class="method">is</span>(<span class="highlight">10</span>))
+    .<span class="method">body</span>(<span class="string">"data[0].id"</span>, <span class="method">notNullValue</span>());</pre>
+                    </div>
+
+                    <h3>Array/List Validations</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">then</span>()
+    .<span class="method">body</span>(<span class="string">"users.size()"</span>, <span class="method">greaterThan</span>(<span class="highlight">0</span>))
+    .<span class="method">body</span>(<span class="string">"users.name"</span>, <span class="method">hasItems</span>(<span class="string">"John"</span>, <span class="string">"Jane"</span>))
+    .<span class="method">body</span>(<span class="string">"users[0].name"</span>, <span class="method">equalTo</span>(<span class="string">"John"</span>))
+    .<span class="method">body</span>(<span class="string">"users.findAll{it.age > 18}.name"</span>, 
+         <span class="method">hasItem</span>(<span class="string">"John"</span>));</pre>
+                    </div>
+
+                    <h3>Headers Validation</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">then</span>()
+    .<span class="method">header</span>(<span class="string">"Content-Type"</span>, <span class="string">"application/json"</span>)
+    .<span class="method">header</span>(<span class="string">"Server"</span>, <span class="method">containsString</span>(<span class="string">"nginx"</span>));</pre>
+                    </div>
+
+                    <h3>Response Time</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">then</span>()
+    .<span class="method">time</span>(<span class="method">lessThan</span>(<span class="highlight">2000L</span>), TimeUnit.MILLISECONDS);</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔍 Hamcrest Matchers</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Matcher</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>equalTo()</code></td>
+                                <td>Exact match</td>
+                                <td><code>equalTo("John")</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>is()</code></td>
+                                <td>Syntactic sugar</td>
+                                <td><code>is(equalTo("John"))</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>not()</code></td>
+                                <td>Negation</td>
+                                <td><code>not(equalTo("John"))</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasItems()</code></td>
+                                <td>Contains items</td>
+                                <td><code>hasItems("a", "b")</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasItem()</code></td>
+                                <td>Contains item</td>
+                                <td><code>hasItem("a")</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>greaterThan()</code></td>
+                                <td>Greater than</td>
+                                <td><code>greaterThan(18)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>lessThan()</code></td>
+                                <td>Less than</td>
+                                <td><code>lessThan(100)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>containsString()</code></td>
+                                <td>String contains</td>
+                                <td><code>containsString("@")</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>startsWith()</code></td>
+                                <td>String starts with</td>
+                                <td><code>startsWith("http")</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>notNullValue()</code></td>
+                                <td>Not null</td>
+                                <td><code>notNullValue()</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>nullValue()</code></td>
+                                <td>Is null</td>
+                                <td><code>nullValue()</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasSize()</code></td>
+                                <td>Collection size</td>
+                                <td><code>hasSize(10)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>🎭 Extract Response Data</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Extract as String</span>
+String name = <span class="method">get</span>(<span class="string">"/users/1"</span>).<span class="method">path</span>(<span class="string">"name"</span>);
+
+<span class="comment">// Extract with JsonPath</span>
+Response response = <span class="method">get</span>(<span class="string">"/users"</span>);
+JsonPath jsonPath = response.<span class="method">jsonPath</span>();
+String firstName = jsonPath.<span class="method">getString</span>(<span class="string">"data[0].name"</span>);
+List&lt;String&gt; names = jsonPath.<span class="method">getList</span>(<span class="string">"data.name"</span>);
+
+<span class="comment">// Extract entire response</span>
+Response response = <span class="method">given</span>().<span class="method">get</span>(<span class="string">"/users"</span>);
+String body = response.<span class="method">asString</span>();
+int statusCode = response.<span class="method">getStatusCode</span>();
+String header = response.<span class="method">getHeader</span>(<span class="string">"Content-Type"</span>);
+
+<span class="comment">// Deserialize to POJO</span>
+User user = <span class="method">get</span>(<span class="string">"/users/1"</span>).<span class="method">as</span>(User.<span class="keyword">class</span>);</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTHENTICATION TAB -->
+            <div id="auth" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'auth')">
+                
+                <div class="section">
+                    <h2>🔐 Authentication Methods</h2>
+                    
+                    <h3>Basic Authentication</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">auth</span>().<span class="method">basic</span>(<span class="string">"username"</span>, <span class="string">"password"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/secure/users"</span>);</pre>
+                    </div>
+
+                    <h3>Preemptive Basic Auth</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">auth</span>().<span class="method">preemptive</span>().<span class="method">basic</span>(<span class="string">"username"</span>, <span class="string">"password"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/secure/users"</span>);</pre>
+                    </div>
+
+                    <h3>Digest Authentication</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">auth</span>().<span class="method">digest</span>(<span class="string">"username"</span>, <span class="string">"password"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/secure/users"</span>);</pre>
+                    </div>
+
+                    <h3>OAuth 2.0</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">auth</span>().<span class="method">oauth2</span>(<span class="string">"access_token_here"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/secure/users"</span>);</pre>
+                    </div>
+
+                    <h3>Bearer Token</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+.when()
+    .<span class="method">get</span>(<span class="string">"/secure/users"</span>);</pre>
+                    </div>
+
+                    <h3>API Key</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// In Header</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"X-API-KEY"</span>, <span class="string">"your-api-key"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/api/data"</span>);
+
+<span class="comment">// In Query Param</span>
+<span class="method">given</span>()
+    .<span class="method">queryParam</span>(<span class="string">"api_key"</span>, <span class="string">"your-api-key"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/api/data"</span>);</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTHENTICATION vs AUTHORIZATION TAB -->
+            <div id="auth-concepts" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'auth-concepts')">
+                
+                <div class="section">
+                    <h2>🔐 Authentication vs Authorization</h2>
+                    
+                    <div class="example-grid">
+                        <div class="example-card" style="border-left: 4px solid #3498db;">
+                            <h4>🆔 Authentication (AuthN)</h4>
+                            <p><strong>What:</strong> "Who are you?"</p>
+                            <p><strong>Purpose:</strong> Verifying the identity of a user or system</p>
+                            <p><strong>Example:</strong> Login with username/password, proving you are who you claim to be</p>
+                            <p><strong>Result:</strong> Confirms identity (valid/invalid credentials)</p>
+                        </div>
+                        <div class="example-card" style="border-left: 4px solid #e74c3c;">
+                            <h4>🔑 Authorization (AuthZ)</h4>
+                            <p><strong>What:</strong> "What can you do?"</p>
+                            <p><strong>Purpose:</strong> Determining what resources/actions an authenticated user can access</p>
+                            <p><strong>Example:</strong> Admin can delete users, regular user cannot</p>
+                            <p><strong>Result:</strong> Grants or denies access to resources</p>
+                        </div>
+                    </div>
+
+                    <div class="tip">
+                        <strong>💡 Remember:</strong> Authentication comes FIRST, then Authorization. You can't authorize someone whose identity you haven't verified!
+                    </div>
+
+                    <h3>Real-World Example</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Step 1: AUTHENTICATION - User proves identity</span>
+String token = <span class="method">given</span>()
+    .<span class="method">contentType</span>(ContentType.JSON)
+    .<span class="method">body</span>(<span class="string">"{ \"username\": \"john\", \"password\": \"secret123\" }"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"/api/login"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+    .<span class="method">extract</span>().<span class="method">path</span>(<span class="string">"token"</span>);
+
+<span class="comment">// Step 2: AUTHORIZATION - Check what user can access</span>
+<span class="comment">// John is a regular user, trying to access admin endpoint</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+.when()
+    .<span class="method">delete</span>(<span class="string">"/api/admin/users/123"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">403</span>); <span class="comment">// Forbidden - Authenticated but not Authorized</span>
+
+<span class="comment">// John accessing his own profile - Authorized</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+.when()
+    .<span class="method">get</span>(<span class="string">"/api/users/john/profile"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">200</span>); <span class="comment">// Success - Both Authenticated and Authorized</span></pre>
+                    </div>
+
+                    <h3>Common HTTP Status Codes</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status Code</th>
+                                <th>Scenario</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>401 Unauthorized</code></td>
+                                <td>Authentication Failed</td>
+                                <td>Invalid credentials or missing token</td>
+                            </tr>
+                            <tr>
+                                <td><code>403 Forbidden</code></td>
+                                <td>Authorization Failed</td>
+                                <td>Valid credentials but insufficient permissions</td>
+                            </tr>
+                            <tr>
+                                <td><code>200 OK</code></td>
+                                <td>Success</td>
+                                <td>Both authenticated and authorized</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>🌐 OpenID Connect (OIDC)</h2>
+                    <p>OpenID Connect is an identity layer built on top of OAuth 2.0. It allows clients to verify user identity and obtain basic profile information.</p>
+
+                    <h3>Key Concepts</h3>
+                    <div class="example-grid">
+                        <div class="example-card">
+                            <h4>OAuth 2.0</h4>
+                            <p><strong>Purpose:</strong> Authorization framework</p>
+                            <p><strong>Use case:</strong> "Let this app access my Google Drive"</p>
+                            <p><strong>Returns:</strong> Access tokens for resource access</p>
+                        </div>
+                        <div class="example-card">
+                            <h4>OpenID Connect</h4>
+                            <p><strong>Purpose:</strong> Authentication + Authorization</p>
+                            <p><strong>Use case:</strong> "Log in with Google"</p>
+                            <p><strong>Returns:</strong> ID token (who you are) + Access token (what you can do)</p>
+                        </div>
+                    </div>
+
+                    <h3>OIDC Flow Example</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Step 1: Get ID Token and Access Token from OIDC provider</span>
+Response authResponse = <span class="method">given</span>()
+    .<span class="method">formParam</span>(<span class="string">"grant_type"</span>, <span class="string">"password"</span>)
+    .<span class="method">formParam</span>(<span class="string">"client_id"</span>, <span class="string">"my-app"</span>)
+    .<span class="method">formParam</span>(<span class="string">"client_secret"</span>, <span class="string">"secret"</span>)
+    .<span class="method">formParam</span>(<span class="string">"username"</span>, <span class="string">"john@example.com"</span>)
+    .<span class="method">formParam</span>(<span class="string">"password"</span>, <span class="string">"password123"</span>)
+    .<span class="method">formParam</span>(<span class="string">"scope"</span>, <span class="string">"openid profile email"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"https://auth-provider.com/oauth/token"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+    .<span class="method">extract</span>().<span class="method">response</span>();
+
+String idToken = authResponse.<span class="method">path</span>(<span class="string">"id_token"</span>); <span class="comment">// Contains user identity info</span>
+String accessToken = authResponse.<span class="method">path</span>(<span class="string">"access_token"</span>); <span class="comment">// For API access</span>
+
+<span class="comment">// Step 2: Use Access Token to call protected API</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + accessToken)
+.when()
+    .<span class="method">get</span>(<span class="string">"/api/protected-resource"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">200</span>);</pre>
+                    </div>
+
+                    <h3>ID Token vs Access Token</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>ID Token</th>
+                                <th>Access Token</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Purpose</strong></td>
+                                <td>Prove user identity</td>
+                                <td>Access protected resources</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Format</strong></td>
+                                <td>Always JWT</td>
+                                <td>Can be JWT or opaque string</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Audience</strong></td>
+                                <td>Client application</td>
+                                <td>Resource server/API</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Contains</strong></td>
+                                <td>User claims (name, email, sub)</td>
+                                <td>Permissions/scopes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Validation</strong></td>
+                                <td>Validated by client</td>
+                                <td>Validated by resource server</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Decoding JWT Token in Tests</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Add dependency: io.jsonwebtoken:jjwt-api:0.11.5</span>
+<span class="keyword">import</span> io.jsonwebtoken.Claims;
+<span class="keyword">import</span> io.jsonwebtoken.Jwts;
+
+<span class="comment">// Decode JWT token (without verification for testing)</span>
+String[] parts = idToken.split(<span class="string">"\\."</span>);
+String payload = <span class="keyword">new</span> String(Base64.getDecoder().decode(parts[<span class="highlight">1</span>]));
+JsonPath jp = <span class="keyword">new</span> JsonPath(payload);
+
+String userId = jp.<span class="method">getString</span>(<span class="string">"sub"</span>); <span class="comment">// Subject (user ID)</span>
+String email = jp.<span class="method">getString</span>(<span class="string">"email"</span>);
+String name = jp.<span class="method">getString</span>(<span class="string">"name"</span>);
+<span class="keyword">long</span> exp = jp.<span class="method">getLong</span>(<span class="string">"exp"</span>); <span class="comment">// Expiration time</span></pre>
+                    </div>
+
+                    <div class="tip">
+                        <strong>🔍 Interview Tip:</strong> When asked about OIDC, mention that it adds an identity layer to OAuth 2.0. OAuth 2.0 is for authorization ("can I access this?"), while OIDC adds authentication ("who am I?"). Together they provide both identity verification and access control.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎯 Testing Auth Scenarios</h2>
+                    
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Test 1: Missing Authentication Token</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testMissingAuthToken() {
+    <span class="method">given</span>()
+        <span class="comment">// No Authorization header</span>
+    .when()
+        .<span class="method">get</span>(<span class="string">"/api/protected-resource"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">401</span>)
+        .<span class="method">body</span>(<span class="string">"error"</span>, <span class="method">equalTo</span>(<span class="string">"Unauthorized"</span>));
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Test 2: Invalid/Expired Token</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testInvalidToken() {
+    <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer invalid_token_xyz"</span>)
+    .when()
+        .<span class="method">get</span>(<span class="string">"/api/protected-resource"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">401</span>)
+        .<span class="method">body</span>(<span class="string">"error"</span>, <span class="method">containsString</span>(<span class="string">"invalid"</span>));
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Test 3: Insufficient Permissions</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testInsufficientPermissions() {
+    <span class="comment">// Login as regular user</span>
+    String userToken = getTokenForUser(<span class="string">"regular_user"</span>);
+    
+    <span class="comment">// Try to access admin endpoint</span>
+    <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + userToken)
+    .when()
+        .<span class="method">delete</span>(<span class="string">"/api/admin/users/123"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">403</span>) <span class="comment">// Forbidden</span>
+        .<span class="method">body</span>(<span class="string">"error"</span>, <span class="method">equalTo</span>(<span class="string">"Forbidden"</span>));
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Test 4: Role-Based Access Control</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testRoleBasedAccess() {
+    String adminToken = getTokenForUser(<span class="string">"admin"</span>);
+    String userToken = getTokenForUser(<span class="string">"user"</span>);
+    
+    <span class="comment">// Admin can delete</span>
+    <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + adminToken)
+    .when()
+        .<span class="method">delete</span>(<span class="string">"/api/users/123"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>);
+    
+    <span class="comment">// Regular user cannot delete</span>
+    <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + userToken)
+    .when()
+        .<span class="method">delete</span>(<span class="string">"/api/users/456"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">403</span>);
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEST PRACTICES TAB -->
+            <div id="best-practices" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'best-practices')">
+                
+                <div class="section">
+                    <h2>📊 Validating Large/Complex Responses</h2>
+                    <p>When dealing with huge responses with many fields to validate, you have several approaches. Let's compare them:</p>
+
+                    <h3>Method Comparison</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Approach</th>
+                                <th>Best For</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>JsonPath</strong></td>
+                                <td>Selective field validation</td>
+                                <td>Fast, lightweight, no POJO needed</td>
+                                <td>No compile-time safety, string-based paths</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Deserialization</strong></td>
+                                <td>Complete object validation</td>
+                                <td>Type-safe, reusable POJOs, better maintainability</td>
+                                <td>Requires POJO creation, more setup</td>
+                            </tr>
+                            <tr>
+                                <td><strong>JSON Schema</strong></td>
+                                <td>Structure validation</td>
+                                <td>Validates entire structure, reusable schema</td>
+                                <td>Doesn't validate actual values</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hybrid</strong></td>
+                                <td>Best of both worlds</td>
+                                <td>Flexibility + type safety</td>
+                                <td>More code to write</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="tip">
+                        <strong>✅ Recommended Approach:</strong> Use <strong>Deserialization for large responses</strong> with many fields. Use <strong>JsonPath for quick spot checks</strong> or when you only need to validate a few fields.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎯 Approach 1: JsonPath (Quick & Selective)</h2>
+                    <p><strong>Use when:</strong> You need to validate specific fields or a subset of the response</p>
+                    
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testWithJsonPath() {
+    <span class="comment">// For small validations - quick and dirty</span>
+    <span class="method">given</span>()
+    .when()
+        .<span class="method">get</span>(<span class="string">"/api/users/1"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">body</span>(<span class="string">"id"</span>, <span class="method">equalTo</span>(<span class="highlight">1</span>))
+        .<span class="method">body</span>(<span class="string">"name"</span>, <span class="method">equalTo</span>(<span class="string">"John Doe"</span>))
+        .<span class="method">body</span>(<span class="string">"email"</span>, <span class="method">containsString</span>(<span class="string">"@"</span>))
+        .<span class="method">body</span>(<span class="string">"address.city"</span>, <span class="method">equalTo</span>(<span class="string">"New York"</span>))
+        .<span class="method">body</span>(<span class="string">"address.zipCode"</span>, <span class="method">equalTo</span>(<span class="string">"10001"</span>))
+        .<span class="method">body</span>(<span class="string">"orders.size()"</span>, <span class="method">greaterThan</span>(<span class="highlight">0</span>))
+        .<span class="method">body</span>(<span class="string">"orders[0].status"</span>, <span class="method">equalTo</span>(<span class="string">"completed"</span>));
+}
+
+<span class="comment">// Extract first, then validate - better for complex logic</span>
+<span class="keyword">@Test</span>
+<span class="keyword">public void</span> testWithJsonPathExtraction() {
+    Response response = <span class="method">get</span>(<span class="string">"/api/users/1"</span>);
+    JsonPath json = response.<span class="method">jsonPath</span>();
+    
+    <span class="comment">// Extract and validate</span>
+    String name = json.<span class="method">getString</span>(<span class="string">"name"</span>);
+    <span class="keyword">int</span> age = json.<span class="method">getInt</span>(<span class="string">"age"</span>);
+    List&lt;String&gt; hobbies = json.<span class="method">getList</span>(<span class="string">"hobbies"</span>);
+    
+    <span class="comment">// Custom assertions</span>
+    Assert.assertEquals(name, <span class="string">"John Doe"</span>);
+    Assert.assertTrue(age >= <span class="highlight">18</span>);
+    Assert.assertTrue(hobbies.contains(<span class="string">"reading"</span>));
+}</pre>
+                    </div>
+
+                    <h3>Pros & Cons</h3>
+                    <div class="example-grid">
+                        <div class="example-card" style="border-left: 4px solid #27ae60;">
+                            <h4>✅ Pros</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Quick to write</li>
+                                <li>No POJO classes needed</li>
+                                <li>Good for spot checking</li>
+                                <li>Lightweight</li>
+                            </ul>
+                        </div>
+                        <div class="example-card" style="border-left: 4px solid #e74c3c;">
+                            <h4>❌ Cons</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>No compile-time safety</li>
+                                <li>Hard to maintain for many fields</li>
+                                <li>Typos in path strings</li>
+                                <li>Verbose for large responses</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🏆 Approach 2: Deserialization (Recommended for Large Responses)</h2>
+                    <p><strong>Use when:</strong> You need to validate many fields or the entire response structure</p>
+
+                    <h3>Step 1: Create POJO Classes</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">public class</span> User {
+    <span class="keyword">private int</span> id;
+    <span class="keyword">private</span> String name;
+    <span class="keyword">private</span> String email;
+    <span class="keyword">private</span> Address address;
+    <span class="keyword">private</span> List&lt;Order&gt; orders;
+    
+    <span class="comment">// Getters, setters, constructors</span>
+    <span class="comment">// Can use Lombok: @Data, @Getter, @Setter</span>
+}
+
+<span class="keyword">public class</span> Address {
+    <span class="keyword">private</span> String street;
+    <span class="keyword">private</span> String city;
+    <span class="keyword">private</span> String zipCode;
+}
+
+<span class="keyword">public class</span> Order {
+    <span class="keyword">private int</span> id;
+    <span class="keyword">private</span> String status;
+    <span class="keyword">private double</span> amount;
+}</pre>
+                    </div>
+
+                    <h3>Step 2: Deserialize and Validate</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testWithDeserialization() {
+    <span class="comment">// Deserialize response to POJO</span>
+    User user = <span class="method">given</span>()
+    .when()
+        .<span class="method">get</span>(<span class="string">"/api/users/1"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">extract</span>()
+        .<span class="method">as</span>(User.<span class="keyword">class</span>);
+    
+    <span class="comment">// Now validate with type safety</span>
+    Assert.assertEquals(user.getId(), <span class="highlight">1</span>);
+    Assert.assertEquals(user.getName(), <span class="string">"John Doe"</span>);
+    Assert.assertTrue(user.getEmail().contains(<span class="string">"@"</span>));
+    
+    <span class="comment">// Nested object validation</span>
+    Assert.assertEquals(user.getAddress().getCity(), <span class="string">"New York"</span>);
+    Assert.assertEquals(user.getAddress().getZipCode(), <span class="string">"10001"</span>);
+    
+    <span class="comment">// List validation</span>
+    Assert.assertTrue(user.getOrders().size() > <span class="highlight">0</span>);
+    Assert.assertEquals(user.getOrders().get(<span class="highlight">0</span>).getStatus(), <span class="string">"completed"</span>);
+    
+    <span class="comment">// Advanced validations</span>
+    <span class="keyword">double</span> totalOrderAmount = user.getOrders().stream()
+        .mapToDouble(Order::getAmount)
+        .sum();
+    Assert.assertTrue(totalOrderAmount > <span class="highlight">100.0</span>);
+}</pre>
+                    </div>
+
+                    <h3>Step 3: Create Reusable Validation Methods</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">public class</span> UserValidator {
+    
+    <span class="keyword">public static void</span> validateUser(User user) {
+        Assert.assertNotNull(user, <span class="string">"User should not be null"</span>);
+        Assert.assertTrue(user.getId() > <span class="highlight">0</span>, <span class="string">"User ID should be positive"</span>);
+        Assert.assertNotNull(user.getName(), <span class="string">"Name should not be null"</span>);
+        Assert.assertTrue(user.getEmail().matches(<span class="string">"^[A-Za-z0-9+_.-]+@(.+)$"</span>), 
+                         <span class="string">"Invalid email format"</span>);
+    }
+    
+    <span class="keyword">public static void</span> validateAddress(Address address) {
+        Assert.assertNotNull(address);
+        Assert.assertNotNull(address.getCity());
+        Assert.assertTrue(address.getZipCode().matches(<span class="string">"\\d{5}"</span>));
+    }
+    
+    <span class="keyword">public static void</span> validateOrders(List&lt;Order&gt; orders) {
+        Assert.assertNotNull(orders);
+        Assert.assertFalse(orders.isEmpty());
+        
+        <span class="keyword">for</span> (Order order : orders) {
+            Assert.assertTrue(order.getId() > <span class="highlight">0</span>);
+            Assert.assertNotNull(order.getStatus());
+            Assert.assertTrue(order.getAmount() >= <span class="highlight">0</span>);
+        }
+    }
+}
+
+<span class="comment">// Usage in test</span>
+<span class="keyword">@Test</span>
+<span class="keyword">public void</span> testUserWithValidator() {
+    User user = <span class="method">get</span>(<span class="string">"/api/users/1"</span>).<span class="method">as</span>(User.<span class="keyword">class</span>);
+    
+    UserValidator.validateUser(user);
+    UserValidator.validateAddress(user.getAddress());
+    UserValidator.validateOrders(user.getOrders());
+}</pre>
+                    </div>
+
+                    <h3>Pros & Cons</h3>
+                    <div class="example-grid">
+                        <div class="example-card" style="border-left: 4px solid #27ae60;">
+                            <h4>✅ Pros</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Type-safe (compile-time checking)</li>
+                                <li>Clean, readable code</li>
+                                <li>Reusable POJOs and validators</li>
+                                <li>Easy to maintain</li>
+                                <li>IDE autocomplete support</li>
+                                <li>Can use Java streams for complex logic</li>
+                            </ul>
+                        </div>
+                        <div class="example-card" style="border-left: 4px solid #e74c3c;">
+                            <h4>❌ Cons</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Initial setup time (create POJOs)</li>
+                                <li>Need to update POJOs when API changes</li>
+                                <li>More classes to manage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔀 Approach 3: Hybrid (Best of Both)</h2>
+                    <p><strong>Use when:</strong> You want flexibility with type safety</p>
+
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testHybridApproach() {
+    Response response = <span class="method">given</span>()
+        .when()
+            .<span class="method">get</span>(<span class="string">"/api/users/1"</span>)
+        .<span class="method">then</span>()
+            .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+            .<span class="method">extract</span>().<span class="method">response</span>();
+    
+    <span class="comment">// Quick validation with JsonPath</span>
+    response.<span class="method">then</span>()
+        .<span class="method">body</span>(<span class="string">"id"</span>, <span class="method">equalTo</span>(<span class="highlight">1</span>))
+        .<span class="method">body</span>(<span class="string">"name"</span>, <span class="method">notNullValue</span>());
+    
+    <span class="comment">// Detailed validation with Deserialization</span>
+    User user = response.<span class="method">as</span>(User.<span class="keyword">class</span>);
+    UserValidator.validateUser(user);
+    
+    <span class="comment">// Complex business logic</span>
+    <span class="keyword">if</span> (user.getOrders().size() > <span class="highlight">10</span>) {
+        Assert.assertEquals(user.getLoyaltyStatus(), <span class="string">"GOLD"</span>);
+    }
+}</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📋 Approach 4: JSON Schema Validation</h2>
+                    <p><strong>Use when:</strong> You want to validate the structure without checking every value</p>
+
+                    <h3>Create Schema File (user-schema.json)</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>{
+  <span class="string">"$schema"</span>: <span class="string">"http://json-schema.org/draft-04/schema#"</span>,
+  <span class="string">"type"</span>: <span class="string">"object"</span>,
+  <span class="string">"properties"</span>: {
+    <span class="string">"id"</span>: { <span class="string">"type"</span>: <span class="string">"integer"</span> },
+    <span class="string">"name"</span>: { <span class="string">"type"</span>: <span class="string">"string"</span> },
+    <span class="string">"email"</span>: { 
+      <span class="string">"type"</span>: <span class="string">"string"</span>,
+      <span class="string">"pattern"</span>: <span class="string">"^[A-Za-z0-9+_.-]+@(.+)$"</span>
+    },
+    <span class="string">"address"</span>: {
+      <span class="string">"type"</span>: <span class="string">"object"</span>,
+      <span class="string">"properties"</span>: {
+        <span class="string">"city"</span>: { <span class="string">"type"</span>: <span class="string">"string"</span> },
+        <span class="string">"zipCode"</span>: { <span class="string">"type"</span>: <span class="string">"string"</span> }
+      },
+      <span class="string">"required"</span>: [<span class="string">"city"</span>, <span class="string">"zipCode"</span>]
+    },
+    <span class="string">"orders"</span>: {
+      <span class="string">"type"</span>: <span class="string">"array"</span>
+    }
+  },
+  <span class="string">"required"</span>: [<span class="string">"id"</span>, <span class="string">"name"</span>, <span class="string">"email"</span>]
+}</pre>
+                    </div>
+
+                    <h3>Use in Test</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testWithJsonSchema() {
+    <span class="method">given</span>()
+    .when()
+        .<span class="method">get</span>(<span class="string">"/api/users/1"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">body</span>(<span class="method">matchesJsonSchemaInClasspath</span>(<span class="string">"schemas/user-schema.json"</span>));
+    
+    <span class="comment">// Then deserialize for value validation</span>
+    User user = <span class="method">get</span>(<span class="string">"/api/users/1"</span>).<span class="method">as</span>(User.<span class="keyword">class</span>);
+    Assert.assertEquals(user.getName(), <span class="string">"John Doe"</span>);
+}</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>💡 Decision Guide</h2>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>Recommended Approach</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Quick smoke test</td>
+                                <td>JsonPath</td>
+                                <td>Fast to write, validates key fields only</td>
+                            </tr>
+                            <tr>
+                                <td>1-5 fields to check</td>
+                                <td>JsonPath</td>
+                                <td>Lightweight, no overhead</td>
+                            </tr>
+                            <tr>
+                                <td>10+ fields to validate</td>
+                                <td>Deserialization</td>
+                                <td>Type-safe, maintainable, reusable</td>
+                            </tr>
+                            <tr>
+                                <td>Complex nested objects</td>
+                                <td>Deserialization</td>
+                                <td>Clean navigation, better readability</td>
+                            </tr>
+                            <tr>
+                                <td>Business logic validation</td>
+                                <td>Deserialization</td>
+                                <td>Can use Java streams, custom methods</td>
+                            </tr>
+                            <tr>
+                                <td>API contract testing</td>
+                                <td>JSON Schema</td>
+                                <td>Validates structure, reusable across tests</td>
+                            </tr>
+                            <tr>
+                                <td>Data-driven testing</td>
+                                <td>Deserialization</td>
+                                <td>Compare POJOs easily</td>
+                            </tr>
+                            <tr>
+                                <td>Dynamic response structure</td>
+                                <td>JsonPath</td>
+                                <td>Flexible, no rigid POJO needed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="tip">
+                        <strong>🎯 Best Practice:</strong> For production test suites with large responses:
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>Use JSON Schema validation to ensure structure compliance</li>
+                            <li>Deserialize to POJOs for detailed field validation</li>
+                            <li>Create reusable validator utility classes</li>
+                            <li>Use JsonPath only for quick spot checks or dynamic fields</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🛠️ Other Best Practices</h2>
+                    
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>1. Use Request and Response Specifications</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// Reusable specs reduce duplication</span>
+RequestSpecification baseRequest = <span class="keyword">new</span> RequestSpecBuilder()
+    .setBaseUri(<span class="string">"https://api.example.com"</span>)
+    .setContentType(ContentType.JSON)
+    .addHeader(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+    .build();</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>2. Enable Logging Conditionally</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// Log only on failure</span>
+.<span class="method">then</span>()
+    .<span class="method">log</span>().<span class="method">ifError</span>()
+    .<span class="method">log</span>().<span class="method">ifValidationFails</span>()</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>3. Extract Common Test Data</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// Use constants or config files</span>
+<span class="keyword">public class</span> TestData {
+    <span class="keyword">public static final</span> String VALID_EMAIL = <span class="string">"test@example.com"</span>;
+    <span class="keyword">public static final int</span> VALID_USER_ID = <span class="highlight">123</span>;
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>4. Use TestNG DataProviders for Data-Driven Tests</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p>Reduces code duplication and makes tests more maintainable</p>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>5. Separate Test Data from Test Logic</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p>Use JSON files, CSV files, or databases for test data</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED TAB -->
+            <div id="advanced" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'advanced')">
+                
+                <div class="section">
+                    <h2>🚀 Advanced Features</h2>
+                    
+                    <h3>File Upload</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Single file</span>
+<span class="method">given</span>()
+    .<span class="method">multiPart</span>(<span class="keyword">new</span> File(<span class="string">"file.txt"</span>))
+.when()
+    .<span class="method">post</span>(<span class="string">"/upload"</span>);
+
+<span class="comment">// With control name</span>
+<span class="method">given</span>()
+    .<span class="method">multiPart</span>(<span class="string">"file"</span>, <span class="keyword">new</span> File(<span class="string">"data.json"</span>), <span class="string">"application/json"</span>)
+.when()
+    .<span class="method">post</span>(<span class="string">"/upload"</span>);</pre>
+                    </div>
+
+                    <h3>File Download</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="keyword">byte</span>[] data = <span class="method">get</span>(<span class="string">"/download/file.pdf"</span>).<span class="method">asByteArray</span>();
+InputStream stream = <span class="method">get</span>(<span class="string">"/download/file.pdf"</span>).<span class="method">asInputStream</span>();</pre>
+                    </div>
+
+                    <h3>Request/Response Logging</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Log everything</span>
+<span class="method">given</span>()
+    .<span class="method">log</span>().<span class="method">all</span>()
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>)
+.<span class="method">then</span>()
+    .<span class="method">log</span>().<span class="method">all</span>();
+
+<span class="comment">// Log specific parts</span>
+<span class="method">given</span>()
+    .<span class="method">log</span>().<span class="method">headers</span>()
+    .<span class="method">log</span>().<span class="method">body</span>()
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>)
+.<span class="method">then</span>()
+    .<span class="method">log</span>().<span class="method">ifError</span>()
+    .<span class="method">log</span>().<span class="method">ifValidationFails</span>();</pre>
+                    </div>
+
+                    <h3>Filters</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Request/Response logging filter</span>
+<span class="method">given</span>()
+    .<span class="method">filter</span>(<span class="keyword">new</span> RequestLoggingFilter())
+    .<span class="method">filter</span>(<span class="keyword">new</span> ResponseLoggingFilter())
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Custom filter</span>
+<span class="method">given</span>()
+    .<span class="method">filter</span>((requestSpec, responseSpec, ctx) -> {
+        <span class="comment">// Custom logic here</span>
+        <span class="keyword">return</span> ctx.next(requestSpec, responseSpec);
+    })
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);</pre>
+                    </div>
+
+                    <h3>Schema Validation</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// JSON Schema validation</span>
+<span class="method">given</span>()
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>)
+.<span class="method">then</span>()
+    .<span class="method">assertThat</span>()
+    .<span class="method">body</span>(<span class="method">matchesJsonSchemaInClasspath</span>(<span class="string">"user-schema.json"</span>));
+
+<span class="comment">// XML Schema validation</span>
+<span class="method">then</span>()
+    .<span class="method">body</span>(<span class="method">matchesXsdInClasspath</span>(<span class="string">"user-schema.xsd"</span>));</pre>
+                    </div>
+
+                    <h3>Serialization/Deserialization</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// POJO to JSON (Serialization)</span>
+User user = <span class="keyword">new</span> User(<span class="string">"John"</span>, <span class="string">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="244e4b4c4a64415c45495448410a474b49">[email&#160;protected]</a>"</span>);
+<span class="method">given</span>()
+    .<span class="method">body</span>(user)
+.when()
+    .<span class="method">post</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// JSON to POJO (Deserialization)</span>
+User user = <span class="method">get</span>(<span class="string">"/users/1"</span>).<span class="method">as</span>(User.<span class="keyword">class</span>);
+
+<span class="comment">// List of POJOs</span>
+List&lt;User&gt; users = <span class="method">get</span>(<span class="string">"/users"</span>)
+    .<span class="method">jsonPath</span>()
+    .<span class="method">getList</span>(<span class="string">"."</span>, User.<span class="keyword">class</span>);</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>⏱️ Timeouts & SSL</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Set timeout</span>
+<span class="method">given</span>()
+    .<span class="method">config</span>(RestAssured.config()
+        .httpClient(HttpClientConfig.httpClientConfig()
+            .setParam(<span class="string">"http.connection.timeout"</span>, <span class="highlight">5000</span>)
+            .setParam(<span class="string">"http.socket.timeout"</span>, <span class="highlight">5000</span>)))
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Ignore SSL certificate</span>
+<span class="method">given</span>()
+    .<span class="method">relaxedHTTPSValidation</span>()
+.when()
+    .<span class="method">get</span>(<span class="string">"https://secure-api.com/users"</span>);</pre>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔄 Reusable Specifications</h2>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><span class="comment">// Create reusable request spec</span>
+RequestSpecification requestSpec = <span class="keyword">new</span> RequestSpecBuilder()
+    .setBaseUri(<span class="string">"https://api.example.com"</span>)
+    .setBasePath(<span class="string">"/v1"</span>)
+    .addHeader(<span class="string">"Content-Type"</span>, <span class="string">"application/json"</span>)
+    .addHeader(<span class="string">"Authorization"</span>, <span class="string">"Bearer token"</span>)
+    .build();
+
+<span class="comment">// Create reusable response spec</span>
+ResponseSpecification responseSpec = <span class="keyword">new</span> ResponseSpecBuilder()
+    .expectStatusCode(<span class="highlight">200</span>)
+    .expectContentType(ContentType.JSON)
+    .expectResponseTime(<span class="method">lessThan</span>(<span class="highlight">3000L</span>))
+    .build();
+
+<span class="comment">// Use them</span>
+<span class="method">given</span>()
+    .<span class="method">spec</span>(requestSpec)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>)
+.<span class="method">then</span>()
+    .<span class="method">spec</span>(responseSpec);</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXAMPLES TAB -->
+            <div id="examples" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'examples')">
+                
+                <div class="section">
+                    <h2>💼 Complete Examples</h2>
+                    
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Example 1: CRUD Operations</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testCRUDOperations() {
+    <span class="comment">// CREATE - POST</span>
+    String userId = <span class="method">given</span>()
+        .<span class="method">contentType</span>(ContentType.JSON)
+        .<span class="method">body</span>(<span class="string">"{ \"name\": \"John Doe\", \"email\": \"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ef4f1f6f0deeafbedeab0fdf1f3">[email&#160;protected]</a>\" }"</span>)
+    .when()
+        .<span class="method">post</span>(<span class="string">"/users"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">201</span>)
+        .<span class="method">extract</span>().<span class="method">path</span>(<span class="string">"id"</span>);
+
+    <span class="comment">// READ - GET</span>
+    <span class="method">given</span>()
+        .<span class="method">pathParam</span>(<span class="string">"id"</span>, userId)
+    .when()
+        .<span class="method">get</span>(<span class="string">"/users/{id}"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">body</span>(<span class="string">"name"</span>, <span class="method">equalTo</span>(<span class="string">"John Doe"</span>));
+
+    <span class="comment">// UPDATE - PUT</span>
+    <span class="method">given</span>()
+        .<span class="method">pathParam</span>(<span class="string">"id"</span>, userId)
+        .<span class="method">contentType</span>(ContentType.JSON)
+        .<span class="method">body</span>(<span class="string">"{ \"name\": \"Jane Doe\" }"</span>)
+    .when()
+        .<span class="method">put</span>(<span class="string">"/users/{id}"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>);
+
+    <span class="comment">// DELETE</span>
+    <span class="method">given</span>()
+        .<span class="method">pathParam</span>(<span class="string">"id"</span>, userId)
+    .when()
+        .<span class="method">delete</span>(<span class="string">"/users/{id}"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">204</span>);
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Example 2: Data-Driven Testing</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@DataProvider</span>
+<span class="keyword">public Object</span>[][] getUserData() {
+    <span class="keyword">return new Object</span>[][] {
+        {<span class="string">"John"</span>, <span class="string">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2842474046685c4d5b5c064b4745">[email&#160;protected]</a>"</span>, <span class="highlight">201</span>},
+        {<span class="string">"Jane"</span>, <span class="string">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="167c77787356627365623875797b">[email&#160;protected]</a>"</span>, <span class="highlight">201</span>},
+        {<span class="string">""</span>, <span class="string">"invalid"</span>, <span class="highlight">400</span>}
+    };
+}
+
+<span class="keyword">@Test</span>(dataProvider = <span class="string">"getUserData"</span>)
+<span class="keyword">public void</span> testUserCreation(String name, String email, <span class="keyword">int</span> expectedStatus) {
+    <span class="method">given</span>()
+        .<span class="method">contentType</span>(ContentType.JSON)
+        .<span class="method">body</span>(String.format(<span class="string">"{ \"name\": \"%s\", \"email\": \"%s\" }"</span>, name, email))
+    .when()
+        .<span class="method">post</span>(<span class="string">"/users"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(expectedStatus);
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Example 3: Chaining Requests</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">@Test</span>
+<span class="keyword">public void</span> testChainedRequests() {
+    <span class="comment">// Step 1: Login and get token</span>
+    String token = <span class="method">given</span>()
+        .<span class="method">contentType</span>(ContentType.JSON)
+        .<span class="method">body</span>(<span class="string">"{ \"username\": \"admin\", \"password\": \"secret\" }"</span>)
+    .when()
+        .<span class="method">post</span>(<span class="string">"/login"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">extract</span>().<span class="method">path</span>(<span class="string">"token"</span>);
+
+    <span class="comment">// Step 2: Use token to create user</span>
+    String userId = <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+        .<span class="method">contentType</span>(ContentType.JSON)
+        .<span class="method">body</span>(<span class="string">"{ \"name\": \"Test User\" }"</span>)
+    .when()
+        .<span class="method">post</span>(<span class="string">"/users"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">201</span>)
+        .<span class="method">extract</span>().<span class="method">path</span>(<span class="string">"id"</span>);
+
+    <span class="comment">// Step 3: Verify user was created</span>
+    <span class="method">given</span>()
+        .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + token)
+        .<span class="method">pathParam</span>(<span class="string">"id"</span>, userId)
+    .when()
+        .<span class="method">get</span>(<span class="string">"/users/{id}"</span>)
+    .<span class="method">then</span>()
+        .<span class="method">statusCode</span>(<span class="highlight">200</span>)
+        .<span class="method">body</span>(<span class="string">"name"</span>, <span class="method">equalTo</span>(<span class="string">"Test User"</span>));
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Example 4: TestNG Integration</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><span class="keyword">public class</span> ApiTests {
+    
+    <span class="keyword">@BeforeClass</span>
+    <span class="keyword">public void</span> setup() {
+        RestAssured.baseURI = <span class="string">"https://api.example.com"</span>;
+        RestAssured.basePath = <span class="string">"/v1"</span>;
+    }
+    
+    <span class="keyword">@Test</span>(priority = <span class="highlight">1</span>)
+    <span class="keyword">public void</span> testGetUsers() {
+        <span class="method">given</span>()
+            .<span class="method">log</span>().<span class="method">all</span>()
+        .when()
+            .<span class="method">get</span>(<span class="string">"/users"</span>)
+        .<span class="method">then</span>()
+            .<span class="method">log</span>().<span class="method">all</span>()
+            .<span class="method">statusCode</span>(<span class="highlight">200</span>);
+    }
+    
+    <span class="keyword">@AfterClass</span>
+    <span class="keyword">public void</span> tearDown() {
+        RestAssured.reset();
+    }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERVIEW Q&A TAB -->
+            <div id="interview" class="tab-content">
+                <input type="text" class="search-box" placeholder="Search in this section..." onkeyup="searchInTab(this, 'interview')">
+                
+                <div class="section">
+                    <h2>🎤 Common Interview Questions</h2>
+                    
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q1: What is REST Assured?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> REST Assured is a Java library that provides a domain-specific language (DSL) for writing powerful, maintainable tests for RESTful APIs. It simplifies API testing by providing methods to make HTTP requests and validate responses using a BDD (Behavior Driven Development) style syntax.</p>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q2: Explain Given-When-Then syntax</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Given:</strong> Preconditions - setup like headers, authentication, request body, parameters</li>
+                            <li><strong>When:</strong> Action - the actual HTTP method call (GET, POST, PUT, DELETE)</li>
+                            <li><strong>Then:</strong> Assertions - validations on response like status code, headers, body</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q3: How do you handle authentication in REST Assured?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> REST Assured supports multiple authentication methods:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Basic Auth: <code>auth().basic(username, password)</code></li>
+                            <li>Preemptive Basic: <code>auth().preemptive().basic()</code></li>
+                            <li>Digest Auth: <code>auth().digest(username, password)</code></li>
+                            <li>OAuth 2.0: <code>auth().oauth2(token)</code></li>
+                            <li>Bearer Token: <code>header("Authorization", "Bearer " + token)</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q4: What is RequestSpecification and ResponseSpecification?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> These are reusable specifications that help avoid code duplication:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>RequestSpecification:</strong> Defines common request settings like base URI, headers, authentication that can be reused across multiple tests</li>
+                            <li><strong>ResponseSpecification:</strong> Defines common response validations like status code, content type that can be applied to multiple tests</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q5: How do you validate JSON response?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> JSON validation can be done using:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>JsonPath:</strong> <code>body("data.name", equalTo("John"))</code></li>
+                            <li><strong>Root level:</strong> <code>body("name", equalTo("John"))</code></li>
+                            <li><strong>Nested fields:</strong> <code>body("user.address.city", equalTo("NYC"))</code></li>
+                            <li><strong>Arrays:</strong> <code>body("users[0].name", equalTo("John"))</code></li>
+                            <li><strong>Size:</strong> <code>body("users.size()", is(10))</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q6: Difference between path() and extract()?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>path():</strong> Directly extracts value from response body. Example: <code>get("/users").path("name")</code></li>
+                            <li><strong>extract():</strong> Provides more options like extracting entire response, specific path, headers, cookies. Example: <code>extract().path("name")</code> or <code>extract().response()</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q7: How to handle file upload in REST Assured?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="method">given</span>()
+    .<span class="method">multiPart</span>(<span class="string">"file"</span>, <span class="keyword">new</span> File(<span class="string">"path/to/file.pdf"</span>))
+.when()
+    .<span class="method">post</span>(<span class="string">"/upload"</span>);</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q8: What are Hamcrest matchers?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> Hamcrest is a framework for writing matcher objects used in assertions. Common matchers include:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><code>equalTo()</code> - exact match</li>
+                            <li><code>containsString()</code> - substring match</li>
+                            <li><code>hasItems()</code> - collection contains items</li>
+                            <li><code>greaterThan()</code>, <code>lessThan()</code> - numeric comparison</li>
+                            <li><code>notNullValue()</code> - null check</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q9: How to perform JSON Schema validation?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="method">given</span>()
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>)
+.<span class="method">then</span>()
+    .<span class="method">assertThat</span>()
+    .<span class="method">body</span>(<span class="method">matchesJsonSchemaInClasspath</span>(<span class="string">"schema.json"</span>));</pre>
+                        </div>
+                        <p style="margin-top: 10px;">This validates that the response structure matches the defined JSON schema.</p>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q10: How to measure response time?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// Assert response time</span>
+<span class="method">then</span>()
+    .<span class="method">time</span>(<span class="method">lessThan</span>(<span class="highlight">2000L</span>), TimeUnit.MILLISECONDS);
+
+<span class="comment">// Extract response time</span>
+<span class="keyword">long</span> responseTime = <span class="method">get</span>(<span class="string">"/users"</span>).<span class="method">time</span>();</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q11: Explain Serialization and Deserialization</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Serialization:</strong> Converting Java object to JSON/XML format for request body. REST Assured automatically handles this when you pass POJO to <code>body()</code> method.</li>
+                            <li><strong>Deserialization:</strong> Converting JSON/XML response to Java object using <code>as(Class)</code> method.</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q12: How to handle cookies in REST Assured?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// Set cookie in request</span>
+<span class="method">given</span>()
+    .<span class="method">cookie</span>(<span class="string">"session_id"</span>, <span class="string">"abc123"</span>)
+.when()
+    .<span class="method">get</span>(<span class="string">"/users"</span>);
+
+<span class="comment">// Get cookie from response</span>
+String cookie = <span class="method">get</span>(<span class="string">"/login"</span>).<span class="method">getCookie</span>(<span class="string">"session_id"</span>);</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q13: Explain the difference between Authentication and Authorization</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Authentication (AuthN):</strong> "Who are you?" - Verifying identity. Example: Login with username/password. HTTP Status: 401 Unauthorized when it fails.</li>
+                            <li><strong>Authorization (AuthZ):</strong> "What can you do?" - Determining permissions. Example: Admin can delete users, regular user cannot. HTTP Status: 403 Forbidden when it fails.</li>
+                            <li><strong>Key Point:</strong> Authentication must happen before authorization. You can't grant permissions to someone whose identity you haven't verified.</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q14: What is OpenID Connect (OIDC)?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> OpenID Connect is an identity layer built on top of OAuth 2.0 protocol. Key points:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>OAuth 2.0:</strong> Authorization framework - "Let this app access my Google Drive"</li>
+                            <li><strong>OIDC:</strong> Adds authentication - "Log in with Google"</li>
+                            <li><strong>ID Token:</strong> JWT containing user identity info (sub, name, email)</li>
+                            <li><strong>Access Token:</strong> For accessing protected resources/APIs</li>
+                            <li><strong>Use Case:</strong> When you click "Sign in with Google/Facebook", that's OIDC</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q15: How do you test 401 vs 403 scenarios?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="code-block">
+                            <pre><span class="comment">// 401 - Missing/Invalid token (Authentication failure)</span>
+<span class="method">given</span>()
+    <span class="comment">// No auth header</span>
+.when()
+    .<span class="method">get</span>(<span class="string">"/api/protected"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">401</span>);
+
+<span class="comment">// 403 - Valid token but insufficient permissions (Authorization failure)</span>
+<span class="method">given</span>()
+    .<span class="method">header</span>(<span class="string">"Authorization"</span>, <span class="string">"Bearer "</span> + userToken)
+.when()
+    .<span class="method">delete</span>(<span class="string">"/api/admin/users/123"</span>)
+.<span class="method">then</span>()
+    .<span class="method">statusCode</span>(<span class="highlight">403</span>);</pre>
+                        </div>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q16: When to use JsonPath vs Deserialization for validation?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Use JsonPath when:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Validating 1-5 fields only</li>
+                                    <li>Quick smoke tests</li>
+                                    <li>Dynamic or changing response structure</li>
+                                    <li>Spot checking specific values</li>
+                                </ul>
+                            </li>
+                            <li><strong>Use Deserialization when:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Validating 10+ fields (RECOMMENDED)</li>
+                                    <li>Complex nested objects</li>
+                                    <li>Need type safety and compile-time checking</li>
+                                    <li>Reusability across multiple tests</li>
+                                    <li>Business logic validation (streams, calculations)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Best Practice:</strong> For large responses, use Deserialization with POJO classes and create reusable validator methods.</li>
+                        </ul>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q17: How do you validate a huge response with 50+ fields?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong> Best approach is to combine multiple strategies:</p>
+                        <div class="code-block">
+                            <pre><span class="comment">// Step 1: Schema validation for structure</span>
+.<span class="method">then</span>()
+    .<span class="method">body</span>(<span class="method">matchesJsonSchemaInClasspath</span>(<span class="string">"user-schema.json"</span>));
+
+<span class="comment">// Step 2: Deserialize to POJO</span>
+User user = response.<span class="method">as</span>(User.<span class="keyword">class</span>);
+
+<span class="comment">// Step 3: Use validator utility classes</span>
+UserValidator.validateBasicInfo(user);
+UserValidator.validateAddress(user.getAddress());
+UserValidator.validateOrders(user.getOrders());
+
+<span class="comment">// Step 4: Custom business logic</span>
+Assert.assertTrue(user.getTotalSpent() > <span class="highlight">1000</span>);</pre>
+                        </div>
+                        <p style="margin-top: 10px;"><strong>This approach provides:</strong> Structure validation (schema), Type safety (POJO), Reusability (validators), Maintainability</p>
+                    </div>
+
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <strong>Q18: What is the difference between ID Token and Access Token?</strong>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Answer:</strong></p>
+                        <table style="margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>ID Token</th>
+                                    <th>Access Token</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Purpose</td>
+                                    <td>Prove user identity</td>
+                                    <td>Access resources</td>
+                                </tr>
+                                <tr>
+                                    <td>Format</td>
+                                    <td>Always JWT</td>
+                                    <td>JWT or opaque</td>
+                                </tr>
+                                <tr>
+                                    <td>Audience</td>
+                                    <td>Client app</td>
+                                    <td>Resource server</td>
+                                </tr>
+                                <tr>
+                                    <td>Contains</td>
+                                    <td>User claims (name, email)</td>
+                                    <td>Scopes/permissions</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎯 Quick Tips for Interview</h2>
+                    <div class="quick-ref">
+                        <div class="quick-ref-item">
+                            <strong>Always mention BDD style</strong>
+                            <p>REST Assured follows Given-When-Then pattern for better readability</p>
+                        </div>
+                        <div class="quick-ref-item">
+                            <strong>Static imports are key</strong>
+                            <p>Mention the importance of static imports for clean syntax</p>
+                        </div>
+                        <div class="quick-ref-item">
+                            <strong>Hamcrest matchers</strong>
+                            <p>Know common matchers like equalTo(), hasItems(), containsString()</p>
+                        </div>
+                        <div class="quick-ref-item">
+                            <strong>Reusability</strong>
+                            <p>Talk about RequestSpec and ResponseSpec for code reusability</p>
+                        </div>
+                        <div class="quick-ref-item">
+                            <strong>JSON Path</strong>
+                            <p>Understand JsonPath syntax for complex JSON validation</p>
+                        </div>
+                        <div class="quick-ref-item">
+                            <strong>Logging</strong>
+                            <p>Mention log().all() for debugging and test reports</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab navigation with event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabName = this.textContent.trim().toLowerCase().replace(/ /g, '-').replace(/&/g, '-');
+                    
+                    // Map display names to tab IDs
+                    const tabMap = {
+                        'basics': 'basics',
+                        'requests': 'requests',
+                        'validations': 'validations',
+                        'authentication': 'auth',
+                        'auth-vs-authz': 'auth-concepts',
+                        'best-practices': 'best-practices',
+                        'advanced': 'advanced',
+                        'examples': 'examples',
+                        'interview-q-a': 'interview'
+                    };
+                    
+                    const targetId = tabMap[tabName] || tabName;
+                    
+                    // Remove active from all
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active to clicked
+                    this.classList.add('active');
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        function toggleCollapsible(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function searchInTab(input, tabId) {
+            const filter = input.value.toLowerCase();
+            const tab = document.getElementById(tabId);
+            if (!tab) return;
+            const sections = tab.getElementsByClassName('section');
+
+            for (let section of sections) {
+                const text = section.textContent || section.innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    section.style.display = '';
+                } else {
+                    section.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

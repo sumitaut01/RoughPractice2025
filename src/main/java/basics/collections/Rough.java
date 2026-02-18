@@ -122,6 +122,83 @@ public class Rough {
         //[value20 nameAsmit, value222 nameZagar] // name sorting s in comparator
     }
 
+
+
+
+    @Test
+    public void ArrayListDemo(){
+
+        ArrayList<String> st=new ArrayList<>();
+        st.add("sumit");
+        st.add("neha");
+        st.add("amit");
+        st.add("sumit");
+
+
+        //remove duplicates
+        System.out.println("before removing");
+        System.out.println(st);
+        HashSet<String> hs=new HashSet<>();
+        for(int i=0;i<st.size();i++) {
+            if (hs.add(st.get(i))) {
+                hs.add(st.get(i));
+            } else {
+                st.remove(i);
+            }
+        }
+        System.out.println("after  removing");
+        System.out.println(st);
+
+
+
+        st.forEach(s-> System.out.println(s));
+        System.out.println("Iterating------");
+        Iterator<String> it=st.iterator();
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }
+    }
+
+
+    @Test
+    public void LinkedList(){
+
+        List<String> str=new LinkedList<>();
+        str.addLast("Last");
+        str.add("sumit");
+        str.add("sumit");
+        str.add("Amit");
+        str.addFirst("First");
+        System.out.println(str);
+
+    }
+
+
+    @Test
+    public void TreeMapDemo(){
+
+        System.out.println();
+        TreeMap<String,String> tm=new TreeMap<>();
+        tm.put("name", "Sumit");
+        tm.put("lastname", "Raut");
+        tm.put("zone", "north");
+        System.out.println(tm);
+
+
+
+
+
+     //   Comparable<String> cc= ((a,b)-> Integer.compare(a);
+
+    }
+
+
+
+
+
+
+
+
 }
 
 

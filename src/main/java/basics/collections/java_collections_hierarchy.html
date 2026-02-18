@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Collections & Map Hierarchy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            line-height: 1.3;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .hierarchy-section {
+            margin-bottom: 20px;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tree {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 2px solid #dee2e6;
+            font-size: 11px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        .interface { color: #e74c3c; font-weight: bold; }
+        .abstract-class { color: #f39c12; font-weight: bold; }
+        .concrete-class { color: #27ae60; font-weight: bold; }
+        .legacy { color: #95a5a6; font-weight: bold; font-style: italic; }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .card {
+            background: #fff;
+            border: 2px solid;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 11px;
+        }
+        .card h3 {
+            font-size: 13px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid;
+        }
+        .list-card { border-color: #3498db; }
+        .list-card h3 { color: #3498db; border-bottom-color: #3498db; }
+        
+        .set-card { border-color: #e74c3c; }
+        .set-card h3 { color: #e74c3c; border-bottom-color: #e74c3c; }
+        
+        .queue-card { border-color: #f39c12; }
+        .queue-card h3 { color: #f39c12; border-bottom-color: #f39c12; }
+        
+        .map-card { border-color: #9b59b6; }
+        .map-card h3 { color: #9b59b6; border-bottom-color: #9b59b6; }
+        
+        .impl-item {
+            margin: 5px 0;
+            padding: 5px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid;
+        }
+        .impl-item strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+        .list-impl { border-left-color: #3498db; }
+        .set-impl { border-left-color: #e74c3c; }
+        .queue-impl { border-left-color: #f39c12; }
+        .map-impl { border-left-color: #9b59b6; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+        }
+        .tips {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+        .tips h3 {
+            color: #856404;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .tips ul {
+            margin-left: 18px;
+            font-size: 10px;
+            color: #856404;
+        }
+        .tips li {
+            margin: 2px 0;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 11px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .color-box {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        .code-snippet {
+            background: #263238;
+            color: #aed581;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            margin: 5px 0;
+            overflow-x: auto;
+        }
+        .keyword { color: #82aaff; }
+        .performance {
+            font-size: 9px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☕ Java Collections Framework</h1>
+        <p class="subtitle">Complete Hierarchy Guide for Technical Interviews</p>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box" style="background: #e74c3c;"></div>
+                <span class="interface">Interface</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #f39c12;"></div>
+                <span class="abstract-class">Abstract Class</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #27ae60;"></div>
+                <span class="concrete-class">Concrete Class</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #95a5a6;"></div>
+                <span class="legacy">Legacy (Pre-JDK 1.2)</span>
+            </div>
+        </div>
+        
+        <!-- COLLECTION HIERARCHY -->
+        <div class="hierarchy-section">
+            <div class="section-header">
+                📚 Collection Interface Hierarchy
+            </div>
+            
+            <div class="tree">
+<span class="interface">Iterable</span> (java.lang)
+    │
+    └── <span class="interface">Collection</span> (java.util)
+            │
+            ├── <span class="interface">List</span> (Ordered, Allows Duplicates, Index-based)
+            │       │
+            │       ├── <span class="abstract-class">AbstractList</span>
+            │       │       │
+            │       │       ├── <span class="concrete-class">ArrayList</span>          [Dynamic array, Fast random access]
+            │       │       ├── <span class="concrete-class">Vector</span>             [Synchronized ArrayList]
+            │       │       │       └── <span class="legacy">Stack</span>          [LIFO, extends Vector]
+            │       │       └── <span class="abstract-class">AbstractSequentialList</span>
+            │       │               └── <span class="concrete-class">LinkedList</span>  [Doubly-linked, Fast insert/delete]
+            │       │
+            │       └── <span class="concrete-class">CopyOnWriteArrayList</span>   [Thread-safe, Fail-safe iterator]
+            │
+            ├── <span class="interface">Set</span> (No Duplicates, Unordered*)
+            │       │
+            │       ├── <span class="abstract-class">AbstractSet</span>
+            │       │       │
+            │       │       ├── <span class="concrete-class">HashSet</span>           [Hash table, O(1) operations]
+            │       │       │       └── <span class="concrete-class">LinkedHashSet</span> [Maintains insertion order]
+            │       │       ├── <span class="concrete-class">TreeSet</span>           [Red-Black tree, Sorted, O(log n)]
+            │       │       └── <span class="concrete-class">EnumSet</span>           [Optimized for enums]
+            │       │
+            │       ├── <span class="interface">SortedSet</span>
+            │       │       └── <span class="interface">NavigableSet</span>
+            │       │               └── <span class="concrete-class">TreeSet</span>
+            │       │
+            │       └── <span class="concrete-class">CopyOnWriteArraySet</span>  [Thread-safe set]
+            │
+            └── <span class="interface">Queue</span> (FIFO, except PriorityQueue)
+                    │
+                    ├── <span class="abstract-class">AbstractQueue</span>
+                    │       │
+                    │       ├── <span class="concrete-class">PriorityQueue</span>    [Heap-based, Natural/Custom order]
+                    │       ├── <span class="concrete-class">ArrayDeque</span>       [Resizable array, Faster than LinkedList]
+                    │       └── <span class="concrete-class">LinkedList</span>       [Also implements Queue & Deque]
+                    │
+                    ├── <span class="interface">Deque</span> (Double-ended queue)
+                    │       ├── <span class="concrete-class">ArrayDeque</span>
+                    │       └── <span class="concrete-class">LinkedList</span>
+                    │
+                    ├── <span class="interface">BlockingQueue</span> (Thread-safe, blocking operations)
+                    │       ├── <span class="concrete-class">ArrayBlockingQueue</span>
+                    │       ├── <span class="concrete-class">LinkedBlockingQueue</span>
+                    │       ├── <span class="concrete-class">PriorityBlockingQueue</span>
+                    │       ├── <span class="concrete-class">DelayQueue</span>
+                    │       └── <span class="concrete-class">SynchronousQueue</span>
+                    │
+                    └── <span class="concrete-class">ConcurrentLinkedQueue</span>  [Non-blocking, thread-safe]
+            </div>
+        </div>
+        
+        <!-- MAP HIERARCHY -->
+        <div class="hierarchy-section">
+            <div class="section-header">
+                🗺️ Map Interface Hierarchy (Separate from Collection)
+            </div>
+            
+            <div class="tree">
+<span class="interface">Map</span>&lt;K,V&gt; (Key-Value pairs, No duplicate keys)
+    │
+    ├── <span class="abstract-class">AbstractMap</span>
+    │       │
+    │       ├── <span class="concrete-class">HashMap</span>              [Hash table, O(1), Allows null key/values]
+    │       │       └── <span class="concrete-class">LinkedHashMap</span>   [Maintains insertion/access order]
+    │       │
+    │       ├── <span class="concrete-class">TreeMap</span>              [Red-Black tree, Sorted, O(log n)]
+    │       ├── <span class="concrete-class">EnumMap</span>              [Optimized for enum keys]
+    │       ├── <span class="concrete-class">WeakHashMap</span>          [Weak references, GC-friendly]
+    │       └── <span class="concrete-class">IdentityHashMap</span>      [Uses == instead of equals()]
+    │
+    ├── <span class="interface">SortedMap</span>
+    │       └── <span class="interface">NavigableMap</span>
+    │               └── <span class="concrete-class">TreeMap</span>
+    │
+    ├── <span class="interface">ConcurrentMap</span> (Thread-safe)
+    │       └── <span class="concrete-class">ConcurrentHashMap</span>   [Segmented locking, High concurrency]
+    │               └── <span class="concrete-class">ConcurrentSkipListMap</span> [Sorted, Thread-safe]
+    │
+    ├── <span class="legacy">Hashtable</span>              [Synchronized, Legacy, No nulls]
+    │       └── <span class="legacy">Properties</span>         [String key-value pairs]
+    │
+    └── <span class="concrete-class">ConcurrentSkipListMap</span>  [Sorted concurrent map]
+            </div>
+        </div>
+        
+        <!-- IMPLEMENTATION DETAILS -->
+        <div class="grid-2">
+            <div class="card list-card">
+                <h3>📋 List Implementations</h3>
+                
+                <div class="impl-item list-impl">
+                    <strong>ArrayList</strong>
+                    • Dynamic array, 50% growth<br>
+                    • Get: O(1), Add: O(1)*, Insert/Delete: O(n)<br>
+                    • Best for: Random access, iteration
+                </div>
+                
+                <div class="impl-item list-impl">
+                    <strong>LinkedList</strong>
+                    • Doubly-linked nodes<br>
+                    • Get: O(n), Add/Remove at ends: O(1)<br>
+                    • Best for: Frequent insertions/deletions
+                </div>
+                
+                <div class="impl-item list-impl">
+                    <strong>Vector (Legacy)</strong>
+                    • Synchronized ArrayList<br>
+                    • Slower due to synchronization<br>
+                    • Use: CopyOnWriteArrayList instead
+                </div>
+                
+                <div class="impl-item list-impl">
+                    <strong>CopyOnWriteArrayList</strong>
+                    • Creates copy on every write<br>
+                    • Read: O(1), Write: O(n)<br>
+                    • Best for: Read-heavy, multi-threaded
+                </div>
+            </div>
+            
+            <div class="card set-card">
+                <h3>🔶 Set Implementations</h3>
+                
+                <div class="impl-item set-impl">
+                    <strong>HashSet</strong>
+                    • Backed by HashMap<br>
+                    • Add/Remove/Contains: O(1)<br>
+                    • Best for: Fast lookups, no order needed
+                </div>
+                
+                <div class="impl-item set-impl">
+                    <strong>LinkedHashSet</strong>
+                    • HashSet + LinkedList<br>
+                    • Maintains insertion order<br>
+                    • Slightly slower than HashSet
+                </div>
+                
+                <div class="impl-item set-impl">
+                    <strong>TreeSet</strong>
+                    • Red-Black tree (self-balancing BST)<br>
+                    • Operations: O(log n), Sorted<br>
+                    • Best for: Sorted unique elements
+                </div>
+                
+                <div class="impl-item set-impl">
+                    <strong>EnumSet</strong>
+                    • Bit vector implementation<br>
+                    • Extremely fast and compact<br>
+                    • Best for: Enum type sets
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="card queue-card">
+                <h3>⏭️ Queue/Deque Implementations</h3>
+                
+                <div class="impl-item queue-impl">
+                    <strong>PriorityQueue</strong>
+                    • Min-heap by default<br>
+                    • Poll: O(log n), Peek: O(1)<br>
+                    • Best for: Priority scheduling
+                </div>
+                
+                <div class="impl-item queue-impl">
+                    <strong>ArrayDeque</strong>
+                    • Resizable array, circular buffer<br>
+                    • Faster than LinkedList for queue ops<br>
+                    • Best for: Stack/Queue operations
+                </div>
+                
+                <div class="impl-item queue-impl">
+                    <strong>LinkedList</strong>
+                    • Implements List, Queue, Deque<br>
+                    • Good for queue operations<br>
+                    • Use: ArrayDeque for better performance
+                </div>
+                
+                <div class="impl-item queue-impl">
+                    <strong>BlockingQueue</strong>
+                    • Thread-safe with blocking ops<br>
+                    • wait() when empty, full<br>
+                    • Best for: Producer-consumer
+                </div>
+            </div>
+            
+            <div class="card map-card">
+                <h3>🗺️ Map Implementations</h3>
+                
+                <div class="impl-item map-impl">
+                    <strong>HashMap</strong>
+                    • Hash table, buckets + linked list/tree<br>
+                    • Get/Put: O(1), Allows 1 null key<br>
+                    • Best for: General purpose key-value
+                </div>
+                
+                <div class="impl-item map-impl">
+                    <strong>LinkedHashMap</strong>
+                    • HashMap + doubly-linked list<br>
+                    • Maintains insertion/access order<br>
+                    • Best for: LRU cache implementation
+                </div>
+                
+                <div class="impl-item map-impl">
+                    <strong>TreeMap</strong>
+                    • Red-Black tree, sorted by keys<br>
+                    • Operations: O(log n)<br>
+                    • Best for: Sorted map, range queries
+                </div>
+                
+                <div class="impl-item map-impl">
+                    <strong>ConcurrentHashMap</strong>
+                    • Segmented locking (16 segments)<br>
+                    • Thread-safe without full sync<br>
+                    • Best for: Multi-threaded applications
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPARISON TABLE -->
+        <div class="section-header">
+            ⚡ Performance Comparison (Big-O)
+        </div>
+        
+        <table>
+            <tr>
+                <th>Data Structure</th>
+                <th>Add</th>
+                <th>Remove</th>
+                <th>Get/Contains</th>
+                <th>Ordered</th>
+                <th>Thread-Safe</th>
+                <th>Null Allowed</th>
+            </tr>
+            <tr>
+                <td><strong>ArrayList</strong></td>
+                <td>O(1)*</td>
+                <td>O(n)</td>
+                <td>O(1)</td>
+                <td>Index</td>
+                <td>No</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>LinkedList</strong></td>
+                <td>O(1)</td>
+                <td>O(1)†</td>
+                <td>O(n)</td>
+                <td>Index</td>
+                <td>No</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>HashSet</strong></td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>No</td>
+                <td>No</td>
+                <td>Yes (1)</td>
+            </tr>
+            <tr>
+                <td><strong>TreeSet</strong></td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>Sorted</td>
+                <td>No</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>HashMap</strong></td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>No</td>
+                <td>No</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>TreeMap</strong></td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>Sorted</td>
+                <td>No</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>ConcurrentHashMap</strong></td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>O(1)</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>PriorityQueue</strong></td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>O(n)</td>
+                <td>Priority</td>
+                <td>No</td>
+                <td>No</td>
+            </tr>
+        </table>
+        <p class="performance">* Amortized, † At ends, ‡ When position known</p>
+        
+        <!-- TIPS -->
+        <div class="tips">
+            <h3>🎯 Interview Tips & Selection Guide</h3>
+            <ul>
+                <li><strong>List Choice:</strong> Use ArrayList by default. LinkedList only when frequent insert/delete at positions (rare)</li>
+                <li><strong>Set Choice:</strong> HashSet for uniqueness, TreeSet for sorted unique elements, LinkedHashSet for insertion order</li>
+                <li><strong>Map Choice:</strong> HashMap for general use, TreeMap for sorted keys, LinkedHashMap for insertion/access order, ConcurrentHashMap for concurrency</li>
+                <li><strong>Queue Choice:</strong> ArrayDeque for stack/queue (faster than Stack/LinkedList), PriorityQueue for priority-based processing</li>
+                <li><strong>Key Interview Point:</strong> Map doesn't extend Collection but is part of Collections Framework</li>
+                <li><strong>HashMap vs HashSet:</strong> HashSet internally uses HashMap (value = dummy PRESENT object)</li>
+                <li><strong>Initial Capacity:</strong> HashMap/HashSet default: 16, load factor: 0.75 (rehashes at 75% full)</li>
+                <li><strong>Java 8+ Changes:</strong> HashMap uses trees (instead of linked lists) when bucket size > 8 (improves O(n) to O(log n))</li>
+                <li><strong>Fail-fast:</strong> All java.util iterators are fail-fast (except concurrent collections)</li>
+                <li><strong>Thread-Safe Options:</strong> Collections.synchronizedXxx() or java.util.concurrent classes</li>
+                <li><strong>Common Mistake:</strong> Using Vector/Hashtable in new code (use ArrayList/HashMap + synchronization if needed)</li>
+                <li><strong>TreeMap/TreeSet Requirement:</strong> Elements must implement Comparable or provide Comparator</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

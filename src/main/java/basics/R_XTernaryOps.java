@@ -14,6 +14,5 @@ public class R_XTernaryOps {
                 : env.equals("uat") ? "uat"
                 : env.equals("prod") ? "prod"
                 : "unknown";
-
     }
 }

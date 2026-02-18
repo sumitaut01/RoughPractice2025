@@ -9,7 +9,6 @@ public interface WebDriver extends SearchContext {
     
     
     public interface Options{
-    	
     	public void addCookie(String cookie);
     	
     }

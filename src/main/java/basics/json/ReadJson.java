@@ -18,9 +18,7 @@ public class ReadJson {
         JSONParser  parser=new JSONParser();
         FileReader fileReader=new FileReader(new File("src//main//resources/jsonArraySyntaxDemo.json"));
         Object obj=parser.parse(fileReader);
-
         JSONObject jsonObject=(JSONObject) obj;
-
         System.out.println(jsonObject.get("first_name").toString());
 
     }

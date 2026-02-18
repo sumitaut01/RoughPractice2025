@@ -60,8 +60,6 @@ public class R1_ {
         int x=3;
         ArrayList<Integer> al=new ArrayList<>();
         al.add(3);// behind the scenes, autoboxing happening
-
-
         Integer i1=Integer.valueOf(1);
         Integer i2=Integer.valueOf("3");
         Integer i3=Integer.valueOf("01",2);

@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestAssured Study Guide - Payload Management & Response Validation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f4f4f4;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #34495e;
+            padding: 15px;
+            margin: -20px -20px 30px -20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        section:last-child {
+            border-bottom: none;
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: #34495e;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .tip-box {
+            background: #f3e5f5;
+            border-left: 5px solid #9c27b0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .highlight {
+            background: #fff59d;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .folder-structure {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .comparison-card {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-card.good {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        
+        .comparison-card.bad {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+        
+        .visual-flow {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        footer {
+            background: #34495e;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 30px -20px -20px -20px;
+        }
+        
+        @media print {
+            nav {
+                position: static;
+            }
+            
+            section {
+                page-break-inside: avoid;
+            }
+            
+            pre {
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-table {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RestAssured Study Guide</h1>
+            <p class="subtitle">Comprehensive Guide to Payload Management & Response Validation</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#project-structure">Project Structure</a></li>
+                <li><a href="#payload-management">Payload Management</a></li>
+                <li><a href="#pojo-approach">POJO Approach</a></li>
+                <li><a href="#json-annotations">JSON Annotations</a></li>
+                <li><a href="#response-validation">Response Validation</a></li>
+                <li><a href="#complete-examples">Complete Examples</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+            </ul>
+        </nav>
+        
+        <!-- PROJECT STRUCTURE -->
+        <section id="project-structure">
+            <h2>1. Project Structure</h2>
+            
+            <div class="info-box">
+                <strong>Key Principle:</strong> Organize your test framework with clear separation of concerns for maintainability and scalability.
+            </div>
+            
+            <h3>Recommended Folder Structure</h3>
+            <div class="folder-structure">
+src/test/java
+├── payloads/
+│   ├── builders/
+│   │   ├── UserPayloadBuilder.java
+│   │   └── OrderPayloadBuilder.java
+│   └── models/
+│       ├── User.java
+│       └── Order.java
+├── requests/
+│   ├── UserRequests.java
+│   └── OrderRequests.java
+├── validators/
+│   ├── UserResponseValidator.java
+│   └── OrderResponseValidator.java
+└── tests/
+    ├── UserTests.java
+    └── OrderTests.java
+
+src/test/resources
+├── payloads/
+│   ├── user_payload.json
+│   └── order_payload.json
+└── schemas/
+    ├── user_schema.json
+    └── order_schema.json
+            </div>
+            
+            <h3>Layer Responsibilities</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Responsibility</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Models</strong></td>
+                        <td>POJO classes representing request/response</td>
+                        <td>User.java, Order.java</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Builders</strong></td>
+                        <td>Factory methods for creating test data</td>
+                        <td>UserPayloadBuilder.createValidUser()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Requests</strong></td>
+                        <td>API endpoint calls and HTTP methods</td>
+                        <td>userRequests.createUser()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validators</strong></td>
+                        <td>Reusable response validation logic</td>
+                        <td>UserResponseValidator.validateSuccess()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tests</strong></td>
+                        <td>Test cases orchestrating the above layers</td>
+                        <td>UserTests.testCreateUser()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- PAYLOAD MANAGEMENT -->
+        <section id="payload-management">
+            <h2>2. Payload Management Approaches</h2>
+            
+            <h3>Option A: POJO with Builder Pattern (Recommended)</h3>
+            
+            <div class="success-box">
+                <strong>✓ Advantages:</strong> Type-safe, IDE support, refactoring-friendly, compile-time validation
+            </div>
+            
+            <h4>Basic POJO</h4>
+            <pre><code>// User.java
+@Data
+@Builder
+public class User {
+    private String name;
+    private String email;
+    private String phone;
+    private Address address;
+}</code></pre>
+
+            <h4>Builder Factory Class</h4>
+            <pre><code>// UserPayloadBuilder.java
+public class UserPayloadBuilder {
+    
+    public static User createValidUser() {
+        return User.builder()
+            .name("John Doe")
+            .email("john@example.com")
+            .phone("1234567890")
+            .build();
+    }
+    
+    public static User createUserWithMissingEmail() {
+        return User.builder()
+            .name("John Doe")
+            .phone("1234567890")
+            .build();
+    }
+    
+    public static User createUserWithInvalidEmail() {
+        return User.builder()
+            .name("John Doe")
+            .email("invalid-email")
+            .phone("1234567890")
+            .build();
+    }
+    
+    public static User createUserWithAllFields() {
+        return User.builder()
+            .name("John Doe")
+            .email("john@example.com")
+            .phone("1234567890")
+            .address(Address.builder()
+                .street("123 Main St")
+                .city("New York")
+                .zipCode("10001")
+                .build())
+            .build();
+    }
+}</code></pre>
+
+            <h3>Option B: JSON Files with Templating</h3>
+            
+            <div class="warning-box">
+                <strong>⚠ Use when:</strong> Non-technical team members need to maintain test data, or you have complex nested structures
+            </div>
+            
+            <h4>JSON Template File</h4>
+            <pre><code>// user_payload.json
+{
+  "name": "{{name}}",
+  "email": "{{email}}",
+  "phone": "{{phone}}",
+  "address": {
+    "street": "{{street}}",
+    "city": "{{city}}"
+  }
+}</code></pre>
+
+            <h4>Helper Class</h4>
+            <pre><code>public class PayloadHelper {
+    
+    public static String getPayload(String fileName) throws IOException {
+        return new String(Files.readAllBytes(
+            Paths.get("src/test/resources/payloads/" + fileName)
+        ));
+    }
+    
+    public static String getPayloadWithReplacements(String fileName, 
+                                                     Map&lt;String, String&gt; replacements) 
+                                                     throws IOException {
+        String payload = getPayload(fileName);
+        for (Map.Entry&lt;String, String&gt; entry : replacements.entrySet()) {
+            payload = payload.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        }
+        return payload;
+    }
+}</code></pre>
+
+            <h4>Usage Example</h4>
+            <pre><code>@Test
+public void testCreateUserFromTemplate() throws IOException {
+    Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+    data.put("name", "John Doe");
+    data.put("email", "john@test.com");
+    data.put("phone", "1234567890");
+    
+    String payload = PayloadHelper.getPayloadWithReplacements("user_payload.json", data);
+    
+    Response response = given()
+        .contentType(ContentType.JSON)
+        .body(payload)
+        .when()
+        .post("/users");
+}</code></pre>
+
+            <div class="comparison-table">
+                <div class="comparison-card good">
+                    <h4>✓ POJO Approach</h4>
+                    <ul>
+                        <li>Type-safe</li>
+                        <li>IDE autocomplete</li>
+                        <li>Easy refactoring</li>
+                        <li>Compile-time errors</li>
+                        <li>Better for complex logic</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-card bad">
+                    <h4>⚠ JSON File Approach</h4>
+                    <ul>
+                        <li>Runtime errors</li>
+                        <li>No type safety</li>
+                        <li>Hard to refactor</li>
+                        <li>Good for large payloads</li>
+                        <li>Non-developers can edit</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- POJO APPROACH -->
+        <section id="pojo-approach">
+            <h2>3. Single POJO Approach</h2>
+            
+            <div class="success-box">
+                <strong>Important:</strong> You should use <span class="highlight">ONE POJO per entity</span> that handles both request and response!
+            </div>
+            
+            <h3>Why Single POJO?</h3>
+            <ul>
+                <li>Reduces code duplication</li>
+                <li>Easier maintenance</li>
+                <li>Same entity concept for request/response</li>
+                <li>Jackson annotations handle the differences</li>
+            </ul>
+            
+            <h3>Complete POJO Example</h3>
+            <pre><code>@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)  // Exclude null fields
+public class User {
+    
+    // Server-generated fields - only in response
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String id;
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String createdAt;
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String updatedAt;
+    
+    // Common fields for both request and response
+    private String name;
+    private String email;
+    private String phone;
+    private Address address;
+    private String status;
+}</code></pre>
+
+            <h3>Usage in Tests</h3>
+            
+            <h4>Creating User (Request)</h4>
+            <pre><code>@Test
+public void testCreateUser() {
+    // Build request - id, createdAt will be null and excluded
+    User requestPayload = User.builder()
+        .name("John Doe")
+        .email("john@example.com")
+        .phone("1234567890")
+        .build();
+    
+    Response response = given()
+        .contentType(ContentType.JSON)
+        .body(requestPayload)
+        .when()
+        .post("/users");
+    
+    // Deserialize response to SAME POJO
+    User createdUser = response.as(User.class);
+    
+    // Validate - now id and createdAt are populated from response
+    assertThat(createdUser.getId(), notNullValue());
+    assertThat(createdUser.getName(), equalTo(requestPayload.getName()));
+    assertThat(createdUser.getCreatedAt(), notNullValue());
+}</code></pre>
+
+            <h4>Getting User (Response)</h4>
+            <pre><code>@Test
+public void testGetUser() {
+    Response response = given()
+        .pathParam("id", "123")
+        .when()
+        .get("/users/{id}");
+    
+    // Same POJO for response
+    User user = response.as(User.class);
+    
+    assertThat(user.getId(), equalTo("123"));
+    assertThat(user.getName(), notNullValue());
+    assertThat(user.getCreatedAt(), notNullValue());
+}</code></pre>
+
+            <h4>Updating User (Partial Request)</h4>
+            <pre><code>@Test
+public void testUpdateUser() {
+    // Only set fields you want to update
+    User updateRequest = User.builder()
+        .name("John Updated")
+        .phone("9999999999")
+        .build();
+    
+    Response response = given()
+        .contentType(ContentType.JSON)
+        .pathParam("id", "123")
+        .body(updateRequest)
+        .when()
+        .put("/users/{id}");
+    
+    User updatedUser = response.as(User.class);
+    assertThat(updatedUser.getName(), equalTo("John Updated"));
+}</code></pre>
+
+            <h3>When to Use Separate POJOs</h3>
+            
+            <div class="warning-box">
+                <strong>Only use separate POJOs when:</strong>
+                <ul>
+                    <li>Request and response structures are fundamentally different</li>
+                    <li>Different validation requirements (e.g., password required for create, optional for update)</li>
+                    <li>API uses completely different contracts</li>
+                </ul>
+            </div>
+            
+            <h4>Example: Separate Request/Response POJOs</h4>
+            <pre><code>// Request POJO
+@Data
+@Builder
+public class CreateUserRequest {
+    private String name;
+    private String email;
+    private String password;  // Only in request
+}
+
+// Response POJO
+@Data
+public class UserResponse {
+    private String id;
+    private String name;
+    private String email;
+    private String role;  // Only in response
+    private String createdAt;
+    // No password field for security
+}</code></pre>
+        </section>
+        
+        <!-- JSON ANNOTATIONS -->
+        <section id="json-annotations">
+            <h2>4. Jackson JSON Annotations Explained</h2>
+            
+            <h3>@JsonProperty(access = READ_ONLY)</h3>
+            
+            <div class="info-box">
+                <strong>Purpose:</strong> Field is only included when <span class="highlight">reading/deserializing JSON</span> (JSON → Java), 
+                but NOT when <span class="highlight">writing/serializing JSON</span> (Java → JSON)
+            </div>
+            
+            <h4>All Access Modes</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Access Mode</th>
+                        <th>Serialization (Java → JSON)</th>
+                        <th>Deserialization (JSON → Java)</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>AUTO</code></td>
+                        <td>✓ Included</td>
+                        <td>✓ Included</td>
+                        <td>Default behavior</td>
+                    </tr>
+                    <tr>
+                        <td><code>READ_ONLY</code></td>
+                        <td>✗ Excluded</td>
+                        <td>✓ Included</td>
+                        <td>Server-generated fields (id, createdAt)</td>
+                    </tr>
+                    <tr>
+                        <td><code>WRITE_ONLY</code></td>
+                        <td>✓ Included</td>
+                        <td>✗ Excluded</td>
+                        <td>Sensitive data (password in request)</td>
+                    </tr>
+                    <tr>
+                        <td><code>READ_WRITE</code></td>
+                        <td>✓ Included</td>
+                        <td>✓ Included</td>
+                        <td>Same as AUTO</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Visual Flow Diagram</h3>
+            <div class="visual-flow">
+REQUEST (Java → JSON Serialization):
+═══════════════════════════════════
+
+User object:                    Generated JSON:
+{                              {
+  id: "999"          ────✗       (excluded - READ_ONLY)
+  createdAt: "..."   ────✗       (excluded - READ_ONLY)
+  name: "John"       ────→       "name": "John"
+  email: "j@t.com"   ────→       "email": "j@t.com"
+}                              }
+
+
+RESPONSE (JSON → Java Deserialization):
+═══════════════════════════════════════
+
+JSON from API:                 User object:
+{                              {
+  "id": "123"        ────→       id: "123" ✓
+  "createdAt": "..." ────→       createdAt: "..." ✓
+  "name": "John"     ────→       name: "John" ✓
+  "email": "j@t.com" ────→       email: "j@t.com" ✓
+}                              }
+            </div>
+            
+            <h3>Real-World Examples</h3>
+            
+            <h4>Example 1: Server-Generated Fields</h4>
+            <pre><code>@Data
+public class User {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String id;  // Server generates this
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String createdAt;  // Server sets timestamp
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String updatedAt;  // Server updates timestamp
+    
+    private String name;  // Client can send and receive
+    private String email; // Client can send and receive
+}</code></pre>
+
+            <h4>Example 2: Sensitive Data (Password)</h4>
+            <pre><code>@Data
+public class User {
+    private String username;
+    
+    // Send in request, never receive in response
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+    
+    // Receive in response, never send in request
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String authToken;
+}</code></pre>
+
+            <div class="comparison-table">
+                <div class="comparison-card good">
+                    <h4>Login Request (password included)</h4>
+                    <pre><code>{
+  "username": "john",
+  "password": "secret123"
+}</code></pre>
+                </div>
+                
+                <div class="comparison-card good">
+                    <h4>Login Response (password excluded)</h4>
+                    <pre><code>{
+  "username": "john",
+  "authToken": "eyJhbGc..."
+}</code></pre>
+                </div>
+            </div>
+            
+            <h4>Example 3: Computed/Derived Fields</h4>
+            <pre><code>@Data
+public class Order {
+    private List&lt;OrderItem&gt; items;
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private BigDecimal totalAmount;  // Calculated by server
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private BigDecimal tax;  // Calculated by server
+    
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String orderStatus;  // Set by server workflow
+}</code></pre>
+
+            <h3>@JsonInclude(NON_NULL)</h3>
+            
+            <div class="info-box">
+                <strong>Purpose:</strong> Exclude fields with null values from JSON output
+            </div>
+            
+            <pre><code>@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class User {
+    private String id;        // If null, not included in JSON
+    private String name;
+    private String email;
+    private String phone;     // If null, not included in JSON
+}</code></pre>
+
+            <h4>Other @JsonInclude Options</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>NON_NULL</code></td>
+                        <td>Exclude null values</td>
+                    </tr>
+                    <tr>
+                        <td><code>NON_EMPTY</code></td>
+                        <td>Exclude null, empty strings, empty collections</td>
+                    </tr>
+                    <tr>
+                        <td><code>NON_DEFAULT</code></td>
+                        <td>Exclude default values (0, false, null)</td>
+                    </tr>
+                    <tr>
+                        <td><code>ALWAYS</code></td>
+                        <td>Include all fields (default)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Complete Demonstration</h3>
+            <pre><code>@Test
+public void demonstrateAnnotations() {
+    // CREATE REQUEST
+    User createRequest = User.builder()
+        .id("IGNORED")          // READ_ONLY - won't be sent
+        .createdAt("IGNORED")   // READ_ONLY - won't be sent
+        .name("John")
+        .email("john@test.com")
+        .phone(null)            // NON_NULL - won't be sent
+        .build();
+    
+    // Actual JSON sent to server:
+    // {"name":"John","email":"john@test.com"}
+    
+    Response response = given()
+        .body(createRequest)
+        .post("/users");
+    
+    // Response from server:
+    // {"id":"123","createdAt":"2024-01-15...","name":"John","email":"john@test.com"}
+    
+    User createdUser = response.as(User.class);
+    
+    assertThat(createdUser.getId(), equalTo("123"));
+    assertThat(createdUser.getCreatedAt(), notNullValue());
+    assertThat(createdUser.getName(), equalTo("John"));
+}</code></pre>
+
+            <div class="tip-box">
+                <strong>💡 Best Practice:</strong> Use <code>@JsonProperty(access = READ_ONLY)</code> instead of 
+                <code>@JsonInclude(NON_NULL)</code> for server-generated fields because:
+                <ul>
+                    <li>More explicit and self-documenting</li>
+                    <li>Prevents accidental inclusion even if field is set</li>
+                    <li>Safer and more maintainable</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- RESPONSE VALIDATION -->
+        <section id="response-validation">
+            <h2>5. Response Validation Strategies</h2>
+            
+            <h3>Strategy 1: Validator Classes (Recommended)</h3>
+            
+            <div class="success-box">
+                <strong>✓ Best for:</strong> Reusable validation logic, multiple similar assertions, maintaining consistency
+            </div>
+            
+            <pre><code>public class UserResponseValidator {
+    
+    public static void validateSuccessfulUserCreation(Response response, User expectedUser) {
+        response.then()
+            .statusCode(201)
+            .body("name", equalTo(expectedUser.getName()))
+            .body("email", equalTo(expectedUser.getEmail()))
+            .body("id", notNullValue())
+            .body("createdAt", matchesPattern("\\d{4}-\\d{2}-\\d{2}.*"));
+    }
+    
+    public static void validateUserNotFound(Response response) {
+        response.then()
+            .statusCode(404)
+            .body("error", equalTo("User not found"))
+            .body("message", containsString("does not exist"));
+    }
+    
+    public static void validateFieldErrors(Response response, List&lt;String&gt; expectedFields) {
+        response.then()
+            .statusCode(400)
+            .body("errors.field", hasItems(expectedFields.toArray()));
+    }
+    
+    public static void validateUserList(Response response, int expectedSize) {
+        response.then()
+            .statusCode(200)
+            .body("$", hasSize(expectedSize))
+            .body("id", everyItem(notNullValue()))
+            .body("email", everyItem(matchesPattern(".*@.*\\..*")));
+    }
+}</code></pre>
+
+            <h4>Usage in Tests</h4>
+            <pre><code>@Test
+public void testCreateUser() {
+    User user = UserPayloadBuilder.createValidUser();
+    Response response = userRequests.createUser(user);
+    
+    // Single line validation
+    UserResponseValidator.validateSuccessfulUserCreation(response, user);
+}
+
+@Test
+public void testGetNonExistentUser() {
+    Response response = userRequests.getUser("invalid-id");
+    
+    // Reusable validation
+    UserResponseValidator.validateUserNotFound(response);
+}</code></pre>
+
+            <h3>Strategy 2: Response Extractor with Assertions</h3>
+            
+            <div class="info-box">
+                <strong>Best for:</strong> Complex object comparisons, custom validation logic
+            </div>
+            
+            <pre><code>public class ResponseExtractor {
+    
+    public static User extractUser(Response response) {
+        return response.as(User.class);
+    }
+    
+    public static List&lt;User&gt; extractUserList(Response response) {
+        return Arrays.asList(response.as(User[].class));
+    }
+    
+    public static void validateUser(User actual, User expected) {
+        assertThat(actual.getName(), equalTo(expected.getName()));
+        assertThat(actual.getEmail(), equalTo(expected.getEmail()));
+        assertThat(actual.getId(), notNullValue());
+        assertThat(actual.getCreatedAt(), notNullValue());
+    }
+    
+    public static void validateUserFields(User user) {
+        assertThat(user.getId(), matchesPattern("[a-f0-9-]{36}"));
+        assertThat(user.getEmail(), matchesPattern(".*@.*"));
+        assertThat(user.getCreatedAt(), notNullValue());
+    }
+}</code></pre>
+
+            <h4>Usage Example</h4>
+            <pre><code>@Test
+public void testCreateAndValidateUser() {
+    User expectedUser = UserPayloadBuilder.createValidUser();
+    Response response = userRequests.createUser(expectedUser);
+    
+    // Extract and validate
+    User actualUser = ResponseExtractor.extractUser(response);
+    ResponseExtractor.validateUser(actualUser, expectedUser);
+    ResponseExtractor.validateUserFields(actualUser);
+}</code></pre>
+
+            <h3>Strategy 3: JSON Schema Validation</h3>
+            
+            <div class="info-box">
+                <strong>Best for:</strong> Contract testing, ensuring response structure consistency
+            </div>
+            
+            <h4>JSON Schema File (user_schema.json)</h4>
+            <pre><code>{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "name", "email", "createdAt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9-]{36}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}</code></pre>
+
+            <h4>Validator Class</h4>
+            <pre><code>public class SchemaValidator {
+    
+    public static void validateAgainstSchema(Response response, String schemaFileName) {
+        response.then()
+            .assertThat()
+            .body(matchesJsonSchemaInClasspath("schemas/" + schemaFileName));
+    }
+}</code></pre>
+
+            <h4>Usage</h4>
+            <pre><code>@Test
+public void testUserResponseSchema() {
+    Response response = userRequests.getUser("123");
+    
+    SchemaValidator.validateAgainstSchema(response, "user_schema.json");
+}</code></pre>
+
+            <h3>Common Validation Patterns</h3>
+            
+            <h4>Basic Assertions</h4>
+            <pre><code>response.then()
+    .statusCode(200)
+    .body("name", equalTo("John"))
+    .body("email", equalTo("john@test.com"))
+    .body("id", notNullValue())
+    .body("status", is("active"));</code></pre>
+
+            <h4>Collection Validations</h4>
+            <pre><code>// Array size
+response.then()
+    .body("users", hasSize(10))
+    .body("users.size()", greaterThan(5));
+
+// Every item validation
+response.then()
+    .body("users.id", everyItem(notNullValue()))
+    .body("users.email", everyItem(matchesPattern(".*@.*")));
+
+// Contains items
+response.then()
+    .body("users.name", hasItems("John", "Jane"));</code></pre>
+
+            <h4>Nested Object Validations</h4>
+            <pre><code>response.then()
+    .body("user.name", equalTo("John"))
+    .body("user.address.city", equalTo("New York"))
+    .body("user.address.zipCode", equalTo("10001"));</code></pre>
+
+            <h4>GPath (Groovy) Advanced Validations</h4>
+            <pre><code>// Find all users with status = 'active'
+response.then()
+    .body("users.findAll { it.status == 'active' }.size()", greaterThan(0));
+
+// Get first user's name
+response.then()
+    .body("users[0].name", notNullValue());
+
+// Sum of all order amounts
+response.then()
+    .body("orders.amount.sum()", greaterThan(1000));</code></pre>
+
+            <h4>Date/Time Validations</h4>
+            <pre><code>response.then()
+    .body("createdAt", matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*"))
+    .body("updatedAt", notNullValue());</code></pre>
+
+            <h4>Multiple Validations</h4>
+            <pre><code>public static void validateCompleteUser(Response response) {
+    response.then()
+        // Status
+        .statusCode(200)
+        
+        // Required fields
+        .body("id", notNullValue())
+        .body("name", notNullValue())
+        .body("email", notNullValue())
+        
+        // Format validations
+        .body("id", matchesPattern("[a-f0-9-]{36}"))
+        .body("email", matchesPattern(".*@.*\\..*"))
+        
+        // Timestamps
+        .body("createdAt", notNullValue())
+        .body("updatedAt", notNullValue())
+        
+        // Nested object
+        .body("address.city", notNullValue())
+        .body("address.zipCode", matchesPattern("\\d{5}"));
+}</code></pre>
+
+            <h3>Custom Matchers</h3>
+            <pre><code>public class CustomMatchers {
+    
+    public static Matcher&lt;String&gt; isValidUUID() {
+        return matchesPattern("^[a-f0-9-]{36}$");
+    }
+    
+    public static Matcher&lt;String&gt; isValidEmail() {
+        return matchesPattern("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+    
+    public static Matcher&lt;String&gt; isValidPhoneNumber() {
+        return matchesPattern("^\\d{10}$");
+    }
+}
+
+// Usage
+response.then()
+    .body("id", isValidUUID())
+    .body("email", isValidEmail())
+    .body("phone", isValidPhoneNumber());</code></pre>
+        </section>
+        
+        <!-- COMPLETE EXAMPLES -->
+        <section id="complete-examples">
+            <h2>6. Complete Working Examples</h2>
+            
+            <h3>Base Request Configuration</h3>
+            <pre><code>public class BaseRequest {
+    
+    protected RequestSpecification getRequestSpec() {
+        return new RequestSpecBuilder()
+            .setBaseUri(ConfigReader.getProperty("base.url"))
+            .setContentType(ContentType.JSON)
+            .addHeader("Authorization", "Bearer " + getAuthToken())
+            .addFilter(new RequestLoggingFilter())
+            .addFilter(new ResponseLoggingFilter())
+            .build();
+    }
+    
+    private String getAuthToken() {
+        // Get token from config or authentication service
+        return ConfigReader.getProperty("auth.token");
+    }
+}</code></pre>
+
+            <h3>Request Layer</h3>
+            <pre><code>public class UserRequests extends BaseRequest {
+    
+    private static final String BASE_PATH = "/api/users";
+    
+    public Response createUser(User user) {
+        return given()
+            .spec(getRequestSpec())
+            .body(user)
+            .when()
+            .post(BASE_PATH);
+    }
+    
+    public Response getUser(String userId) {
+        return given()
+            .spec(getRequestSpec())
+            .pathParam("id", userId)
+            .when()
+            .get(BASE_PATH + "/{id}");
+    }
+    
+    public Response getAllUsers() {
+        return given()
+            .spec(getRequestSpec())
+            .when()
+            .get(BASE_PATH);
+    }
+    
+    public Response updateUser(String userId, User user) {
+        return given()
+            .spec(getRequestSpec())
+            .pathParam("id", userId)
+            .body(user)
+            .when()
+            .put(BASE_PATH + "/{id}");
+    }
+    
+    public Response deleteUser(String userId) {
+        return given()
+            .spec(getRequestSpec())
+            .pathParam("id", userId)
+            .when()
+            .delete(BASE_PATH + "/{id}");
+    }
+    
+    public Response searchUsers(Map&lt;String, String&gt; queryParams) {
+        return given()
+            .spec(getRequestSpec())
+            .queryParams(queryParams)
+            .when()
+            .get(BASE_PATH + "/search");
+    }
+}</code></pre>
+
+            <h3>Complete Test Suite</h3>
+            <pre><code>public class UserAPITests {
+    
+    private UserRequests userRequests;
+    private String createdUserId;
+    
+    @BeforeEach
+    public void setup() {
+        userRequests = new UserRequests();
+    }
+    
+    @AfterEach
+    public void cleanup() {
+        if (createdUserId != null) {
+            userRequests.deleteUser(createdUserId);
+        }
+    }
+    
+    @Test
+    @DisplayName("Create user with valid data - Should return 201")
+    public void testCreateUser_Success() {
+        // Arrange
+        User user = UserPayloadBuilder.createValidUser();
+        
+        // Act
+        Response response = userRequests.createUser(user);
+        
+        // Assert
+        UserResponseValidator.validateSuccessfulUserCreation(response, user);
+        
+        // Extract user ID for cleanup
+        createdUserId = response.jsonPath().getString("id");
+        
+        // Additional validations
+        assertThat(createdUserId, CustomMatchers.isValidUUID());
+    }
+    
+    @Test
+    @DisplayName("Create user with missing email - Should return 400")
+    public void testCreateUser_MissingEmail() {
+        // Arrange
+        User invalidUser = UserPayloadBuilder.createUserWithMissingEmail();
+        
+        // Act
+        Response response = userRequests.createUser(invalidUser);
+        
+        // Assert
+        UserResponseValidator.validateFieldErrors(response, Arrays.asList("email"));
+    }
+    
+    @Test
+    @DisplayName("Get existing user - Should return 200 with user data")
+    public void testGetUser_Success() {
+        // Arrange - Create user first
+        User user = UserPayloadBuilder.createValidUser();
+        createdUserId = userRequests.createUser(user)
+            .jsonPath().getString("id");
+        
+        // Act
+        Response response = userRequests.getUser(createdUserId);
+        
+        // Assert
+        response.then()
+            .statusCode(200)
+            .body("id", equalTo(createdUserId))
+            .body("name", equalTo(user.getName()))
+            .body("email", equalTo(user.getEmail()));
+        
+        // Schema validation
+        SchemaValidator.validateAgainstSchema(response, "user_schema.json");
+    }
+    
+    @Test
+    @DisplayName("Get non-existent user - Should return 404")
+    public void testGetUser_NotFound() {
+        // Act
+        Response response = userRequests.getUser("invalid-id-12345");
+        
+        // Assert
+        UserResponseValidator.validateUserNotFound(response);
+    }
+    
+    @Test
+    @DisplayName("Update user - Should return 200 with updated data")
+    public void testUpdateUser_Success() {
+        // Arrange - Create user first
+        User user = UserPayloadBuilder.createValidUser();
+        createdUserId = userRequests.createUser(user)
+            .jsonPath().getString("id");
+        
+        // Prepare update
+        User updateData = User.builder()
+            .name("Updated Name")
+            .phone("9999999999")
+            .build();
+        
+        // Act
+        Response response = userRequests.updateUser(createdUserId, updateData);
+        
+        // Assert
+        response.then()
+            .statusCode(200)
+            .body("id", equalTo(createdUserId))
+            .body("name", equalTo("Updated Name"))
+            .body("phone", equalTo("9999999999"))
+            .body("updatedAt", notNullValue());
+    }
+    
+    @Test
+    @DisplayName("Get all users - Should return list with minimum 1 user")
+    public void testGetAllUsers_Success() {
+        // Arrange - Create a user to ensure list is not empty
+        User user = UserPayloadBuilder.createValidUser();
+        createdUserId = userRequests.createUser(user)
+            .jsonPath().getString("id");
+        
+        // Act
+        Response response = userRequests.getAllUsers();
+        
+        // Assert
+        UserResponseValidator.validateUserList(response, 1);
+    }
+    
+    @Test
+    @DisplayName("Delete user - Should return 204")
+    public void testDeleteUser_Success() {
+        // Arrange - Create user first
+        User user = UserPayloadBuilder.createValidUser();
+        String userId = userRequests.createUser(user)
+            .jsonPath().getString("id");
+        
+        // Act
+        Response response = userRequests.deleteUser(userId);
+        
+        // Assert
+        response.then().statusCode(204);
+        
+        // Verify user is deleted
+        Response getResponse = userRequests.getUser(userId);
+        UserResponseValidator.validateUserNotFound(getResponse);
+        
+        // Set to null to prevent cleanup attempt
+        createdUserId = null;
+    }
+}</code></pre>
+
+            <h3>Data-Driven Testing</h3>
+            <pre><code>@ParameterizedTest
+@CsvSource({
+    "John Doe,john@test.com,1234567890,201",
+    "'',john@test.com,1234567890,400",
+    "John,'',1234567890,400",
+    "John,invalid-email,1234567890,400"
+})
+@DisplayName("Create user with various inputs")
+public void testCreateUser_ParameterizedTest(String name, String email, 
+                                             String phone, int expectedStatus) {
+    // Arrange
+    User user = User.builder()
+        .name(name)
+        .email(email)
+        .phone(phone)
+        .build();
+    
+    // Act
+    Response response = userRequests.createUser(user);
+    
+    // Assert
+    response.then().statusCode(expectedStatus);
+    
+    // Cleanup if created successfully
+    if (expectedStatus == 201) {
+        String userId = response.jsonPath().getString("id");
+        userRequests.deleteUser(userId);
+    }
+}</code></pre>
+
+            <h3>End-to-End User Lifecycle Test</h3>
+            <pre><code>@Test
+@DisplayName("Complete user lifecycle - Create, Read, Update, Delete")
+public void testUserLifecycle() {
+    // 1. CREATE
+    User createRequest = UserPayloadBuilder.createValidUser();
+    Response createResponse = userRequests.createUser(createRequest);
+    
+    createResponse.then().statusCode(201);
+    String userId = createResponse.jsonPath().getString("id");
+    User createdUser = createResponse.as(User.class);
+    
+    assertThat(createdUser.getId(), notNullValue());
+    assertThat(createdUser.getName(), equalTo(createRequest.getName()));
+    
+    // 2. READ
+    Response getResponse = userRequests.getUser(userId);
+    User fetchedUser = getResponse.as(User.class);
+    
+    assertThat(fetchedUser.getId(), equalTo(userId));
+    assertThat(fetchedUser.getName(), equalTo(createRequest.getName()));
+    
+    // 3. UPDATE
+    User updateRequest = User.builder()
+        .name("Updated Name")
+        .phone("9999999999")
+        .build();
+    
+    Response updateResponse = userRequests.updateUser(userId, updateRequest);
+    User updatedUser = updateResponse.as(User.class);
+    
+    assertThat(updatedUser.getName(), equalTo("Updated Name"));
+    assertThat(updatedUser.getPhone(), equalTo("9999999999"));
+    
+    // 4. DELETE
+    Response deleteResponse = userRequests.deleteUser(userId);
+    deleteResponse.then().statusCode(204);
+    
+    // 5. VERIFY DELETION
+    Response verifyResponse = userRequests.getUser(userId);
+    UserResponseValidator.validateUserNotFound(verifyResponse);
+}</code></pre>
+        </section>
+        
+        <!-- BEST PRACTICES -->
+        <section id="best-practices">
+            <h2>7. Best Practices & Tips</h2>
+            
+            <h3>Project Organization</h3>
+            <div class="success-box">
+                <ul>
+                    <li>Use <strong>ONE POJO per entity</strong> for both request and response</li>
+                    <li>Separate concerns: Models, Builders, Requests, Validators, Tests</li>
+                    <li>Use Builder pattern for flexible object creation</li>
+                    <li>Keep validators reusable across multiple tests</li>
+                </ul>
+            </div>
+            
+            <h3>Payload Management</h3>
+            <div class="tip-box">
+                <ul>
+                    <li>Prefer <strong>POJO approach</strong> over JSON files for type safety</li>
+                    <li>Use <code>@JsonInclude(NON_NULL)</code> to exclude null fields</li>
+                    <li>Use <code>@JsonProperty(access = READ_ONLY)</code> for server-generated fields</li>
+                    <li>Create factory methods in Builder classes for common scenarios</li>
+                </ul>
+            </div>
+            
+            <h3>Response Validation</h3>
+            <div class="info-box">
+                <ul>
+                    <li>Create validator classes for <strong>reusable validations</strong></li>
+                    <li>Use JSON Schema validation for <strong>contract testing</strong></li>
+                    <li>Combine multiple validation strategies for comprehensive testing</li>
+                    <li>Validate both positive and negative scenarios</li>
+                    <li>Use custom matchers for domain-specific validations</li>
+                </ul>
+            </div>
+            
+            <h3>Test Organization</h3>
+            <div class="warning-box">
+                <ul>
+                    <li>Use <code>@BeforeEach</code> for test setup</li>
+                    <li>Use <code>@AfterEach</code> for cleanup (delete test data)</li>
+                    <li>Use descriptive test method names and <code>@DisplayName</code></li>
+                    <li>Follow AAA pattern: Arrange, Act, Assert</li>
+                    <li>Keep tests independent and idempotent</li>
+                </ul>
+            </div>
+            
+            <h3>Common Hamcrest Matchers</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matcher</th>
+                        <th>Usage</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>equalTo()</code></td>
+                        <td>Exact match</td>
+                        <td><code>body("name", equalTo("John"))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>notNullValue()</code></td>
+                        <td>Not null</td>
+                        <td><code>body("id", notNullValue())</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>hasItems()</code></td>
+                        <td>Contains items</td>
+                        <td><code>body("names", hasItems("John", "Jane"))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>hasSize()</code></td>
+                        <td>Collection size</td>
+                        <td><code>body("users", hasSize(10))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>greaterThan()</code></td>
+                        <td>Comparison</td>
+                        <td><code>body("age", greaterThan(18))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>containsString()</code></td>
+                        <td>Substring match</td>
+                        <td><code>body("message", containsString("success"))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>matchesPattern()</code></td>
+                        <td>Regex match</td>
+                        <td><code>body("email", matchesPattern(".*@.*"))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>everyItem()</code></td>
+                        <td>Every element</td>
+                        <td><code>body("ids", everyItem(notNullValue()))</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Quick Reference: When to Use What</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Recommended Approach</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Simple CRUD operations</td>
+                        <td>Single POJO with Jackson annotations</td>
+                    </tr>
+                    <tr>
+                        <td>Complex nested objects</td>
+                        <td>POJO with nested POJOs</td>
+                    </tr>
+                    <tr>
+                        <td>Server-generated fields</td>
+                        <td><code>@JsonProperty(access = READ_ONLY)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Password/sensitive data</td>
+                        <td><code>@JsonProperty(access = WRITE_ONLY)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Optional fields</td>
+                        <td><code>@JsonInclude(NON_NULL)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Reusable validations</td>
+                        <td>Validator classes with static methods</td>
+                    </tr>
+                    <tr>
+                        <td>Contract testing</td>
+                        <td>JSON Schema validation</td>
+                    </tr>
+                    <tr>
+                        <td>Multiple similar tests</td>
+                        <td>Parameterized tests</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Configuration Management</h3>
+            <pre><code>// config.properties
+base.url=https://api.example.com
+auth.token=your-token-here
+default.timeout=30
+
+// ConfigReader.java
+public class ConfigReader {
+    private static Properties properties;
+    
+    static {
+        try {
+            properties = new Properties();
+            FileInputStream fis = new FileInputStream("src/test/resources/config.properties");
+            properties.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+}</code></pre>
+
+            <h3>Logging and Reporting</h3>
+            <pre><code>// Add filters for request/response logging
+RequestSpecification spec = new RequestSpecBuilder()
+    .addFilter(new RequestLoggingFilter())
+    .addFilter(new ResponseLoggingFilter())
+    .addFilter(new AllureRestAssured())  // For Allure reports
+    .build();
+
+// Log only if validation fails
+given()
+    .spec(spec)
+    .log().ifValidationFails()
+    .when()
+    .get("/users")
+    .then()
+    .log().ifValidationFails()
+    .statusCode(200);</code></pre>
+
+            <h3>Error Handling</h3>
+            <pre><code>@Test
+public void testWithErrorHandling() {
+    try {
+        Response response = given()
+            .when()
+            .get("/users/invalid");
+        
+        if (response.getStatusCode() != 200) {
+            System.out.println("Error Response: " + response.asString());
+        }
+        
+        response.then().statusCode(200);
+        
+    } catch (AssertionError e) {
+        System.out.println("Assertion failed: " + e.getMessage());
+        throw e;
+    }
+}</code></pre>
+
+            <div class="tip-box">
+                <h4>💡 Pro Tips</h4>
+                <ul>
+                    <li>Always clean up test data in <code>@AfterEach</code></li>
+                    <li>Use meaningful variable names and test descriptions</li>
+                    <li>Don't hardcore values - use constants or config files</li>
+                    <li>Extract common setup to <code>@BeforeEach</code></li>
+                    <li>Use soft assertions for multiple validations</li>
+                    <li>Implement retry logic for flaky tests</li>
+                    <li>Use environment-specific configurations</li>
+                    <li>Add proper wait/timeouts for async operations</li>
+                </ul>
+            </div>
+        </section>
+        
+        <footer>
+            <p><strong>RestAssured Study Guide</strong> - Your comprehensive reference for API testing</p>
+            <p>Created: February 2026 | Version 1.0</p>
+        </footer>
+    </div>
+</body>
+</html>

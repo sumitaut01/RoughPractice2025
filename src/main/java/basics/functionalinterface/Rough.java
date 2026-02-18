@@ -1,5 +1,6 @@
 package basics.functionalinterface;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -26,6 +27,12 @@ public class Rough {
         fff.apply("sumit");
 
         //map
+
+
+        //consumer
+
+        Consumer<String> dd= s-> System.out.println(s);
+        dd.accept("sumit");
 
 
     }

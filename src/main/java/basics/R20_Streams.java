@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class R20_Streams {
     public static void main(String[] args) {
@@ -84,6 +85,33 @@ public class R20_Streams {
         Supplier<MyClassXX> obj2=()->new MyClassXX();//with lambda
 
 
+
+
+    }
+
+
+
+
+    @Test
+    public void Rough3(){
+        List<String> lData=List.of("sumit","amit","neha");
+        List<String> data=lData.stream().map(s->s.toUpperCase()).filter(s->s.startsWith("S")).collect(Collectors.toList());
+        System.out.println(data);
+    }
+
+    @Test
+    public void Rough4(){
+
+        //arrray list
+        //linkedlist
+        //
+
+        //set hashset lhst
+
+        //map hashmap //treemap
+
+
+        //
 
 
     }

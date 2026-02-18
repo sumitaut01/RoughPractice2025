@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REST Assured — Complete Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&family=Newsreader:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --accent4: #10b981;
+    --accent5: #f43f5e;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --code-bg: #0d1117;
+    --code-border: #21262d;
+    --tag-auth: #7c3aed22;
+    --tag-auth-border: #7c3aed55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Newsreader', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── HEADER ── */
+  .hero {
+    background: var(--bg);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, #00e5ff08 0%, #7c3aed05 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-top: 16px;
+    font-style: italic;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.6s;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.8s;
+  }
+
+  .hero-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 12, 16, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    overflow-x: auto;
+  }
+
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 16px 18px;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.1s; }
+  .section:nth-child(2) { animation-delay: 0.2s; }
+  .section:nth-child(3) { animation-delay: 0.3s; }
+  .section:nth-child(4) { animation-delay: 0.4s; }
+  .section:nth-child(5) { animation-delay: 0.5s; }
+  .section:nth-child(6) { animation-delay: 0.6s; }
+  .section:nth-child(7) { animation-delay: 0.7s; }
+  .section:nth-child(8) { animation-delay: 0.8s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: #00e5ff12;
+    border: 1px solid #00e5ff22;
+    padding: 4px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .section h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section h3::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  p {
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #161b22;
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .code-lang {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .code-dots span:nth-child(1) { background: #ff5f57; }
+  .code-dots span:nth-child(2) { background: #febc2e; }
+  .code-dots span:nth-child(3) { background: #28c840; }
+
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  /* Syntax coloring */
+  .kw  { color: #ff7b72; }   /* keywords */
+  .cl  { color: #79c0ff; }   /* classes */
+  .st  { color: #a5d6ff; }   /* strings */
+  .cm  { color: #8b949e; font-style: italic; }  /* comments */
+  .an  { color: #ffa657; }   /* annotations */
+  .mt  { color: #d2a8ff; }   /* methods */
+  .nm  { color: #79c0ff; }   /* numbers */
+  .vr  { color: #e2e8f0; }   /* variables */
+
+  /* ── INLINE CODE ── */
+  p code, li code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* ── CARDS ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 16px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead {
+    background: var(--surface2);
+  }
+
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 12px 16px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: var(--surface); }
+
+  td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .callout p { margin: 0; font-size: 14px; }
+
+  .callout.tip {
+    background: #10b98110;
+    border: 1px solid #10b98122;
+  }
+  .callout.tip p { color: #6ee7b7; }
+
+  .callout.warn {
+    background: #f59e0b10;
+    border: 1px solid #f59e0b22;
+  }
+  .callout.warn p { color: #fcd34d; }
+
+  .callout.info {
+    background: #00e5ff08;
+    border: 1px solid #00e5ff20;
+  }
+  .callout.info p { color: #67e8f9; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+    overflow-x: auto;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .flow-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    text-align: center;
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+
+  .flow-step .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .flow-step .step-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .flow-step .step-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .flow-arrow {
+    font-size: 18px;
+    color: var(--text-muted);
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── COMPARISON ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  @media (max-width: 640px) {
+    .compare { grid-template-columns: 1fr; }
+  }
+
+  .compare-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .compare-box h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-green { background: #10b98118; color: #34d399; border: 1px solid #10b98133; }
+  .tag-red   { background: #f43f5e18; color: #fb7185; border: 1px solid #f43f5e33; }
+  .tag-blue  { background: #00e5ff12; color: #67e8f9; border: 1px solid #00e5ff22; }
+  .tag-purple{ background: #7c3aed18; color: #c084fc; border: 1px solid #7c3aed33; }
+  .tag-amber { background: #f59e0b18; color: #fcd34d; border: 1px solid #f59e0b33; }
+
+  ul.checklist {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul.checklist li {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  ul.checklist li::before {
+    content: '✓';
+    color: var(--accent4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  ul.checklist li.no::before {
+    content: '✗';
+    color: var(--accent5);
+  }
+
+  /* ── AUTH VISUAL ── */
+  .auth-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .auth-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+  }
+
+  .auth-label {
+    width: 130px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  .auth-bar {
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* ── STATUS CODES ── */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .status-card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .status-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .status-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .status-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── CHEATSHEET ── */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .cheat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .cheat-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cheat-rows { padding: 8px 0; }
+
+  .cheat-row {
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
+    transition: background 0.15s;
+  }
+
+  .cheat-row:hover { background: var(--surface2); }
+
+  .cheat-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+
+  .cheat-val {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+  }
+
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero { padding: 60px 20px 40px; }
+    .container { padding: 40px 20px; }
+    .nav { padding: 0 20px; }
+    .hero h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">// Study Guide · REST Assured + TestNG</div>
+  <h1>REST Assured<br><span>Complete Reference</span></h1>
+  <p class="hero-sub">Response Parsing · Serialization · Auth · Validation · Reporting</p>
+  <div class="hero-meta">
+    <span class="hero-badge">REST Assured 5.4</span>
+    <span class="hero-badge">TestNG 7.9</span>
+    <span class="hero-badge">Jackson 2.16</span>
+    <span class="hero-badge">Allure 2.25</span>
+    <span class="hero-badge">Java 11+</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#setup">Setup</a>
+    <a href="#parsing">Response Parsing</a>
+    <a href="#serialization">Serialization</a>
+    <a href="#jackson">Jackson Annotations</a>
+    <a href="#validation">Validation + TestNG</a>
+    <a href="#chaining">Chaining Requests</a>
+    <a href="#auth">Auth Types</a>
+    <a href="#authn-authz">Authn vs Authz</a>
+    <a href="#schema">Schema Validation</a>
+    <a href="#reporting">Reporting</a>
+    <a href="#cheatsheet">Cheat Sheet</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 1. SETUP -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="setup">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Project Setup</h2>
+    </div>
+
+    <p>Add these dependencies to your <code>pom.xml</code>. REST Assured uses Jackson or Gson for serialization automatically — just have one on the classpath.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">xml · pom.xml</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="cm">&lt;!-- REST Assured --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">rest-assured</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">5.4.0</span>&lt;/version&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- JSON Schema Validator --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">json-schema-validator</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">5.4.0</span>&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- Jackson for serialization --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">jackson-databind</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">2.16.0</span>&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- Jackson Java 8 Time Support --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;com.fasterxml.jackson.datatype&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">jackson-datatype-jsr310</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">2.16.0</span>&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- TestNG --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.testng&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">testng</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">7.9.0</span>&lt;/version&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- Allure TestNG --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.qameta.allure&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">allure-testng</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="nm">2.25.0</span>&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+    </div>
+
+    <h3>Base Test Class</h3>
+    <p>Set up everything once in a base class. All test classes extend this.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java · BaseTest.java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="kw">public class</span> <span class="cl">BaseTest</span> {
+
+    <span class="kw">protected</span> <span class="cl">RequestSpecification</span> requestSpec;
+    <span class="kw">protected</span> <span class="cl">ResponseSpecification</span> responseSpec;
+
+    <span class="an">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="mt">setup</span>() {
+        <span class="cm">// Global ObjectMapper config</span>
+        <span class="cl">ObjectMapper</span> mapper = <span class="kw">new</span> <span class="cl">ObjectMapper</span>();
+        mapper.<span class="mt">registerModule</span>(<span class="kw">new</span> <span class="cl">JavaTimeModule</span>());
+        mapper.<span class="mt">configure</span>(<span class="cl">DeserializationFeature</span>.FAIL_ON_UNKNOWN_PROPERTIES, <span class="kw">false</span>);
+        mapper.<span class="mt">setPropertyNamingStrategy</span>(<span class="cl">PropertyNamingStrategies</span>.SNAKE_CASE);
+
+        <span class="cl">RestAssured</span>.config = <span class="cl">RestAssuredConfig</span>.<span class="mt">config</span>()
+            .<span class="mt">objectMapperConfig</span>(<span class="cl">ObjectMapperConfig</span>.<span class="mt">objectMapperConfig</span>()
+                .<span class="mt">jackson2ObjectMapperFactory</span>((cls, charset) -> mapper));
+
+        <span class="cm">// Request spec</span>
+        requestSpec = <span class="kw">new</span> <span class="cl">RequestSpecBuilder</span>()
+            .<span class="mt">setBaseUri</span>(<span class="st">"https://api.example.com"</span>)
+            .<span class="mt">setContentType</span>(<span class="cl">ContentType</span>.JSON)
+            .<span class="mt">addHeader</span>(<span class="st">"Authorization"</span>, <span class="st">"Bearer "</span> + <span class="cl">TokenManager</span>.<span class="mt">getToken</span>())
+            .<span class="mt">addFilter</span>(<span class="kw">new</span> <span class="cl">AllureRestAssured</span>())
+            .<span class="mt">log</span>(<span class="cl">LogDetail</span>.ALL)
+            .<span class="mt">build</span>();
+
+        <span class="cm">// Response spec</span>
+        responseSpec = <span class="kw">new</span> <span class="cl">ResponseSpecBuilder</span>()
+            .<span class="mt">expectStatusCode</span>(<span class="nm">200</span>)
+            .<span class="mt">expectContentType</span>(<span class="cl">ContentType</span>.JSON)
+            .<span class="mt">build</span>();
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 2. RESPONSE PARSING -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="parsing">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Response Parsing</h2>
+    </div>
+
+    <h3>Using jsonPath() — No POJO Needed</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="cl">Response</span> response = <span class="mt">given</span>()
+    .<span class="mt">spec</span>(requestSpec)
+  .<span class="mt">when</span>()
+    .<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+  .<span class="mt">then</span>()
+    .<span class="mt">statusCode</span>(<span class="nm">200</span>)
+    .<span class="mt">extract</span>().<span class="mt">response</span>();
+
+<span class="cm">// Top level field</span>
+<span class="cl">String</span> name  = response.<span class="mt">jsonPath</span>().<span class="mt">getString</span>(<span class="st">"name"</span>);
+<span class="kw">int</span>    id    = response.<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"id"</span>);
+
+<span class="cm">// Nested field — use dot notation</span>
+<span class="cl">String</span> city  = response.<span class="mt">jsonPath</span>().<span class="mt">getString</span>(<span class="st">"address.city"</span>);
+<span class="cl">String</span> lat   = response.<span class="mt">jsonPath</span>().<span class="mt">getString</span>(<span class="st">"address.geo.lat"</span>);
+
+<span class="cm">// List of values</span>
+<span class="cl">List</span>&lt;<span class="cl">String</span>&gt; names = response.<span class="mt">jsonPath</span>().<span class="mt">getList</span>(<span class="st">"name"</span>);
+
+<span class="cm">// First item in array</span>
+<span class="kw">int</span> firstOrderId = response.<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"orders[0].order_id"</span>);</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Use For</th><th>Example Path</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>getString("field")</td><td>Text values</td><td>"name", "address.city"</td></tr>
+          <tr><td>getInt("field")</td><td>Whole numbers</td><td>"id", "orders[0].order_id"</td></tr>
+          <tr><td>getDouble("field")</td><td>Decimal numbers</td><td>"price", "rating"</td></tr>
+          <tr><td>getBoolean("field")</td><td>True/false</td><td>"is_active"</td></tr>
+          <tr><td>getList("field")</td><td>Arrays</td><td>"tags", "orders.item"</td></tr>
+          <tr><td>getMap("field")</td><td>Objects as map</td><td>"address", "metadata"</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 3. SERIALIZATION / DESERIALIZATION -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="serialization">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Serialization &amp; Deserialization</h2>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box">
+        <h4><span class="tag tag-blue">Deserialization</span> JSON → Java</h4>
+        <ul class="checklist">
+          <li>Response JSON mapped into a POJO</li>
+          <li>Use <code>.extract().as(User.class)</code></li>
+          <li>Jackson matches JSON fields to POJO fields</li>
+          <li>Use <code>TypeRef</code> for generic types like Lists</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4><span class="tag tag-purple">Serialization</span> Java → JSON</h4>
+        <ul class="checklist">
+          <li>POJO converted to JSON for request body</li>
+          <li>Use <code>.body(myObject)</code></li>
+          <li>Must set <code>ContentType.JSON</code></li>
+          <li>Can also use <code>Map</code> instead of POJO</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>POJO for Nested Response</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java · User.java (POJO)</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="an">@JsonNaming</span>(<span class="cl">PropertyNamingStrategies</span>.<span class="cl">SnakeCaseStrategy</span>.<span class="kw">class</span>)
+<span class="kw">public class</span> <span class="cl">User</span> {
+    <span class="kw">private int</span> id;
+    <span class="kw">private</span> <span class="cl">String</span> firstName;
+    <span class="kw">private</span> <span class="cl">String</span> email;
+    <span class="kw">private</span> <span class="cl">Address</span> address;           <span class="cm">// nested object</span>
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">Order</span>&gt; orders;        <span class="cm">// list of objects</span>
+    <span class="kw">private</span> <span class="cl">List</span>&lt;<span class="cl">String</span>&gt; tags;         <span class="cm">// list of strings</span>
+
+    <span class="an">@JsonFormat</span>(pattern = <span class="st">"yyyy-MM-dd'T'HH:mm:ss"</span>)
+    <span class="kw">private</span> <span class="cl">LocalDateTime</span> createdAt;  <span class="cm">// date handling</span>
+
+    <span class="cm">// getters and setters...</span>
+}
+
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">Address</span> {
+    <span class="kw">private</span> <span class="cl">String</span> street, city, zip;
+    <span class="cm">// getters and setters...</span>
+}</code></pre>
+    </div>
+
+    <h3>Deserialize Response</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="cm">// Single object</span>
+<span class="cl">User</span> user = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+    .<span class="mt">then</span>().<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">User</span>.<span class="kw">class</span>);
+
+<span class="cm">// List of objects — use TypeRef for generics</span>
+<span class="cl">List</span>&lt;<span class="cl">User</span>&gt; users = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users"</span>)
+    .<span class="mt">then</span>().<span class="mt">extract</span>().<span class="mt">as</span>(<span class="kw">new</span> <span class="cl">TypeRef</span>&lt;<span class="cl">List</span>&lt;<span class="cl">User</span>&gt;&gt;() {});
+
+<span class="cm">// Serialize POJO as request body</span>
+<span class="cl">User</span> newUser = <span class="kw">new</span> <span class="cl">User</span>();
+newUser.<span class="mt">setFirstName</span>(<span class="st">"John"</span>);
+
+<span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">body</span>(newUser)              <span class="cm">// auto-serialized to JSON</span>
+  .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/users"</span>)
+  .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">201</span>);</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 4. JACKSON ANNOTATIONS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="jackson">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Jackson Annotations</h2>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h4>@JsonIgnoreProperties</h4>
+        <p>Silently ignore unknown fields in response. <strong>Always use this</strong> — APIs add new fields constantly.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔤</div>
+        <h4>@JsonNaming</h4>
+        <p>Apply naming strategy to all fields in the class. Use <code>SnakeCaseStrategy</code> for APIs that return <code>snake_case</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏷️</div>
+        <h4>@JsonProperty</h4>
+        <p>Map a specific JSON field name to a Java field. Overrides <code>@JsonNaming</code> for that field.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚫</div>
+        <h4>@JsonIgnore</h4>
+        <p>Skip a specific field during serialization or deserialization — passwords, internal fields, etc.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📅</div>
+        <h4>@JsonFormat</h4>
+        <p>Define the date/time pattern for a field. Required for <code>LocalDateTime</code>, <code>LocalDate</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧹</div>
+        <h4>@JsonInclude</h4>
+        <p>Skip null fields when serializing to JSON. Use <code>NON_NULL</code> to keep request bodies clean.</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java · All annotations in one POJO</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)          <span class="cm">// ignore extra fields</span>
+<span class="an">@JsonNaming</span>(<span class="cl">PropertyNamingStrategies</span>.<span class="cl">SnakeCaseStrategy</span>.<span class="kw">class</span>)  <span class="cm">// first_name → firstName</span>
+<span class="an">@JsonInclude</span>(<span class="cl">JsonInclude</span>.<span class="cl">Include</span>.NON_NULL)             <span class="cm">// skip nulls in requests</span>
+<span class="kw">public class</span> <span class="cl">User</span> {
+
+    <span class="kw">private int</span> id;
+
+    <span class="kw">private</span> <span class="cl">String</span> firstName;   <span class="cm">// auto-mapped from "first_name"</span>
+
+    <span class="an">@JsonProperty</span>(<span class="st">"email_address"</span>)  <span class="cm">// explicit override</span>
+    <span class="kw">private</span> <span class="cl">String</span> email;
+
+    <span class="an">@JsonIgnore</span>                      <span class="cm">// never serialized or deserialized</span>
+    <span class="kw">private</span> <span class="cl">String</span> password;
+
+    <span class="an">@JsonFormat</span>(pattern = <span class="st">"yyyy-MM-dd'T'HH:mm:ss"</span>)
+    <span class="kw">private</span> <span class="cl">LocalDateTime</span> createdAt;
+}</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <p><strong>Pro tip:</strong> <code>@JsonProperty</code> always wins over <code>@JsonNaming</code>. Set a global naming strategy on the class, then override specific non-conforming fields with <code>@JsonProperty</code>.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 5. VALIDATION + TESTNG -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="validation">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Validation + TestNG</h2>
+    </div>
+
+    <h3>Approach 1 — Inline Hamcrest (Quick Checks)</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+.<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+.<span class="mt">then</span>()
+    .<span class="mt">statusCode</span>(<span class="nm">200</span>)
+    .<span class="mt">body</span>(<span class="st">"name"</span>,               <span class="mt">equalTo</span>(<span class="st">"Leanne Graham"</span>))
+    .<span class="mt">body</span>(<span class="st">"address.city"</span>,       <span class="mt">equalTo</span>(<span class="st">"Gwenborough"</span>))     <span class="cm">// nested</span>
+    .<span class="mt">body</span>(<span class="st">"address.geo.lat"</span>,    <span class="mt">notNullValue</span>())              <span class="cm">// deep nested</span>
+    .<span class="mt">body</span>(<span class="st">"$"</span>,                  <span class="mt">hasSize</span>(<span class="nm">10</span>))                 <span class="cm">// list size</span>
+    .<span class="mt">body</span>(<span class="st">"name"</span>,               <span class="mt">hasItem</span>(<span class="st">"Leanne Graham"</span>))    <span class="cm">// list contains</span>
+    .<span class="mt">body</span>(<span class="st">"[0].address.city"</span>,   <span class="mt">equalTo</span>(<span class="st">"Gwenborough"</span>));    <span class="cm">// first item nested</span></code></pre>
+    </div>
+
+    <h3>Approach 2 — POJO + TestNG Assert</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="cl">User</span> user = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+    .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+    .<span class="mt">then</span>().<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">User</span>.<span class="kw">class</span>);
+
+<span class="cl">Assert</span>.<span class="mt">assertEquals</span>(user.<span class="mt">getName</span>(), <span class="st">"Leanne Graham"</span>);
+<span class="cl">Assert</span>.<span class="mt">assertNotNull</span>(user.<span class="mt">getAddress</span>());
+<span class="cl">Assert</span>.<span class="mt">assertEquals</span>(user.<span class="mt">getAddress</span>().<span class="mt">getCity</span>(), <span class="st">"Gwenborough"</span>);
+<span class="cl">Assert</span>.<span class="mt">assertFalse</span>(user.<span class="mt">getOrders</span>().<span class="mt">isEmpty</span>());</code></pre>
+    </div>
+
+    <h3>Approach 3 — SoftAssert ⭐ Recommended</h3>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Without SoftAssert, the test stops at the <strong>first failure</strong>. You won't know about other failures until you fix the first one. Always use SoftAssert for API field validations.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateUser</span>() {
+    <span class="cl">User</span> user = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+        .<span class="mt">then</span>().<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">User</span>.<span class="kw">class</span>);
+
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+
+    soft.<span class="mt">assertEquals</span>(user.<span class="mt">getId</span>(),                  <span class="nm">1</span>,             <span class="st">"ID mismatch"</span>);
+    soft.<span class="mt">assertEquals</span>(user.<span class="mt">getName</span>(),               <span class="st">"Leanne Graham"</span>, <span class="st">"Name mismatch"</span>);
+    soft.<span class="mt">assertNotNull</span>(user.<span class="mt">getAddress</span>(),                            <span class="st">"Address null"</span>);
+    soft.<span class="mt">assertEquals</span>(user.<span class="mt">getAddress</span>().<span class="mt">getCity</span>(), <span class="st">"Gwenborough"</span>,   <span class="st">"City mismatch"</span>);
+    soft.<span class="mt">assertFalse</span>(user.<span class="mt">getOrders</span>().<span class="mt">isEmpty</span>(),                     <span class="st">"Orders empty"</span>);
+
+    soft.<span class="mt">assertAll</span>();  <span class="cm">// MUST call — reports ALL failures at once</span>
+}</code></pre>
+    </div>
+
+    <h3>Approach 4 — @DataProvider (Data Driven)</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="an">@DataProvider</span>(name = <span class="st">"users"</span>)
+<span class="kw">public</span> <span class="cl">Object</span>[][] <span class="mt">userData</span>() {
+    <span class="kw">return new</span> <span class="cl">Object</span>[][] {
+        { <span class="nm">1</span>, <span class="st">"Leanne Graham"</span>, <span class="st">"Gwenborough"</span>  },
+        { <span class="nm">2</span>, <span class="st">"Ervin Howell"</span>,  <span class="st">"Wisokyburgh"</span>  },
+        { <span class="nm">3</span>, <span class="st">"Clementine"</span>,    <span class="st">"McKenziehaven"</span>}
+    };
+}
+
+<span class="an">@Test</span>(dataProvider = <span class="st">"users"</span>)
+<span class="kw">public void</span> <span class="mt">validateUser</span>(<span class="kw">int</span> id, <span class="cl">String</span> name, <span class="cl">String</span> city) {
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+    <span class="cl">User</span> user = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/"</span> + id)
+        .<span class="mt">then</span>().<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">User</span>.<span class="kw">class</span>);
+
+    soft.<span class="mt">assertEquals</span>(user.<span class="mt">getName</span>(), name);
+    soft.<span class="mt">assertEquals</span>(user.<span class="mt">getAddress</span>().<span class="mt">getCity</span>(), city);
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 6. CHAINING REQUESTS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="chaining">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Chaining Requests</h2>
+    </div>
+
+    <p>The response of one API call becomes the input to the next — critical for end-to-end flows.</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">01</div>
+        <div class="step-label">Login</div>
+        <div class="step-sub">→ get token</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">02</div>
+        <div class="step-label">Create User</div>
+        <div class="step-sub">→ get userId</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">03</div>
+        <div class="step-label">Create Order</div>
+        <div class="step-sub">→ get orderId</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">04</div>
+        <div class="step-label">Verify Order</div>
+        <div class="step-sub">→ assertions</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">05</div>
+        <div class="step-label">Cleanup</div>
+        <div class="step-sub">→ delete</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java · Full chained flow</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">fullOrderFlow</span>() {
+
+    <span class="cm">// Step 1 — Create user, capture userId</span>
+    <span class="kw">int</span> userId = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">body</span>(<span class="cl">Map</span>.<span class="mt">of</span>(<span class="st">"name"</span>, <span class="st">"John"</span>, <span class="st">"email"</span>, <span class="st">"john@test.com"</span>))
+      .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/users"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">201</span>)
+        .<span class="mt">extract</span>().<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"data.id"</span>);
+
+    <span class="cm">// Step 2 — Create order using userId</span>
+    <span class="kw">int</span> orderId = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">body</span>(<span class="cl">Map</span>.<span class="mt">of</span>(<span class="st">"user_id"</span>, userId, <span class="st">"item"</span>, <span class="st">"Laptop"</span>, <span class="st">"amount"</span>, <span class="nm">999.99</span>))
+      .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/orders"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">201</span>)
+        .<span class="mt">extract</span>().<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"data.order_id"</span>);
+
+    <span class="cm">// Step 3 — Verify order using orderId</span>
+    <span class="cl">SoftAssert</span> soft = <span class="kw">new</span> <span class="cl">SoftAssert</span>();
+    <span class="cl">Order</span> order = <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+      .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/orders/"</span> + orderId)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        .<span class="mt">extract</span>().<span class="mt">as</span>(<span class="cl">Order</span>.<span class="kw">class</span>);
+
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getUserId</span>(), userId);
+    soft.<span class="mt">assertEquals</span>(order.<span class="mt">getItem</span>(), <span class="st">"Laptop"</span>);
+
+    <span class="cm">// Step 4 — Cleanup</span>
+    <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+      .<span class="mt">when</span>().<span class="mt">delete</span>(<span class="st">"/orders/"</span> + orderId)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">204</span>);
+
+    soft.<span class="mt">assertAll</span>();
+}</code></pre>
+    </div>
+
+    <h3>dependsOnMethods — Steps as Separate Tests</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">java</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><code><span class="kw">private int</span> userId;
+<span class="kw">private int</span> orderId;
+
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">step1_createUser</span>() { userId = <span class="cm">/* ... */</span>; }
+
+<span class="an">@Test</span>(dependsOnMethods = <span class="st">"step1_createUser"</span>)
+<span class="kw">public void</span> <span class="mt">step2_createOrder</span>() { orderId = <span class="cm">/* ... */</span>; }
+
+<span class="an">@Test</span>(dependsOnMethods = <span class="st">"step2_createOrder"</span>)
+<span class="kw">public void</span> <span class="mt">step3_verifyOrder</span>() { <span class="cm">/* assertions */</span> }
+
+<span class="an">@Test</span>(dependsOnMethods = <span class="st">"step3_verifyOrder"</span>, alwaysRun = <span class="kw">true</span>)  <span class="cm">// runs even if prev fails</span>
+<span class="kw">public void</span> <span class="mt">step4_cleanup</span>() { <span class="cm">/* delete */</span> }</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 7. AUTH TYPES -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="auth">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Auth Types Deep Dive</h2>
+    </div>
+
+    <h3>Basic Auth</h3>
+    <p>Sends <code>username:password</code> encoded in Base64 on every request. NOT encryption — just encoding. Safe only over HTTPS.</p>
+
+    <div class="auth-visual">
+      <div class="auth-row">
+        <span class="auth-label">Credentials:</span>
+        <div class="auth-bar" style="background:#f59e0b18;border:1px solid #f59e0b33;color:#fcd34d;">john : secret123</div>
+      </div>
+      <div class="auth-row">
+        <span class="auth-label">Base64 encoded:</span>
+        <div class="auth-bar" style="background:#7c3aed18;border:1px solid #7c3aed33;color:#c084fc;">am9objpzZWNyZXQxMjM=</div>
+      </div>
+      <div class="auth-row">
+        <span class="auth-label">Header sent:</span>
+        <div class="auth-bar" style="background:#00e5ff12;border:1px solid #00e5ff22;color:#67e8f9;">Authorization: Basic am9objpzZWNyZXQxMjM=</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="mt">given</span>().<span class="mt">auth</span>().<span class="mt">basic</span>(<span class="st">"john"</span>, <span class="st">"secret123"</span>)</code></pre>
+    </div>
+
+    <h3>Digest Auth</h3>
+    <p>Password never travels over the wire. Server sends a one-time nonce (challenge), client hashes the password + nonce and sends the hash. Server does the same hash and compares.</p>
+
+    <div class="flow">
+      <div class="flow-step"><div class="step-num">01</div><div class="step-label">Request</div><div class="step-sub">no credentials</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">02</div><div class="step-label">401 + nonce</div><div class="step-sub">server challenge</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">03</div><div class="step-label">Hash(pass+nonce)</div><div class="step-sub">client computes</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">04</div><div class="step-label">Send hash</div><div class="step-sub">not password!</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">05</div><div class="step-label">200 OK</div><div class="step-sub">server validates</div></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="mt">given</span>().<span class="mt">auth</span>().<span class="mt">digest</span>(<span class="st">"john"</span>, <span class="st">"secret123"</span>)</code></pre>
+    </div>
+
+    <h3>Bearer Token / JWT</h3>
+    <p>Login once, get a token, use it everywhere. The JWT token carries user identity AND permissions inside its payload — no DB lookup needed on each request.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · JWT structure</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="cm">// JWT = header.payload.signature</span>
+eyJhbGciOiJIUzI1NiJ9 . eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImV4cCI6MTcwNX0 . abc123sig
+
+<span class="cm">// Decoded payload:</span>
+{
+  <span class="st">"userId"</span>: <span class="nm">1</span>,
+  <span class="st">"role"</span>:   <span class="st">"admin"</span>,        <span class="cm">// authorization info</span>
+  <span class="st">"perms"</span>: [<span class="st">"read"</span>, <span class="st">"write"</span>, <span class="st">"delete"</span>],
+  <span class="st">"exp"</span>:    <span class="nm">1705312200</span>       <span class="cm">// expiry</span>
+}</code></pre>
+    </div>
+
+    <h3>OAuth2</h3>
+    <p>Delegated access — let a third-party app access your resources without giving it your password. Scopes define exactly what is permitted.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · Client Credentials flow (machine-to-machine)</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="cm">// Step 1 — Get token using client credentials</span>
+<span class="cl">String</span> token = <span class="mt">given</span>()
+    .<span class="mt">contentType</span>(<span class="cl">ContentType</span>.URLENC)
+    .<span class="mt">formParam</span>(<span class="st">"grant_type"</span>,    <span class="st">"client_credentials"</span>)
+    .<span class="mt">formParam</span>(<span class="st">"client_id"</span>,     <span class="cl">System</span>.<span class="mt">getenv</span>(<span class="st">"CLIENT_ID"</span>))
+    .<span class="mt">formParam</span>(<span class="st">"client_secret"</span>, <span class="cl">System</span>.<span class="mt">getenv</span>(<span class="st">"CLIENT_SECRET"</span>))
+    .<span class="mt">formParam</span>(<span class="st">"scope"</span>,         <span class="st">"read:users write:orders"</span>)
+  .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/oauth/token"</span>)
+  .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>)
+    .<span class="mt">extract</span>().<span class="mt">jsonPath</span>().<span class="mt">getString</span>(<span class="st">"access_token"</span>);
+
+<span class="cm">// Step 2 — Use like Bearer token</span>
+<span class="mt">given</span>().<span class="mt">auth</span>().<span class="mt">oauth2</span>(token)</code></pre>
+    </div>
+
+    <h3>Token Manager — Dynamic Token Handling</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · TokenManager.java</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="kw">public class</span> <span class="cl">TokenManager</span> {
+    <span class="kw">private static</span> <span class="cl">String</span> accessToken;
+    <span class="kw">private static long</span> tokenExpiryTime;
+    <span class="kw">private static final</span> <span class="cl">String</span> USERNAME = <span class="cl">System</span>.<span class="mt">getenv</span>(<span class="st">"API_USERNAME"</span>);
+    <span class="kw">private static final</span> <span class="cl">String</span> PASSWORD = <span class="cl">System</span>.<span class="mt">getenv</span>(<span class="st">"API_PASSWORD"</span>);
+
+    <span class="kw">public static synchronized</span> <span class="cl">String</span> <span class="mt">getToken</span>() {
+        <span class="kw">if</span> (accessToken == <span class="kw">null</span> || <span class="cl">System</span>.<span class="mt">currentTimeMillis</span>() > tokenExpiryTime) {
+            <span class="mt">fetchNewToken</span>();
+        }
+        <span class="kw">return</span> accessToken;
+    }
+
+    <span class="kw">private static void</span> <span class="mt">fetchNewToken</span>() {
+        <span class="cl">Response</span> res = <span class="mt">given</span>()
+            .<span class="mt">contentType</span>(<span class="cl">ContentType</span>.JSON)
+            .<span class="mt">body</span>(<span class="cl">Map</span>.<span class="mt">of</span>(<span class="st">"username"</span>, USERNAME, <span class="st">"password"</span>, PASSWORD))
+          .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/auth/login"</span>)
+          .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">200</span>).<span class="mt">extract</span>().<span class="mt">response</span>();
+
+        accessToken = res.<span class="mt">jsonPath</span>().<span class="mt">getString</span>(<span class="st">"data.access_token"</span>);
+        <span class="kw">int</span> expiresIn = res.<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"data.expires_in"</span>);
+        tokenExpiryTime = <span class="cl">System</span>.<span class="mt">currentTimeMillis</span>() + (expiresIn * <span class="nm">1000L</span>) - <span class="nm">5000L</span>;
+    }
+
+    <span class="cm">// For role-based testing</span>
+    <span class="kw">public static</span> <span class="cl">String</span> <span class="mt">getToken</span>(<span class="cl">String</span> role) { <span class="cm">/* ... */</span> }
+}</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Auth Type</th><th>Password Over Wire?</th><th>Has Expiry?</th><th>Carries Permissions?</th><th>Best Used For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Basic</td><td>Yes (Base64)</td><td>No</td><td>No</td><td>Internal tools, simple APIs</td></tr>
+          <tr><td>Digest</td><td>No (hash only)</td><td>No</td><td>No</td><td>Legacy enterprise systems</td></tr>
+          <tr><td>Bearer/JWT</td><td>No</td><td>Yes</td><td>Yes (in token)</td><td>User sessions, mobile apps</td></tr>
+          <tr><td>OAuth2</td><td>No</td><td>Yes</td><td>Yes (scopes)</td><td>Delegated / 3rd party access</td></tr>
+          <tr><td>API Key</td><td>Key only</td><td>Usually no</td><td>Partially</td><td>Public APIs, developer access</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 8. AUTHN VS AUTHZ -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="authn-authz">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Authentication vs Authorization</h2>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box" style="border-color:#00e5ff33;">
+        <h4 style="color:#67e8f9;">🔑 Authentication</h4>
+        <p style="color:#94a3b8;font-size:14px;margin-bottom:12px;"><em>"Who are you?"</em></p>
+        <ul class="checklist">
+          <li>Verifying identity</li>
+          <li>Username + password check</li>
+          <li>Token validation</li>
+          <li>Happens first</li>
+          <li>Failure → <strong style="color:#f87171;">401 Unauthorized</strong></li>
+        </ul>
+      </div>
+      <div class="compare-box" style="border-color:#7c3aed33;">
+        <h4 style="color:#c084fc;">🛡️ Authorization</h4>
+        <p style="color:#94a3b8;font-size:14px;margin-bottom:12px;"><em>"What can you do?"</em></p>
+        <ul class="checklist">
+          <li>Checking permissions</li>
+          <li>Role-based access control</li>
+          <li>Scope validation</li>
+          <li>Happens after authentication</li>
+          <li>Failure → <strong style="color:#f87171;">403 Forbidden</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">🏢</span>
+      <p><strong>Analogy:</strong> Authentication = Security checks your ID at the office entrance. Authorization = Your ID only gives you access to floors 1 and 2, not the CEO's floor 3.</p>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-card" style="border-color:#f43f5e33;">
+        <div class="status-code" style="color:#f87171;">401</div>
+        <div class="status-text">Unauthorized</div>
+        <div class="status-desc">Authentication failed. No token, invalid token, or expired token.</div>
+      </div>
+      <div class="status-card" style="border-color:#f59e0b33;">
+        <div class="status-code" style="color:#fcd34d;">403</div>
+        <div class="status-text">Forbidden</div>
+        <div class="status-desc">Authentication passed but Authorization failed. Valid token, wrong role/permission.</div>
+      </div>
+      <div class="status-card" style="border-color:#10b98133;">
+        <div class="status-code" style="color:#34d399;">200</div>
+        <div class="status-text">OK</div>
+        <div class="status-desc">Both authentication and authorization passed.</div>
+      </div>
+    </div>
+
+    <h3>Testing Both in Code</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · Auth negative tests</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="cm">// 401 — Authentication failure (no token)</span>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">noToken_returns401</span>() {
+    <span class="mt">given</span>().<span class="mt">baseUri</span>(<span class="st">"https://api.example.com"</span>)
+      .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/secure/users"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">401</span>);
+}
+
+<span class="cm">// 401 — Authentication failure (invalid token)</span>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">invalidToken_returns401</span>() {
+    <span class="mt">given</span>().<span class="mt">header</span>(<span class="st">"Authorization"</span>, <span class="st">"Bearer invalidtoken123"</span>)
+      .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/secure/users"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">401</span>);
+}
+
+<span class="cm">// 403 — Authorization failure (valid token, wrong role)</span>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">customerCannotDelete_returns403</span>() {
+    <span class="mt">given</span>().<span class="mt">header</span>(<span class="st">"Authorization"</span>, <span class="st">"Bearer "</span> + <span class="cl">TokenManager</span>.<span class="mt">getToken</span>(<span class="st">"customer"</span>))
+      .<span class="mt">when</span>().<span class="mt">delete</span>(<span class="st">"/users/5"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">403</span>);  <span class="cm">// knows who you are, but NO permission</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 9. SCHEMA VALIDATION -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="schema">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>JSON Schema Validation</h2>
+    </div>
+
+    <p>Instead of validating field by field, schema validation checks the <strong>entire response structure</strong> — field names, types, required fields — in one shot.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">json · src/test/resources/schemas/user-schema.json</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code>{
+  <span class="st">"$schema"</span>: <span class="st">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="st">"type"</span>: <span class="st">"object"</span>,
+  <span class="st">"required"</span>: [<span class="st">"id"</span>, <span class="st">"name"</span>, <span class="st">"email"</span>, <span class="st">"address"</span>],   <span class="cm">// must be present</span>
+  <span class="st">"properties"</span>: {
+    <span class="st">"id"</span>:    { <span class="st">"type"</span>: <span class="st">"integer"</span> },
+    <span class="st">"name"</span>:  { <span class="st">"type"</span>: <span class="st">"string"</span>  },
+    <span class="st">"email"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span>, <span class="st">"format"</span>: <span class="st">"email"</span> },
+    <span class="st">"address"</span>: {
+      <span class="st">"type"</span>: <span class="st">"object"</span>,
+      <span class="st">"required"</span>: [<span class="st">"street"</span>, <span class="st">"city"</span>],
+      <span class="st">"properties"</span>: {
+        <span class="st">"street"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span> },
+        <span class="st">"city"</span>:   { <span class="st">"type"</span>: <span class="st">"string"</span> },
+        <span class="st">"geo"</span>: {
+          <span class="st">"type"</span>: <span class="st">"object"</span>,
+          <span class="st">"properties"</span>: {
+            <span class="st">"lat"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span> },
+            <span class="st">"lng"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span> }
+          }
+        }
+      }
+    },
+    <span class="st">"orders"</span>: {
+      <span class="st">"type"</span>: <span class="st">"array"</span>,
+      <span class="st">"items"</span>: {
+        <span class="st">"required"</span>: [<span class="st">"order_id"</span>, <span class="st">"item"</span>, <span class="st">"amount"</span>],
+        <span class="st">"properties"</span>: {
+          <span class="st">"order_id"</span>: { <span class="st">"type"</span>: <span class="st">"integer"</span> },
+          <span class="st">"item"</span>:     { <span class="st">"type"</span>: <span class="st">"string"</span>  },
+          <span class="st">"amount"</span>:   { <span class="st">"type"</span>: <span class="st">"number"</span>  },
+          <span class="st">"status"</span>:   { <span class="st">"type"</span>: <span class="st">"string"</span>  }
+        }
+      }
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · Using schema validation</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="kw">import static</span> io.restassured.module.jsv.JsonSchemaValidator.<span class="mt">matchesJsonSchemaInClasspath</span>;
+
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="mt">validateSchema</span>() {
+    <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+      .<span class="mt">when</span>().<span class="mt">get</span>(<span class="st">"/users/1"</span>)
+      .<span class="mt">then</span>()
+        .<span class="mt">statusCode</span>(<span class="nm">200</span>)
+        .<span class="mt">body</span>(<span class="mt">matchesJsonSchemaInClasspath</span>(<span class="st">"schemas/user-schema.json"</span>))  <span class="cm">// one line!</span>
+        .<span class="mt">body</span>(<span class="st">"name"</span>, <span class="mt">equalTo</span>(<span class="st">"Leanne Graham"</span>));  <span class="cm">// combine with field validation</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 10. REPORTING -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="reporting">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Reporting — Allure</h2>
+    </div>
+
+    <h3>Setup</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java · BaseTest — add Allure filter</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code>requestSpec = <span class="kw">new</span> <span class="cl">RequestSpecBuilder</span>()
+    .<span class="mt">addFilter</span>(<span class="kw">new</span> <span class="cl">AllureRestAssured</span>())  <span class="cm">// auto-logs ALL requests/responses</span>
+    .<span class="mt">build</span>();</code></pre>
+    </div>
+
+    <h3>Annotate Tests</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="an">@Epic</span>(<span class="st">"User Management"</span>)
+<span class="an">@Feature</span>(<span class="st">"User API"</span>)
+<span class="kw">public class</span> <span class="cl">UserApiTest</span> <span class="kw">extends</span> <span class="cl">BaseTest</span> {
+
+    <span class="an">@Test</span>
+    <span class="an">@Story</span>(<span class="st">"Get user by ID"</span>)
+    <span class="an">@Severity</span>(<span class="cl">SeverityLevel</span>.CRITICAL)
+    <span class="an">@Description</span>(<span class="st">"Verify user details and nested address are correct"</span>)
+    <span class="kw">public void</span> <span class="mt">validateUser</span>() { <span class="cm">/* ... */</span> }
+}</code></pre>
+    </div>
+
+    <h3>@Step — Drillable Steps in Report</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">java</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="an">@Step</span>(<span class="st">"Create user with name {name} and email {email}"</span>)
+<span class="kw">private int</span> <span class="mt">createUser</span>(<span class="cl">String</span> name, <span class="cl">String</span> email) {
+    <span class="kw">return</span> <span class="mt">given</span>().<span class="mt">spec</span>(requestSpec)
+        .<span class="mt">body</span>(<span class="cl">Map</span>.<span class="mt">of</span>(<span class="st">"name"</span>, name, <span class="st">"email"</span>, email))
+      .<span class="mt">when</span>().<span class="mt">post</span>(<span class="st">"/users"</span>)
+      .<span class="mt">then</span>().<span class="mt">statusCode</span>(<span class="nm">201</span>)
+        .<span class="mt">extract</span>().<span class="mt">jsonPath</span>().<span class="mt">getInt</span>(<span class="st">"data.id"</span>);
+}
+
+<span class="cm">// Attach data for debugging in report</span>
+<span class="cl">Allure</span>.<span class="mt">addAttachment</span>(<span class="st">"Response JSON"</span>,
+    <span class="kw">new</span> <span class="cl">ObjectMapper</span>().<span class="mt">writerWithDefaultPrettyPrinter</span>().<span class="mt">writeValueAsString</span>(user));</code></pre>
+    </div>
+
+    <h3>Generate Report</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code>mvn clean test           <span class="cm"># run tests</span>
+mvn allure:serve         <span class="cm"># generate + open in browser automatically</span>
+mvn allure:report        <span class="cm"># generate to target/site/allure-maven-plugin</span></code></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 11. CHEAT SHEET -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section" id="cheatsheet">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <h2>Quick Reference Cheat Sheet</h2>
+    </div>
+
+    <div class="cheat-grid">
+
+      <div class="cheat-card">
+        <div class="cheat-title">Response Extraction</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">.jsonPath().getString("field")</span><span class="cheat-val">Get string</span></div>
+          <div class="cheat-row"><span class="cheat-key">.jsonPath().getInt("field")</span><span class="cheat-val">Get integer</span></div>
+          <div class="cheat-row"><span class="cheat-key">.jsonPath().getList("field")</span><span class="cheat-val">Get list</span></div>
+          <div class="cheat-row"><span class="cheat-key">.extract().as(User.class)</span><span class="cheat-val">Deserialize to POJO</span></div>
+          <div class="cheat-row"><span class="cheat-key">.extract().as(new TypeRef&lt;&gt;(){})</span><span class="cheat-val">Deserialize to List</span></div>
+          <div class="cheat-row"><span class="cheat-key">.extract().response()</span><span class="cheat-val">Get full Response obj</span></div>
+          <div class="cheat-row"><span class="cheat-key">.asString()</span><span class="cheat-val">Raw JSON string</span></div>
+          <div class="cheat-row"><span class="cheat-key">.getStatusCode()</span><span class="cheat-val">HTTP status code</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-title">Hamcrest Matchers</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">equalTo("value")</span><span class="cheat-val">Exact match</span></div>
+          <div class="cheat-row"><span class="cheat-key">notNullValue()</span><span class="cheat-val">Field exists and not null</span></div>
+          <div class="cheat-row"><span class="cheat-key">hasSize(10)</span><span class="cheat-val">List/array size</span></div>
+          <div class="cheat-row"><span class="cheat-key">hasItem("x")</span><span class="cheat-val">List contains item</span></div>
+          <div class="cheat-row"><span class="cheat-key">hasItems(1, 2, 3)</span><span class="cheat-val">List contains all</span></div>
+          <div class="cheat-row"><span class="cheat-key">containsString("x")</span><span class="cheat-val">String contains</span></div>
+          <div class="cheat-row"><span class="cheat-key">not(emptyString())</span><span class="cheat-val">Not empty string</span></div>
+          <div class="cheat-row"><span class="cheat-key">greaterThan(0)</span><span class="cheat-val">Numeric comparison</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-title">Jackson Annotations</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">@JsonIgnoreProperties(ignoreUnknown=true)</span><span class="cheat-val">Ignore extra fields</span></div>
+          <div class="cheat-row"><span class="cheat-key">@JsonNaming(SnakeCaseStrategy.class)</span><span class="cheat-val">first_name → firstName</span></div>
+          <div class="cheat-row"><span class="cheat-key">@JsonProperty("json_name")</span><span class="cheat-val">Explicit field mapping</span></div>
+          <div class="cheat-row"><span class="cheat-key">@JsonIgnore</span><span class="cheat-val">Skip this field</span></div>
+          <div class="cheat-row"><span class="cheat-key">@JsonFormat(pattern="...")</span><span class="cheat-val">Date formatting</span></div>
+          <div class="cheat-row"><span class="cheat-key">@JsonInclude(NON_NULL)</span><span class="cheat-val">Skip null fields in req</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-title">Auth Methods</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">.auth().basic("u","p")</span><span class="cheat-val">Basic Auth</span></div>
+          <div class="cheat-row"><span class="cheat-key">.auth().digest("u","p")</span><span class="cheat-val">Digest Auth</span></div>
+          <div class="cheat-row"><span class="cheat-key">.auth().oauth2(token)</span><span class="cheat-val">OAuth2 / Bearer</span></div>
+          <div class="cheat-row"><span class="cheat-key">.header("Authorization","Bearer "+t)</span><span class="cheat-val">Manual Bearer</span></div>
+          <div class="cheat-row"><span class="cheat-key">.header("x-api-key","key")</span><span class="cheat-val">API Key (header)</span></div>
+          <div class="cheat-row"><span class="cheat-key">.queryParam("api_key","key")</span><span class="cheat-val">API Key (query)</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-title">TestNG Annotations</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">@BeforeClass</span><span class="cheat-val">Run once before all tests</span></div>
+          <div class="cheat-row"><span class="cheat-key">@BeforeMethod</span><span class="cheat-val">Run before each test</span></div>
+          <div class="cheat-row"><span class="cheat-key">@Test</span><span class="cheat-val">Mark as test method</span></div>
+          <div class="cheat-row"><span class="cheat-key">@DataProvider(name="x")</span><span class="cheat-val">Supply test data</span></div>
+          <div class="cheat-row"><span class="cheat-key">@Test(dataProvider="x")</span><span class="cheat-val">Use data provider</span></div>
+          <div class="cheat-row"><span class="cheat-key">@Test(dependsOnMethods="x")</span><span class="cheat-val">Run after x passes</span></div>
+          <div class="cheat-row"><span class="cheat-key">@Test(alwaysRun=true)</span><span class="cheat-val">Run even if deps fail</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-title">Status Codes to Remember</div>
+        <div class="cheat-rows">
+          <div class="cheat-row"><span class="cheat-key">200</span><span class="cheat-val">OK — GET success</span></div>
+          <div class="cheat-row"><span class="cheat-key">201</span><span class="cheat-val">Created — POST success</span></div>
+          <div class="cheat-row"><span class="cheat-key">204</span><span class="cheat-val">No Content — DELETE success</span></div>
+          <div class="cheat-row"><span class="cheat-key">400</span><span class="cheat-val">Bad Request — invalid input</span></div>
+          <div class="cheat-row"><span class="cheat-key">401</span><span class="cheat-val">Unauthorized — auth failed</span></div>
+          <div class="cheat-row"><span class="cheat-key">403</span><span class="cheat-val">Forbidden — no permission</span></div>
+          <div class="cheat-row"><span class="cheat-key">404</span><span class="cheat-val">Not Found</span></div>
+          <div class="cheat-row"><span class="cheat-key">500</span><span class="cheat-val">Server Error</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Project Structure</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Project layout</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><code>src/
+├── test/
+│   ├── java/
+│   │   ├── base/
+│   │   │   └── <span class="cl">BaseTest.java</span>          <span class="cm">← setup, specs, ObjectMapper</span>
+│   │   ├── models/
+│   │   │   ├── <span class="cl">User.java</span>              <span class="cm">← POJOs with Jackson annotations</span>
+│   │   │   ├── <span class="cl">Address.java</span>
+│   │   │   └── <span class="cl">Order.java</span>
+│   │   ├── tests/
+│   │   │   ├── <span class="cl">UserApiTest.java</span>       <span class="cm">← test classes extending BaseTest</span>
+│   │   │   └── <span class="cl">OrderApiTest.java</span>
+│   │   └── utils/
+│   │       └── <span class="cl">TokenManager.java</span>      <span class="cm">← singleton token management</span>
+│   └── resources/
+│       ├── schemas/
+│       │   ├── <span class="st">user-schema.json</span>       <span class="cm">← JSON schema files</span>
+│       │   └── <span class="st">order-schema.json</span>
+│       └── <span class="st">testng.xml</span>               <span class="cm">← suite config with Allure listener</span></code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">⭐</span>
+      <p><strong>Golden rules:</strong> Always use <code>SoftAssert</code> for field validations · Put <code>@JsonIgnoreProperties</code> on all POJOs · Never hardcode credentials — use <code>System.getenv()</code> · Call <code>TokenManager.getToken()</code> once in <code>@BeforeClass</code> · Use <code>alwaysRun = true</code> on cleanup steps</p>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>REST Assured Complete Study Guide · Generated for personal study · REST Assured 5.4 · TestNG 7.9 · Jackson 2.16 · Allure 2.25</p>
+</footer>
+
+</body>
+</html>

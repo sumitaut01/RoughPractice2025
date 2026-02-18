@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Access Types - Interview Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .access-box {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        .access-box h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid;
+        }
+        .public { border-color: #4caf50; }
+        .public h2 { color: #4caf50; border-bottom-color: #4caf50; }
+        .protected { border-color: #ff9800; }
+        .protected h2 { color: #ff9800; border-bottom-color: #ff9800; }
+        .default { border-color: #2196f3; }
+        .default h2 { color: #2196f3; border-bottom-color: #2196f3; }
+        .private { border-color: #f44336; }
+        .private h2 { color: #f44336; border-bottom-color: #f44336; }
+        .access-box p {
+            font-size: 12px;
+            margin: 6px 0;
+            color: #333;
+        }
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            margin: 6px 0;
+            overflow-x: auto;
+        }
+        .keyword { color: #82aaff; }
+        .string { color: #c3e88d; }
+        .comment { color: #546e7a; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        .yes { color: #4caf50; font-weight: bold; }
+        .no { color: #f44336; font-weight: bold; }
+        .tips {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .tips h3 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .tips ul {
+            margin-left: 20px;
+            font-size: 11px;
+            color: #856404;
+        }
+        .tips li {
+            margin: 3px 0;
+        }
+        .section-title {
+            background: #667eea;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 15px 0 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☕ Java Access Modifiers</h1>
+        <p class="subtitle">Quick Reference Guide for Technical Interviews</p>
+        
+        <div class="grid">
+            <div class="access-box public">
+                <h2>🌍 PUBLIC</h2>
+                <p><strong>Access:</strong> Everywhere - no restrictions</p>
+                <p><strong>Scope:</strong> Class, Package, Subclass, World</p>
+                <div class="code"><span class="keyword">public class</span> User {
+    <span class="keyword">public</span> String name;
+    <span class="keyword">public void</span> display() {}
+}</div>
+                <p><strong>Use Case:</strong> APIs, interfaces, constants meant for external use</p>
+            </div>
+            
+            <div class="access-box protected">
+                <h2>🛡️ PROTECTED</h2>
+                <p><strong>Access:</strong> Same package + subclasses</p>
+                <p><strong>Scope:</strong> Class, Package, Subclass only</p>
+                <div class="code"><span class="keyword">protected</span> String id;
+<span class="keyword">protected void</span> calculate() {
+    <span class="comment">// accessible to subclasses</span>
+}</div>
+                <p><strong>Use Case:</strong> Methods/fields for inheritance, template methods</p>
+            </div>
+            
+            <div class="access-box default">
+                <h2>📦 DEFAULT (Package-Private)</h2>
+                <p><strong>Access:</strong> Same package only</p>
+                <p><strong>Scope:</strong> Class, Package only</p>
+                <div class="code"><span class="keyword">class</span> Helper {
+    String value; <span class="comment">// no modifier</span>
+    <span class="keyword">void</span> process() {}
+}</div>
+                <p><strong>Use Case:</strong> Internal package utilities, helper classes</p>
+            </div>
+            
+            <div class="access-box private">
+                <h2>🔒 PRIVATE</h2>
+                <p><strong>Access:</strong> Same class only</p>
+                <p><strong>Scope:</strong> Class only</p>
+                <div class="code"><span class="keyword">private</span> int salary;
+<span class="keyword">private void</span> validateData() {
+    <span class="comment">// only within this class</span>
+}</div>
+                <p><strong>Use Case:</strong> Encapsulation, implementation details, helper methods</p>
+            </div>
+        </div>
+        
+        <div class="section-title">📊 Access Level Comparison Matrix</div>
+        <table>
+            <tr>
+                <th>Access Modifier</th>
+                <th>Same Class</th>
+                <th>Same Package</th>
+                <th>Subclass</th>
+                <th>Other Packages</th>
+            </tr>
+            <tr>
+                <td><strong>public</strong></td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+            </tr>
+            <tr>
+                <td><strong>protected</strong></td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="no">✗</td>
+            </tr>
+            <tr>
+                <td><strong>default</strong></td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="no">✗</td>
+                <td class="no">✗</td>
+            </tr>
+            <tr>
+                <td><strong>private</strong></td>
+                <td class="yes">✓</td>
+                <td class="no">✗</td>
+                <td class="no">✗</td>
+                <td class="no">✗</td>
+            </tr>
+        </table>
+        
+        <div class="tips">
+            <h3>💡 Interview Tips & Best Practices</h3>
+            <ul>
+                <li><strong>Encapsulation:</strong> Use private for fields, provide public getters/setters</li>
+                <li><strong>Class-level:</strong> Top-level classes can only be public or default (no protected/private)</li>
+                <li><strong>Constructors:</strong> Private constructors prevent instantiation (Singleton pattern)</li>
+                <li><strong>Interface members:</strong> Always public by default (methods & constants)</li>
+                <li><strong>Local variables:</strong> Cannot have access modifiers (only method parameters and class members)</li>
+                <li><strong>Protected caveat:</strong> Subclass in different package accesses protected via inheritance, not instance reference</li>
+                <li><strong>Default choice:</strong> Start with most restrictive, increase visibility only as needed</li>
+                <li><strong>Common mistake:</strong> Forgetting that protected allows same package access (not just subclasses)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

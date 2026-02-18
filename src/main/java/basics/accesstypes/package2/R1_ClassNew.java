@@ -3,8 +3,6 @@ package basics.accesstypes.package2;
 import basics.accesstypes.package1.R1_Class;
 
 public class R1_ClassNew {
-
-
     public static void main(String[] args) {
 
         R1_Class c=new R1_Class();

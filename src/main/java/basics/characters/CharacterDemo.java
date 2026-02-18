@@ -90,4 +90,28 @@ public class CharacterDemo {
 
 
     }
+
+
+    @Test
+    public void Rough3(){
+
+        String name="sumit raut";
+        int []data=new int[256];
+
+        for( char ch:name.toCharArray()){
+            data[(int)ch]++;
+        }
+
+        for(int i: data){
+
+           // if(data[i]>0)
+                System.out.println( (char)i +" "+ data[i]);
+        }
+
+
+
+
+
+
+    }
 }
