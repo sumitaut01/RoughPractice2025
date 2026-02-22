@@ -1,0 +1,44 @@
+{
+  "order_id": "ORD-992837465",
+  "status": "PARTIALLY_SHIPPED",
+  "customer": {
+    "id": "USR-102",
+    "tier": "GOLD",
+    "preferences": {
+      "currency": "USD",
+      "notifications": ["email", "sms"]
+    }
+  },
+  "items": [
+    {
+      "sku": "BK-01",
+      "type": "PHYSICAL",
+      "details": {
+        "title": "Clean Code",
+        "weight_lbs": 1.2
+      },
+      "pricing": { "unit_price": 45.00, "quantity": 2, "discount": 5.00 }
+    },
+    {
+      "sku": "SUB-NEW-12",
+      "type": "DIGITAL_SUBSCRIPTION",
+      "details": {
+        "service_name": "Cloud Storage",
+        "duration_months": 12
+      },
+      "pricing": { "unit_price": 120.00, "quantity": 1, "discount": 0 }
+    }
+  ],
+  "financials": {
+    "subtotal": 205.00,
+    "tax_breakdown": [
+      { "state": "NY", "rate": 0.08, "amount": 16.40 },
+      { "state": "CA", "rate": 0.07, "amount": 14.35 }
+    ],
+    "total_payable": 235.75
+  },
+  "history": [
+    { "event": "ORDER_PLACED", "timestamp": "2026-02-20T10:00:00Z" },
+    { "event": "PAYMENT_SUCCESS", "timestamp": "2026-02-20T10:05:00Z" }
+  ]
+}

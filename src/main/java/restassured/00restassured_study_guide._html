@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RestAssured + TestNG Framework — Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: #252a38;
+    --accent: #00e5ff;
+    --accent2: #7c5cfc;
+    --accent3: #00ffaa;
+    --warn: #ff6b6b;
+    --text: #e2e8f0;
+    --text-muted: #6b7a99;
+    --text-dim: #3d4a66;
+    --code-bg: #0a0c10;
+    --tab-active: #00e5ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Header */
+  header {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .header-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  h1 span.glow {
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 400;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* Tab navigation */
+  .tab-nav-wrapper {
+    overflow-x: auto;
+    margin-bottom: 32px;
+    scrollbar-width: none;
+  }
+  .tab-nav-wrapper::-webkit-scrollbar { display: none; }
+
+  .tab-nav {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: max-content;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .tab-btn:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .tab-btn.active {
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+  }
+
+  .tab-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    background: var(--border);
+    border-radius: 2px;
+    font-size: 10px;
+    margin-right: 6px;
+  }
+
+  .tab-btn.active .tab-number {
+    background: rgba(0, 229, 255, 0.2);
+    color: var(--accent);
+  }
+
+  /* Tab content */
+  .tab-content { display: none; animation: fadeIn 0.3s ease; }
+  .tab-content.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section cards */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+  }
+
+  .section-icon {
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue { background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.2); }
+  .icon-purple { background: rgba(124, 92, 252, 0.1); border: 1px solid rgba(124, 92, 252, 0.2); }
+  .icon-green { background: rgba(0, 255, 170, 0.1); border: 1px solid rgba(0, 255, 170, 0.2); }
+  .icon-red { background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .section-body { padding: 24px; }
+
+  /* Code blocks */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 12px 0;
+    position: relative;
+  }
+
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  /* Inline code */
+  p code, li code {
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 12px;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #7c5cfc; }
+  .cl { color: #00e5ff; }
+  .fn { color: #00ffaa; }
+  .st { color: #ffb347; }
+  .cm { color: #4a5568; font-style: italic; }
+  .an { color: #ff6b6b; }
+  .nu { color: #f9a8d4; }
+
+  /* Info boxes */
+  .info-box {
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .info-box.blue {
+    background: rgba(0, 229, 255, 0.05);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+  }
+
+  .info-box.green {
+    background: rgba(0, 255, 170, 0.05);
+    border: 1px solid rgba(0, 255, 170, 0.15);
+  }
+
+  .info-box.red {
+    background: rgba(255, 107, 107, 0.05);
+    border: 1px solid rgba(255, 107, 107, 0.15);
+  }
+
+  .info-box.purple {
+    background: rgba(124, 92, 252, 0.05);
+    border: 1px solid rgba(124, 92, 252, 0.15);
+  }
+
+  .info-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .info-content { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+  .info-content strong { color: var(--text); }
+
+  /* Tables */
+  .tbl-wrap { overflow-x: auto; margin: 16px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  td:first-child { color: var(--text); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 16px 0;
+  }
+
+  .flow-item {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .flow-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  .flow-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    outline: 2px solid var(--accent);
+    flex-shrink: 0;
+    margin-top: 16px;
+  }
+
+  .flow-dot.purple { background: var(--accent2); outline-color: var(--accent2); }
+  .flow-dot.green { background: var(--accent3); outline-color: var(--accent3); }
+  .flow-dot.red { background: var(--warn); outline-color: var(--warn); }
+
+  .flow-line {
+    flex: 1;
+    width: 2px;
+    background: var(--border);
+    margin: 0 auto;
+  }
+
+  .flow-card {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+  }
+
+  .flow-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .flow-card-title.purple { color: var(--accent2); }
+  .flow-card-title.green { color: var(--accent3); }
+  .flow-card-title.red { color: var(--warn); }
+
+  .flow-card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Grid layout for 2 cols */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .card-title.purple { color: var(--accent2); }
+  .card-title.green { color: var(--accent3); }
+
+  .card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+
+  /* Prose text */
+  p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 20px 0 10px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Progress bar decoration */
+  .topic-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .topic-chip {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .topic-chip.done {
+    background: rgba(0, 255, 170, 0.08);
+    border-color: rgba(0, 255, 170, 0.2);
+    color: var(--accent3);
+  }
+
+  ul.checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  ul.checklist li {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding-left: 24px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  ul.checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent3);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  ul.checklist li.warn::before {
+    content: '✗';
+    color: var(--warn);
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-badge">Study Guide</div>
+    <h1>RestAssured + TestNG<br><span class="glow">API Testing Framework</span></h1>
+    <p class="subtitle">Complete reference covering multi-country/env architecture, request building, response validation, mocking with WireMock, and test parameterization.</p>
+  </header>
+
+  <div class="topic-progress">
+    <div class="topic-chip done">Project Structure</div>
+    <div class="topic-chip done">Config Management</div>
+    <div class="topic-chip done">Multi Country/Env</div>
+    <div class="topic-chip done">Request Builder</div>
+    <div class="topic-chip done">Response Models</div>
+    <div class="topic-chip done">Schema Validation</div>
+    <div class="topic-chip done">Response Validator</div>
+    <div class="topic-chip done">Business Validator</div>
+    <div class="topic-chip done">Soft Asserts</div>
+    <div class="topic-chip done">WireMock</div>
+    <div class="topic-chip done">DataProvider</div>
+    <div class="topic-chip done">TestNG Suite</div>
+  </div>
+
+  <!-- TAB NAV -->
+  <div class="tab-nav-wrapper">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('t1',this)"><span class="tab-number">1</span>Project Structure</button>
+      <button class="tab-btn" onclick="showTab('t2',this)"><span class="tab-number">2</span>Config & Context</button>
+      <button class="tab-btn" onclick="showTab('t3',this)"><span class="tab-number">3</span>Models & Builders</button>
+      <button class="tab-btn" onclick="showTab('t4',this)"><span class="tab-number">4</span>Schema Validation</button>
+      <button class="tab-btn" onclick="showTab('t5',this)"><span class="tab-number">5</span>Response Validators</button>
+      <button class="tab-btn" onclick="showTab('t6',this)"><span class="tab-number">6</span>Soft Asserts</button>
+      <button class="tab-btn" onclick="showTab('t7',this)"><span class="tab-number">7</span>WireMock</button>
+      <button class="tab-btn" onclick="showTab('t8',this)"><span class="tab-number">8</span>Parameterization</button>
+      <button class="tab-btn" onclick="showTab('t9',this)"><span class="tab-number">9</span>TestNG Suite</button>
+      <button class="tab-btn" onclick="showTab('t10',this)"><span class="tab-number">10</span>Quick Reference</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 1: Project Structure -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t1" class="tab-content active">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📁</div>
+        <div class="section-title">Full Project Structure</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="tree"><code>src
+├── main/java/com.api.framework
+│   ├── apicalls/
+│   │   ├── PricingApiCall.java        ← REST calls only, no validation
+│   │   ├── OrdersApiCall.java
+│   │   └── UserApiCall.java
+│   ├── config/
+│   │   ├── ConfigManager.java         ← loads env+country .properties
+│   │   └── TestContext.java           ← ThreadLocal context holder
+│   ├── constants/
+│   │   ├── Country.java               ← enum: US, UK, IN, AU
+│   │   └── Environment.java           ← enum: QA, UAT, PROD
+│   ├── models/
+│   │   ├── request/
+│   │   │   └── PricingRequest.java    ← @Builder request POJO
+│   │   └── response/
+│   │       └── pricing/
+│   │           ├── PricingResponse.java
+│   │           ├── DiscountDetails.java
+│   │           └── AppliedRule.java
+│   └── utils/
+│       ├── RequestBuilder.java        ← builds RestAssured RequestSpec
+│       ├── PayloadBuilder.java        ← serializes request models
+│       └── CurrencyMapper.java
+│
+└── test/java/com.api.tests
+    ├── base/
+    │   └── BaseTest.java              ← @BeforeClass setup, @AfterClass cleanup
+    ├── validators/
+    │   ├── SchemaValidator.java       ← JSON schema gate
+    │   ├── ResponseValidator.java     ← status, headers, fields (fluent)
+    │   └── pricing/
+    │       ├── PricingValidator.java  ← core + price summary
+    │       ├── DiscountValidator.java ← discount sub-object
+    │       └── RulesValidator.java    ← applied rules list
+    ├── testdata/
+    │   └── PricingDataProvider.java   ← @DataProvider methods
+    └── tests/
+        ├── PricingTest.java
+        ├── OrdersTest.java
+        └── UserTest.java
+
+test/resources/
+├── config/
+│   ├── qa/  us.properties  uk.properties  in.properties
+│   ├── uat/ us.properties  uk.properties  in.properties
+│   └── prod/us.properties  uk.properties  in.properties
+├── schemas/
+│   ├── qa/us/  get_pricing_schema.json
+│   ├── uat/us/ get_pricing_schema.json
+│   └── prod/us/get_pricing_schema.json
+├── testdata/
+│   └── pricing_scenarios.json
+├── __files/                           ← WireMock response bodies HERE
+│   └── orders_response.json
+└── testng-suite.xml</code></pre>
+
+        <div class="info-box blue">
+          <div class="info-icon">💡</div>
+          <div class="info-content"><strong>Key Rule:</strong> <code>main</code> owns API calls, config, models, utilities. <code>test</code> owns validators, test data, and test classes. Validation logic never lives in main.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">⚙️</div>
+        <div class="section-title">pom.xml — Key Dependencies</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="xml"><code><span class="cm">&lt;!-- RestAssured --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">rest-assured</span>&lt;/artifactId&gt;
+  &lt;version&gt;5.4.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- JSON Schema Validator --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">json-schema-validator</span>&lt;/artifactId&gt;
+  &lt;version&gt;5.4.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- TestNG --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.testng&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">testng</span>&lt;/artifactId&gt;
+  &lt;version&gt;7.9.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- WireMock --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.wiremock&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">wiremock</span>&lt;/artifactId&gt;
+  &lt;version&gt;3.13.1&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- Lombok --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">lombok</span>&lt;/artifactId&gt;
+  &lt;version&gt;1.18.34&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">&lt;!-- Jackson --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">jackson-databind</span>&lt;/artifactId&gt;
+  &lt;version&gt;2.17.1&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 2: Config & Context -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t2" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🌍</div>
+        <div class="section-title">Multi-Country + Multi-Env Config</div>
+      </div>
+      <div class="section-body">
+        <p>Properties files are organized by <strong>env → country</strong>. Each combination has its own file.</p>
+        <pre data-lang="properties"><code><span class="cm"># config/qa/us.properties</span>
+base.url=https://qa-api.us.example.com
+auth.token=qa-us-token
+user.endpoint=/v1/users
+order.endpoint=/v1/orders
+pricing.endpoint=/v1/pricing
+
+<span class="cm"># config/prod/uk.properties</span>
+base.url=https://api.uk.example.com
+auth.token=prod-uk-token
+user.endpoint=/v3/users
+pricing.endpoint=/v3/pricing</code></pre>
+
+        <pre data-lang="java"><code><span class="cm">// ConfigManager.java — caches loaded properties</span>
+<span class="kw">public class</span> <span class="cl">ConfigManager</span> {
+    <span class="kw">private static final</span> Map&lt;String, Properties&gt; cache = <span class="kw">new</span> HashMap&lt;&gt;();
+
+    <span class="kw">public static</span> Properties <span class="fn">load</span>(String env, String country) {
+        String key = env.toLowerCase() + <span class="st">"_"</span> + country.toLowerCase();
+        <span class="kw">return</span> cache.computeIfAbsent(key, k -&gt; {
+            String path = <span class="st">"config/"</span> + env.toLowerCase()
+                        + <span class="st">"/"</span> + country.toLowerCase() + <span class="st">".properties"</span>;
+            Properties props = <span class="kw">new</span> Properties();
+            <span class="kw">try</span> (InputStream is = ConfigManager.<span class="kw">class</span>
+                    .getClassLoader().getResourceAsStream(path)) {
+                <span class="kw">if</span> (is == <span class="kw">null</span>) <span class="kw">throw new</span> RuntimeException(<span class="st">"Not found: "</span> + path);
+                props.load(is);
+            }
+            <span class="kw">return</span> props;
+        });
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🧵</div>
+        <div class="section-title">TestContext — ThreadLocal Holder</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box purple">
+          <div class="info-icon">⚡</div>
+          <div class="info-content"><strong>Why ThreadLocal?</strong> When tests run in parallel, each thread needs its own env+country context. ThreadLocal gives each thread an isolated copy so they don't interfere with each other.</div>
+        </div>
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">TestContext</span> {
+    <span class="kw">private static final</span> ThreadLocal&lt;TestContext&gt; instance = <span class="kw">new</span> ThreadLocal&lt;&gt;();
+
+    <span class="kw">private</span> String env, country;
+    <span class="kw">private</span> Properties config;
+    <span class="kw">private</span> RequestSpecification requestSpec;
+
+    <span class="kw">public static void</span> <span class="fn">init</span>(String env, String country) {
+        TestContext ctx = <span class="kw">new</span> TestContext();
+        ctx.env = env;
+        ctx.country = country;
+        ctx.config = ConfigManager.<span class="fn">load</span>(env, country);
+        ctx.requestSpec = RequestBuilder.<span class="fn">buildSpec</span>(ctx.config);
+        instance.<span class="fn">set</span>(ctx);
+    }
+
+    <span class="kw">public static</span> TestContext <span class="fn">get</span>()              { <span class="kw">return</span> instance.<span class="fn">get</span>(); }
+    <span class="kw">public static void</span>        <span class="fn">clear</span>()            { instance.<span class="fn">remove</span>(); }  <span class="cm">// ALWAYS call in @AfterClass</span>
+
+    <span class="kw">public</span> String              <span class="fn">getEnv</span>()           { <span class="kw">return</span> env; }
+    <span class="kw">public</span> String              <span class="fn">getCountry</span>()      { <span class="kw">return</span> country; }
+    <span class="kw">public</span> String              <span class="fn">getEndpoint</span>(String key) { <span class="kw">return</span> config.<span class="fn">getProperty</span>(key); }
+    <span class="kw">public</span> RequestSpecification <span class="fn">getRequestSpec</span>() { <span class="kw">return</span> requestSpec; }
+}</code></pre>
+
+        <pre data-lang="java"><code><span class="cm">// BaseTest.java</span>
+<span class="kw">public class</span> <span class="cl">BaseTest</span> {
+
+    <span class="an">@BeforeClass</span>
+    <span class="an">@Parameters</span>({<span class="st">"env"</span>, <span class="st">"country"</span>})
+    <span class="kw">public void</span> <span class="fn">setUp</span>(<span class="an">@Optional</span> String env, <span class="an">@Optional</span> String country) {
+        String resolvedEnv     = env     != <span class="kw">null</span> ? env     : System.<span class="fn">getProperty</span>(<span class="st">"env"</span>, <span class="st">"QA"</span>);
+        String resolvedCountry = country != <span class="kw">null</span> ? country : System.<span class="fn">getProperty</span>(<span class="st">"country"</span>, <span class="st">"US"</span>);
+        TestContext.<span class="fn">init</span>(resolvedEnv, resolvedCountry);
+    }
+
+    <span class="an">@AfterClass</span>
+    <span class="kw">public void</span> <span class="fn">tearDown</span>() {
+        TestContext.<span class="fn">clear</span>();  <span class="cm">// critical — prevents ThreadLocal memory leak</span>
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🔧</div>
+        <div class="section-title">RequestBuilder</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">RequestBuilder</span> {
+
+    <span class="kw">public static</span> RequestSpecification <span class="fn">buildSpec</span>(Properties config) {
+        <span class="kw">return new</span> RequestSpecBuilder()
+                .<span class="fn">setBaseUri</span>(config.<span class="fn">getProperty</span>(<span class="st">"base.url"</span>))
+                .<span class="fn">addHeader</span>(<span class="st">"Authorization"</span>, <span class="st">"Bearer "</span> + config.<span class="fn">getProperty</span>(<span class="st">"auth.token"</span>))
+                .<span class="fn">addHeader</span>(<span class="st">"Content-Type"</span>, <span class="st">"application/json"</span>)
+                .<span class="fn">addHeader</span>(<span class="st">"Accept"</span>,       <span class="st">"application/json"</span>)
+                .<span class="fn">log</span>(LogDetail.ALL)
+                .<span class="fn">build</span>();
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 3: Models & Builders -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t3" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📦</div>
+        <div class="section-title">Request Model with @Builder</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="an">@Data</span>
+<span class="an">@Builder</span>
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">PricingRequest</span> {
+    <span class="kw">private</span> String productId;
+    <span class="kw">private</span> String country;
+    <span class="kw">private</span> String currency;
+    <span class="kw">private</span> String discountCode;
+}
+
+<span class="cm">// Usage — clean builder pattern</span>
+PricingRequest request = PricingRequest.builder()
+        .productId(<span class="st">"PROD-001"</span>)
+        .country(TestContext.<span class="fn">get</span>().<span class="fn">getCountry</span>())
+        .currency(CurrencyMapper.<span class="fn">get</span>(TestContext.<span class="fn">get</span>().<span class="fn">getCountry</span>()))
+        .discountCode(<span class="st">"SUMMER10"</span>)
+        .build();</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">📩</div>
+        <div class="section-title">Response Models — Nested Structure</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="cm">// Top-level response</span>
+<span class="an">@Data</span>
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">PricingResponse</span> {
+    <span class="kw">private</span> String         productId;
+    <span class="kw">private</span> String         currency;
+    <span class="kw">private</span> BigDecimal     basePrice;
+    <span class="kw">private</span> BigDecimal     finalPrice;
+    <span class="kw">private</span> DiscountDetails discount;           <span class="cm">// nested object</span>
+    <span class="kw">private</span> List&lt;AppliedRule&gt; appliedRules;    <span class="cm">// nested list</span>
+}
+
+<span class="cm">// Sub-object</span>
+<span class="an">@Data</span>
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">DiscountDetails</span> {
+    <span class="kw">private</span> String     discountCode;
+    <span class="kw">private</span> String     discountType;        <span class="cm">// PERCENTAGE | FLAT</span>
+    <span class="kw">private</span> BigDecimal discountValue;
+    <span class="kw">private</span> BigDecimal discountAmount;
+    <span class="kw">private</span> BigDecimal priceBeforeDiscount;
+    <span class="kw">private</span> BigDecimal priceAfterDiscount;
+}
+
+<span class="cm">// Item inside list</span>
+<span class="an">@Data</span>
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">AppliedRule</span> {
+    <span class="kw">private</span> String  ruleId;
+    <span class="kw">private</span> String  ruleName;
+    <span class="kw">private</span> String  ruleType;   <span class="cm">// PERCENTAGE | FLAT | BUY_X_GET_Y</span>
+    <span class="kw">private boolean</span> active;
+}</code></pre>
+
+        <h3>Deserializing Sections of Response</h3>
+        <pre data-lang="java"><code><span class="cm">// Full response → POJO</span>
+PricingResponse pricing = response.<span class="fn">as</span>(PricingResponse.<span class="kw">class</span>);
+
+<span class="cm">// Navigate to sub-object via getter</span>
+DiscountDetails discount = pricing.<span class="fn">getDiscount</span>();
+
+<span class="cm">// OR extract section directly from response (skip full deserialization)</span>
+DiscountDetails discount = response.jsonPath()
+        .<span class="fn">getObject</span>(<span class="st">"discount"</span>, DiscountDetails.<span class="kw">class</span>);
+
+<span class="cm">// Extract list directly</span>
+List&lt;AppliedRule&gt; rules = response.jsonPath()
+        .<span class="fn">getList</span>(<span class="st">"appliedRules"</span>, AppliedRule.<span class="kw">class</span>);
+
+<span class="cm">// Extract single item from list</span>
+AppliedRule first = response.jsonPath()
+        .<span class="fn">getObject</span>(<span class="st">"appliedRules[0]"</span>, AppliedRule.<span class="kw">class</span>);</code></pre>
+
+        <div class="info-box green">
+          <div class="info-icon">💡</div>
+          <div class="info-content"><strong>Use full deserialization</strong> when a test needs multiple sections. <strong>Use direct extraction</strong> when a test only cares about one specific section — keeps it focused and fast.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🏗️</div>
+        <div class="section-title">PayloadBuilder</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">PayloadBuilder</span> {
+    <span class="kw">private static final</span> ObjectMapper mapper = <span class="kw">new</span> ObjectMapper();
+
+    <span class="cm">// Serialize request model to JSON string</span>
+    <span class="kw">public static</span> String <span class="fn">buildPricingPayload</span>(PricingRequest request) {
+        <span class="kw">try</span> {
+            <span class="kw">return</span> mapper.<span class="fn">writeValueAsString</span>(request);
+        } <span class="kw">catch</span> (JsonProcessingException e) {
+            <span class="kw">throw new</span> RuntimeException(<span class="st">"Failed to serialize PricingRequest"</span>, e);
+        }
+    }
+
+    <span class="cm">// Load from file — path: testdata/{env}/{country}/{file}.json</span>
+    <span class="kw">public static</span> String <span class="fn">fromFile</span>(String fileName) {
+        TestContext ctx = TestContext.<span class="fn">get</span>();
+        String path = <span class="st">"testdata/"</span> + ctx.<span class="fn">getEnv</span>().toLowerCase()
+                    + <span class="st">"/"</span> + ctx.<span class="fn">getCountry</span>().toLowerCase()
+                    + <span class="st">"/"</span> + fileName;
+        <span class="cm">// read and return file contents...</span>
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 4: Schema Validation -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t4" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📋</div>
+        <div class="section-title">JSON Schema File</div>
+      </div>
+      <div class="section-body">
+        <p>Schema files live at <code>src/test/resources/schemas/{env}/{country}/{file}.json</code></p>
+        <pre data-lang="json"><code>{
+  <span class="st">"$schema"</span>: <span class="st">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="st">"type"</span>: <span class="st">"object"</span>,
+  <span class="st">"required"</span>: [<span class="st">"productId"</span>, <span class="st">"currency"</span>, <span class="st">"basePrice"</span>, <span class="st">"discount"</span>],
+  <span class="st">"properties"</span>: {
+    <span class="st">"productId"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span> },
+    <span class="st">"currency"</span>:  { <span class="st">"type"</span>: <span class="st">"string"</span> },
+    <span class="st">"basePrice"</span>: { <span class="st">"type"</span>: <span class="st">"number"</span>, <span class="st">"minimum"</span>: <span class="nu">0</span> },
+    <span class="st">"finalPrice"</span>:{ <span class="st">"type"</span>: <span class="st">"number"</span>, <span class="st">"minimum"</span>: <span class="nu">0</span> },
+    <span class="st">"discount"</span>: {
+      <span class="st">"type"</span>: <span class="st">"object"</span>,
+      <span class="st">"required"</span>: [<span class="st">"discountType"</span>, <span class="st">"discountAmount"</span>],
+      <span class="st">"properties"</span>: {
+        <span class="st">"discountType"</span>: { <span class="st">"type"</span>: <span class="st">"string"</span>, <span class="st">"enum"</span>: [<span class="st">"PERCENTAGE"</span>, <span class="st">"FLAT"</span>] },
+        <span class="st">"discountAmount"</span>: { <span class="st">"type"</span>: <span class="st">"number"</span> }
+      }
+    }
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🛡️</div>
+        <div class="section-title">SchemaValidator.java — Correct Implementation</div>
+      </div>
+      <div class="section-body">
+
+        <div class="info-box red">
+          <div class="info-icon">⚠️</div>
+          <div class="info-content">
+            <strong>Common Mistakes:</strong><br>
+            1. Passing just filename — misses env/country path<br>
+            2. Passing full filesystem path like <code>src/test/java/...</code> — <code>getResourceAsStream</code> doesn't understand filesystem paths<br>
+            3. Not closing the InputStream — resource leak
+          </div>
+        </div>
+
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">SchemaValidator</span> {
+
+    <span class="kw">public static void</span> <span class="fn">validate</span>(Response response, String schemaFileName) {
+        TestContext ctx = TestContext.<span class="fn">get</span>();
+
+        <span class="cm">// ✅ Build full classpath path from env + country</span>
+        String fullPath = <span class="st">"schemas/"</span>
+                + ctx.<span class="fn">getEnv</span>().toLowerCase() + <span class="st">"/"</span>
+                + ctx.<span class="fn">getCountry</span>().toLowerCase() + <span class="st">"/"</span>
+                + schemaFileName;
+
+        InputStream schemaStream = SchemaValidator.<span class="kw">class</span>
+                .getClassLoader()
+                .getResourceAsStream(fullPath);  <span class="cm">// ✅ classpath relative path only</span>
+
+        <span class="kw">if</span> (schemaStream == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> RuntimeException(
+                <span class="st">"Schema not found: "</span> + fullPath
+                + <span class="st">" | env="</span> + ctx.<span class="fn">getEnv</span>()
+                + <span class="st">" | country="</span> + ctx.<span class="fn">getCountry</span>());
+        }
+
+        <span class="kw">try</span> (InputStream stream = schemaStream) {  <span class="cm">// ✅ auto-close</span>
+            response.then().assertThat()
+                    .body(<span class="fn">matchesJsonSchema</span>(stream));
+        } <span class="kw">catch</span> (AssertionError e) {
+            <span class="kw">throw new</span> AssertionError(
+                <span class="st">"Schema failed ["</span> + fullPath + <span class="st">"]\n"</span>
+                + <span class="st">"Response:\n"</span> + response.<span class="fn">asPrettyString</span>()
+                + <span class="st">"\nError: "</span> + e.<span class="fn">getMessage</span>(), e);
+        }
+    }
+}</code></pre>
+
+        <h3>getResourceAsStream — How Classpath Works</h3>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>File Location</th><th>getResourceAsStream Call</th><th>Works?</th></tr>
+            <tr><td>src/test/resources/schema.json</td><td>getResourceAsStream("schema.json")</td><td>✅ Yes</td></tr>
+            <tr><td>src/test/resources/schemas/qa/us/schema.json</td><td>getResourceAsStream("schemas/qa/us/schema.json")</td><td>✅ Yes</td></tr>
+            <tr><td>src/test/java/pkg/schema.json</td><td>getResourceAsStream("schema.json")</td><td>❌ No — java folder not on classpath for resources</td></tr>
+            <tr><td>src/test/resources/schema.json</td><td>getResourceAsStream("src/test/resources/schema.json")</td><td>❌ No — filesystem path doesn't work</td></tr>
+          </table>
+        </div>
+
+        <div class="info-box blue">
+          <div class="info-icon">📌</div>
+          <div class="info-content"><strong>Use ClassLoader version:</strong> <code>MyClass.class.getClassLoader().getResourceAsStream("path")</code> — path always from classpath root, no leading slash, no surprises.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-red">🚦</div>
+        <div class="section-title">Schema as Hard Gate vs Soft</div>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Hard Gate (throws on fail)</div>
+            <ul>
+              <li>Schema fails → everything stops</li>
+              <li>Best for CI/CD smoke tests</li>
+              <li>Use when structure broken = rest is pointless</li>
+              <li>Recommended: status → schema → fields</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title purple">Soft (collects, continues)</div>
+            <ul>
+              <li>Schema fails → adds to SoftAssert, keeps going</li>
+              <li>Best for QA/UAT regression runs</li>
+              <li>Full visibility — see all failures at once</li>
+              <li>Pass shared SoftAssert into validate()</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 5: Response Validators -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t5" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">✅</div>
+        <div class="section-title">ResponseValidator — Fluent, Generic</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">ResponseValidator</span> {
+    <span class="kw">private final</span> Response   response;
+    <span class="kw">private final</span> SoftAssert softAssert;
+
+    <span class="kw">public</span> <span class="cl">ResponseValidator</span>(Response response)                       { <span class="cm">/* own softAssert */</span> }
+    <span class="kw">public</span> <span class="cl">ResponseValidator</span>(Response response, SoftAssert softAssert) { <span class="cm">/* shared */</span> }
+
+    <span class="kw">public</span> ResponseValidator <span class="fn">statusCode</span>(<span class="kw">int</span> expected)              { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">responseTimeBelow</span>(<span class="kw">long</span> ms)           { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">hasHeader</span>(String name, String value)  { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">fieldExists</span>(String jsonPath)          { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">fieldNotNull</span>(String jsonPath)         { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">fieldEquals</span>(String path, Object val)  { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">listNotEmpty</span>(String jsonPath)         { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> ResponseValidator <span class="fn">listSize</span>(String path, <span class="kw">int</span> size)       { <span class="cm">/* ... */</span> <span class="kw">return this</span>; }
+    <span class="kw">public</span> &lt;T&gt; T             <span class="fn">as</span>(Class&lt;T&gt; clazz)                   { <span class="kw">return</span> response.<span class="fn">as</span>(clazz); }
+    <span class="kw">public</span> String            <span class="fn">extract</span>(String jsonPath)              { <span class="kw">return</span> response.jsonPath().<span class="fn">getString</span>(jsonPath); }
+    <span class="kw">public void</span>              <span class="fn">validate</span>()                            { softAssert.<span class="fn">assertAll</span>(); }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">💰</div>
+        <div class="section-title">Sectional Validators — Pricing Example</div>
+      </div>
+      <div class="section-body">
+        <p>For complex responses, split into focused validator classes — one per section of the response.</p>
+
+        <div class="flow">
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title">PricingValidator</div>
+              <div class="flow-card-desc">validateCore() — productId, currency, basePrice, finalPrice<br>validatePriceSummary() — finalPrice vs discountedPrice consistency</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot purple"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title purple">DiscountValidator</div>
+              <div class="flow-card-desc">validateDiscount() — full math check (amount, type, priceAfter)<br>validateDiscountCode() — specific code + type<br>validateNoDiscount() — when no discount expected</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot green"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title green">RulesValidator</div>
+              <div class="flow-card-desc">validateAppliedRules() — all rules have id, type, active=true<br>validateRuleApplied(id) — specific rule was applied<br>validateRuleNotApplied(id) — specific rule was excluded<br>validateRulesCount(n) — exact count</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot red"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title red">softAssert.assertAll()</div>
+              <div class="flow-card-desc">ONE call at the end — reports ALL failures collected across ALL validators</div>
+            </div>
+          </div>
+        </div>
+
+        <pre data-lang="java"><code><span class="cm">// In test — only call sections relevant to scenario</span>
+SoftAssert softAssert = <span class="kw">new</span> SoftAssert();
+PricingResponse pricing = response.<span class="fn">as</span>(PricingResponse.<span class="kw">class</span>);
+
+<span class="kw">new</span> <span class="cl">PricingValidator</span>(pricing, softAssert)
+        .<span class="fn">validateCore</span>()
+        .<span class="fn">validatePriceSummary</span>();
+
+<span class="kw">new</span> <span class="cl">DiscountValidator</span>(pricing.<span class="fn">getDiscount</span>(), softAssert)
+        .<span class="fn">validateDiscount</span>()
+        .<span class="fn">validateDiscountCode</span>(<span class="st">"SUMMER10"</span>, <span class="st">"PERCENTAGE"</span>);
+
+<span class="kw">new</span> <span class="cl">RulesValidator</span>(pricing.<span class="fn">getAppliedRules</span>(), softAssert)
+        .<span class="fn">validateAppliedRules</span>()
+        .<span class="fn">validateRuleApplied</span>(<span class="st">"RULE-SUMMER-10"</span>);
+
+softAssert.<span class="fn">assertAll</span>();  <span class="cm">// one call — collects everything</span></code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🧮</div>
+        <div class="section-title">Math Validation — Pricing Example</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box green">
+          <div class="info-icon">🔑</div>
+          <div class="info-content"><strong>Key principle:</strong> Don't just check that fields exist — independently recompute the math and verify the API's calculation is correct. If API returns wrong discount amount, your test catches it.</div>
+        </div>
+        <pre data-lang="java"><code><span class="cm">// Independently verify discount amount math</span>
+<span class="kw">private</span> <span class="kw">static final</span> BigDecimal TOLERANCE = <span class="kw">new</span> BigDecimal(<span class="st">"0.01"</span>);
+
+<span class="kw">public</span> DiscountValidator <span class="fn">validateDiscountAmountIsCorrect</span>() {
+    DiscountDetails d = discount;
+    BigDecimal expected;
+
+    <span class="kw">if</span> (<span class="st">"PERCENTAGE"</span>.equals(d.<span class="fn">getDiscountType</span>())) {
+        <span class="cm">// expected = basePrice * discountValue / 100</span>
+        expected = basePrice
+                .<span class="fn">multiply</span>(d.<span class="fn">getDiscountValue</span>())
+                .<span class="fn">divide</span>(BigDecimal.<span class="fn">valueOf</span>(<span class="nu">100</span>), <span class="nu">2</span>, RoundingMode.HALF_UP);
+    } <span class="kw">else</span> {
+        expected = d.<span class="fn">getDiscountValue</span>();  <span class="cm">// FLAT: amount == value</span>
+    }
+
+    BigDecimal diff = d.<span class="fn">getDiscountAmount</span>().<span class="fn">subtract</span>(expected).<span class="fn">abs</span>();
+    softAssert.<span class="fn">assertTrue</span>(diff.<span class="fn">compareTo</span>(TOLERANCE) &lt;= <span class="nu">0</span>,
+        <span class="st">"Discount math wrong. Expected: "</span> + expected
+        + <span class="st">", Got: "</span> + d.<span class="fn">getDiscountAmount</span>());
+    <span class="kw">return this</span>;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 6: Soft Asserts -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t6" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🧩</div>
+        <div class="section-title">Hard Assert vs Soft Assert</div>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title red">Hard Assert (default TestNG)</div>
+            <ul>
+              <li>First failure throws immediately</li>
+              <li>Rest of test never executes</li>
+              <li>Use for: status code, schema gate</li>
+              <li>Assert.assertEquals(actual, expected)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title green">Soft Assert</div>
+            <ul>
+              <li>Collects ALL failures, continues</li>
+              <li>Reports everything at the end</li>
+              <li>Use for: field, business validations</li>
+              <li>MUST call assertAll() at end</li>
+            </ul>
+          </div>
+        </div>
+
+        <pre data-lang="java"><code><span class="cm">// Hard assert — stops at first failure</span>
+Assert.<span class="fn">assertEquals</span>(response.<span class="fn">statusCode</span>(), <span class="nu">200</span>);  <span class="cm">// throws if wrong</span>
+<span class="cm">// lines below never run if above fails</span>
+
+<span class="cm">// Soft assert — collects all, reports all</span>
+SoftAssert sa = <span class="kw">new</span> SoftAssert();
+sa.<span class="fn">assertEquals</span>(actual1, expected1, <span class="st">"message1"</span>);  <span class="cm">// failure 1</span>
+sa.<span class="fn">assertEquals</span>(actual2, expected2, <span class="st">"message2"</span>);  <span class="cm">// failure 2</span>
+sa.<span class="fn">assertNotNull</span>(value, <span class="st">"message3"</span>);              <span class="cm">// failure 3</span>
+sa.<span class="fn">assertAll</span>();  <span class="cm">// reports ALL 3 failures at once ← don't forget this!</span></code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🔗</div>
+        <div class="section-title">Sharing SoftAssert Across Multiple Validators</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box red">
+          <div class="info-icon">⚠️</div>
+          <div class="info-content"><strong>Problem:</strong> If each validator has its own SoftAssert and calls validate() independently, the first validator's assertAll() can throw — and subsequent validators never run.</div>
+        </div>
+        <div class="info-box green">
+          <div class="info-icon">✅</div>
+          <div class="info-content"><strong>Solution:</strong> Create ONE SoftAssert per test method, pass it to all validators. Call assertAll() ONCE at the very end.</div>
+        </div>
+
+        <pre data-lang="java"><code><span class="an">@Test</span>
+<span class="kw">public void</span> <span class="fn">testPricing_WithDiscount</span>() {
+    Response response = PricingApiCall.<span class="fn">getPrice</span>(request);
+
+    <span class="cm">// Hard gate — status and schema</span>
+    <span class="kw">new</span> <span class="cl">ResponseValidator</span>(response).<span class="fn">statusCode</span>(<span class="nu">200</span>).<span class="fn">validate</span>();
+    SchemaValidator.<span class="fn">validate</span>(response, <span class="st">"get_pricing_schema.json"</span>);
+
+    <span class="cm">// ONE shared soft assert for everything below</span>
+    SoftAssert softAssert = <span class="kw">new</span> SoftAssert();  <span class="cm">// ← one per test method</span>
+    PricingResponse pricing = response.<span class="fn">as</span>(PricingResponse.<span class="kw">class</span>);
+
+    <span class="kw">new</span> <span class="cl">PricingValidator</span>(pricing, softAssert)   <span class="cm">// ← pass shared SA</span>
+            .<span class="fn">validateCore</span>()
+            .<span class="fn">validatePriceSummary</span>();
+
+    <span class="kw">new</span> <span class="cl">DiscountValidator</span>(pricing.<span class="fn">getDiscount</span>(), softAssert)  <span class="cm">// ← same SA</span>
+            .<span class="fn">validateDiscount</span>();
+
+    <span class="kw">new</span> <span class="cl">RulesValidator</span>(pricing.<span class="fn">getAppliedRules</span>(), softAssert) <span class="cm">// ← same SA</span>
+            .<span class="fn">validateAppliedRules</span>();
+
+    softAssert.<span class="fn">assertAll</span>();  <span class="cm">// ← ONE place, reports ALL from ALL validators</span>
+}</code></pre>
+
+        <h3>Validator Constructor Pattern — Support Both</h3>
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">DiscountValidator</span> {
+    <span class="kw">private final</span> SoftAssert softAssert;
+
+    <span class="cm">// Own instance — standalone use</span>
+    <span class="kw">public</span> <span class="cl">DiscountValidator</span>(DiscountDetails discount) {
+        <span class="kw">this</span>.softAssert = <span class="kw">new</span> SoftAssert();
+    }
+
+    <span class="cm">// Shared instance — multi-validator test</span>
+    <span class="kw">public</span> <span class="cl">DiscountValidator</span>(DiscountDetails discount, SoftAssert softAssert) {
+        <span class="kw">this</span>.softAssert = softAssert;  <span class="cm">// uses caller's instance</span>
+    }
+
+    <span class="cm">// Only call when NOT sharing — calling on shared SA would be wrong</span>
+    <span class="kw">public void</span> <span class="fn">validate</span>() { softAssert.<span class="fn">assertAll</span>(); }
+}</code></pre>
+
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>Scenario</th><th>Approach</th></tr>
+            <tr><td>Single validator in test</td><td>Own SoftAssert, call validate() at end</td></tr>
+            <tr><td>Multiple validators in same test</td><td>Shared SoftAssert passed to each, one assertAll() at end</td></tr>
+            <tr><td>Schema / status code</td><td>Hard assert — stop if these fail</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 7: WireMock -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t7" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🎭</div>
+        <div class="section-title">WireMock — Mock Server Setup</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box blue">
+          <div class="info-icon">📌</div>
+          <div class="info-content">WireMock starts a real HTTP server locally. Your tests hit it exactly like a real API. Great for isolated testing when the real API isn't available.</div>
+        </div>
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">R1_Get</span> {
+    <span class="kw">private</span> WireMockServer wireMockServer;
+
+    <span class="an">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">setup</span>() {
+        wireMockServer = <span class="kw">new</span> WireMockServer(<span class="nu">9091</span>);  <span class="cm">// start on port 9091</span>
+        wireMockServer.<span class="fn">start</span>();
+        <span class="fn">configureFor</span>(<span class="st">"localhost"</span>, <span class="nu">9091</span>);
+
+        <span class="fn">stubFor</span>(<span class="fn">get</span>(<span class="fn">urlEqualTo</span>(<span class="st">"/v1/orders/sampleorder"</span>))
+                .<span class="fn">withHeader</span>(<span class="st">"Authorization"</span>, <span class="fn">equalTo</span>(<span class="st">"Bearer MY_TOKEN"</span>))
+                .<span class="fn">willReturn</span>(<span class="fn">aResponse</span>()
+                        .<span class="fn">withStatus</span>(<span class="nu">200</span>)
+                        .<span class="fn">withHeader</span>(<span class="st">"Content-Type"</span>, <span class="st">"application/json"</span>)
+                        .<span class="fn">withBodyFile</span>(<span class="st">"orders_response.json"</span>)));
+        <span class="cm">//             ↑ WireMock looks in src/test/resources/__files/</span>
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">getWork</span>() {
+        RestAssured.<span class="fn">given</span>()
+                .<span class="fn">baseUri</span>(<span class="st">"http://localhost:9091"</span>)  <span class="cm">// ← MUST match WireMock port</span>
+                .<span class="fn">header</span>(<span class="st">"Authorization"</span>, <span class="st">"Bearer MY_TOKEN"</span>)
+            .<span class="fn">when</span>()
+                .<span class="fn">get</span>(<span class="st">"/v1/orders/sampleorder"</span>)
+            .<span class="fn">then</span>()
+                .<span class="fn">statusCode</span>(<span class="nu">200</span>)
+                .<span class="fn">body</span>(<span class="fn">matchesJsonSchemaInClasspath</span>(<span class="st">"orders_response_schema.json"</span>));
+    }
+
+    <span class="an">@AfterClass</span>
+    <span class="kw">public void</span> <span class="fn">tearDown</span>() {
+        <span class="kw">if</span> (wireMockServer != <span class="kw">null</span>) wireMockServer.<span class="fn">stop</span>();
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-red">🐛</div>
+        <div class="section-title">WireMock — Common Errors & Fixes</div>
+      </div>
+      <div class="section-body">
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+            <tr><td>Connection refused</td><td>RestAssured hitting wrong port</td><td>Match port: WireMock 9091 = RestAssured 9091</td></tr>
+            <tr><td>Not found in blob store: files/orders_response.json</td><td>File not in __files folder</td><td>Move file to src/test/resources/__files/</td></tr>
+            <tr><td>Not found in blob store: __files/orders_response.json</td><td>File in wrong location or not built</td><td>Run mvn clean test / Rebuild Project in IntelliJ</td></tr>
+            <tr><td>Schema file not found</td><td>Schema not at classpath root</td><td>Place schema directly in src/test/resources/</td></tr>
+          </table>
+        </div>
+
+        <h3>Required File Structure for WireMock</h3>
+        <pre data-lang="tree"><code>src/test/resources/
+├── __files/
+│   └── orders_response.json        ← withBodyFile("orders_response.json")
+│                                      WireMock ALWAYS looks here
+│
+└── orders_response_schema.json     ← matchesJsonSchemaInClasspath("orders_response_schema.json")
+                                       RestAssured looks at classpath root</code></pre>
+
+        <div class="info-box red">
+          <div class="info-icon">⚠️</div>
+          <div class="info-content"><strong>After adding files</strong> to src/test/resources, always do <strong>Build → Rebuild Project</strong> in IntelliJ (or <code>mvn clean test</code>) to copy files to target/test-classes. WireMock reads from target at runtime, not src directly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 8: Parameterization -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t8" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📊</div>
+        <div class="section-title">Way 1 — @DataProvider in Same Class</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="java"><code><span class="kw">public class</span> <span class="cl">PricingTest</span> <span class="kw">extends</span> BaseTest {
+
+    <span class="an">@Test</span>(dataProvider = <span class="st">"pricingScenarios"</span>)
+    <span class="kw">public void</span> <span class="fn">testPricing</span>(PricingRequest request,
+                             String expectedRuleId,
+                             String expectedDiscountType,
+                             <span class="kw">int</span> expectedRulesCount) {
+
+        Response response = PricingApiCall.<span class="fn">getPrice</span>(request);
+        <span class="cm">// validations using params above...</span>
+    }
+
+    <span class="an">@DataProvider</span>(name = <span class="st">"pricingScenarios"</span>)
+    <span class="kw">public</span> Object[][] <span class="fn">pricingScenarios</span>() {
+        <span class="kw">return new</span> Object[][] {
+            {
+                PricingRequest.builder()
+                    .productId(<span class="st">"PROD-001"</span>).discountCode(<span class="st">"SUMMER10"</span>)
+                    .country(<span class="st">"US"</span>).currency(<span class="st">"USD"</span>).build(),
+                <span class="st">"RULE-SUMMER-10"</span>, <span class="st">"PERCENTAGE"</span>, <span class="nu">1</span>
+            },
+            {
+                PricingRequest.builder()
+                    .productId(<span class="st">"PROD-002"</span>).discountCode(<span class="st">"FLAT5"</span>)
+                    .country(<span class="st">"US"</span>).currency(<span class="st">"USD"</span>).build(),
+                <span class="st">"RULE-FLAT-5"</span>, <span class="st">"FLAT"</span>, <span class="nu">1</span>
+            }
+        };
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🏛️</div>
+        <div class="section-title">Way 2 — @DataProvider in Separate Class (Recommended)</div>
+      </div>
+      <div class="section-body">
+        <p>Best when same data is needed across multiple test classes.</p>
+        <pre data-lang="java"><code><span class="cm">// testdata/PricingDataProvider.java</span>
+<span class="kw">public class</span> <span class="cl">PricingDataProvider</span> {
+
+    <span class="an">@DataProvider</span>(name = <span class="st">"pricingScenarios"</span>)
+    <span class="kw">public static</span> Object[][] <span class="fn">pricingScenarios</span>() {
+        <span class="kw">return new</span> Object[][] {
+            { PricingRequest.builder().productId(<span class="st">"PROD-001"</span>).discountCode(<span class="st">"SUMMER10"</span>).build(),
+              <span class="st">"RULE-SUMMER-10"</span>, <span class="st">"PERCENTAGE"</span>, <span class="nu">1</span> },
+            { PricingRequest.builder().productId(<span class="st">"PROD-002"</span>).discountCode(<span class="st">"FLAT5"</span>).build(),
+              <span class="st">"RULE-FLAT-5"</span>, <span class="st">"FLAT"</span>, <span class="nu">1</span> }
+        };
+    }
+
+    <span class="an">@DataProvider</span>(name = <span class="st">"invalidDiscountScenarios"</span>)
+    <span class="kw">public static</span> Object[][] <span class="fn">invalidDiscountScenarios</span>() {
+        <span class="kw">return new</span> Object[][] {
+            { <span class="st">"PROD-001"</span>, <span class="st">"EXPIRED2023"</span>, <span class="nu">400</span>, <span class="st">"DISCOUNT_EXPIRED"</span>  },
+            { <span class="st">"PROD-001"</span>, <span class="st">"INVALID999"</span>,  <span class="nu">400</span>, <span class="st">"INVALID_DISCOUNT"</span>  },
+            { <span class="st">"PROD-001"</span>, <span class="st">""</span>,            <span class="nu">400</span>, <span class="st">"DISCOUNT_REQUIRED"</span> }
+        };
+    }
+}
+
+<span class="cm">// Reference via dataProviderClass in test</span>
+<span class="an">@Test</span>(dataProvider = <span class="st">"pricingScenarios"</span>,
+      dataProviderClass = PricingDataProvider.<span class="kw">class</span>)  <span class="cm">// ← key line</span>
+<span class="kw">public void</span> <span class="fn">testPricing</span>(PricingRequest request, ...) { }</span></code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">📄</div>
+        <div class="section-title">Way 3 — Data from JSON File</div>
+      </div>
+      <div class="section-body">
+        <p>Best for large datasets or when non-developers maintain test data.</p>
+        <pre data-lang="json"><code><span class="cm">// src/test/resources/testdata/pricing_scenarios.json</span>
+[
+  {
+    <span class="st">"productId"</span>: <span class="st">"PROD-001"</span>,
+    <span class="st">"discountCode"</span>: <span class="st">"SUMMER10"</span>,
+    <span class="st">"expectedRuleId"</span>: <span class="st">"RULE-SUMMER-10"</span>,
+    <span class="st">"expectedDiscountType"</span>: <span class="st">"PERCENTAGE"</span>,
+    <span class="st">"expectedRulesCount"</span>: <span class="nu">1</span>
+  },
+  {
+    <span class="st">"productId"</span>: <span class="st">"PROD-002"</span>,
+    <span class="st">"discountCode"</span>: <span class="st">"FLAT5"</span>,
+    <span class="st">"expectedRuleId"</span>: <span class="st">"RULE-FLAT-5"</span>,
+    <span class="st">"expectedDiscountType"</span>: <span class="st">"FLAT"</span>,
+    <span class="st">"expectedRulesCount"</span>: <span class="nu">1</span>
+  }
+]</code></pre>
+
+        <pre data-lang="java"><code><span class="cm">// PricingTestData.java — model for JSON file</span>
+<span class="an">@Data</span>
+<span class="an">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cl">PricingTestData</span> {
+    <span class="kw">private</span> String productId, discountCode, expectedRuleId, expectedDiscountType;
+    <span class="kw">private int</span> expectedRulesCount;
+}
+
+<span class="cm">// DataProvider reads file and returns Object[][]</span>
+<span class="an">@DataProvider</span>(name = <span class="st">"pricingFromFile"</span>)
+<span class="kw">public static</span> Object[][] <span class="fn">pricingFromFile</span>() <span class="kw">throws</span> Exception {
+    ObjectMapper mapper = <span class="kw">new</span> ObjectMapper();
+    List&lt;PricingTestData&gt; data = mapper.<span class="fn">readValue</span>(
+        PricingDataProvider.<span class="kw">class</span>.getClassLoader()
+            .getResourceAsStream(<span class="st">"testdata/pricing_scenarios.json"</span>),
+        <span class="kw">new</span> TypeReference&lt;List&lt;PricingTestData&gt;&gt;() {}
+    );
+    <span class="kw">return</span> data.stream()
+               .map(d -&gt; <span class="kw">new</span> Object[]{d})
+               .toArray(Object[][]::new);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-red">⚖️</div>
+        <div class="section-title">Which DataProvider to Use?</div>
+      </div>
+      <div class="section-body">
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>Approach</th><th>Best For</th><th>Maintainer</th><th>Reusable?</th></tr>
+            <tr><td>Same class</td><td>Quick, test-specific data</td><td>Developer</td><td>❌ Only that class</td></tr>
+            <tr><td>Separate class</td><td>Shared across test classes</td><td>Developer</td><td>✅ Any test</td></tr>
+            <tr><td>JSON file</td><td>Large datasets, 10+ rows</td><td>Anyone</td><td>✅ Any test</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 9: TestNG Suite -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t9" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🗂️</div>
+        <div class="section-title">testng-suite.xml — Multi Env + Country</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="xml"><code><span class="cm">&lt;!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd"&gt;</span>
+&lt;suite name=<span class="st">"Multi-Env Multi-Country Suite"</span>
+       parallel=<span class="st">"tests"</span>
+       thread-count=<span class="st">"6"</span>&gt;
+
+  <span class="cm">&lt;!-- QA --&gt;</span>
+  &lt;test name=<span class="st">"QA-US"</span>&gt;
+    &lt;parameter name=<span class="st">"env"</span>     value=<span class="st">"QA"</span>/&gt;
+    &lt;parameter name=<span class="st">"country"</span> value=<span class="st">"US"</span>/&gt;
+    &lt;classes&gt;
+      &lt;class name=<span class="st">"com.api.tests.PricingTest"</span>/&gt;
+      &lt;class name=<span class="st">"com.api.tests.OrdersTest"</span>/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+  &lt;test name=<span class="st">"QA-UK"</span>&gt;
+    &lt;parameter name=<span class="st">"env"</span>     value=<span class="st">"QA"</span>/&gt;
+    &lt;parameter name=<span class="st">"country"</span> value=<span class="st">"UK"</span>/&gt;
+    &lt;classes&gt;
+      &lt;class name=<span class="st">"com.api.tests.PricingTest"</span>/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+  <span class="cm">&lt;!-- UAT --&gt;</span>
+  &lt;test name=<span class="st">"UAT-US"</span>&gt;
+    &lt;parameter name=<span class="st">"env"</span>     value=<span class="st">"UAT"</span>/&gt;
+    &lt;parameter name=<span class="st">"country"</span> value=<span class="st">"US"</span>/&gt;
+    &lt;classes&gt;
+      &lt;class name=<span class="st">"com.api.tests.PricingTest"</span>/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+  <span class="cm">&lt;!-- PROD --&gt;</span>
+  &lt;test name=<span class="st">"PROD-US"</span>&gt;
+    &lt;parameter name=<span class="st">"env"</span>     value=<span class="st">"PROD"</span>/&gt;
+    &lt;parameter name=<span class="st">"country"</span> value=<span class="st">"US"</span>/&gt;
+    &lt;classes&gt;
+      &lt;class name=<span class="st">"com.api.tests.PricingTest"</span>/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+&lt;/suite&gt;</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🖥️</div>
+        <div class="section-title">Run from Maven CLI</div>
+      </div>
+      <div class="section-body">
+        <pre data-lang="bash"><code><span class="cm"># Run full suite from XML</span>
+mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-suite.xml
+
+<span class="cm"># Run specific env via system properties (fallback in BaseTest)</span>
+mvn test -Denv=UAT -Dcountry=US
+
+<span class="cm"># Run only QA suite</span>
+mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-qa-suite.xml</code></pre>
+
+        <h3>@Optional Fallback in BaseTest</h3>
+        <pre data-lang="java"><code><span class="an">@BeforeClass</span>
+<span class="an">@Parameters</span>({<span class="st">"env"</span>, <span class="st">"country"</span>})
+<span class="kw">public void</span> <span class="fn">setUp</span>(<span class="an">@Optional</span> String env, <span class="an">@Optional</span> String country) {
+    <span class="cm">// If not set in XML, fall back to system property, then default to QA/US</span>
+    String resolvedEnv     = env     != <span class="kw">null</span> ? env     : System.<span class="fn">getProperty</span>(<span class="st">"env"</span>,     <span class="st">"QA"</span>);
+    String resolvedCountry = country != <span class="kw">null</span> ? country : System.<span class="fn">getProperty</span>(<span class="st">"country"</span>, <span class="st">"US"</span>);
+    TestContext.<span class="fn">init</span>(resolvedEnv, resolvedCountry);
+}</code></pre>
+
+        <div class="info-box purple">
+          <div class="info-icon">⚡</div>
+          <div class="info-content"><strong>parallel="tests"</strong> in suite XML runs each &lt;test&gt; block in its own thread. ThreadLocal in TestContext ensures QA-US and UAT-UK don't share state even running simultaneously.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TAB 10: Quick Reference -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="t10" class="tab-content">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">⚡</div>
+        <div class="section-title">Validation Flow — Full Picture</div>
+      </div>
+      <div class="section-body">
+        <div class="flow">
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot red"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title red">1 — Status Code (Hard Assert)</div>
+              <div class="flow-card-desc">Always first. If 500 or 404, stop immediately — no point validating body</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot red"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title red">2 — Schema Validation (Hard Gate)</div>
+              <div class="flow-card-desc">Structure correct? Required fields present? Correct types? Enum values valid? If structure broken, field checks are meaningless</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title">3 — ResponseValidator (Soft Assert)</div>
+              <div class="flow-card-desc">Headers, response time, field existence, field values. Collects all failures</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot purple"></div><div class="flow-line"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title purple">4 — Deserialize → Sectional Validators (Soft Assert, Shared)</div>
+              <div class="flow-card-desc">PricingValidator → DiscountValidator → RulesValidator, all sharing one SoftAssert</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-left"><div class="flow-dot green"></div></div>
+            <div class="flow-card">
+              <div class="flow-card-title green">5 — softAssert.assertAll()</div>
+              <div class="flow-card-desc">Single call at end of test — reports every failure from every validator at once</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🗺️</div>
+        <div class="section-title">Responsibility Map</div>
+      </div>
+      <div class="section-body">
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>File</th><th>Location</th><th>Does</th></tr>
+            <tr><td>PricingApiCall.java</td><td>main/apicalls</td><td>Makes the HTTP call, returns Response</td></tr>
+            <tr><td>ConfigManager.java</td><td>main/config</td><td>Loads env+country .properties, caches them</td></tr>
+            <tr><td>TestContext.java</td><td>main/config</td><td>ThreadLocal holder for env, country, spec</td></tr>
+            <tr><td>RequestBuilder.java</td><td>main/utils</td><td>Builds RestAssured RequestSpecification</td></tr>
+            <tr><td>PayloadBuilder.java</td><td>main/utils</td><td>Serializes request models to JSON string</td></tr>
+            <tr><td>PricingRequest.java</td><td>main/models/request</td><td>@Builder POJO for request body</td></tr>
+            <tr><td>PricingResponse.java</td><td>main/models/response</td><td>Top-level response POJO</td></tr>
+            <tr><td>DiscountDetails.java</td><td>main/models/response</td><td>Nested sub-object POJO</td></tr>
+            <tr><td>SchemaValidator.java</td><td>test/validators</td><td>Validates JSON structure against schema file</td></tr>
+            <tr><td>ResponseValidator.java</td><td>test/validators</td><td>Generic: status, headers, fields (fluent)</td></tr>
+            <tr><td>PricingValidator.java</td><td>test/validators/pricing</td><td>Core fields + price summary math</td></tr>
+            <tr><td>DiscountValidator.java</td><td>test/validators/pricing</td><td>Discount object math and field checks</td></tr>
+            <tr><td>RulesValidator.java</td><td>test/validators/pricing</td><td>Applied rules list checks</td></tr>
+            <tr><td>PricingDataProvider.java</td><td>test/testdata</td><td>@DataProvider methods for parameterization</td></tr>
+            <tr><td>BaseTest.java</td><td>test/base</td><td>@BeforeClass init, @AfterClass cleanup</td></tr>
+            <tr><td>PricingTest.java</td><td>test/tests</td><td>Orchestrates: call → schema → validators</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">✅</div>
+        <div class="section-title">Key Rules & Gotchas</div>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Always Do</div>
+            <ul class="checklist">
+              <li>Call TestContext.clear() in @AfterClass</li>
+              <li>Use ClassLoader.getResourceAsStream (not Class)</li>
+              <li>Use try-with-resources for InputStream</li>
+              <li>Match WireMock port to RestAssured baseUri</li>
+              <li>Place WireMock files in __files/ folder</li>
+              <li>Call softAssert.assertAll() at end of test</li>
+              <li>Rebuild project after adding resources</li>
+              <li>Verify math independently, not just field presence</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title red">Never Do</div>
+            <ul class="checklist">
+              <li class="warn">Pass filesystem paths to getResourceAsStream</li>
+              <li class="warn">Put schema files in src/test/java</li>
+              <li class="warn">Forget to call softAssert.assertAll()</li>
+              <li class="warn">Create multiple SoftAsserts per test</li>
+              <li class="warn">Put validation logic in main folder</li>
+              <li class="warn">Use different ports for WireMock + RestAssured</li>
+              <li class="warn">Skip ThreadLocal cleanup in tearDown</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-red">🔍</div>
+        <div class="section-title">getResourceAsStream — One Liner Rules</div>
+      </div>
+      <div class="section-body">
+        <ul class="checklist">
+          <li>Works from src/test/resources — always, no config needed</li>
+          <li>Works from src/main/resources — always, no config needed</li>
+          <li>Works from custom folders — only after adding to pom.xml &lt;testResources&gt;</li>
+          <li>Path is always relative to classpath ROOT — no leading slash when using ClassLoader</li>
+          <li class="warn">Does NOT work with filesystem paths like src/test/java/...</li>
+          <li class="warn">Returns null if file not found — always check for null before using</li>
+          <li class="warn">File must exist in target/test-classes — rebuild if just added</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end tab 10 -->
+
+</div><!-- end container -->
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

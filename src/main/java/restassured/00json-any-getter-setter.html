@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@JsonAnyGetter & @JsonAnySetter — Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wght@300;400;600;800&family=Azeret+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Lora:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0e0e0e;
+  --bg2:       #141414;
+  --bg3:       #1a1a1a;
+  --border:    #2a2a2a;
+  --border2:   #333;
+  --fg:        #e8e0d4;
+  --fg2:       #a09888;
+  --fg3:       #6a6058;
+  --amber:     #f0a500;
+  --amber2:    #c07800;
+  --amber-dim: #f0a50018;
+  --amber-brd: #f0a50030;
+  --green:     #4ec994;
+  --green-dim: #4ec99415;
+  --green-brd: #4ec99430;
+  --red:       #e05c5c;
+  --red-dim:   #e05c5c15;
+  --red-brd:   #e05c5c30;
+  --blue:      #5ba4e0;
+  --blue-dim:  #5ba4e015;
+  --blue-brd:  #5ba4e030;
+  --purple:    #a07de0;
+  --code-bg:   #111;
+  --tk:        #e8c07a;  /* token key */
+  --tv:        #89c899;  /* token value string */
+  --tn:        #e0a060;  /* token number */
+  --ta:        #c8a0e0;  /* annotation */
+  --tc:        #5a6878;  /* comment */
+  --tkw:       #c07ae8;  /* keyword */
+  --tcl:       #7ab8e8;  /* class */
+  --tmt:       #6ad8e8;  /* method */
+  --tst:       #89c899;  /* string literal */
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  line-height: 1.8;
+  cursor: default;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hero-glow {
+  position: absolute;
+  top: 20%; left: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #f0a50008 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-tag {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-brd);
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 2px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: up 0.5s ease forwards 0.1s;
+}
+
+.hero h1 {
+  font-family: 'Anybody', sans-serif;
+  font-size: clamp(38px, 7vw, 88px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #fff;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: up 0.6s ease forwards 0.25s;
+}
+
+.hero h1 .anno {
+  color: var(--amber);
+  display: block;
+}
+
+.hero-desc {
+  font-size: 17px;
+  color: var(--fg2);
+  font-style: italic;
+  font-weight: 300;
+  max-width: 540px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: up 0.6s ease forwards 0.4s;
+}
+
+.hero-pills {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  opacity: 0;
+  animation: up 0.5s ease forwards 0.55s;
+}
+
+.pill {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border2);
+  color: var(--fg3);
+  letter-spacing: 0.04em;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(14,14,14,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.nav a {
+  display: block;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg3);
+  text-decoration: none;
+  padding: 15px 16px;
+  white-space: nowrap;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.nav a:hover { color: var(--amber); border-bottom-color: var(--amber); }
+
+/* ── PAGE ── */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 72px 40px;
+}
+
+/* ── SECTION ── */
+.s {
+  margin-bottom: 88px;
+  opacity: 0;
+  animation: up 0.7s ease forwards;
+}
+.s:nth-child(1){animation-delay:.05s}
+.s:nth-child(2){animation-delay:.1s}
+.s:nth-child(3){animation-delay:.15s}
+.s:nth-child(4){animation-delay:.2s}
+.s:nth-child(5){animation-delay:.25s}
+.s:nth-child(6){animation-delay:.3s}
+.s:nth-child(7){animation-delay:.35s}
+.s:nth-child(8){animation-delay:.4s}
+
+.s-label {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.s-label::after {
+  content: '';
+  flex: 1;
+  max-width: 60px;
+  height: 1px;
+  background: var(--amber-brd);
+}
+
+.s h2 {
+  font-family: 'Anybody', sans-serif;
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.s h3 {
+  font-family: 'Anybody', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 32px 0 12px;
+  letter-spacing: -0.01em;
+}
+
+p { color: var(--fg2); margin-bottom: 14px; font-size: 14px; line-height: 1.8; }
+strong { color: var(--fg); font-weight: 600; }
+
+/* ── CODE ── */
+.code {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 14px 0;
+  font-family: 'Azeret Mono', monospace;
+}
+
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+
+.code-title {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg3);
+}
+
+.dots { display:flex; gap:5px; }
+.dots span { width:9px; height:9px; border-radius:50%; }
+.dots span:nth-child(1){ background:#e05c5c44; }
+.dots span:nth-child(2){ background:#e0a06044; }
+.dots span:nth-child(3){ background:#4ec99444; }
+
+pre {
+  padding: 20px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: var(--fg);
+}
+
+.tk  { color: var(--tk);  }
+.tv  { color: var(--tv);  }
+.tn  { color: var(--tn);  }
+.ta  { color: var(--ta);  }
+.tc  { color: var(--tc); font-style: italic; }
+.tkw { color: var(--tkw); }
+.tcl { color: var(--tcl); }
+.tmt { color: var(--tmt); }
+.tst { color: var(--tst); }
+.top { color: var(--red); }
+
+p code, li code {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  padding: 1px 7px;
+  border-radius: 3px;
+  color: var(--amber);
+}
+
+/* ── VISUAL FLOW ── */
+.flow-container {
+  margin: 20px 0;
+  position: relative;
+}
+
+.flow-title {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg3);
+  margin-bottom: 16px;
+}
+
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flow-col {
+  flex: 1;
+  padding: 20px;
+  min-width: 0;
+}
+
+.flow-col + .flow-col {
+  border-left: 1px solid var(--border);
+}
+
+.flow-col-head {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.flow-arrow-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-arrow-col .arrow-label {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  color: var(--fg3);
+}
+
+.big-arrow {
+  font-size: 22px;
+  color: var(--amber);
+}
+
+/* ── COMPARISON BLOCK ── */
+.vs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  margin: 16px 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg2);
+}
+
+.vs-box { padding: 20px; }
+.vs-box + .vs-box { border-left: 1px solid var(--border); }
+
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  background: var(--bg3);
+}
+
+.vs-badge {
+  font-family: 'Anybody', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--fg3);
+  letter-spacing: 0.05em;
+}
+
+.vs-head {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.vs-head.good { color: var(--green); }
+.vs-head.bad  { color: var(--red);   }
+
+ul.items { list-style: none; padding: 0; }
+ul.items li {
+  font-size: 13px;
+  color: var(--fg2);
+  padding: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+ul.items li .i { flex-shrink: 0; margin-top: 2px; font-style: normal; }
+ul.items li.g .i { color: var(--green); }
+ul.items li.r .i { color: var(--red); }
+ul.items li.a .i { color: var(--amber); }
+
+/* ── CALLOUT ── */
+.callout {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout p { margin: 0; font-size: 13px; line-height: 1.6; }
+
+.callout.tip  { background: var(--green-dim); border: 1px solid var(--green-brd); }
+.callout.tip p { color: #6adca4; }
+.callout.warn { background: var(--amber-dim); border: 1px solid var(--amber-brd); }
+.callout.warn p { color: #d09830; }
+.callout.info { background: var(--blue-dim); border: 1px solid var(--blue-brd); }
+.callout.info p { color: #80b8e8; }
+.callout.key  { background: var(--red-dim); border: 1px solid var(--red-brd); }
+.callout.key p { color: #e08080; }
+
+/* ── TABLE ── */
+.tbl { overflow-x: auto; margin: 16px 0; border-radius: 6px; border: 1px solid var(--border); }
+table { width:100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--bg3); }
+th {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg3);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 11px 16px; color: var(--fg2); border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); }
+td:first-child { font-family: 'Azeret Mono', monospace; font-size: 11px; color: var(--amber); white-space: nowrap; }
+
+/* ── SCENARIO CARDS ── */
+.scenarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.sc-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.sc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.sc-card:hover::before { transform: scaleX(1); }
+.sc-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.sc-num {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  color: var(--fg3);
+  margin-bottom: 8px;
+}
+
+.sc-card h4 {
+  font-family: 'Anybody', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.sc-card p {
+  font-size: 12px;
+  color: var(--fg3);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── JSON VISUAL ── */
+.json-diff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+@media(max-width:640px){ .json-diff { grid-template-columns:1fr; } }
+
+.json-panel {
+  background: var(--code-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-family: 'Azeret Mono', monospace;
+}
+
+.json-panel-head {
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.json-panel-head .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.json-panel-body {
+  padding: 16px 18px;
+  font-size: 12.5px;
+  line-height: 1.85;
+}
+
+.hi-wrong { background: #e05c5c18; border-left: 2px solid var(--red); margin-left: -18px; padding-left: 16px; display: block; }
+.hi-right { background: #4ec99418; border-left: 2px solid var(--green); margin-left: -18px; padding-left: 16px; display: block; }
+
+/* ── LIFECYCLE DIAGRAM ── */
+.lifecycle {
+  margin: 16px 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lifecycle-head {
+  background: var(--bg3);
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg3);
+}
+
+.lifecycle-body {
+  padding: 24px 28px;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 12px;
+}
+
+.lc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0;
+  position: relative;
+}
+
+.lc-row + .lc-row .lc-line {
+  border-left: 1px dashed var(--border2);
+  position: absolute;
+  top: 0; left: 15px;
+  height: 100%;
+}
+
+.lc-left {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.lc-dot {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.lc-connector {
+  width: 1px;
+  flex: 1;
+  min-height: 28px;
+  background: var(--border2);
+  margin: 2px 0;
+}
+
+.lc-content {
+  flex: 1;
+  padding: 4px 0 28px;
+}
+
+.lc-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.lc-desc {
+  font-size: 11.5px;
+  color: var(--fg3);
+  line-height: 1.6;
+  font-family: 'Lora', serif;
+  font-style: italic;
+}
+
+/* ── ROUND TRIP DIAGRAM ── */
+.roundtrip {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  margin: 16px 0;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 12px;
+}
+
+.rt-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.rt-box {
+  padding: 10px 16px;
+  border-radius: 5px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  min-width: 160px;
+  text-align: center;
+}
+
+.rt-arrow { color: var(--amber); font-size: 18px; flex-shrink: 0; }
+.rt-anno  { color: var(--ta); font-style: italic; font-size: 11px; align-self: center; }
+.rt-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg3); min-width: 120px; }
+
+/* ── ANIMATIONS ── */
+@keyframes up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  text-align: center;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--fg3);
+}
+
+@media(max-width:700px){
+  .hero { padding: 60px 24px; }
+  .page { padding: 48px 24px; }
+  .vs { grid-template-columns: 1fr; }
+  .vs-divider { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">// Jackson Annotation Deep Dive</div>
+  <h1>
+    <span class="anno">@JsonAnyGetter</span>
+    <span style="color:var(--fg2);font-weight:300;font-size:0.55em;letter-spacing:0;">&amp;</span>
+    <span class="anno">@JsonAnySetter</span>
+  </h1>
+  <p class="hero-desc">The dynamic field catch-all pair — capture unknown JSON fields, keep them alive, and round-trip them back out perfectly.</p>
+  <div class="hero-pills">
+    <span class="pill">Jackson 2.x</span>
+    <span class="pill">REST Assured</span>
+    <span class="pill">Serialization</span>
+    <span class="pill">Deserialization</span>
+    <span class="pill">Contract Testing</span>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <ul>
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#what">What They Do</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#roundtrip">Round-Trip</a></li>
+    <li><a href="#vs">vs @JsonIgnore</a></li>
+    <li><a href="#usage">In Tests</a></li>
+    <li><a href="#scenarios">Use Cases</a></li>
+    <li><a href="#ref">Reference</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+<!-- ══════════════════════════════ -->
+<!-- THE PROBLEM -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="problem">
+  <div class="s-label">01 — Context</div>
+  <h2>The Problem They Solve</h2>
+  <p>APIs evolve constantly. Every few sprints, backend teams add new fields to responses. Without special handling, your Java POJOs break or silently drop data.</p>
+
+  <div class="vs">
+    <div class="vs-box">
+      <div class="vs-head bad">❌ Default Jackson Behavior</div>
+      <ul class="items">
+        <li class="r"><i class="i">✗</i>Unknown field throws <code>UnrecognizedPropertyException</code></li>
+        <li class="r"><i class="i">✗</i>Test suite crashes when API adds a new field</li>
+        <li class="r"><i class="i">✗</i>You never even know the field arrived</li>
+      </ul>
+    </div>
+    <div class="vs-divider"><div class="vs-badge">VS</div></div>
+    <div class="vs-box">
+      <div class="vs-head good">✓ With @JsonIgnoreProperties</div>
+      <ul class="items">
+        <li class="g"><i class="i">✓</i>Unknown fields silently dropped</li>
+        <li class="g"><i class="i">✓</i>No crash, tests keep running</li>
+        <li class="r"><i class="i">✗</i>Data is gone — you can't access it later</li>
+        <li class="r"><i class="i">✗</i>Can't do contract testing (detect unexpected fields)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="icon">💡</span>
+    <p><strong>The gap:</strong> Sometimes you want a third option — don't crash, but also don't throw the data away. Keep unknown fields in a safe bucket so you can inspect, assert, or forward them. That's exactly what <code>@JsonAnySetter</code> + <code>@JsonAnyGetter</code> provide.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- WHAT THEY DO -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="what">
+  <div class="s-label">02 — Core Concepts</div>
+  <h2>What Each Annotation Does</h2>
+
+  <div class="vs" style="grid-template-columns:1fr auto 1fr;">
+    <div class="vs-box" style="background:var(--blue-dim);border-color:var(--blue-brd);">
+      <div class="vs-head" style="color:var(--blue)">@JsonAnySetter</div>
+      <ul class="items">
+        <li class="a"><i class="i">→</i>Direction: <strong>JSON → Java</strong> (Deserialization)</li>
+        <li class="a"><i class="i">→</i>Triggered when Jackson finds a field it doesn't recognize</li>
+        <li class="a"><i class="i">→</i>Receives the unknown field name + value</li>
+        <li class="a"><i class="i">→</i>You store it wherever you want — usually a <code>Map</code></li>
+        <li class="a"><i class="i">→</i>Acts like a catch-all drain at the bottom of a sink</li>
+      </ul>
+    </div>
+    <div class="vs-divider"><div class="vs-badge">+</div></div>
+    <div class="vs-box" style="background:var(--green-dim);border-color:var(--green-brd);">
+      <div class="vs-head" style="color:var(--green)">@JsonAnyGetter</div>
+      <ul class="items">
+        <li class="a"><i class="i">←</i>Direction: <strong>Java → JSON</strong> (Serialization)</li>
+        <li class="a"><i class="i">←</i>Called when Jackson is writing this object to JSON</li>
+        <li class="a"><i class="i">←</i>Returns the Map — Jackson <em>unwraps</em> it as flat fields</li>
+        <li class="a"><i class="i">←</i>Fields appear at the root level, NOT nested under a key</li>
+        <li class="a"><i class="i">←</i>Makes the round-trip transparent and lossless</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Pair in Code</h3>
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java · User.java — Complete POJO</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="ta">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="tkw">false</span>)  <span class="tc">// set to false — we want to capture, not ignore</span>
+<span class="tkw">public class</span> <span class="tcl">User</span> {
+
+    <span class="tc">// ── Known, mapped fields ──────────────────────────────────────────</span>
+    <span class="tkw">private int</span>    id;
+    <span class="tkw">private</span> <span class="tcl">String</span> name;
+    <span class="tkw">private</span> <span class="tcl">String</span> email;
+
+    <span class="tc">// ── Bucket for ALL unknown/extra fields ───────────────────────────</span>
+    <span class="tkw">private</span> <span class="tcl">Map</span>&lt;<span class="tcl">String</span>, <span class="tcl">Object</span>&gt; additionalProperties = <span class="tkw">new</span> <span class="tcl">HashMap</span>&lt;&gt;();
+
+    <span class="tc">// ── Standard getters/setters for known fields ─────────────────────</span>
+    <span class="tkw">public int</span>    <span class="tmt">getId</span>()              { <span class="tkw">return</span> id; }
+    <span class="tkw">public void</span>   <span class="tmt">setId</span>(<span class="tkw">int</span> id)        { <span class="tkw">this</span>.id = id; }
+    <span class="tkw">public</span> <span class="tcl">String</span> <span class="tmt">getName</span>()            { <span class="tkw">return</span> name; }
+    <span class="tkw">public void</span>   <span class="tmt">setName</span>(<span class="tcl">String</span> n)    { <span class="tkw">this</span>.name = n; }
+
+    <span class="tc">// ── @JsonAnySetter — receives unknown fields one by one ───────────</span>
+    <span class="ta">@JsonAnySetter</span>
+    <span class="tkw">public void</span> <span class="tmt">setAdditionalProperty</span>(<span class="tcl">String</span> name, <span class="tcl">Object</span> value) {
+        <span class="tkw">this</span>.additionalProperties.<span class="tmt">put</span>(name, value);  <span class="tc">// store in bucket</span>
+    }
+
+    <span class="tc">// ── @JsonAnyGetter — spreads the map back out as flat JSON fields ──</span>
+    <span class="ta">@JsonAnyGetter</span>
+    <span class="tkw">public</span> <span class="tcl">Map</span>&lt;<span class="tcl">String</span>, <span class="tcl">Object</span>&gt; <span class="tmt">getAdditionalProperties</span>() {
+        <span class="tkw">return this</span>.additionalProperties;
+    }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- HOW IT WORKS -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="how">
+  <div class="s-label">03 — Mechanics</div>
+  <h2>Step-by-Step: How Jackson Processes This</h2>
+
+  <div class="lifecycle">
+    <div class="lifecycle-head">Deserialization flow — JSON arriving → POJO</div>
+    <div class="lifecycle-body">
+      <div class="lc-row">
+        <div class="lc-left">
+          <div class="lc-dot" style="background:var(--amber-dim);border:1px solid var(--amber-brd);color:var(--amber);">1</div>
+          <div class="lc-connector"></div>
+        </div>
+        <div class="lc-content">
+          <div class="lc-title">Jackson reads the JSON response field by field</div>
+          <div class="lc-desc">It scans each key in the JSON object one at a time.</div>
+        </div>
+      </div>
+      <div class="lc-row">
+        <div class="lc-left">
+          <div class="lc-dot" style="background:var(--green-dim);border:1px solid var(--green-brd);color:var(--green);">2</div>
+          <div class="lc-connector"></div>
+        </div>
+        <div class="lc-content">
+          <div class="lc-title">Known field? → calls its setter normally</div>
+          <div class="lc-desc">"id" → calls <code>setId(1)</code>. "name" → calls <code>setName("Alice")</code>. Business as usual.</div>
+        </div>
+      </div>
+      <div class="lc-row">
+        <div class="lc-left">
+          <div class="lc-dot" style="background:var(--blue-dim);border:1px solid var(--blue-brd);color:var(--blue);">3</div>
+          <div class="lc-connector"></div>
+        </div>
+        <div class="lc-content">
+          <div class="lc-title">Unknown field? → calls the @JsonAnySetter method</div>
+          <div class="lc-desc">"createdAt" has no setter in POJO → Jackson calls <code>setAdditionalProperty("createdAt", "2024-01-01")</code> instead of throwing an error.</div>
+        </div>
+      </div>
+      <div class="lc-row">
+        <div class="lc-left">
+          <div class="lc-dot" style="background:var(--red-dim);border:1px solid var(--red-brd);color:var(--red);">4</div>
+          <div class="lc-connector"></div>
+        </div>
+        <div class="lc-content">
+          <div class="lc-title">ALL unknown fields land in additionalProperties map</div>
+          <div class="lc-desc">Every unrecognized field is stored. Nothing is lost. You can retrieve them any time after deserialization.</div>
+        </div>
+      </div>
+      <div class="lc-row">
+        <div class="lc-left">
+          <div class="lc-dot" style="background:var(--amber-dim);border:1px solid var(--amber-brd);color:var(--amber);">5</div>
+        </div>
+        <div class="lc-content" style="padding-bottom:0">
+          <div class="lc-title">POJO is fully populated — known + unknown fields both accessible</div>
+          <div class="lc-desc">Known fields via getters. Unknown fields via <code>getAdditionalProperties().get("fieldName")</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Concrete Example</h3>
+  <p>Given this JSON response where your POJO only knows about <code>id</code>, <code>name</code>, and <code>email</code>:</p>
+
+  <div class="code">
+    <div class="code-bar"><span class="code-title">json · API Response</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code>{
+  <span class="tk">"id"</span>:             <span class="tn">1</span>,                  <span class="tc">← known field → setId(1)</span>
+  <span class="tk">"name"</span>:           <span class="tst">"Alice Kumar"</span>,      <span class="tc">← known field → setName("Alice Kumar")</span>
+  <span class="tk">"email"</span>:          <span class="tst">"alice@test.com"</span>,   <span class="tc">← known field → setEmail("alice@test.com")</span>
+  <span class="tk">"createdAt"</span>:      <span class="tst">"2024-01-15"</span>,       <span class="tc">← UNKNOWN → setAdditionalProperty("createdAt", "2024-01-15")</span>
+  <span class="tk">"internalCode"</span>:   <span class="tst">"XYZ-999"</span>,          <span class="tc">← UNKNOWN → setAdditionalProperty("internalCode", "XYZ-999")</span>
+  <span class="tk">"experimentFlag"</span>: <span class="tkw">true</span>,              <span class="tc">← UNKNOWN → setAdditionalProperty("experimentFlag", true)</span>
+  <span class="tk">"score"</span>:          <span class="tn">98.5</span>                <span class="tc">← UNKNOWN → setAdditionalProperty("score", 98.5)</span>
+}</code></pre>
+  </div>
+
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java · What you get after deserialization</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="tcl">User</span> user = response.<span class="tmt">as</span>(<span class="tcl">User</span>.<span class="tkw">class</span>);
+
+<span class="tc">// ── Known fields — normal getters ────────────────────────</span>
+user.<span class="tmt">getId</span>();      <span class="tc">// → 1</span>
+user.<span class="tmt">getName</span>();    <span class="tc">// → "Alice Kumar"</span>
+user.<span class="tmt">getEmail</span>();   <span class="tc">// → "alice@test.com"</span>
+
+<span class="tc">// ── Unknown fields — via additionalProperties map ────────</span>
+user.<span class="tmt">getAdditionalProperties</span>();
+<span class="tc">// → {</span>
+<span class="tc">//     "createdAt"      : "2024-01-15",</span>
+<span class="tc">//     "internalCode"   : "XYZ-999",</span>
+<span class="tc">//     "experimentFlag" : true,</span>
+<span class="tc">//     "score"          : 98.5</span>
+<span class="tc">// }</span>
+
+<span class="tc">// Access individual unknown fields</span>
+<span class="tcl">String</span> code = (<span class="tcl">String</span>) user.<span class="tmt">getAdditionalProperties</span>().<span class="tmt">get</span>(<span class="tst">"internalCode"</span>);
+<span class="tc">// → "XYZ-999"</span>
+
+<span class="tcl">Boolean</span> flag = (<span class="tcl">Boolean</span>) user.<span class="tmt">getAdditionalProperties</span>().<span class="tmt">get</span>(<span class="tst">"experimentFlag"</span>);
+<span class="tc">// → true</span></code></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- ROUND-TRIP -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="roundtrip">
+  <div class="s-label">04 — Serialization</div>
+  <h2>The Round-Trip: @JsonAnyGetter Explained</h2>
+
+  <p>When you send this POJO back as a request body (PUT, PATCH), you want the JSON to look exactly like what came in — not with a strange nested <code>additionalProperties</code> object.</p>
+
+  <div class="json-diff">
+    <div class="json-panel">
+      <div class="json-panel-head">
+        <div class="dot" style="background:var(--red)"></div>
+        <span style="color:var(--red);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Without @JsonAnyGetter</span>
+      </div>
+      <div class="json-panel-body">
+        <span style="color:#888;">{</span><br>
+        &nbsp;&nbsp;<span class="tk">"id"</span>: <span class="tn">1</span>,<br>
+        &nbsp;&nbsp;<span class="tk">"name"</span>: <span class="tst">"Alice Kumar"</span>,<br>
+        <span class="hi-wrong">&nbsp;&nbsp;<span class="tk">"additionalProperties"</span>: <span style="color:#888;">{</span></span>
+        <span class="hi-wrong">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">"createdAt"</span>: <span class="tst">"2024-01-15"</span>,</span>
+        <span class="hi-wrong">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">"internalCode"</span>: <span class="tst">"XYZ-999"</span></span>
+        <span class="hi-wrong">&nbsp;&nbsp;<span style="color:#888;">}</span>  ← nested, wrong structure!</span>
+        <span style="color:#888;">}</span>
+      </div>
+    </div>
+    <div class="json-panel">
+      <div class="json-panel-head">
+        <div class="dot" style="background:var(--green)"></div>
+        <span style="color:var(--green);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">With @JsonAnyGetter ✓</span>
+      </div>
+      <div class="json-panel-body">
+        <span style="color:#888;">{</span><br>
+        &nbsp;&nbsp;<span class="tk">"id"</span>: <span class="tn">1</span>,<br>
+        &nbsp;&nbsp;<span class="tk">"name"</span>: <span class="tst">"Alice Kumar"</span>,<br>
+        <span class="hi-right">&nbsp;&nbsp;<span class="tk">"createdAt"</span>: <span class="tst">"2024-01-15"</span>,</span>
+        <span class="hi-right">&nbsp;&nbsp;<span class="tk">"internalCode"</span>: <span class="tst">"XYZ-999"</span></span>
+        <span style="color:#888;">}</span><br><br>
+        <span style="color:#4ec994;font-size:11px;">← flat, exactly as it arrived. ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Full Round-Trip Visualized</h3>
+  <div class="roundtrip">
+    <div class="rt-step">
+      <div class="rt-label">API RESPONSE</div>
+      <div class="rt-box" style="background:var(--bg3);border:1px solid var(--border);color:var(--fg);">JSON (flat, all fields)</div>
+    </div>
+    <div class="rt-step" style="padding-left:120px;">
+      <div class="rt-arrow">↓</div>
+      <div class="rt-anno">@JsonAnySetter catches unknown fields → puts in Map</div>
+    </div>
+    <div class="rt-step">
+      <div class="rt-label">YOUR POJO</div>
+      <div class="rt-box" style="background:var(--blue-dim);border:1px solid var(--blue-brd);color:var(--blue);">User { id, name } + Map{ extra fields }</div>
+    </div>
+    <div class="rt-step" style="padding-left:120px;">
+      <div class="rt-arrow">↓</div>
+      <div class="rt-anno">@JsonAnyGetter unwraps Map back to flat JSON fields</div>
+    </div>
+    <div class="rt-step">
+      <div class="rt-label">REQUEST BODY</div>
+      <div class="rt-box" style="background:var(--green-dim);border:1px solid var(--green-brd);color:var(--green);">JSON (flat, all fields — identical to input)</div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="icon">✅</span>
+    <p><strong>Lossless round-trip:</strong> The JSON that came IN is identical to the JSON that goes OUT. This is critical for PATCH/PUT requests where you read a resource, modify known fields, and send it back — the unknown fields must survive the journey unchanged.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- VS JSONIGNORE -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="vs">
+  <div class="s-label">05 — Comparison</div>
+  <h2>Three Ways to Handle Unknown Fields</h2>
+
+  <div class="tbl">
+    <table>
+      <thead>
+        <tr><th>Approach</th><th>Unknown fields kept?</th><th>No crash?</th><th>Round-trip?</th><th>Contract test?</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Default (no annotation)</td>
+          <td style="color:var(--red)">✗ Throws exception</td>
+          <td style="color:var(--red)">✗</td>
+          <td style="color:var(--red)">✗</td>
+          <td style="color:var(--red)">✗</td>
+          <td>When API contract is 100% stable</td>
+        </tr>
+        <tr>
+          <td>@JsonIgnoreProperties<br>(ignoreUnknown=true)</td>
+          <td style="color:var(--red)">✗ Silently dropped</td>
+          <td style="color:var(--green)">✓</td>
+          <td style="color:var(--red)">✗</td>
+          <td style="color:var(--red)">✗</td>
+          <td>When you don't care about extra fields at all</td>
+        </tr>
+        <tr>
+          <td>@JsonAnySetter + @JsonAnyGetter</td>
+          <td style="color:var(--green)">✓ Stored in Map</td>
+          <td style="color:var(--green)">✓</td>
+          <td style="color:var(--green)">✓ Perfect</td>
+          <td style="color:var(--green)">✓ Assert isEmpty()</td>
+          <td>Evolving APIs, contract tests, PUT/PATCH flows</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="icon">⚠️</span>
+    <p><strong>Important:</strong> When using <code>@JsonAnySetter/@JsonAnyGetter</code>, set <code>@JsonIgnoreProperties(ignoreUnknown = false)</code> or remove the annotation entirely. If <code>ignoreUnknown = true</code> is present, unknown fields are dropped before <code>@JsonAnySetter</code> ever sees them — defeating the purpose.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- USAGE IN TESTS -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="usage">
+  <div class="s-label">06 — Testing Patterns</div>
+  <h2>Using This Pattern in REST Assured Tests</h2>
+
+  <h3>Pattern 1 — Assert on a Specific Unknown Field</h3>
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="ta">@Test</span>
+<span class="tkw">public void</span> <span class="tmt">assertSpecificUnknownField</span>() {
+    <span class="tcl">User</span> user = <span class="tmt">given</span>().<span class="tmt">spec</span>(requestSpec)
+        .<span class="tmt">when</span>().<span class="tmt">get</span>(<span class="tst">"/users/1"</span>)
+        .<span class="tmt">then</span>().<span class="tmt">statusCode</span>(<span class="tn">200</span>)
+        .<span class="tmt">extract</span>().<span class="tmt">as</span>(<span class="tcl">User</span>.<span class="tkw">class</span>);
+
+    <span class="tcl">SoftAssert</span> soft = <span class="tkw">new</span> <span class="tcl">SoftAssert</span>();
+
+    <span class="tc">// ── Known fields — type-safe getters ─────────────────────────────</span>
+    soft.<span class="tmt">assertEquals</span>(user.<span class="tmt">getId</span>(),    <span class="tn">1</span>,             <span class="tst">"id"</span>);
+    soft.<span class="tmt">assertEquals</span>(user.<span class="tmt">getName</span>(), <span class="tst">"Alice Kumar"</span>, <span class="tst">"name"</span>);
+
+    <span class="tc">// ── Unknown fields — via additionalProperties ────────────────────</span>
+    <span class="tcl">Map</span>&lt;<span class="tcl">String</span>, <span class="tcl">Object</span>&gt; extra = user.<span class="tmt">getAdditionalProperties</span>();
+
+    soft.<span class="tmt">assertNotNull</span>(extra.<span class="tmt">get</span>(<span class="tst">"createdAt"</span>),                <span class="tst">"createdAt present"</span>);
+    soft.<span class="tmt">assertEquals</span>(extra.<span class="tmt">get</span>(<span class="tst">"internalCode"</span>), <span class="tst">"XYZ-999"</span>,   <span class="tst">"internalCode"</span>);
+    soft.<span class="tmt">assertEquals</span>(extra.<span class="tmt">get</span>(<span class="tst">"experimentFlag"</span>), <span class="tkw">true</span>,       <span class="tst">"experimentFlag"</span>);
+
+    soft.<span class="tmt">assertAll</span>();
+}</code></pre>
+  </div>
+
+  <h3>Pattern 2 — Contract Testing: Assert No Unexpected Fields</h3>
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java · Detect when API adds new fields you didn't expect</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="ta">@Test</span>
+<span class="tkw">public void</span> <span class="tmt">assertNoUnexpectedFields</span>() {
+    <span class="tcl">User</span> user = <span class="tmt">given</span>().<span class="tmt">spec</span>(requestSpec)
+        .<span class="tmt">when</span>().<span class="tmt">get</span>(<span class="tst">"/users/1"</span>)
+        .<span class="tmt">then</span>().<span class="tmt">extract</span>().<span class="tmt">as</span>(<span class="tcl">User</span>.<span class="tkw">class</span>);
+
+    <span class="tc">// If this fails → API added new fields you don't know about</span>
+    <span class="tc">// Error message tells you exactly which fields appeared</span>
+    <span class="tcl">Assert</span>.<span class="tmt">assertTrue</span>(
+        user.<span class="tmt">getAdditionalProperties</span>().<span class="tmt">isEmpty</span>(),
+        <span class="tst">"Unexpected fields in response: "</span>
+            + user.<span class="tmt">getAdditionalProperties</span>().<span class="tmt">keySet</span>()
+    );
+
+    <span class="tc">// If it fails, error will say something like:</span>
+    <span class="tc">// "Unexpected fields in response: [experimentFlag, internalCode]"</span>
+    <span class="tc">// → Perfect for contract review meetings!</span>
+}</code></pre>
+  </div>
+
+  <h3>Pattern 3 — Log All Unknown Fields During Debugging</h3>
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java · Useful while exploring an unfamiliar API</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="ta">@Test</span>
+<span class="tkw">public void</span> <span class="tmt">discoverUnknownFields</span>() {
+    <span class="tcl">User</span> user = <span class="tmt">given</span>().<span class="tmt">spec</span>(requestSpec)
+        .<span class="tmt">when</span>().<span class="tmt">get</span>(<span class="tst">"/users/1"</span>)
+        .<span class="tmt">then</span>().<span class="tmt">extract</span>().<span class="tmt">as</span>(<span class="tcl">User</span>.<span class="tkw">class</span>);
+
+    <span class="tcl">Map</span>&lt;<span class="tcl">String</span>, <span class="tcl">Object</span>&gt; extra = user.<span class="tmt">getAdditionalProperties</span>();
+
+    <span class="tkw">if</span> (!extra.<span class="tmt">isEmpty</span>()) {
+        <span class="tcl">System</span>.out.<span class="tmt">println</span>(<span class="tst">"=== Unknown fields found ==="</span>);
+        extra.<span class="tmt">forEach</span>((key, val) ->
+            <span class="tcl">System</span>.out.<span class="tmt">printf</span>(<span class="tst">"  %-20s : %s (%s)%n"</span>,
+                key, val, val.<span class="tmt">getClass</span>().<span class="tmt">getSimpleName</span>())
+        );
+        <span class="tc">// Output:</span>
+        <span class="tc">// === Unknown fields found ===</span>
+        <span class="tc">//   createdAt            : 2024-01-15 (String)</span>
+        <span class="tc">//   internalCode         : XYZ-999 (String)</span>
+        <span class="tc">//   experimentFlag       : true (Boolean)</span>
+        <span class="tc">//   score                : 98.5 (Double)</span>
+    }
+}</code></pre>
+  </div>
+
+  <h3>Pattern 4 — Round-Trip: Read → Modify → Write Back</h3>
+  <div class="code">
+    <div class="code-bar"><span class="code-title">java · PUT/PATCH without losing unknown fields</span><div class="dots"><span></span><span></span><span></span></div></div>
+    <pre><code><span class="ta">@Test</span>
+<span class="tkw">public void</span> <span class="tmt">updateUserRoundTrip</span>() {
+    <span class="tc">// Step 1 — GET the user (unknown fields captured in Map)</span>
+    <span class="tcl">User</span> user = <span class="tmt">given</span>().<span class="tmt">spec</span>(requestSpec)
+        .<span class="tmt">when</span>().<span class="tmt">get</span>(<span class="tst">"/users/1"</span>)
+        .<span class="tmt">then</span>().<span class="tmt">extract</span>().<span class="tmt">as</span>(<span class="tcl">User</span>.<span class="tkw">class</span>);
+
+    <span class="tc">// Step 2 — Modify only the known field you care about</span>
+    user.<span class="tmt">setName</span>(<span class="tst">"Alice M. Kumar"</span>);
+    <span class="tc">// additionalProperties Map still has all the original unknown fields</span>
+
+    <span class="tc">// Step 3 — PUT back — @JsonAnyGetter ensures all original fields go back</span>
+    <span class="tmt">given</span>().<span class="tmt">spec</span>(requestSpec)
+        .<span class="tmt">body</span>(user)  <span class="tc">// serializes: id + name + ALL additionalProperties fields flattened</span>
+    .<span class="tmt">when</span>().<span class="tmt">put</span>(<span class="tst">"/users/1"</span>)
+    .<span class="tmt">then</span>().<span class="tmt">statusCode</span>(<span class="tn">200</span>);
+
+    <span class="tc">// The request body sent will be:</span>
+    <span class="tc">// { "id":1, "name":"Alice M. Kumar",</span>
+    <span class="tc">//   "createdAt":"2024-01-15", "internalCode":"XYZ-999", ... }</span>
+    <span class="tc">// NOT: { "id":1, "name":"...", "additionalProperties": {...} }</span>
+}</code></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- WHEN TO USE -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="scenarios">
+  <div class="s-label">07 — Use Cases</div>
+  <h2>When to Use This Pattern</h2>
+
+  <div class="scenarios">
+    <div class="sc-card">
+      <div class="sc-num">01</div>
+      <h4>Rapidly Evolving APIs</h4>
+      <p>Backend team ships new fields every sprint. Your tests won't crash, and you can see what was added via <code>getAdditionalProperties()</code>.</p>
+    </div>
+    <div class="sc-card">
+      <div class="sc-num">02</div>
+      <h4>API Contract Testing</h4>
+      <p>Assert <code>additionalProperties.isEmpty()</code> to detect when the API returns something unexpected. Fail fast with a clear message listing exactly what changed.</p>
+    </div>
+    <div class="sc-card">
+      <div class="sc-num">03</div>
+      <h4>PUT / PATCH Flows</h4>
+      <p>Read a resource, modify one field, write it back. Unknown fields survive the round-trip thanks to <code>@JsonAnyGetter</code> — the server gets back what it expects.</p>
+    </div>
+    <div class="sc-card">
+      <div class="sc-num">04</div>
+      <h4>Exploring Unknown APIs</h4>
+      <p>Integrating a third-party API for the first time? Use this to discover all fields without building a complete POJO upfront.</p>
+    </div>
+    <div class="sc-card">
+      <div class="sc-num">05</div>
+      <h4>Feature Flag Fields</h4>
+      <p>Backend sends experiment flags or A/B test data alongside regular fields. Capture them in the Map and assert on the ones your test cares about.</p>
+    </div>
+    <div class="sc-card">
+      <div class="sc-num">06</div>
+      <h4>Partial POJO Strategy</h4>
+      <p>Map only the fields your tests need in the POJO. Everything else lands safely in the Map. You can promote fields from Map to POJO incrementally.</p>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <span class="icon">🔑</span>
+    <p><strong>When NOT to use it:</strong> If you genuinely don't care about extra fields at all (just want tests not to break), <code>@JsonIgnoreProperties(ignoreUnknown = true)</code> is simpler. Use <code>@JsonAnySetter/@JsonAnyGetter</code> only when you need to <em>keep</em> or <em>act on</em> unknown fields.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- QUICK REFERENCE -->
+<!-- ══════════════════════════════ -->
+<div class="s" id="ref">
+  <div class="s-label">08 — Reference</div>
+  <h2>Quick Reference</h2>
+
+  <div class="tbl">
+    <table>
+      <thead>
+        <tr><th>Annotation</th><th>Placed On</th><th>Direction</th><th>Does What</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>@JsonAnySetter</td>
+          <td>A method with <code>(String, Object)</code> params</td>
+          <td>JSON → Java</td>
+          <td>Called for every unrecognized field during deserialization. You store the name+value wherever you want.</td>
+        </tr>
+        <tr>
+          <td>@JsonAnyGetter</td>
+          <td>A method that returns <code>Map&lt;String, Object&gt;</code></td>
+          <td>Java → JSON</td>
+          <td>Called during serialization. Jackson unwraps the Map entries as flat top-level JSON fields — not as a nested object.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl" style="margin-top:16px;">
+    <table>
+      <thead>
+        <tr><th>Task</th><th>Code</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Get all extra fields</td><td><code>user.getAdditionalProperties()</code></td></tr>
+        <tr><td>Get specific extra field</td><td><code>user.getAdditionalProperties().get("fieldName")</code></td></tr>
+        <tr><td>Assert no extra fields (contract test)</td><td><code>Assert.assertTrue(user.getAdditionalProperties().isEmpty(), "Unexpected: " + user.getAdditionalProperties().keySet())</code></td></tr>
+        <tr><td>Check if specific extra field exists</td><td><code>user.getAdditionalProperties().containsKey("fieldName")</code></td></tr>
+        <tr><td>List all extra field names</td><td><code>user.getAdditionalProperties().keySet()</code></td></tr>
+        <tr><td>Count extra fields</td><td><code>user.getAdditionalProperties().size()</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>One-Line Summary</h3>
+  <div style="background:var(--bg2);border:1px solid var(--amber-brd);border-radius:8px;padding:24px 28px;margin-top:16px;">
+    <p style="font-family:'Azeret Mono',monospace;font-size:13px;color:var(--amber);margin:0;line-height:1.7;">
+      <span style="color:var(--fg3)">@JsonAnySetter</span> = catch-all drain for unknown fields arriving in JSON<br>
+      <span style="color:var(--fg3)">@JsonAnyGetter</span> = unwraps the bucket back out flat when sending JSON<br>
+      <span style="color:var(--fg3)">Together</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= lossless round-trip · no crash · full visibility · contract testable
+    </p>
+  </div>
+</div>
+
+</div><!-- end .page -->
+
+<footer>
+  @JsonAnyGetter &amp; @JsonAnySetter Deep Dive · Jackson 2.x · REST Assured · TestNG
+</footer>
+
+</body>
+</html>
