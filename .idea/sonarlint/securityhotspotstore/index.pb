@@ -93,8 +93,6 @@ U
 .src/main/java/restassured/auth/R5_ApiKeys.java,6\5\65500f4ed537a229313e663a1e09a632005d0d31
 b
 2src/main/java/restassured/auth/R6_Preemeptive.java,e\2\e2f89177e5adad3bbbab550cd587ff62a0666f4b
-X
-(src/main/java/restassured/BasicJson.json,f\a\fa65b3a827705490abc84481ce1b6c23d65769cd
 h
 8src/main/java/myproject/driverfactory/DriverFactory.java,9\4\9430ea1e6f72e149cd8ce08813b05dd254763664
 _
@@ -247,8 +245,6 @@ v
 Fsrc/main/java/basics/javapgms/Rx_MaxSumofSubArrayKadanesAlgorithm.java,9\9\99306c30ed8f12c9fcbada6f62e54b77f3666ed5
 l
 <src/main/java/basics/javapgms/R_XInsertPositionOfNumber.java,c\0\c09040dee152e0db28e4b585ca6a7bec8faa815b
-[
-+src/main/java/restassured/R12_GsonDemo.java,8\e\8e25ddf9e6b465a261b7779f5598afbe69d8a1e8
 T
 $src/main/java/restassured/Rough.java,2\f\2f4ef1cf973c14c9e7ef805032ea3f246400e970
 o
@@ -431,10 +427,6 @@ H
 ,src/main/java/git/mergeMaster Rebase Feature,1\f\1f9ce00d5cca5362bdcb7c1d5df9c66a2902684d
 \
 ,src/main/java/objectmapper/R03_JsonNode.java,a\8\a8f4f3009a922446eb51c510f9f3f46fdf8f92e7
-b
-2src/main/java/restassured/R13_RestConfiigDemo.java,b\d\bd334b2cff52b27f934fbf1a9e360feedbc2271f
-a
-1src/main/java/restassured/R14_HeadernHeaders.java,b\8\b8ae5242e08984b00be3f7abfa7f469a02f7890e
 I
 src/main/java/testng/Info,6\e\6ed9fb24ebfbe3614622bd36cd685351a869db8e
 I
@@ -451,8 +443,6 @@ P
  src/main/java/zzRough/Rough.java,5\d\5d1ea4e796b14e0ce721d62e8721d4c6255d87f4
 T
 $src/main/java/zzRough/RoughTemp.java,f\e\feeb10507bef7f644763906d7f2c9f6e114e009b
-V
-&src/main/java/sql/functions_basics.sql,3\2\32b1b5beaf3b1033eb3fef6e743716ca311bab74
 [
 +src/main/java/zzRough/R_X01Segregarion.java,2\d\2d98c67836c6de7d40c0d844f1ab9afd80b8b78b
 W
@@ -531,8 +521,6 @@ s
 Csrc/main/java/restassured/jacksonandtransient/R1_WithTransient.java,1\1\11d94c5733c943b0d932de21938516ed14328da6
 [
 +src/main/java/basics/collections/Rough.java,8\b\8b7cb942326338f010cc1885638c4f975b2b0c19
-_
-/src/main/java/restassured/R11_ObjectMapper.java,2\2\22766435c05bb1542de406e126958e5e1dc06c50
 g
 7src/main/java/restassured/R15_SerializationJackson.java,9\4\9495c294e61328dd86a7b905cbe96fcb927ddeab
 i

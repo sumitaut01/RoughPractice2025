@@ -143,6 +143,8 @@ public class R10_ResponseAs {
         String resp = response.asString();
         JsonPath jsonpath = response.jsonPath();
         byte[] bArray = response.asByteArray();
+
+
         wireMockServer.stop();
 
 

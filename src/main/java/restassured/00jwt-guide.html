@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JWT — Interview Prep Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #141820;
+    --border: #1e2535;
+    --accent: #f5a623;
+    --accent2: #4fffb0;
+    --accent3: #ff6b6b;
+    --text: #e8eaf0;
+    --muted: #7a839a;
+    --code-bg: #0a0c10;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 60px 40px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero::before {
+    content: 'JWT';
+    position: absolute;
+    top: 10px; right: 0;
+    font-size: 180px;
+    font-weight: 800;
+    color: rgba(245,166,35,0.05);
+    letter-spacing: -10px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(245,166,35,0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 560px;
+  }
+
+  /* QUICK ANSWER */
+  .quick-answer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    background: rgba(79,255,176,0.05);
+    border-left: 4px solid var(--accent2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .quick-answer .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .quick-answer p {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .quick-answer strong { color: var(--accent2); }
+
+  /* MAIN CONTENT */
+  .content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 40px;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 60px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  p { color: #bcc4d6; margin-bottom: 14px; font-size: 15px; }
+
+  /* TOKEN VISUAL */
+  .token-visual {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    word-break: break-all;
+    line-height: 2;
+  }
+
+  .token-visual .part-header {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .header-part { color: #ff6b9d; }
+  .payload-part { color: var(--accent); }
+  .signature-part { color: var(--accent2); }
+  .dot { color: var(--muted); }
+
+  /* PART CARDS */
+  .parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .part-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .part-card:hover { border-color: var(--accent); }
+
+  .part-card h3 {
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .part-card.h h3 { color: #ff6b9d; }
+  .part-card.p h3 { color: var(--accent); }
+  .part-card.s h3 { color: var(--accent2); }
+
+  .part-card p { font-size: 13px; margin-bottom: 8px; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    background: var(--surface);
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .code-header .lang {
+    background: rgba(245,166,35,0.15);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  pre {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: #c5d0e8;
+  }
+
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .cls { color: #ffcb6b; }
+  .fn { color: #82aaff; }
+  .num { color: #f78c6c; }
+  .anno { color: #89ddff; }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 24px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-left: 2px solid var(--border);
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .flow-step::before {
+    content: attr(data-n);
+    position: absolute;
+    left: -12px;
+    top: 16px;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  .flow-step:last-child { border-left-color: transparent; }
+
+  .flow-step-content h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .flow-step-content p {
+    font-size: 13px;
+    margin-bottom: 0;
+  }
+
+  /* COMPARISON TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #bcc4d6;
+    vertical-align: top;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td.yes { color: var(--accent2); font-weight: 700; }
+  td.no { color: var(--accent3); }
+
+  /* INTERVIEW TIPS */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .tip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .tip.warn { border-left-color: var(--accent3); }
+  .tip.good { border-left-color: var(--accent2); }
+
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .tip.warn .tip-label { color: var(--accent3); }
+  .tip.good .tip-label { color: var(--accent2); }
+  .tip .tip-label { color: var(--accent); }
+
+  .tip p { font-size: 13px; margin-bottom: 0; }
+
+  /* CLAIMS TABLE */
+  .claims {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .claim-row {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .claim-row:last-child { border-bottom: none; }
+
+  .claim-key { color: var(--accent); min-width: 60px; }
+  .claim-full { color: var(--muted); min-width: 140px; font-size: 11px; padding-top: 2px; }
+  .claim-desc { color: #bcc4d6; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Interview Prep · Security</div>
+  <h1>JSON Web <span>Token</span></h1>
+  <p class="subtitle">Everything you need to understand JWT — structure, flow, code, and common interview questions. Written for Java developers.</p>
+</div>
+
+<div class="quick-answer">
+  <div class="label">★ One-Line Answer for Interview</div>
+  <p>JWT is primarily used for <strong>Authentication + Authorization</strong> — the server verifies WHO you are (authn) once, issues a token, and then uses that token to decide WHAT you can access (authz) on every subsequent request — <strong>without hitting the database again</strong>.</p>
+</div>
+
+<div class="content">
+
+  <!-- AUTHN vs AUTHZ -->
+  <div class="section">
+    <div class="section-title">Authentication vs Authorization — The Classic Interview Trap</div>
+    <table>
+      <tr>
+        <th>Concept</th>
+        <th>Question it answers</th>
+        <th>Example</th>
+        <th>JWT role?</th>
+      </tr>
+      <tr>
+        <td><strong>Authentication</strong></td>
+        <td>"Who are you?"</td>
+        <td>Login with username + password</td>
+        <td class="yes">JWT is issued here</td>
+      </tr>
+      <tr>
+        <td><strong>Authorization</strong></td>
+        <td>"What can you do?"</td>
+        <td>Can this user access /admin?</td>
+        <td class="yes">JWT carries roles/claims</td>
+      </tr>
+    </table>
+    <p>JWT sits at the boundary: you authenticate once (login), get a JWT, and then the JWT is used for authorization on every API call. The roles/permissions baked into the token tell the server what you're allowed to do.</p>
+  </div>
+
+  <!-- STRUCTURE -->
+  <div class="section">
+    <div class="section-title">JWT Structure — 3 Parts Separated by Dots</div>
+
+    <div class="token-visual">
+      <div class="part-header header-part">Header (Base64URL)</div>
+      <span class="header-part">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span>
+      <span class="dot">.</span>
+      <div class="part-header payload-part" style="margin-top:12px">Payload / Claims (Base64URL)</div>
+      <span class="payload-part">eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IlJhaHVsIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE2MzAwMDAwMDAsImV4cCI6MTYzMDA4NjQwMH0</span>
+      <span class="dot">.</span>
+      <div class="part-header signature-part" style="margin-top:12px">Signature (HMAC / RSA)</div>
+      <span class="signature-part">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+    </div>
+
+    <div class="parts-grid">
+      <div class="part-card h">
+        <h3>Header</h3>
+        <p>Algorithm used to sign + token type. Example decoded:</p>
+        <div class="code-block">
+          <pre>{
+  <span class="str">"alg"</span>: <span class="str">"HS256"</span>,
+  <span class="str">"typ"</span>: <span class="str">"JWT"</span>
+}</pre>
+        </div>
+      </div>
+      <div class="part-card p">
+        <h3>Payload (Claims)</h3>
+        <p>User data + metadata. Example decoded:</p>
+        <div class="code-block">
+          <pre>{
+  <span class="str">"sub"</span>: <span class="str">"user123"</span>,
+  <span class="str">"name"</span>: <span class="str">"Rahul"</span>,
+  <span class="str">"roles"</span>: [<span class="str">"USER"</span>],
+  <span class="str">"iat"</span>: <span class="num">1630000000</span>,
+  <span class="str">"exp"</span>: <span class="num">1630086400</span>
+}</pre>
+        </div>
+      </div>
+      <div class="part-card s">
+        <h3>Signature</h3>
+        <p>Ensures integrity. Nobody can tamper with the token. Computed as:</p>
+        <div class="code-block">
+          <pre>HMACSHA256(
+  base64(header) + "." +
+  base64(payload),
+  secretKey
+)</pre>
+        </div>
+      </div>
+    </div>
+
+    <p>⚠️ <strong>Important:</strong> The payload is only Base64URL encoded — NOT encrypted. Anyone can decode it. Never put passwords or sensitive data in the payload. The signature only proves the data wasn't tampered with.</p>
+  </div>
+
+  <!-- STANDARD CLAIMS -->
+  <div class="section">
+    <div class="section-title">Standard Claims You Must Know</div>
+    <div class="claims">
+      <div class="claim-row">
+        <span class="claim-key">sub</span>
+        <span class="claim-full">Subject</span>
+        <span class="claim-desc">Who the token is about — usually userId or email</span>
+      </div>
+      <div class="claim-row">
+        <span class="claim-key">iss</span>
+        <span class="claim-full">Issuer</span>
+        <span class="claim-desc">Who created the token — your auth service URL</span>
+      </div>
+      <div class="claim-row">
+        <span class="claim-key">aud</span>
+        <span class="claim-full">Audience</span>
+        <span class="claim-desc">Who this token is intended for</span>
+      </div>
+      <div class="claim-row">
+        <span class="claim-key">exp</span>
+        <span class="claim-full">Expiration</span>
+        <span class="claim-desc">Unix timestamp when the token expires — ALWAYS set this!</span>
+      </div>
+      <div class="claim-row">
+        <span class="claim-key">iat</span>
+        <span class="claim-full">Issued At</span>
+        <span class="claim-desc">When the token was created</span>
+      </div>
+      <div class="claim-row">
+        <span class="claim-key">jti</span>
+        <span class="claim-full">JWT ID</span>
+        <span class="claim-desc">Unique ID for the token — useful for revocation/blacklisting</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="section">
+    <div class="section-title">How JWT Works — The Full Auth Flow</div>
+    <div class="flow">
+      <div class="flow-step" data-n="1">
+        <div class="flow-step-content">
+          <h4>User Logs In</h4>
+          <p>Client sends POST /login with {username, password} → Server validates credentials against DB.</p>
+        </div>
+      </div>
+      <div class="flow-step" data-n="2">
+        <div class="flow-step-content">
+          <h4>Server Issues JWT</h4>
+          <p>Auth server creates a JWT with user's id, roles, expiry, signs it with a secret key, returns it.</p>
+        </div>
+      </div>
+      <div class="flow-step" data-n="3">
+        <div class="flow-step-content">
+          <h4>Client Stores Token</h4>
+          <p>Frontend stores the JWT in memory or localStorage (mobile apps in secure storage).</p>
+        </div>
+      </div>
+      <div class="flow-step" data-n="4">
+        <div class="flow-step-content">
+          <h4>Client Sends Token on Every Request</h4>
+          <p>Each API call includes: <code style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px">Authorization: Bearer &lt;token&gt;</code></p>
+        </div>
+      </div>
+      <div class="flow-step" data-n="5">
+        <div class="flow-step-content">
+          <h4>Server Validates JWT</h4>
+          <p>Server verifies signature with the secret key + checks expiry. No DB call needed!</p>
+        </div>
+      </div>
+      <div class="flow-step" data-n="6">
+        <div class="flow-step-content">
+          <h4>Access Granted or Denied</h4>
+          <p>Server reads roles/claims from token to authorize the request, responds accordingly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVA CODE -->
+  <div class="section">
+    <div class="section-title">Java Code — Generate &amp; Validate JWT</div>
+    <p>Using <strong>jjwt</strong> library (most popular in Java). Add to pom.xml:</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">XML</span> Maven Dependency</div>
+      <pre><span class="kw">&lt;dependency&gt;</span>
+    <span class="kw">&lt;groupId&gt;</span>io.jsonwebtoken<span class="kw">&lt;/groupId&gt;</span>
+    <span class="kw">&lt;artifactId&gt;</span>jjwt-api<span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;version&gt;</span>0.12.3<span class="kw">&lt;/version&gt;</span>
+<span class="kw">&lt;/dependency&gt;</span>
+<span class="kw">&lt;dependency&gt;</span>
+    <span class="kw">&lt;groupId&gt;</span>io.jsonwebtoken<span class="kw">&lt;/groupId&gt;</span>
+    <span class="kw">&lt;artifactId&gt;</span>jjwt-impl<span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;version&gt;</span>0.12.3<span class="kw">&lt;/version&gt;</span>
+<span class="kw">&lt;/dependency&gt;</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Java</span> JwtUtil.java — Generate Token</div>
+      <pre><span class="kw">import</span> io.jsonwebtoken.Jwts;
+<span class="kw">import</span> io.jsonwebtoken.SignatureAlgorithm;
+<span class="kw">import</span> java.util.Date;
+<span class="kw">import</span> java.util.Map;
+
+<span class="kw">public class</span> <span class="cls">JwtUtil</span> {
+
+    <span class="kw">private static final</span> <span class="cls">String</span> SECRET_KEY = <span class="str">"mySecretKeyThatShouldBe32CharsLong"</span>;
+    <span class="kw">private static final long</span> EXPIRY_MS = <span class="num">86400000L</span>; <span class="cm">// 24 hours in ms</span>
+
+    <span class="kw">public static</span> <span class="cls">String</span> <span class="fn">generateToken</span>(<span class="cls">String</span> userId, <span class="cls">String</span> role) {
+        <span class="kw">return</span> Jwts.builder()
+            .<span class="fn">subject</span>(userId)               <span class="cm">// "sub" claim</span>
+            .<span class="fn">claim</span>(<span class="str">"role"</span>, role)            <span class="cm">// custom claim</span>
+            .<span class="fn">issuedAt</span>(<span class="kw">new</span> <span class="cls">Date</span>())           <span class="cm">// "iat" claim</span>
+            .<span class="fn">expiration</span>(<span class="kw">new</span> <span class="cls">Date</span>(
+                <span class="cls">System</span>.<span class="fn">currentTimeMillis</span>() + EXPIRY_MS
+            ))                               <span class="cm">// "exp" claim</span>
+            .<span class="fn">signWith</span>(<span class="cls">SignatureAlgorithm</span>.HS256,
+                SECRET_KEY.<span class="fn">getBytes</span>())     <span class="cm">// sign with secret</span>
+            .<span class="fn">compact</span>();                     <span class="cm">// build the token string</span>
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Java</span> JwtUtil.java — Validate &amp; Parse Token</div>
+      <pre>    <span class="kw">public static</span> <span class="cls">Claims</span> <span class="fn">validateAndParse</span>(<span class="cls">String</span> token) {
+        <span class="kw">try</span> {
+            <span class="kw">return</span> Jwts.parser()
+                .<span class="fn">verifyWith</span>(Keys.<span class="fn">hmacShaKeyFor</span>(SECRET_KEY.<span class="fn">getBytes</span>()))
+                .<span class="fn">build</span>()
+                .<span class="fn">parseSignedClaims</span>(token)
+                .<span class="fn">getPayload</span>();
+            <span class="cm">// Returns Claims object — expiry is auto-checked!</span>
+
+        } <span class="kw">catch</span> (<span class="cls">ExpiredJwtException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"Token expired"</span>);
+        } <span class="kw">catch</span> (<span class="cls">JwtException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"Invalid token"</span>);
+        }
+    }
+
+    <span class="cm">// Usage:</span>
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">String</span> token = <span class="fn">generateToken</span>(<span class="str">"user123"</span>, <span class="str">"ADMIN"</span>);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"Token: "</span> + token);
+
+        <span class="cls">Claims</span> claims = <span class="fn">validateAndParse</span>(token);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"User ID: "</span> + claims.<span class="fn">getSubject</span>()); <span class="cm">// user123</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"Role: "</span> + claims.<span class="fn">get</span>(<span class="str">"role"</span>));    <span class="cm">// ADMIN</span>
+    }</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Java</span> Spring Boot Filter — Intercept &amp; Verify Every Request</div>
+      <pre><span class="anno">@Component</span>
+<span class="kw">public class</span> <span class="cls">JwtFilter</span> <span class="kw">extends</span> <span class="cls">OncePerRequestFilter</span> {
+
+    <span class="anno">@Override</span>
+    <span class="kw">protected void</span> <span class="fn">doFilterInternal</span>(<span class="cls">HttpServletRequest</span> req,
+                                      <span class="cls">HttpServletResponse</span> res,
+                                      <span class="cls">FilterChain</span> chain)
+                                      <span class="kw">throws</span> <span class="cls">IOException</span>, <span class="cls">ServletException</span> {
+
+        <span class="cls">String</span> header = req.<span class="fn">getHeader</span>(<span class="str">"Authorization"</span>);
+
+        <span class="kw">if</span> (header != <span class="kw">null</span> && header.<span class="fn">startsWith</span>(<span class="str">"Bearer "</span>)) {
+            <span class="cls">String</span> token = header.<span class="fn">substring</span>(<span class="num">7</span>); <span class="cm">// strip "Bearer "</span>
+
+            <span class="cls">Claims</span> claims = <span class="cls">JwtUtil</span>.<span class="fn">validateAndParse</span>(token);
+
+            <span class="cm">// Set authentication in Spring Security context</span>
+            <span class="cls">UsernamePasswordAuthenticationToken</span> auth =
+                <span class="kw">new</span> <span class="cls">UsernamePasswordAuthenticationToken</span>(
+                    claims.<span class="fn">getSubject</span>(), <span class="kw">null</span>,
+                    <span class="cls">List</span>.<span class="fn">of</span>(<span class="kw">new</span> <span class="cls">SimpleGrantedAuthority</span>(
+                        (<span class="cls">String</span>) claims.<span class="fn">get</span>(<span class="str">"role"</span>)
+                    ))
+                );
+            <span class="cls">SecurityContextHolder</span>.<span class="fn">getContext</span>().<span class="fn">setAuthentication</span>(auth);
+        }
+
+        chain.<span class="fn">doFilter</span>(req, res);
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- JWT vs SESSION -->
+  <div class="section">
+    <div class="section-title">JWT vs Session-Based Auth</div>
+    <table>
+      <tr>
+        <th>Aspect</th>
+        <th>Session (Stateful)</th>
+        <th>JWT (Stateless)</th>
+      </tr>
+      <tr>
+        <td>State stored where?</td>
+        <td>Server memory / DB</td>
+        <td>Client (token itself)</td>
+      </tr>
+      <tr>
+        <td>Scalability</td>
+        <td>Hard (sticky sessions)</td>
+        <td class="yes">Easy (any server can validate)</td>
+      </tr>
+      <tr>
+        <td>Revocation</td>
+        <td class="yes">Easy (delete session)</td>
+        <td class="no">Hard (need blacklist)</td>
+      </tr>
+      <tr>
+        <td>Mobile/API friendly</td>
+        <td class="no">No (cookies)</td>
+        <td class="yes">Yes (Authorization header)</td>
+      </tr>
+      <tr>
+        <td>Microservices</td>
+        <td class="no">Needs shared session store</td>
+        <td class="yes">Each service validates independently</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- INTERVIEW TIPS -->
+  <div class="section">
+    <div class="section-title">Common Interview Questions &amp; Tips</div>
+    <div class="tips-grid">
+      <div class="tip good">
+        <div class="tip-label">✓ Know This</div>
+        <p>"JWT is stateless — the server doesn't need to store tokens. Validation just requires the secret key and checking expiry."</p>
+      </div>
+      <div class="tip warn">
+        <div class="tip-label">⚠ Common Mistake</div>
+        <p>Don't say the payload is encrypted. It's only Base64URL encoded. Anyone can decode it — signature just prevents tampering.</p>
+      </div>
+      <div class="tip">
+        <div class="tip-label">★ Bonus Point</div>
+        <p>Mention Refresh Tokens: short-lived access token (15 min) + long-lived refresh token (7 days) in httpOnly cookie. Best practice for production.</p>
+      </div>
+      <div class="tip warn">
+        <div class="tip-label">⚠ Security Trap</div>
+        <p>The "alg: none" attack — always specify and validate the algorithm. Never trust the header's alg claim blindly.</p>
+      </div>
+      <div class="tip good">
+        <div class="tip-label">✓ For Microservices</div>
+        <p>"In microservices, each service can validate the JWT independently without calling a central auth server — that's the key advantage over session tokens."</p>
+      </div>
+      <div class="tip">
+        <div class="tip-label">★ Revocation Strategy</div>
+        <p>To revoke JWTs before expiry: maintain a Redis blacklist of invalidated jti (JWT ID) values. Check on every request.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK CHEAT SHEET -->
+  <div class="section">
+    <div class="section-title">Quick Cheat Sheet</div>
+    <div class="code-block">
+      <div class="code-header"><span class="lang">TXT</span> One-liners to remember</div>
+      <pre><span class="cm">// JWT = Header.Payload.Signature (3 parts, dot-separated)</span>
+<span class="cm">// Header  → algo + type (alg + typ)</span>
+<span class="cm">// Payload → claims (sub, iat, exp, roles...)</span>
+<span class="cm">// Sig     → HMAC(base64Header + "." + base64Payload, secret)</span>
+
+<span class="cm">// Payload is NOT encrypted, only encoded (anyone can read it)</span>
+<span class="cm">// Signature verifies integrity (prevents tampering)</span>
+
+<span class="cm">// Token sent as:  Authorization: Bearer &lt;token&gt;</span>
+<span class="cm">// Stateless = no DB call to validate = fast + scalable</span>
+
+<span class="cm">// HS256 = symmetric (one secret key for sign + verify)</span>
+<span class="cm">// RS256 = asymmetric (private key signs, public key verifies)</span>
+<span class="cm">//        → RS256 preferred in microservices (each service has public key)</span>
+
+<span class="cm">// Access Token  → short-lived (15 min) — sent in Authorization header</span>
+<span class="cm">// Refresh Token → long-lived (7 days)  — stored in httpOnly cookie</span></pre>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:30px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;border-top:1px solid var(--border);">
+  Good luck in your interview! 🚀
+</div>
+
+</body>
+</html>
