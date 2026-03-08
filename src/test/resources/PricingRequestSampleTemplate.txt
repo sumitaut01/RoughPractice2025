@@ -1,0 +1,21 @@
+{
+    "countryCode": "@countryCode",
+    "companyCode": "@companyCode",
+    "customerBranch": "@customerBranch",
+    "customerNumber": "@customerNumber",
+    "isOrder": @isOrder,
+    "clientSystem": "@clientSystem",
+    "priceRequestLines": [
+        {
+            "ingramPartNumber": "@ingramPartNumber1",
+            "quantity": @quantity
+        },
+{
+ "ingramPartNumber": "@ingramPartNumber2",
+            "quantity": @quantity
+
+
+}
+
+    ]
+}

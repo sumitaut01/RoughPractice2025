@@ -1,0 +1,32 @@
+{
+  "testCaseName": "Premium User Purchase Flow",
+  "registration": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe.2026@example.com",
+    "credentials": {
+      "username": "jdoe_premium",
+      "password": "SecurePassword123!"
+    }
+  },
+  "orderPlacement": {
+    "productCategory": "Electronics",
+    "items": [
+      {
+        "productId": "SKU-9982",
+        "quantity": 2,
+        "color": "Midnight Blue"
+      }
+    ],
+    "shippingAddress": {
+      "street": "123 Tech Lane",
+      "city": "Pimpri-Chinchwad",
+      "zip": "411018"
+    }
+  },
+  "paymentDetails": {
+    "method": "CreditCard",
+    "gateway": "Stripe",
+    "currency": "INR"
+  }
+}

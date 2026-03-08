@@ -1,0 +1,12 @@
+[
+  {
+    "scenario": "Premium User Flow",
+    "registration": { "email": "premium@test.com", "type": "gold" },
+    "order": { "item": "MacBook", "price": 2500 }
+  },
+  {
+    "scenario": "Standard User Flow",
+    "registration": { "email": "standard@test.com", "type": "silver" },
+    "order": { "item": "Mouse", "price": 50 }
+  }
+]

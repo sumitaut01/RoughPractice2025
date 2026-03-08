@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OAuth2 Flow – BookMyShow × Google</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --panel: #111118;
+    --border: #1e1e2e;
+    --accent-red: #e63946;
+    --accent-blue: #4285f4;
+    --accent-green: #34a853;
+    --accent-yellow: #fbbc04;
+    --accent-purple: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #5a5a7a;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  header .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent-red) 0%, #ff6b9d 40%, var(--accent-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: var(--mono);
+  }
+
+  /* Role Legend */
+  .roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .role-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font-size: 12px;
+    font-family: var(--mono);
+    transition: all 0.3s;
+  }
+  .role-badge .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .role-badge.active { border-color: currentColor; box-shadow: 0 0 12px -2px currentColor; }
+
+  /* Actors Row */
+  .actors {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media(max-width: 600px) { .actors { grid-template-columns: repeat(2, 1fr); } }
+
+  .actor {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .actor::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .actor.owner::before  { background: var(--accent-yellow); }
+  .actor.client::before { background: var(--accent-red); }
+  .actor.authsrv::before{ background: var(--accent-blue); }
+  .actor.resource::before{ background: var(--accent-green); }
+
+  .actor.lit {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px -8px var(--glow-color, #fff);
+    border-color: var(--glow-color, var(--border));
+  }
+
+  .actor .icon { font-size: 36px; margin-bottom: 10px; display: block; }
+  .actor .name { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+  .actor .role { font-size: 11px; font-family: var(--mono); color: var(--muted); margin-top: 4px; }
+  .actor .desc { font-size: 10px; font-family: var(--mono); color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  /* Steps */
+  .steps-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 0 0 0 8px;
+    opacity: 0.25;
+    transition: opacity 0.5s ease;
+    position: relative;
+  }
+  .step.active { opacity: 1; }
+  .step.done { opacity: 0.6; }
+
+  .step-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    width: 32px;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--panel);
+    flex-shrink: 0;
+    transition: all 0.4s;
+    z-index: 1;
+  }
+  .step.active .step-num {
+    border-color: var(--step-color, var(--accent-purple));
+    color: var(--step-color, var(--accent-purple));
+    box-shadow: 0 0 12px var(--step-color, var(--accent-purple));
+  }
+  .step.done .step-num {
+    background: var(--step-color);
+    border-color: var(--step-color);
+    color: #000;
+  }
+  .connector {
+    width: 2px;
+    flex: 1;
+    min-height: 24px;
+    background: var(--border);
+    margin: 0;
+  }
+  .step.done .connector { background: var(--step-color); }
+
+  .step-body {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    transition: all 0.4s;
+  }
+  .step.active .step-body {
+    border-color: var(--step-color, var(--accent-purple));
+    box-shadow: 0 0 20px -8px var(--step-color, var(--accent-purple));
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .step-title { font-size: 14px; font-weight: 800; }
+  .step-from {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .step-desc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent-green);
+    line-height: 1.6;
+    overflow-x: auto;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .code-block .key { color: var(--accent-blue); }
+  .code-block .val { color: var(--accent-yellow); }
+  .code-block .comment { color: var(--muted); }
+
+  /* Arrow visualization */
+  .arrow-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .arrow-actor {
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+  .arrow-line {
+    flex: 1;
+    min-width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--step-color, #fff), transparent);
+    position: relative;
+    min-width: 60px;
+  }
+  .arrow-line::after {
+    content: '▶';
+    position: absolute;
+    right: -2px;
+    top: -7px;
+    font-size: 10px;
+    color: var(--step-color, #fff);
+  }
+  .arrow-label {
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--muted);
+    text-align: center;
+    flex-basis: 100%;
+    margin-top: 2px;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 12px 28px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+  .btn-primary {
+    background: var(--accent-red);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #c62b38; box-shadow: 0 0 20px var(--accent-red); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-red), var(--accent-blue));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Token animation */
+  .token-show {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* Pulse dot */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .step.active .step-body { animation: slideIn 0.35s ease forwards; }
+
+  .summary-box {
+    margin-top: 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: none;
+  }
+  .summary-box.visible { display: block; animation: slideIn 0.4s ease; }
+  .summary-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--accent-green); }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .lbl { color: var(--muted); }
+  .summary-row .val { color: var(--accent-yellow); text-align: right; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="tag">OAuth 2.0 Authorization Code Flow</div>
+    <h1>BookMyShow × Google Sign-In</h1>
+    <p>// step through each role in the OAuth2 dance</p>
+  </header>
+
+  <!-- Role Badges -->
+  <div class="roles">
+    <div class="role-badge" id="badge-owner" style="color:var(--accent-yellow)">
+      <span class="dot" style="background:var(--accent-yellow)"></span> Resource Owner (You)
+    </div>
+    <div class="role-badge" id="badge-client" style="color:var(--accent-red)">
+      <span class="dot" style="background:var(--accent-red)"></span> Client (BookMyShow)
+    </div>
+    <div class="role-badge" id="badge-authsrv" style="color:var(--accent-blue)">
+      <span class="dot" style="background:var(--accent-blue)"></span> Auth Server (Google)
+    </div>
+    <div class="role-badge" id="badge-resource" style="color:var(--accent-green)">
+      <span class="dot" style="background:var(--accent-green)"></span> Resource Server (Google APIs)
+    </div>
+  </div>
+
+  <!-- Actor Cards -->
+  <div class="actors">
+    <div class="actor owner" id="actor-owner" style="--glow-color:var(--accent-yellow)">
+      <span class="icon">🧑‍💻</span>
+      <div class="name">You</div>
+      <div class="role">Resource Owner</div>
+      <div class="desc">The human. Owns the Google account. Decides what to allow.</div>
+    </div>
+    <div class="actor client" id="actor-client" style="--glow-color:var(--accent-red)">
+      <span class="icon">🎟️</span>
+      <div class="name">BookMyShow</div>
+      <div class="role">Client Application</div>
+      <div class="desc">Wants access to your Google profile to log you in.</div>
+    </div>
+    <div class="actor authsrv" id="actor-authsrv" style="--glow-color:var(--accent-blue)">
+      <span class="icon">🔐</span>
+      <div class="name">Google OAuth</div>
+      <div class="role">Authorization Server</div>
+      <div class="desc">Issues tokens after you grant consent. The gatekeeper.</div>
+    </div>
+    <div class="actor resource" id="actor-resource" style="--glow-color:var(--accent-green)">
+      <span class="icon">📦</span>
+      <div class="name">Google APIs</div>
+      <div class="role">Resource Server</div>
+      <div class="desc">Holds your profile data. Only trusts valid access tokens.</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress" style="width:0%"></div>
+  </div>
+
+  <div class="steps-title">— Flow Steps —</div>
+
+  <!-- Steps Container -->
+  <div class="steps" id="steps-container"></div>
+
+  <!-- Summary -->
+  <div class="summary-box" id="summary">
+    <div class="summary-title">✅ Flow Complete — Ticket Booking Unlocked</div>
+    <div class="summary-row"><span class="lbl">User Identity Confirmed</span><span class="val">sumit@gmail.com</span></div>
+    <div class="summary-row"><span class="lbl">Access Token</span><span class="val">ya29.A0AfH6SM... (1hr TTL)</span></div>
+    <div class="summary-row"><span class="lbl">Scopes Granted</span><span class="val">openid, profile, email</span></div>
+    <div class="summary-row"><span class="lbl">BMS Session Created</span><span class="val">sess_bms_7a3f9c...</span></div>
+    <div class="summary-row"><span class="lbl">Client Secret Exposed?</span><span class="val" style="color:var(--accent-green)">❌ Never</span></div>
+    <div class="summary-row"><span class="lbl">Password Shared with BMS?</span><span class="val" style="color:var(--accent-green)">❌ Never</span></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-secondary" onclick="resetFlow()">↺ Reset</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">▶ Start Flow</button>
+  </div>
+
+</div>
+
+<script>
+const STEPS = [
+  {
+    num: 1,
+    title: "User Clicks \"Sign in with Google\"",
+    from: "Owner → Client",
+    color: "var(--accent-yellow)",
+    actors: ["owner","client"],
+    desc: "You land on BookMyShow and click the Google login button. BMS initiates the OAuth flow by building a redirect URL.",
+    code: `<span class="comment">// BMS builds the authorization URL</span>
+GET https://accounts.google.com/o/oauth2/v2/auth
+  ?<span class="key">client_id</span>=<span class="val">bms_client_id_xyz</span>
+  &<span class="key">redirect_uri</span>=<span class="val">https://bookmyshow.com/callback</span>
+  &<span class="key">response_type</span>=<span class="val">code</span>
+  &<span class="key">scope</span>=<span class="val">openid profile email</span>
+  &<span class="key">state</span>=<span class="val">random_csrf_token_abc</span>`,
+    arrowFrom: "🧑‍💻 You", arrowTo: "🎟️ BMS", arrowLabel: "click: Sign in with Google"
+  },
+  {
+    num: 2,
+    title: "Browser Redirected to Google Login",
+    from: "Client → Auth Server",
+    color: "var(--accent-red)",
+    actors: ["client","authsrv"],
+    desc: "BMS redirects your browser to Google's Authorization Endpoint. Your credentials NEVER go to BMS.",
+    code: `<span class="comment">// HTTP 302 Redirect from BMS</span>
+<span class="key">Location:</span> <span class="val">https://accounts.google.com/o/oauth2/v2/auth</span>
+  <span class="comment">// Browser follows → Google login page shown to user</span>
+  <span class="comment">// client_secret is stored server-side, NOT here</span>`,
+    arrowFrom: "🎟️ BMS", arrowTo: "🔐 Google", arrowLabel: "302 redirect with auth params"
+  },
+  {
+    num: 3,
+    title: "You Authenticate & Grant Consent",
+    from: "Owner → Auth Server",
+    color: "var(--accent-yellow)",
+    actors: ["owner","authsrv"],
+    desc: "Google shows its login page. You enter your password (directly to Google) and approve the permissions BMS is requesting.",
+    code: `<span class="comment">// Google shows consent screen</span>
+<span class="key">App:</span>     <span class="val">BookMyShow</span>
+<span class="key">Wants:</span>  <span class="val">View your profile info</span>
+         <span class="val">View your email address</span>
+<span class="comment">// You click: Allow ✅</span>
+<span class="comment">// Your Google password → ONLY seen by Google</span>`,
+    arrowFrom: "🧑‍💻 You", arrowTo: "🔐 Google", arrowLabel: "login + click Allow"
+  },
+  {
+    num: 4,
+    title: "Auth Code Sent to BMS Callback",
+    from: "Auth Server → Client",
+    color: "var(--accent-blue)",
+    actors: ["authsrv","client"],
+    desc: "Google generates a short-lived Auth Code and redirects your browser to BMS's callback URL. This code is single-use and expires fast.",
+    code: `<span class="comment">// Google issues auth code via browser redirect</span>
+GET https://bookmyshow.com/callback
+  ?<span class="key">code</span>=<span class="val">4/P7q7W91a-oMsCeLvIaQm6bTrgtp7</span>
+  &<span class="key">state</span>=<span class="val">random_csrf_token_abc</span>  <span class="comment">// CSRF check</span>
+
+<span class="comment">// BMS verifies state matches → safe to proceed</span>`,
+    arrowFrom: "🔐 Google", arrowTo: "🎟️ BMS", arrowLabel: "auth code via browser redirect"
+  },
+  {
+    num: 5,
+    title: "BMS Exchanges Code for Tokens (Back-channel)",
+    from: "Client → Auth Server",
+    color: "var(--accent-red)",
+    actors: ["client","authsrv"],
+    desc: "BMS's backend (not browser) posts the auth code + client_secret to Google to get the access token. This is server-to-server — secure.",
+    code: `<span class="comment">// Server-side POST (no browser involved!)</span>
+POST https://oauth2.googleapis.com/token
+<span class="key">grant_type</span>=<span class="val">authorization_code</span>
+<span class="key">code</span>=<span class="val">4/P7q7W91a-oMsCeLvIaQm6bTrgtp7</span>
+<span class="key">redirect_uri</span>=<span class="val">https://bookmyshow.com/callback</span>
+<span class="key">client_id</span>=<span class="val">bms_client_id_xyz</span>
+<span class="key">client_secret</span>=<span class="val">SECRET_NEVER_EXPOSED_TO_BROWSER</span>`,
+    arrowFrom: "🎟️ BMS backend", arrowTo: "🔐 Google", arrowLabel: "POST: code + client_secret"
+  },
+  {
+    num: 6,
+    title: "Google Returns Access Token + ID Token",
+    from: "Auth Server → Client",
+    color: "var(--accent-blue)",
+    actors: ["authsrv","client"],
+    desc: "Google validates everything and returns tokens. The ID Token (JWT) contains your identity. Access Token is used for API calls.",
+    code: `<span class="comment">// Google responds with tokens</span>
+{
+  <span class="key">"access_token"</span>:  <span class="val">"ya29.A0AfH6SM..."</span>,
+  <span class="key">"id_token"</span>:      <span class="val">"eyJhbGciOiJSUzI1..."</span>, <span class="comment">// JWT</span>
+  <span class="key">"token_type"</span>:    <span class="val">"Bearer"</span>,
+  <span class="key">"expires_in"</span>:    <span class="val">3600</span>,
+  <span class="key">"scope"</span>:         <span class="val">"openid profile email"</span>
+}`,
+    arrowFrom: "🔐 Google", arrowTo: "🎟️ BMS backend", arrowLabel: "access_token + id_token"
+  },
+  {
+    num: 7,
+    title: "BMS Fetches Your Profile",
+    from: "Client → Resource Server",
+    color: "var(--accent-purple)",
+    actors: ["client","resource"],
+    desc: "BMS uses the access token to call Google's userinfo endpoint to get your name, email and profile picture.",
+    code: `<span class="comment">// BMS calls Google Resource Server</span>
+GET https://www.googleapis.com/oauth2/v3/userinfo
+<span class="key">Authorization:</span> <span class="val">Bearer ya29.A0AfH6SM...</span>
+
+<span class="comment">// Google validates token → returns profile</span>
+{
+  <span class="key">"sub"</span>:     <span class="val">"10769150350006150715113082367"</span>,
+  <span class="key">"email"</span>:   <span class="val">"sumit@gmail.com"</span>,
+  <span class="key">"name"</span>:    <span class="val">"Sumit Sagar"</span>
+}`,
+    arrowFrom: "🎟️ BMS", arrowTo: "📦 Google API", arrowLabel: "Bearer token → GET profile"
+  },
+  {
+    num: 8,
+    title: "BMS Creates Your Session — You're In!",
+    from: "Client → Owner",
+    color: "var(--accent-green)",
+    actors: ["client","owner"],
+    desc: "BMS creates a local session for you. You're now logged in — ready to book tickets! Google password was never shared with BMS.",
+    code: `<span class="comment">// BMS session created for user</span>
+SET SESSION sess_bms_7a3f9c = {
+  <span class="key">user_email</span>:  <span class="val">"sumit@gmail.com"</span>,
+  <span class="key">user_name</span>:   <span class="val">"Sumit Sagar"</span>,
+  <span class="key">auth_via</span>:    <span class="val">"google_oauth2"</span>,
+  <span class="key">expires</span>:     <span class="val">"2025-01-01T23:59:59Z"</span>
+}
+<span class="comment">// 🎉 Redirect to: https://bookmyshow.com/movies</span>`,
+    arrowFrom: "🎟️ BMS", arrowTo: "🧑‍💻 You", arrowLabel: "session cookie + redirect"
+  }
+];
+
+let currentStep = -1;
+
+function buildSteps() {
+  const container = document.getElementById('steps-container');
+  container.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.id = `step-${i}`;
+    div.style.setProperty('--step-color', s.color);
+    div.innerHTML = `
+      <div class="step-line">
+        <div class="step-num">${s.num}</div>
+        ${i < STEPS.length - 1 ? '<div class="connector"></div>' : ''}
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-title">${s.title}</span>
+          <span class="step-from">${s.from}</span>
+        </div>
+        <div class="step-desc">${s.desc}</div>
+        <div class="code-block">${s.code}</div>
+        <div class="arrow-bar" style="--step-color:${s.color}">
+          <span class="arrow-actor" style="background:${s.color}22; color:${s.color}">${s.arrowFrom}</span>
+          <div class="arrow-line"></div>
+          <span class="arrow-actor" style="background:${s.color}22; color:${s.color}">${s.arrowTo}</span>
+          <span class="arrow-label">${s.arrowLabel}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateActors(actorIds) {
+  ['owner','client','authsrv','resource'].forEach(id => {
+    document.getElementById(`actor-${id}`).classList.remove('lit');
+    document.getElementById(`badge-${id}`).classList.remove('active');
+  });
+  actorIds.forEach(id => {
+    document.getElementById(`actor-${id}`).classList.add('lit');
+    document.getElementById(`badge-${id}`).classList.add('active');
+  });
+}
+
+function nextStep() {
+  currentStep++;
+  if (currentStep >= STEPS.length) {
+    document.getElementById('summary').classList.add('visible');
+    document.getElementById('nextBtn').textContent = '✅ Done';
+    document.getElementById('nextBtn').disabled = true;
+    return;
+  }
+
+  // Update step classes
+  for (let i = 0; i < STEPS.length; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.classList.remove('active','done');
+    if (i < currentStep) el.classList.add('done');
+    else if (i === currentStep) el.classList.add('active');
+  }
+
+  updateActors(STEPS[currentStep].actors);
+
+  // Progress
+  const pct = ((currentStep + 1) / STEPS.length) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+
+  // Scroll step into view
+  setTimeout(() => {
+    document.getElementById(`step-${currentStep}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+
+  // Button text
+  if (currentStep === STEPS.length - 1) {
+    document.getElementById('nextBtn').textContent = '▶ Finish';
+  } else {
+    document.getElementById('nextBtn').textContent = `▶ Step ${currentStep + 2} of ${STEPS.length}`;
+  }
+}
+
+function resetFlow() {
+  currentStep = -1;
+  buildSteps();
+  updateActors([]);
+  document.getElementById('progress').style.width = '0%';
+  document.getElementById('summary').classList.remove('visible');
+  document.getElementById('nextBtn').textContent = '▶ Start Flow';
+  document.getElementById('nextBtn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildSteps();
+</script>
+</body>
+</html>

@@ -13,12 +13,7 @@ import static io.restassured.RestAssured.given;
 public class R1_OpenAIWork {
     @Test
     public void generateData() throws JsonProcessingException {
-
         generateUsernames(5);
-
-
-
-
     }
 
 

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authentication vs Authorization</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --authn: #00e5ff;
+    --authz: #ff6b35;
+    --bg: #0a0a12;
+    --panel: #0f0f1e;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --dim: #6b6b8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  header .chip {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-size: clamp(22px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  header h1 .authn { color: var(--authn); }
+  header h1 .authz { color: var(--authz); }
+  header p {
+    margin-top: 10px;
+    color: var(--dim);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── STAGE ── */
+  .stage {
+    max-width: 900px;
+    margin: 32px auto;
+    padding: 0 16px;
+  }
+
+  /* ── DEMO BOX ── */
+  .demo-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .demo-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .demo-box.authn-box::before { background: linear-gradient(90deg, transparent, var(--authn), transparent); }
+  .demo-box.authz-box::before { background: linear-gradient(90deg, transparent, var(--authz), transparent); }
+
+  .box-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .authn-box .box-label { color: var(--authn); }
+  .authz-box .box-label { color: var(--authz); }
+
+  .box-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .box-sub {
+    color: var(--dim);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 28px;
+  }
+
+  /* ── FLOW ANIMATION ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 90px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .flow-step.visible { opacity: 1; transform: translateY(0); }
+
+  .step-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    position: relative;
+    border: 1px solid var(--border);
+  }
+  .authn-box .step-icon { background: rgba(0,229,255,0.08); }
+  .authz-box .step-icon { background: rgba(255,107,53,0.08); }
+
+  .step-icon .pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 14px;
+    opacity: 0;
+    animation: none;
+  }
+  .flow-step.active .step-icon .pulse {
+    animation: ripple 1.2s ease-out infinite;
+  }
+  .authn-box .step-icon .pulse { border: 2px solid var(--authn); }
+  .authz-box .step-icon .pulse { border: 2px solid var(--authz); }
+
+  @keyframes ripple {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .step-label {
+    font-size: 11px;
+    text-align: center;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.3;
+    max-width: 80px;
+  }
+  .flow-step.active .step-label { color: var(--text); }
+
+  .flow-arrow {
+    flex: 1;
+    min-width: 24px;
+    height: 2px;
+    position: relative;
+    margin-bottom: 28px;
+    background: var(--border);
+    overflow: visible;
+  }
+  .flow-arrow .arrow-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    transition: width 0.6s ease;
+  }
+  .authn-box .arrow-fill { background: var(--authn); }
+  .authz-box .arrow-fill { background: var(--authz); }
+  .flow-arrow::after {
+    content: '▶';
+    position: absolute;
+    right: -8px; top: -7px;
+    font-size: 10px;
+    color: var(--dim);
+  }
+
+  /* ── STATUS BADGE ── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    margin-top: 20px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .status-badge.show { opacity: 1; transform: scale(1); }
+  .badge-authn { background: rgba(0,229,255,0.1); color: var(--authn); border: 1px solid rgba(0,229,255,0.3); }
+  .badge-authz { background: rgba(255,107,53,0.1); color: var(--authz); border: 1px solid rgba(255,107,53,0.3); }
+  .badge-deny  { background: rgba(255,50,80,0.1);  color: #ff3250;       border: 1px solid rgba(255,50,80,0.3); }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .btn-authn { background: rgba(0,229,255,0.15); color: var(--authn); border: 1px solid rgba(0,229,255,0.3); }
+  .btn-authn:hover { background: rgba(0,229,255,0.25); }
+  .btn-authz { background: rgba(255,107,53,0.15); color: var(--authz); border: 1px solid rgba(255,107,53,0.3); }
+  .btn-authz:hover { background: rgba(255,107,53,0.25); }
+  .btn-reset { background: rgba(255,255,255,0.05); color: var(--dim); border: 1px solid var(--border); }
+  .btn-reset:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+  /* ── REST ASSURED PANEL ── */
+  .ra-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .ra-panel h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ra-panel h3 span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 400;
+  }
+  .ra-tabs {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .ra-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--dim);
+    transition: all 0.2s;
+  }
+  .ra-tab.active { color: var(--text); background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); }
+  .ra-tab.authn-tab.active { color: var(--authn); border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.07); }
+  .ra-tab.authz-tab.active { color: var(--authz); border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.07); }
+
+  pre {
+    background: #060610;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .ann { color: #ffcb6b; }
+  .met { color: #82aaff; }
+  .num { color: #f78c6c; }
+  .cn { color: var(--authn); }
+  .cz { color: var(--authz); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+  .cmp-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .cmp-card h4 {
+    font-size: 13px;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .cmp-card h4.authn { color: var(--authn); }
+  .cmp-card h4.authz { color: var(--authz); }
+  .cmp-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .cmp-row .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-top: 5px; flex-shrink: 0;
+  }
+  .authn .dot { background: var(--authn); }
+  .authz .dot { background: var(--authz); }
+
+  /* ── HTTP CODE BADGE ── */
+  .http-codes {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .hcode {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+  .h200 { color: #69ff83; border-color: rgba(105,255,131,0.3); background: rgba(105,255,131,0.07); }
+  .h401 { color: var(--authn); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.07); }
+  .h403 { color: var(--authz); border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.07); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="chip">REST Assured + TestNG Study</div>
+  <h1><span class="authn">Authentication</span> vs <span class="authz">Authorization</span></h1>
+  <p>// WHO are you?  vs  WHAT can you do?</p>
+</header>
+
+<div class="stage">
+
+  <!-- ── AUTHN FLOW ── -->
+  <div class="demo-box authn-box" id="authnBox">
+    <div class="box-label">Authentication — 401 Unauthorized</div>
+    <div class="box-title">Proving Identity</div>
+    <div class="box-sub">// "Who are you?" — Verifying credentials before granting any access</div>
+
+    <div class="flow" id="authnFlow">
+      <div class="flow-step" id="an0">
+        <div class="step-icon">🧑<div class="pulse"></div></div>
+        <div class="step-label">Client sends request</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="aa0"></div></div>
+      <div class="flow-step" id="an1">
+        <div class="step-icon">🔑<div class="pulse"></div></div>
+        <div class="step-label">Credentials (user/pass, token)</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="aa1"></div></div>
+      <div class="flow-step" id="an2">
+        <div class="step-icon">🏛️<div class="pulse"></div></div>
+        <div class="step-label">Auth Server validates</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="aa2"></div></div>
+      <div class="flow-step" id="an3">
+        <div class="step-icon">🎫<div class="pulse"></div></div>
+        <div class="step-label">JWT / Session token issued</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="aa3"></div></div>
+      <div class="flow-step" id="an4">
+        <div class="step-icon">✅<div class="pulse"></div></div>
+        <div class="step-label">Identity confirmed — 200 OK</div>
+      </div>
+    </div>
+
+    <div id="authnBadge" class="status-badge badge-authn">
+      <span>⬡</span> Token Issued — Identity Confirmed
+    </div>
+    <div id="authnBadgeFail" class="status-badge badge-deny" style="display:none">
+      <span>✗</span> 401 Unauthorized — Invalid Credentials
+    </div>
+
+    <div class="controls">
+      <button class="btn-authn" onclick="runAuthn(true)">▶ Valid Login</button>
+      <button class="btn-reset" onclick="runAuthn(false)">✗ Wrong Password</button>
+      <button class="btn-reset" onclick="resetAuthn()">↺ Reset</button>
+    </div>
+
+    <div class="http-codes" style="margin-top:20px">
+      <span class="hcode h401">401 — Not authenticated</span>
+      <span class="hcode h200">200 — Authenticated</span>
+    </div>
+  </div>
+
+  <!-- ── AUTHZ FLOW ── -->
+  <div class="demo-box authz-box" id="authzBox">
+    <div class="box-label">Authorization — 403 Forbidden</div>
+    <div class="box-title">Granting Permissions</div>
+    <div class="box-sub">// "What can you do?" — Checking roles/scopes AFTER identity is confirmed</div>
+
+    <div class="flow" id="authzFlow">
+      <div class="flow-step" id="az0">
+        <div class="step-icon">🎫<div class="pulse"></div></div>
+        <div class="step-label">Authenticated token present</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="za0"></div></div>
+      <div class="flow-step" id="az1">
+        <div class="step-icon">📋<div class="pulse"></div></div>
+        <div class="step-label">Request resource /admin</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="za1"></div></div>
+      <div class="flow-step" id="az2">
+        <div class="step-icon">🛡️<div class="pulse"></div></div>
+        <div class="step-label">Check role / scope / policy</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="za2"></div></div>
+      <div class="flow-step" id="az3">
+        <div class="step-icon">🔐<div class="pulse"></div></div>
+        <div class="step-label">Role: ADMIN vs USER?</div>
+      </div>
+      <div class="flow-arrow"><div class="arrow-fill" id="za3"></div></div>
+      <div class="flow-step" id="az4">
+        <div class="step-icon" id="azResult">🔓<div class="pulse"></div></div>
+        <div class="step-label" id="azResultLabel">Access granted</div>
+      </div>
+    </div>
+
+    <div id="authzBadge" class="status-badge badge-authz">
+      <span>⬡</span> ADMIN role — Access Granted
+    </div>
+    <div id="authzBadgeFail" class="status-badge badge-deny" style="display:none">
+      <span>✗</span> 403 Forbidden — Insufficient Role
+    </div>
+
+    <div class="controls">
+      <button class="btn-authz" onclick="runAuthz(true)">▶ ADMIN Role</button>
+      <button class="btn-reset" onclick="runAuthz(false)">✗ USER Role (no admin)</button>
+      <button class="btn-reset" onclick="resetAuthz()">↺ Reset</button>
+    </div>
+
+    <div class="http-codes" style="margin-top:20px">
+      <span class="hcode h403">403 — Forbidden (no permission)</span>
+      <span class="hcode h200">200 — Authorized</span>
+    </div>
+  </div>
+
+  <!-- ── REST ASSURED CODE ── -->
+  <div class="ra-panel">
+    <h3>
+      REST Assured + TestNG Code
+      <span style="background:rgba(0,229,255,0.1);color:var(--authn);border:1px solid rgba(0,229,255,0.2)">Java</span>
+    </h3>
+    <div class="ra-tabs">
+      <button class="ra-tab authn-tab active" onclick="showCode('basic')">Basic Auth</button>
+      <button class="ra-tab authn-tab" onclick="showCode('bearer')">Bearer Token</button>
+      <button class="ra-tab authn-tab" onclick="showCode('oauth2')">OAuth2</button>
+      <button class="ra-tab authz-tab" onclick="showCode('roles')">Role Testing</button>
+      <button class="ra-tab authz-tab" onclick="showCode('403')">403 Assertion</button>
+    </div>
+    <pre id="codeBlock"></pre>
+  </div>
+
+  <!-- ── COMPARISON ── -->
+  <div class="compare">
+    <div class="cmp-card">
+      <h4 class="authn">Authentication</h4>
+      <div class="cmp-row authn"><div class="dot"></div><div>Happens <b>first</b>, before any access</div></div>
+      <div class="cmp-row authn"><div class="dot"></div><div>Answers: <b>Who are you?</b></div></div>
+      <div class="cmp-row authn"><div class="dot"></div><div>Failure → <b>401 Unauthorized</b></div></div>
+      <div class="cmp-row authn"><div class="dot"></div><div>Uses: username/password, API key, JWT, OAuth tokens</div></div>
+      <div class="cmp-row authn"><div class="dot"></div><div>REST Assured: <code style="color:var(--authn)">.auth().basic()</code>, <code style="color:var(--authn)">.auth().oauth2()</code></div></div>
+    </div>
+    <div class="cmp-card">
+      <h4 class="authz">Authorization</h4>
+      <div class="cmp-row authz"><div class="dot"></div><div>Happens <b>after</b> authentication</div></div>
+      <div class="cmp-row authz"><div class="dot"></div><div>Answers: <b>What can you do?</b></div></div>
+      <div class="cmp-row authz"><div class="dot"></div><div>Failure → <b>403 Forbidden</b></div></div>
+      <div class="cmp-row authz"><div class="dot"></div><div>Uses: roles, scopes, permissions, ACLs, policies</div></div>
+      <div class="cmp-row authz"><div class="dot"></div><div>REST Assured: assert <code style="color:var(--authz)">statusCode(403)</code> for wrong roles</div></div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<script>
+// ── CODE SNIPPETS ──
+const codes = {
+  basic: `<span class="cm">// AUTHENTICATION — Basic Auth (Base64 encoded user:pass)</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testBasicAuthentication</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">auth</span>()
+        .<span class="met">basic</span>(<span class="str">"sumit"</span>, <span class="str">"password123"</span>)
+        .<span class="met">header</span>(<span class="str">"Accept"</span>, <span class="str">"application/json"</span>)
+    .<span class="kw">when</span>()
+        .<span class="met">get</span>(<span class="str">"/api/profile"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="num">200</span>)   <span class="cm">// 200 = Authenticated ✅</span>
+        .<span class="met">body</span>(<span class="str">"username"</span>, equalTo(<span class="str">"sumit"</span>));
+}
+
+<span class="cm">// Wrong credentials → 401 Unauthorized</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testBasicAuth_InvalidCredentials</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">auth</span>().<span class="met">basic</span>(<span class="str">"sumit"</span>, <span class="str">"wrongPass"</span>)
+    .<span class="kw">when</span>()
+        .<span class="met">get</span>(<span class="str">"/api/profile"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="cn">401</span>);  <span class="cm">// ← Authentication failed</span>
+}`,
+
+  bearer: `<span class="cm">// AUTHENTICATION — Bearer Token (JWT in Authorization header)</span>
+<span class="kw">private</span> String token;
+
+<span class="ann">@BeforeClass</span>
+<span class="kw">public void</span> <span class="met">getToken</span>() {
+    token = <span class="kw">given</span>()
+        .<span class="met">contentType</span>(<span class="str">"application/json"</span>)
+        .<span class="met">body</span>(<span class="str">"{\\"username\\":\\"sumit\\", \\"password\\":\\"pass123\\"}"</span>)
+    .<span class="kw">when</span>()
+        .<span class="met">post</span>(<span class="str">"/auth/login"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="num">200</span>)
+        .<span class="met">extract</span>().<span class="met">path</span>(<span class="str">"token"</span>); <span class="cm">// Extract JWT</span>
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testWithBearerToken</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">header</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + token)
+    .<span class="kw">when</span>()
+        .<span class="met">get</span>(<span class="str">"/api/data"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="num">200</span>); <span class="cm">// Authenticated ✅</span>
+}`,
+
+  oauth2: `<span class="cm">// AUTHENTICATION — OAuth2 (REST Assured built-in support)</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testOAuth2Authentication</span>() {
+    String accessToken = <span class="met">fetchOAuthToken</span>(); <span class="cm">// from token endpoint</span>
+
+    <span class="kw">given</span>()
+        .<span class="met">auth</span>()
+        .<span class="met">oauth2</span>(accessToken)   <span class="cm">// REST Assured sets Bearer header</span>
+    .<span class="kw">when</span>()
+        .<span class="met">get</span>(<span class="str">"/api/secure-data"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="num">200</span>);
+}
+
+<span class="kw">private</span> String <span class="met">fetchOAuthToken</span>() {
+    <span class="kw">return given</span>()
+        .<span class="met">param</span>(<span class="str">"grant_type"</span>,    <span class="str">"client_credentials"</span>)
+        .<span class="met">param</span>(<span class="str">"client_id"</span>,     <span class="str">"x4v-client"</span>)
+        .<span class="met">param</span>(<span class="str">"client_secret"</span>, <span class="str">"secret"</span>)
+    .<span class="kw">when</span>()
+        .<span class="met">post</span>(<span class="str">"/oauth/token"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">extract</span>().<span class="met">path</span>(<span class="str">"access_token"</span>);
+}`,
+
+  roles: `<span class="cm">// AUTHORIZATION — Role-based access control testing</span>
+<span class="kw">private</span> String adminToken, userToken;
+
+<span class="ann">@BeforeClass</span>
+<span class="kw">public void</span> <span class="met">setupTokens</span>() {
+    adminToken = <span class="met">login</span>(<span class="str">"admin"</span>, <span class="str">"adminPass"</span>);
+    userToken  = <span class="met">login</span>(<span class="str">"viewer"</span>, <span class="str">"viewPass"</span>);
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">adminCan_DeleteUser</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">header</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + adminToken)
+    .<span class="kw">when</span>()
+        .<span class="met">delete</span>(<span class="str">"/api/users/42"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="num">200</span>);  <span class="cm">// ADMIN is authorized ✅</span>
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">viewer_CanNot_DeleteUser</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">header</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + userToken)
+    .<span class="kw">when</span>()
+        .<span class="met">delete</span>(<span class="str">"/api/users/42"</span>)
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="cz">403</span>);  <span class="cm">// ← NOT authorized (403 Forbidden)</span>
+}`,
+
+  '403': `<span class="cm">// AUTHORIZATION — Asserting 403 Forbidden responses in TestNG</span>
+<span class="kw">import static</span> io.restassured.RestAssured.*;
+<span class="kw">import static</span> org.hamcrest.Matchers.*;
+
+<span class="ann">@Test(description = "Verify 403 for insufficient role")</span>
+<span class="kw">public void</span> <span class="met">testForbiddenAccess_403</span>() {
+    <span class="kw">given</span>()
+        .<span class="met">header</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + regularUserToken)
+        .<span class="met">contentType</span>(<span class="str">"application/json"</span>)
+    .<span class="kw">when</span>()
+        .<span class="met">get</span>(<span class="str">"/api/admin/users"</span>)   <span class="cm">// Admin-only endpoint</span>
+    .<span class="kw">then</span>()
+        .<span class="met">statusCode</span>(<span class="cz">403</span>)             <span class="cm">// ← Assert FORBIDDEN</span>
+        .<span class="met">body</span>(<span class="str">"error"</span>, equalTo(<span class="str">"Forbidden"</span>))
+        .<span class="met">body</span>(<span class="str">"message"</span>, containsString(<span class="str">"insufficient"</span>));
+}
+
+<span class="cm">// ── Key difference in assertions ──
+// Authentication failure  → assertThat(statusCode, is(401))
+// Authorization failure   → assertThat(statusCode, is(403))</span>`
+};
+
+function showCode(key) {
+  document.getElementById('codeBlock').innerHTML = codes[key];
+  document.querySelectorAll('.ra-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+showCode('basic');
+
+// ── ANIMATION ENGINE ──
+function animateFlow(steps, arrows, delay = 300) {
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('visible', 'active'); }
+      if (i > 0) {
+        const prev = document.getElementById(id.replace(/\d$/, m => m-1));
+        if (prev) prev.classList.remove('active');
+      }
+      const arr = arrows[i];
+      if (arr) {
+        const fill = document.getElementById(arr);
+        if (fill) {
+          setTimeout(() => fill.style.width = '100%', 80);
+        }
+      }
+    }, i * delay);
+  });
+}
+
+function resetFlow(steps, arrows) {
+  steps.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('visible', 'active'); }
+  });
+  arrows.forEach(id => {
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.style.width = '0%';
+  });
+}
+
+// AUTHN
+function runAuthn(success) {
+  resetAuthn();
+  const steps = ['an0','an1','an2','an3', success ? 'an4' : null].filter(Boolean);
+  const arrows = ['aa0','aa1','aa2', success ? 'aa3' : null].filter(Boolean);
+  animateFlow(steps, arrows);
+  const totalTime = steps.length * 300 + 200;
+  setTimeout(() => {
+    if (success) {
+      document.getElementById('authnBadge').classList.add('show');
+    } else {
+      document.getElementById('authnBadgeFail').classList.add('show');
+    }
+  }, totalTime);
+}
+
+function resetAuthn() {
+  resetFlow(['an0','an1','an2','an3','an4'], ['aa0','aa1','aa2','aa3']);
+  document.getElementById('authnBadge').classList.remove('show');
+  document.getElementById('authnBadgeFail').classList.remove('show');
+}
+
+// AUTHZ
+function runAuthz(success) {
+  resetAuthz();
+  const steps = ['az0','az1','az2','az3','az4'];
+  const arrows = ['za0','za1','za2','za3'];
+  animateFlow(steps, arrows);
+  const totalTime = steps.length * 300 + 200;
+  setTimeout(() => {
+    const icon = document.getElementById('azResult');
+    const label = document.getElementById('azResultLabel');
+    if (success) {
+      icon.textContent = '🔓'; icon.innerHTML += '<div class="pulse"></div>';
+      label.textContent = 'Access Granted';
+      document.getElementById('authzBadge').classList.add('show');
+    } else {
+      icon.textContent = '🔒'; icon.innerHTML += '<div class="pulse"></div>';
+      label.textContent = 'Access Denied';
+      document.getElementById('authzBadgeFail').classList.add('show');
+    }
+  }, totalTime);
+}
+
+function resetAuthz() {
+  resetFlow(['az0','az1','az2','az3','az4'], ['za0','za1','za2','za3']);
+  document.getElementById('authzBadge').classList.remove('show');
+  document.getElementById('authzBadgeFail').classList.remove('show');
+  document.getElementById('azResult').innerHTML = '🔓<div class="pulse"></div>';
+  document.getElementById('azResultLabel').textContent = 'Access granted';
+}
+
+// Auto-play on load
+setTimeout(() => runAuthn(true), 600);
+setTimeout(() => runAuthz(true), 3200);
+</script>
+</body>
+</html>

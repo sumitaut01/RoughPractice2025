@@ -10,6 +10,7 @@ public class R1_BasicAuth2 {
         Response response= RestAssured.given().auth().basic("admin", "admin")
                 .baseUri("https://the-internet.herokuapp.com")
                 .basePath("/basic_auth")
+                .log().all()
                 .get();
         System.out.println(response.then().log().all());
 

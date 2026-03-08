@@ -1,0 +1,18 @@
+{
+    "countryCode": "US",
+    "companyCode": "MD",
+    "customerBranch": "20",
+    "customerNumber": "222222",
+    "isOrder": true,
+    "clientSystem": "IMONLINE",
+    "priceRequestLines": [
+        {
+            "ingramPartNumber": "SKUNumber1",
+            "quantity": 1
+        },
+{
+ "ingramPartNumber": "SKUNumber2",
+            "quantity": 2
+}
+    ]
+}
