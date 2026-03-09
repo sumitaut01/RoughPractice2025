@@ -1,6 +1,33 @@
 package basics.collections.map;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.compare;
+
 public class loopmap {
+    public static void main(String[] args) {
+
+
+        HashMap<String, String> hm = new HashMap<>();
+        System.out.println(hm.entrySet());//[]
+        hm.put("name", "sumit");
+        hm.put("lastname", "raut");
+        hm.put("college", "kits");
+
+        System.out.println(hm.entrySet());//[name=sumit, lastname=raut]
+        System.out.println(hm);//{name=sumit, lastname=raut}
+
+
+
+
+    }
+
+
+
+
 }
 
 //Suppose You Have:

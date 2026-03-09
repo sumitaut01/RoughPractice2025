@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Memory Visualizer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d47;
+    --stack-color: #ef4444;
+    --stack-bg: #1f0808;
+    --stack-border: #7f1d1d;
+    --heap-color: #22c55e;
+    --heap-bg: #041508;
+    --heap-border: #14532d;
+    --meta-color: #a855f7;
+    --meta-bg: #100818;
+    --meta-border: #4c1d95;
+    --pc-color: #f59e0b;
+    --pc-bg: #120900;
+    --pc-border: #78350f;
+    --native-color: #06b6d4;
+    --native-bg: #00080f;
+    --native-border: #164e63;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 48px 20px 32px;
+    position: relative;
+    background: linear-gradient(180deg, #0d1526 0%, transparent 100%);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .title-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 28px 20px 0;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--text); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* MEMORY ARENA */
+  .arena {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .mem-zone {
+    border-radius: 12px;
+    border: 1px solid;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .mem-zone:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .zone-header {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid;
+  }
+  .zone-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .zone-body { padding: 12px; min-height: 80px; }
+
+  /* Zone colors */
+  .zone-stack { background: var(--stack-bg); border-color: var(--stack-border); }
+  .zone-stack .zone-header { background: rgba(239,68,68,0.15); border-color: var(--stack-border); color: var(--stack-color); }
+  .zone-stack .zone-dot { background: var(--stack-color); box-shadow: 0 0 8px var(--stack-color); }
+
+  .zone-heap { background: var(--heap-bg); border-color: var(--heap-border); }
+  .zone-heap .zone-header { background: rgba(34,197,94,0.12); border-color: var(--heap-border); color: var(--heap-color); }
+  .zone-heap .zone-dot { background: var(--heap-color); box-shadow: 0 0 8px var(--heap-color); }
+
+  .zone-meta { background: var(--meta-bg); border-color: var(--meta-border); }
+  .zone-meta .zone-header { background: rgba(168,85,247,0.12); border-color: var(--meta-border); color: var(--meta-color); }
+  .zone-meta .zone-dot { background: var(--meta-color); box-shadow: 0 0 8px var(--meta-color); }
+
+  .zone-pc { background: var(--pc-bg); border-color: var(--pc-border); }
+  .zone-pc .zone-header { background: rgba(245,158,11,0.12); border-color: var(--pc-border); color: var(--pc-color); }
+  .zone-pc .zone-dot { background: var(--pc-color); box-shadow: 0 0 8px var(--pc-color); }
+
+  .zone-native { background: var(--native-bg); border-color: var(--native-border); }
+  .zone-native .zone-header { background: rgba(6,182,212,0.12); border-color: var(--native-border); color: var(--native-color); }
+  .zone-native .zone-dot { background: var(--native-color); box-shadow: 0 0 8px var(--native-color); }
+
+  /* Memory items */
+  .mem-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: slideIn 0.3s ease forwards;
+    opacity: 0;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .mem-label { color: #94a3b8; }
+  .mem-val { font-weight: 600; }
+  .val-stack { color: #fca5a5; }
+  .val-heap { color: #86efac; }
+  .val-meta { color: #d8b4fe; }
+  .val-pc { color: #fde68a; }
+  .val-native { color: #a5f3fc; }
+  .val-ref { color: #93c5fd; font-size: 10px; }
+
+  /* STEP ANIMATION */
+  .step-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .step-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-play { background: var(--accent); border-color: var(--accent); }
+  .step-counter { color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+
+  /* CODE PANEL */
+  .code-panel {
+    background: #080c16;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .code-line { padding: 1px 8px; border-radius: 3px; white-space: pre; color: #94a3b8; }
+  .code-line.active { background: rgba(59,130,246,0.2); color: #93c5fd; border-left: 2px solid var(--accent); }
+  .code-line .kw { color: #c084fc; }
+  .code-line .str { color: #86efac; }
+  .code-line .num { color: #fde68a; }
+  .code-line .type { color: #60a5fa; }
+  .code-line .comment { color: #475569; font-style: italic; }
+  .code-line .method { color: #f59e0b; }
+
+  /* EXPLANATION */
+  .explanation {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #bfdbfe;
+    line-height: 1.6;
+    min-height: 48px;
+    transition: all 0.3s ease;
+  }
+  .explanation .highlight { color: var(--heap-color); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .explanation .highlight-s { color: var(--stack-color); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .explanation .highlight-m { color: var(--meta-color); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  /* VISUAL DIAGRAM */
+  .diagram-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media(max-width: 600px) { .diagram-container { grid-template-columns: 1fr; } }
+
+  .stack-visual {
+    border: 1px solid var(--stack-border);
+    border-radius: 10px;
+    background: var(--stack-bg);
+    overflow: hidden;
+  }
+  .heap-visual {
+    border: 1px solid var(--heap-border);
+    border-radius: 10px;
+    background: var(--heap-bg);
+    overflow: hidden;
+  }
+  .vis-title {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid;
+  }
+  .stack-visual .vis-title { color: var(--stack-color); border-color: var(--stack-border); background: rgba(239,68,68,0.1); }
+  .heap-visual .vis-title { color: var(--heap-color); border-color: var(--heap-border); background: rgba(34,197,94,0.08); }
+
+  .vis-body { padding: 12px; min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+  .heap-body { justify-content: flex-start; }
+
+  .frame {
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    border: 1px solid;
+    animation: pushFrame 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    opacity: 0;
+  }
+  .frame.popping {
+    animation: popFrame 0.3s ease-out forwards;
+  }
+  @keyframes pushFrame {
+    from { opacity: 0; transform: scaleY(0.5) translateY(10px); }
+    to { opacity: 1; transform: scaleY(1) translateY(0); }
+  }
+  @keyframes popFrame {
+    from { opacity: 1; transform: scaleY(1); }
+    to { opacity: 0; transform: scaleY(0) translateY(-10px); height: 0; padding: 0; }
+  }
+  .frame-main { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+  .frame-method { background: rgba(251,146,60,0.15); border-color: rgba(251,146,60,0.4); color: #fdba74; }
+  .frame-label { font-weight: 700; margin-bottom: 4px; }
+  .frame-vars { color: #94a3b8; font-size: 10px; }
+
+  .heap-obj {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #86efac;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    opacity: 0;
+    position: relative;
+  }
+  .heap-obj.eligible { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+  .heap-obj.eligible::after {
+    content: 'GC eligible';
+    position: absolute;
+    top: 4px; right: 8px;
+    font-size: 9px;
+    color: var(--stack-color);
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* INFO CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .info-card.card-stack::before { background: var(--stack-color); }
+  .info-card.card-heap::before { background: var(--heap-color); }
+  .info-card.card-meta::before { background: var(--meta-color); }
+  .info-card.card-pc::before { background: var(--pc-color); }
+  .info-card.card-native::before { background: var(--native-color); }
+  .info-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); border-color: #2d3f5f; }
+  .card-icon { font-size: 24px; margin-bottom: 10px; }
+  .card-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+  .card-stack .card-title { color: var(--stack-color); }
+  .card-heap .card-title { color: var(--heap-color); }
+  .card-meta .card-title { color: var(--meta-color); }
+  .card-pc .card-title { color: var(--pc-color); }
+  .card-native .card-title { color: var(--native-color); }
+  .card-desc { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+  .card-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid;
+  }
+  .card-stack .card-tag { color: var(--stack-color); border-color: var(--stack-border); background: var(--stack-bg); }
+  .card-heap .card-tag { color: var(--heap-color); border-color: var(--heap-border); background: var(--heap-bg); }
+  .card-meta .card-tag { color: var(--meta-color); border-color: var(--meta-border); background: var(--meta-bg); }
+  .card-pc .card-tag { color: var(--pc-color); border-color: var(--pc-border); background: var(--pc-bg); }
+  .card-native .card-tag { color: var(--native-color); border-color: var(--native-border); background: var(--native-bg); }
+
+  /* COMPARISON TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+  .comp-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .comp-table .aspect { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .comp-table .stack-v { color: var(--stack-color); font-weight: 600; }
+  .comp-table .heap-v { color: var(--heap-color); font-weight: 600; }
+
+  /* GOTCHA BOX */
+  .gotcha {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .gotcha-title { color: var(--stack-color); font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+  .gotcha-body { font-size: 13px; color: #fca5a5; line-height: 1.6; }
+  .tip {
+    background: rgba(34,197,94,0.07);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .tip-title { color: var(--heap-color); font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+  .tip-body { font-size: 13px; color: #86efac; line-height: 1.6; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--meta-color));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Arrow animation */
+  .arrow-svg { display: block; margin: 0 auto 16px; }
+  .arrow-path { stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawArrow 1s ease forwards 0.5s; }
+  @keyframes drawArrow { to { stroke-dashoffset: 0; } }
+
+  /* Pulse */
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .pulse { animation: pulse 2s infinite; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-eyebrow">☕ Java Runtime</div>
+  <h1>Memory Architecture</h1>
+  <p class="subtitle">Interactive visualization of Stack, Heap, Metaspace & more</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview')">Overview</button>
+  <button class="tab" onclick="showTab('animation')">▶ Animation</button>
+  <button class="tab" onclick="showTab('compare')">Stack vs Heap</button>
+  <button class="tab" onclick="showTab('gotchas')">⚠ Gotchas</button>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════ OVERVIEW ═══════════════════════════ -->
+<div class="section active" id="overview">
+  <div class="section-label">JVM Memory Zones</div>
+  <div class="arena">
+    <div class="mem-zone zone-stack">
+      <div class="zone-header"><div class="zone-dot"></div>Stack</div>
+      <div class="zone-body" id="stackZone">
+        <div class="mem-item" style="animation-delay:0.1s"><span class="mem-label">local: int x</span><span class="mem-val val-stack">= 5</span></div>
+        <div class="mem-item" style="animation-delay:0.2s"><span class="mem-label">local: ref p</span><span class="mem-val val-ref">→ Heap@1f2a</span></div>
+        <div class="mem-item" style="animation-delay:0.3s"><span class="mem-label">frame: main()</span><span class="mem-val val-stack">active</span></div>
+      </div>
+    </div>
+    <div class="mem-zone zone-heap">
+      <div class="zone-header"><div class="zone-dot"></div>Heap</div>
+      <div class="zone-body">
+        <div class="mem-item" style="animation-delay:0.15s"><span class="mem-label">Person@1f2a</span><span class="mem-val val-heap">name, age</span></div>
+        <div class="mem-item" style="animation-delay:0.25s"><span class="mem-label">int[]@3b4c</span><span class="mem-val val-heap">[1,2,3]</span></div>
+        <div class="mem-item" style="animation-delay:0.35s"><span class="mem-label">String@5d6e</span><span class="mem-val val-heap">"hello"</span></div>
+      </div>
+    </div>
+    <div class="mem-zone zone-meta">
+      <div class="zone-header"><div class="zone-dot"></div>Metaspace</div>
+      <div class="zone-body">
+        <div class="mem-item" style="animation-delay:0.1s"><span class="mem-label">class Person</span><span class="mem-val val-meta">loaded</span></div>
+        <div class="mem-item" style="animation-delay:0.2s"><span class="mem-label">static count</span><span class="mem-val val-meta">= 2</span></div>
+        <div class="mem-item" style="animation-delay:0.3s"><span class="mem-label">method bytecode</span><span class="mem-val val-meta">cached</span></div>
+      </div>
+    </div>
+    <div class="mem-zone zone-pc">
+      <div class="zone-header"><div class="zone-dot"></div>PC Register</div>
+      <div class="zone-body">
+        <div class="mem-item" style="animation-delay:0.1s"><span class="mem-label">Thread-1 PC</span><span class="mem-val val-pc pulse">0x00A4</span></div>
+        <div class="mem-item" style="animation-delay:0.2s"><span class="mem-label">Thread-2 PC</span><span class="mem-val val-pc pulse">0x01B8</span></div>
+      </div>
+    </div>
+    <div class="mem-zone zone-native">
+      <div class="zone-header"><div class="zone-dot"></div>Native Stack</div>
+      <div class="zone-body">
+        <div class="mem-item" style="animation-delay:0.1s"><span class="mem-label">JNI frame</span><span class="mem-val val-native">currentTimeMillis</span></div>
+        <div class="mem-item" style="animation-delay:0.2s"><span class="mem-label">C frame</span><span class="mem-val val-native">OS syscall</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Memory Zones Explained</div>
+  <div class="cards-grid">
+    <div class="info-card card-stack">
+      <div class="card-icon">🗂</div>
+      <div class="card-title">Stack</div>
+      <div class="card-desc">Private per-thread. Holds method call frames with local variables and references. LIFO structure — frame pushed on call, popped on return. Very fast access.</div>
+      <span class="card-tag">Per-Thread · Auto-managed · LIFO</span>
+    </div>
+    <div class="info-card card-heap">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Heap</div>
+      <div class="card-desc">Shared across all threads. All objects and arrays live here. Garbage Collector automatically frees unreachable objects. Largest memory region.</div>
+      <span class="card-tag">Shared · GC managed · -Xmx</span>
+    </div>
+    <div class="info-card card-meta">
+      <div class="card-icon">📚</div>
+      <div class="card-title">Metaspace</div>
+      <div class="card-desc">Class-level metadata: bytecode, method signatures, static fields. Replaced PermGen in Java 8. Lives in native OS memory — grows dynamically.</div>
+      <span class="card-tag">Shared · Native OS · Java 8+</span>
+    </div>
+    <div class="info-card card-pc">
+      <div class="card-icon">📍</div>
+      <div class="card-title">PC Register</div>
+      <div class="card-desc">Each thread has its own tiny PC register storing the address of the currently executing JVM instruction. Undefined for native methods.</div>
+      <span class="card-tag">Per-Thread · JVM instruction ptr</span>
+    </div>
+    <div class="info-card card-native">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">Native Method Stack</div>
+      <div class="card-desc">Used when Java calls native (C/C++) methods via JNI. Managed by the OS, not JVM. Used by System.currentTimeMillis(), Object.hashCode() etc.</div>
+      <span class="card-tag">Per-Thread · OS managed · JNI</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ANIMATION ═══════════════════════════ -->
+<div class="section" id="animation">
+  <div class="section-label">Step-by-step Memory Trace</div>
+
+  <div class="step-box">
+    <div class="step-controls">
+      <button class="btn" id="prevBtn" onclick="prevStep()" disabled>← Prev</button>
+      <button class="btn btn-play" id="playBtn" onclick="autoPlay()">▶ Auto Play</button>
+      <button class="btn" id="nextBtn" onclick="nextStep()">Next →</button>
+      <button class="btn" onclick="resetAnim()">↺ Reset</button>
+      <span class="step-counter" id="stepCounter">Step 1 / 9</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:11%"></div></div>
+
+    <div class="code-panel" id="codePanel"></div>
+    <div class="explanation" id="explanation"></div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="stack-visual">
+      <div class="vis-title">🔴 Stack Memory</div>
+      <div class="vis-body" id="stackVis"></div>
+    </div>
+    <div class="heap-visual">
+      <div class="vis-title">🟢 Heap Memory</div>
+      <div class="vis-body heap-body" id="heapVis"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ COMPARE ═══════════════════════════ -->
+<div class="section" id="compare">
+  <div class="section-label">Stack vs Heap Comparison</div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th style="color:#ef4444">🔴 Stack</th>
+        <th style="color:#22c55e">🟢 Heap</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="aspect">What's stored</td><td class="stack-v">Primitives, references, frames</td><td class="heap-v">Objects, arrays, instance vars</td></tr>
+      <tr><td class="aspect">Thread scope</td><td class="stack-v">Private (per-thread)</td><td class="heap-v">Shared (all threads)</td></tr>
+      <tr><td class="aspect">Speed</td><td class="stack-v">Very fast (pointer move)</td><td class="heap-v">Slower (GC overhead)</td></tr>
+      <tr><td class="aspect">Size</td><td class="stack-v">Small (~1MB default)</td><td class="heap-v">Large (-Xms/-Xmx)</td></tr>
+      <tr><td class="aspect">Lifecycle</td><td class="stack-v">Method entry → return</td><td class="heap-v">Until GC collects</td></tr>
+      <tr><td class="aspect">Management</td><td class="stack-v">Auto (LIFO)</td><td class="heap-v">Garbage Collector</td></tr>
+      <tr><td class="aspect">Error</td><td class="stack-v">StackOverflowError</td><td class="heap-v">OutOfMemoryError</td></tr>
+      <tr><td class="aspect">Null possible?</td><td class="stack-v">No (primitives)</td><td class="heap-v">Yes (object refs)</td></tr>
+      <tr><td class="aspect">JVM flag</td><td class="stack-v">-Xss (stack size)</td><td class="heap-v">-Xmx / -Xms</td></tr>
+      <tr><td class="aspect">Synchronization</td><td class="stack-v">Not needed</td><td class="heap-v">Required for shared state</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:28px">
+  <div class="section-label">Where does each piece of code go?</div>
+  <div class="code-panel">
+<div class="code-line"><span class="kw">public class</span> <span class="type">Example</span> {</div>
+<div class="code-line">    <span class="kw">static int</span> counter = <span class="num">0</span>;          <span class="comment">// ← Metaspace (static field)</span></div>
+<div class="code-line">    <span class="type">String</span> name;                        <span class="comment">// ← Heap (inside each object)</span></div>
+<div class="code-line"></div>
+<div class="code-line">    <span class="kw">void</span> <span class="method">run</span>() {</div>
+<div class="code-line">        <span class="kw">int</span> x = <span class="num">42</span>;                    <span class="comment">// ← Stack (local primitive)</span></div>
+<div class="code-line">        <span class="type">String</span> s = <span class="str">"hi"</span>;              <span class="comment">// ← Stack (ref) → Heap String Pool</span></div>
+<div class="code-line">        <span class="type">Example</span> e = <span class="kw">new</span> <span class="type">Example</span>();    <span class="comment">// ← Stack (ref) → Heap (object)</span></div>
+<div class="code-line">        counter++;                      <span class="comment">// ← Metaspace (static access)</span></div>
+<div class="code-line">    }                                   <span class="comment">// ← x, s, e refs popped from Stack</span></div>
+<div class="code-line">}</div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ GOTCHAS ═══════════════════════════ -->
+<div class="section" id="gotchas">
+  <div class="section-label">Common Memory Gotchas & Best Practices</div>
+
+  <div class="gotcha">
+    <div class="gotcha-title">⚠️ StackOverflowError — Infinite Recursion</div>
+    <div class="gotcha-body">
+      Every method call pushes a new frame. Infinite recursion never pops, so the stack fills up.
+    </div>
+    <div class="code-panel" style="margin-top:12px; background:#0a0810">
+<div class="code-line"><span class="kw">void</span> <span class="method">infinite</span>() {</div>
+<div class="code-line">    <span class="method">infinite</span>();    <span class="comment">// pushes new frame each call, never returns</span></div>
+<div class="code-line">}                  <span class="comment">// → StackOverflowError</span></div>
+<div class="code-line"></div>
+<div class="code-line"><span class="comment">// Fix: ensure all recursion has a base case</span></div>
+<div class="code-line"><span class="kw">void</span> <span class="method">safeRecurse</span>(<span class="kw">int</span> n) {</div>
+<div class="code-line">    <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return</span>;   <span class="comment">// base case ✅</span></div>
+<div class="code-line">    <span class="method">safeRecurse</span>(n - <span class="num">1</span>);</div>
+<div class="code-line">}</div>
+    </div>
+  </div>
+
+  <div class="gotcha">
+    <div class="gotcha-title">⚠️ OutOfMemoryError — Heap Exhaustion</div>
+    <div class="gotcha-body">
+      Creating objects faster than GC can collect them (memory leak) eventually exhausts the Heap.
+    </div>
+    <div class="code-panel" style="margin-top:12px; background:#0a0810">
+<div class="code-line"><span class="type">List</span>&lt;<span class="type">byte[]</span>&gt; list = <span class="kw">new</span> <span class="type">ArrayList</span>&lt;&gt;();</div>
+<div class="code-line"><span class="kw">while</span> (<span class="kw">true</span>) {</div>
+<div class="code-line">    list.add(<span class="kw">new</span> <span class="kw">byte</span>[<span class="num">1024 * 1024</span>]);  <span class="comment">// keeps adding 1MB objects</span></div>
+<div class="code-line">}                                          <span class="comment">// → OutOfMemoryError: Java heap space</span></div>
+    </div>
+  </div>
+
+  <div class="gotcha">
+    <div class="gotcha-title">⚠️ NullPointerException — Unboxing null Wrapper</div>
+    <div class="gotcha-body">
+      When an Integer (or any wrapper) is null and you try to unbox it to a primitive, JVM calls .intValue() on null → NPE.
+    </div>
+    <div class="code-panel" style="margin-top:12px; background:#0a0810">
+<div class="code-line"><span class="type">Integer</span> obj = <span class="kw">null</span>;       <span class="comment">// wrapper can be null (on Heap)</span></div>
+<div class="code-line"><span class="kw">int</span> x = obj;              <span class="comment">// compiler: obj.intValue() → NPE! ❌</span></div>
+<div class="code-line"></div>
+<div class="code-line"><span class="comment">// Fix:</span></div>
+<div class="code-line"><span class="kw">if</span> (obj != <span class="kw">null</span>) { <span class="kw">int</span> x = obj; }   <span class="comment">// ✅</span></div>
+<div class="code-line"><span class="kw">int</span> x = (obj != <span class="kw">null</span>) ? obj : <span class="num">0</span>;   <span class="comment">// ✅</span></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-title">✅ Best Practice: Use primitives in hot loops</div>
+    <div class="tip-body">Wrapper types in loops cause repeated boxing/unboxing — creating thousands of short-lived Heap objects that increase GC pressure.</div>
+    <div class="code-panel" style="margin-top:12px; background:#030f06">
+<div class="code-line"><span class="comment">// BAD — Long wrapper boxing in every iteration</span></div>
+<div class="code-line"><span class="type">Long</span> sum = <span class="num">0L</span>;</div>
+<div class="code-line"><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">1_000_000</span>; i++) sum += i;  <span class="comment">// millions of Long objects!</span></div>
+<div class="code-line"></div>
+<div class="code-line"><span class="comment">// GOOD — pure primitive, no heap allocation</span></div>
+<div class="code-line"><span class="kw">long</span> sum = <span class="num">0L</span>;  <span class="comment">// ✅ Stack only</span></div>
+<div class="code-line"><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">1_000_000</span>; i++) sum += i;</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-title">✅ Metaspace: Java 8+ PermGen is gone</div>
+    <div class="tip-body">Before Java 8, class metadata went into PermGen (fixed size, common source of "OutOfMemoryError: PermGen space"). Now it uses native OS memory and auto-expands.</div>
+    <div class="code-panel" style="margin-top:12px; background:#030f06">
+<div class="code-line"><span class="comment">// Java 7 and below:</span></div>
+<div class="code-line"><span class="comment">// -XX:PermSize=64m -XX:MaxPermSize=256m  ← Old way</span></div>
+<div class="code-line"></div>
+<div class="code-line"><span class="comment">// Java 8+:</span></div>
+<div class="code-line"><span class="comment">// -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=256m  ← New way ✅</span></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─── TAB SWITCHING ─────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'animation') renderStep();
+}
+
+// ─── ANIMATION LOGIC ───────────────────────────────────────────────
+const steps = [
+  {
+    line: 0,
+    explain: `<b>Program starts.</b> JVM loads the <span class="highlight-m">MemoryDemo</span> class into <span class="highlight-m">Metaspace</span>. The static field <span class="highlight-m">count</span> is initialized to 0 in Metaspace.`,
+    stack: [],
+    heap: [],
+    activeLines: [0]
+  },
+  {
+    line: 1,
+    explain: `<b>main() is called.</b> A new <span class="highlight-s">Stack Frame for main()</span> is pushed onto the Stack. The JVM PC Register now points to the first instruction in main().`,
+    stack: [{ label: 'main() frame', vars: 'frame pushed', type: 'main' }],
+    heap: [],
+    activeLines: [3]
+  },
+  {
+    line: 2,
+    explain: `<b>int x = 10</b> — A primitive local variable. Stored <span class="highlight-s">directly on the Stack</span> in main()'s frame. No heap allocation needed. Fast!`,
+    stack: [{ label: 'main() frame', vars: 'int x = 10', type: 'main' }],
+    heap: [],
+    activeLines: [4]
+  },
+  {
+    line: 3,
+    explain: `<b>new Person("Sumit")</b> — The <code>new</code> keyword allocates a <span class="highlight">Person object on the Heap</span>. The reference <span class="highlight-s">p1</span> lives on the Stack, pointing to the Heap object.`,
+    stack: [{ label: 'main() frame', vars: 'int x=10  |  ref p1 → Heap@1a2b', type: 'main' }],
+    heap: [{ label: 'Person@1a2b', vars: 'name="Sumit", age=28', eligible: false }],
+    activeLines: [5]
+  },
+  {
+    line: 4,
+    explain: `<b>new Person("Rahul")</b> — Another <span class="highlight">Person object created on the Heap</span>. Now the Heap has two Person objects. Metaspace's <span class="highlight-m">count</span> is incremented to 2.`,
+    stack: [{ label: 'main() frame', vars: 'int x=10  |  ref p1,p2 → Heap', type: 'main' }],
+    heap: [
+      { label: 'Person@1a2b', vars: 'name="Sumit", age=28', eligible: false },
+      { label: 'Person@3c4d', vars: 'name="Rahul", age=30', eligible: false }
+    ],
+    activeLines: [6]
+  },
+  {
+    line: 5,
+    explain: `<b>greet(p1) is called.</b> A new <span class="highlight-s">Stack Frame for greet()</span> is pushed. The parameter <span class="highlight-s">p</span> is a reference copy on the Stack — it still points to the same Heap object as p1.`,
+    stack: [
+      { label: 'greet() frame', vars: 'ref p → Heap@1a2b', type: 'method' },
+      { label: 'main() frame', vars: 'int x=10  |  ref p1,p2 → Heap', type: 'main' }
+    ],
+    heap: [
+      { label: 'Person@1a2b', vars: 'name="Sumit", age=28', eligible: false },
+      { label: 'Person@3c4d', vars: 'name="Rahul", age=30', eligible: false }
+    ],
+    activeLines: [7]
+  },
+  {
+    line: 6,
+    explain: `<b>greet() returns.</b> The <span class="highlight-s">greet() frame is popped</span> from the Stack. Local variable <span class="highlight-s">p</span> is gone. The Person objects on the Heap are unaffected.`,
+    stack: [{ label: 'main() frame', vars: 'int x=10  |  ref p1,p2 → Heap', type: 'main' }],
+    heap: [
+      { label: 'Person@1a2b', vars: 'name="Sumit", age=28', eligible: false },
+      { label: 'Person@3c4d', vars: 'name="Rahul", age=30', eligible: false }
+    ],
+    activeLines: [10]
+  },
+  {
+    line: 7,
+    explain: `<b>p1 = null</b> — The Stack reference <span class="highlight-s">p1</span> no longer points to the Person object. If no other reference exists, <span class="highlight">Person@1a2b becomes eligible for Garbage Collection</span>!`,
+    stack: [{ label: 'main() frame', vars: 'int x=10  |  p1=null  |  ref p2 → Heap@3c4d', type: 'main' }],
+    heap: [
+      { label: 'Person@1a2b', vars: 'name="Sumit", age=28 — unreachable!', eligible: true },
+      { label: 'Person@3c4d', vars: 'name="Rahul", age=30', eligible: false }
+    ],
+    activeLines: [11]
+  },
+  {
+    line: 8,
+    explain: `<b>main() returns.</b> The <span class="highlight-s">main() frame is popped</span>. All local variables (x, p2) are gone. Person@3c4d is now also unreachable — eligible for GC. Stack is empty. Program ends.`,
+    stack: [],
+    heap: [
+      { label: 'Person@1a2b', vars: 'name="Sumit" — GC will collect', eligible: true },
+      { label: 'Person@3c4d', vars: 'name="Rahul" — GC will collect', eligible: true }
+    ],
+    activeLines: [12]
+  }
+];
+
+const codeLines = [
+  '<span class="kw">public class</span> <span class="type">MemoryDemo</span> {',
+  '    <span class="kw">static int</span> count = <span class="num">0</span>;                <span class="comment">// Metaspace</span>',
+  '',
+  '    <span class="kw">public static void</span> <span class="method">main</span>(<span class="type">String</span>[] args) {',
+  '        <span class="kw">int</span> x = <span class="num">10</span>;                       <span class="comment">// Stack</span>',
+  '        <span class="type">Person</span> p1 = <span class="kw">new</span> <span class="type">Person</span>(<span class="str">"Sumit"</span>, <span class="num">28</span>);  <span class="comment">// Stack ref → Heap obj</span>',
+  '        <span class="type">Person</span> p2 = <span class="kw">new</span> <span class="type">Person</span>(<span class="str">"Rahul"</span>, <span class="num">30</span>);  <span class="comment">// Stack ref → Heap obj</span>',
+  '        <span class="method">greet</span>(p1);                         <span class="comment">// new Stack Frame</span>',
+  '        <span class="comment">// greet() returned → frame popped</span>',
+  '        <span class="comment">// ...</span>',
+  '        <span class="comment">// (back in main)</span>',
+  '        p1 = <span class="kw">null</span>;                       <span class="comment">// Person@1a2b → GC eligible</span>',
+  '    }                                      <span class="comment">// main frame popped</span>',
+  '',
+  '    <span class="kw">static void</span> <span class="method">greet</span>(<span class="type">Person</span> p) {',
+  '        <span class="comment">// p is Stack ref to same Heap object</span>',
+  '        System.out.<span class="method">println</span>(p.name);',
+  '    }',
+  '}',
+];
+
+let currentStep = 0;
+let autoTimer = null;
+
+function renderStep() {
+  const step = steps[currentStep];
+  const total = steps.length;
+
+  // Progress
+  document.getElementById('progressFill').style.width = ((currentStep + 1) / total * 100) + '%';
+  document.getElementById('stepCounter').textContent = `Step ${currentStep + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = currentStep === 0;
+  document.getElementById('nextBtn').disabled = currentStep === total - 1;
+
+  // Code panel
+  const cp = document.getElementById('codePanel');
+  cp.innerHTML = codeLines.map((line, i) =>
+    `<div class="code-line ${step.activeLines.includes(i) ? 'active' : ''}">${line || '&nbsp;'}</div>`
+  ).join('');
+
+  // Explanation
+  document.getElementById('explanation').innerHTML = step.explain;
+
+  // Stack visual
+  const sv = document.getElementById('stackVis');
+  sv.innerHTML = '';
+  if (step.stack.length === 0) {
+    sv.innerHTML = '<div style="text-align:center;color:#475569;font-size:12px;padding:20px">Stack empty</div>';
+  } else {
+    [...step.stack].reverse().forEach((f, i) => {
+      const d = document.createElement('div');
+      d.className = `frame frame-${f.type}`;
+      d.style.animationDelay = (i * 0.1) + 's';
+      d.innerHTML = `<div class="frame-label">${f.label}</div><div class="frame-vars">${f.vars}</div>`;
+      sv.appendChild(d);
+    });
+  }
+
+  // Heap visual
+  const hv = document.getElementById('heapVis');
+  hv.innerHTML = '';
+  if (step.heap.length === 0) {
+    hv.innerHTML = '<div style="text-align:center;color:#475569;font-size:12px;padding:20px">Heap empty</div>';
+  } else {
+    step.heap.forEach((o, i) => {
+      const d = document.createElement('div');
+      d.className = `heap-obj ${o.eligible ? 'eligible' : ''}`;
+      d.style.animationDelay = (i * 0.1) + 's';
+      d.innerHTML = `<div style="font-weight:700;margin-bottom:4px">${o.label}</div><div style="color:#64748b;font-size:10px">${o.vars}</div>`;
+      hv.appendChild(d);
+    });
+  }
+}
+
+function nextStep() {
+  if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+}
+function prevStep() {
+  if (currentStep > 0) { currentStep--; renderStep(); }
+}
+function resetAnim() {
+  clearInterval(autoTimer);
+  autoTimer = null;
+  document.getElementById('playBtn').textContent = '▶ Auto Play';
+  currentStep = 0;
+  renderStep();
+}
+function autoPlay() {
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    document.getElementById('playBtn').textContent = '▶ Auto Play';
+    return;
+  }
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  autoTimer = setInterval(() => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      renderStep();
+    } else {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      document.getElementById('playBtn').textContent = '▶ Auto Play';
+    }
+  }, 2200);
+}
+
+// Init animation tab on first render
+renderStep();
+</script>
+</body>
+</html>

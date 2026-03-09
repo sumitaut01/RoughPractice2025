@@ -3,8 +3,6 @@ package restassured;
 import io.restassured.path.json.JsonPath;
 
 public class CompleJsonWithJsonPath {
-
-
     public static void main(String[] args) {
         String complex= """
                 {

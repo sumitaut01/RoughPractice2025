@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Natural Sorting & Comparable</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card2: #161e2e;
+    --accent1: #00e5ff;
+    --accent2: #ff6b6b;
+    --accent3: #a78bfa;
+    --accent4: #34d399;
+    --accent5: #fbbf24;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: #1e293b;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(167,139,250,0.15));
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent1);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    animation: pulse-border 3s ease-in-out infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(0,229,255,0); }
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent1) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 560px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+  }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 70px;
+  }
+  .toc a {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.25s;
+  }
+  .toc a:hover { color: var(--accent1); border-color: var(--accent1); background: rgba(0,229,255,0.06); }
+
+  /* SECTION TITLES */
+  .section { margin-bottom: 70px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent1);
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .section h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    transition: border-color 0.25s;
+  }
+  .card:hover { border-color: var(--accent3); }
+
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 9px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+  }
+  .tag-cyan { background: rgba(0,229,255,0.12); color: var(--accent1); }
+  .tag-purple { background: rgba(167,139,250,0.12); color: var(--accent3); }
+  .tag-red { background: rgba(255,107,107,0.12); color: var(--accent2); }
+  .tag-green { background: rgba(52,211,153,0.12); color: var(--accent4); }
+  .tag-yellow { background: rgba(251,191,36,0.12); color: var(--accent5); }
+
+  .card p { color: #94a3b8; font-size: 0.92rem; margin-bottom: 10px; }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    margin: 14px 0;
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: #e2e8f0;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #ff79c6; }         /* keywords */
+  .cn { color: #8be9fd; }         /* class names */
+  .fn { color: #50fa7b; }         /* function names */
+  .st { color: #f1fa8c; }         /* strings */
+  .cm { color: #6272a4; font-style: italic; } /* comments */
+  .nm { color: #bd93f9; }         /* numbers */
+  .an { color: #ffb86c; }         /* annotations */
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.87rem;
+    margin: 14px 0;
+  }
+  .compare-table th {
+    background: rgba(0,229,255,0.07);
+    color: var(--accent1);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #94a3b8;
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table td:first-child { color: #e2e8f0; font-weight: 600; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 0.9rem;
+  }
+  .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .callout.info { background: rgba(0,229,255,0.07); border-left: 3px solid var(--accent1); }
+  .callout.warn { background: rgba(251,191,36,0.07); border-left: 3px solid var(--accent5); }
+  .callout.danger { background: rgba(255,107,107,0.07); border-left: 3px solid var(--accent2); }
+  .callout.success { background: rgba(52,211,153,0.07); border-left: 3px solid var(--accent4); }
+  .callout p { color: #94a3b8; margin: 0; }
+  .callout strong { color: #e2e8f0; }
+
+  /* VISUAL SORT DEMO */
+  .sort-demo {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+  .sort-demo h4 { font-size: 0.88rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 80px;
+    margin-bottom: 10px;
+  }
+  .bar {
+    flex: 1;
+    border-radius: 5px 5px 0 0;
+    transition: all 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+  }
+  .bar:hover { opacity: 0.85; }
+  .bars-label {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .bars-label span {
+    flex: 1;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sort-btn {
+    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(167,139,250,0.15));
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent1);
+    padding: 9px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+  .sort-btn:hover { background: rgba(0,229,255,0.2); }
+
+  /* TWO COLUMN */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .flow-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 0.82rem;
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    color: var(--accent1);
+    font-size: 1.2rem;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .flow-box.highlight { border-color: var(--accent1); color: var(--accent1); }
+  .flow-box.highlight2 { border-color: var(--accent3); color: var(--accent3); }
+
+  /* RETURN VALUE VIZ */
+  .return-viz {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .rv-box {
+    flex: 1;
+    min-width: 120px;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+  }
+  .rv-box .rv-val { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+  .rv-box .rv-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); letter-spacing: 1px; }
+  .rv-neg { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); }
+  .rv-neg .rv-val { color: var(--accent2); }
+  .rv-zero { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); }
+  .rv-zero .rv-val { color: var(--accent5); }
+  .rv-pos { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); }
+  .rv-pos .rv-val { color: var(--accent4); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-family: 'Space Mono', monospace;
+    margin-top: 40px;
+  }
+
+  /* SCROLL FADE IN */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.55s ease forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section:nth-child(1) .fade-in { animation-delay: 0.1s; }
+  .section:nth-child(2) .fade-in { animation-delay: 0.15s; }
+  .section:nth-child(3) .fade-in { animation-delay: 0.2s; }
+  .section:nth-child(4) .fade-in { animation-delay: 0.25s; }
+
+  .inline-code {
+    background: rgba(0,229,255,0.08);
+    color: var(--accent1);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82em;
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid rgba(0,229,255,0.15);
+  }
+
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .pill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-family: 'Space Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-badge">☕ Java Deep Dive</div>
+    <h1>Natural Sorting &<br>Comparable in Java</h1>
+    <p>Master <code style="font-family:monospace;color:var(--accent1)">Comparable</code>, <code style="font-family:monospace;color:var(--accent3)">Comparator</code>, and <code style="font-family:monospace;color:var(--accent4)">sort()</code> — with vivid examples to lock it in memory.</p>
+    <nav class="toc">
+      <a href="#s1">01 · What is Natural Order?</a>
+      <a href="#s2">02 · Comparable Interface</a>
+      <a href="#s3">03 · compareTo() Contract</a>
+      <a href="#s4">04 · Real Examples</a>
+      <a href="#s5">05 · Comparator vs Comparable</a>
+      <a href="#s6">06 · sort() Everywhere</a>
+      <a href="#s7">07 · Gotchas & Tips</a>
+    </nav>
+  </div>
+
+  <!-- SECTION 1 -->
+  <section class="section fade-in" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>What is Natural Order?</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <p>In Java, <strong style="color:#e2e8f0">Natural Order</strong> means the default way objects of a class sort themselves. Built-in types already have it baked in:</p>
+
+      <div class="pill-list">
+        <span class="pill tag-cyan">Integer → ascending (1, 2, 3)</span>
+        <span class="pill tag-green">String → lexicographic (a, b, c)</span>
+        <span class="pill tag-purple">Double → ascending (1.1, 2.2)</span>
+        <span class="pill tag-yellow">LocalDate → chronological</span>
+        <span class="pill tag-red">char → Unicode order</span>
+      </div>
+
+      <p style="margin-top:14px">For your <strong style="color:#e2e8f0">custom classes</strong> (like <span class="inline-code">Employee</span>, <span class="inline-code">Student</span>), Java doesn't know the order unless YOU define it via <span class="inline-code">Comparable</span>.</p>
+    </div>
+
+    <!-- Interactive Sort Demo -->
+    <div class="sort-demo">
+      <h4>🎮 Interactive: Click "Sort" to see natural order</h4>
+      <div class="bars" id="bars1"></div>
+      <div class="bars-label" id="labels1"></div>
+      <button class="sort-btn" onclick="toggleSort()">▶ Collections.sort( list )</button>
+      <p id="sort-status" style="margin-top:10px;font-size:0.78rem;color:var(--muted);font-family:'Space Mono',monospace"></p>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section fade-in" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>The Comparable Interface</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-cyan">INTERFACE</span> java.lang.Comparable&lt;T&gt;</h3>
+      <p>It lives in <span class="inline-code">java.lang</span> — no import needed. It has exactly <strong style="color:#e2e8f0">ONE method</strong> to implement:</p>
+      <pre data-lang="Java"><code><span class="kw">public interface</span> <span class="cn">Comparable</span>&lt;T&gt; {
+    <span class="kw">int</span> <span class="fn">compareTo</span>(T other);
+}</code></pre>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <p><strong>Mental Model:</strong> Think of <span class="inline-code">compareTo()</span> as asking:<br>
+        <em>"Am I (this) less than, equal to, or greater than <strong>other</strong>?"</em></p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3><span class="tag tag-green">HOW TO USE</span></h3>
+        <p>Your class <strong style="color:#e2e8f0">implements</strong> Comparable:</p>
+        <pre data-lang="Java"><code><span class="kw">class</span> <span class="cn">Student</span> <span class="kw">implements</span> <span class="cn">Comparable</span>&lt;<span class="cn">Student</span>&gt; {
+
+    <span class="kw">int</span> marks;
+
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cn">Student</span> other) {
+        <span class="kw">return this</span>.marks - other.marks;
+        <span class="cm">// ascending by marks</span>
+    }
+}</code></pre>
+      </div>
+
+      <div class="card">
+        <h3><span class="tag tag-purple">WHAT UNLOCKS</span></h3>
+        <p>Once you implement it, <strong style="color:#e2e8f0">ALL of these work:</strong></p>
+        <pre data-lang="Java"><code><span class="cn">Collections</span>.<span class="fn">sort</span>(studentList);
+
+<span class="cn">Arrays</span>.<span class="fn">sort</span>(studentArray);
+
+<span class="kw">new</span> <span class="cn">TreeSet</span>&lt;&gt;(studentList);
+
+<span class="kw">new</span> <span class="cn">PriorityQueue</span>&lt;&gt;(studentList);
+
+student1.<span class="fn">compareTo</span>(student2);
+<span class="cm">// all use your compareTo!</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="section fade-in" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>The compareTo() Contract</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <p>The return value of <span class="inline-code">compareTo()</span> tells Java <strong style="color:#e2e8f0">where to place THIS object relative to OTHER:</strong></p>
+
+      <div class="return-viz">
+        <div class="rv-box rv-neg">
+          <div class="rv-val">< 0</div>
+          <div class="rv-label">THIS comes<br>BEFORE other</div>
+        </div>
+        <div class="rv-box rv-zero">
+          <div class="rv-val">= 0</div>
+          <div class="rv-label">EQUAL<br>(same position)</div>
+        </div>
+        <div class="rv-box rv-pos">
+          <div class="rv-val">> 0</div>
+          <div class="rv-label">THIS comes<br>AFTER other</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚡</span>
+        <p><strong>Memory Trick:</strong> Think of it as <strong>subtraction</strong>.<br>
+        <code style="color:var(--accent1);font-family:monospace">this.age - other.age</code> → ascending (small → big)<br>
+        <code style="color:var(--accent3);font-family:monospace">other.age - this.age</code> → descending (big → small)</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-red">CONCRETE EXAMPLE</span> Integer comparison flow</h3>
+      <div class="flow">
+        <div class="flow-box">a = 5</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">compareTo(b=9)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">5 - 9 = <strong style="color:var(--accent2)">-4</strong></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight2">5 comes BEFORE 9</div>
+      </div>
+
+      <pre data-lang="Java"><code><span class="cn">Integer</span> a = <span class="nm">5</span>, b = <span class="nm">9</span>;
+System.out.<span class="fn">println</span>(a.<span class="fn">compareTo</span>(b));  <span class="cm">// -1 (negative → a before b)</span>
+System.out.<span class="fn">println</span>(b.<span class="fn">compareTo</span>(a));  <span class="cm">// 1  (positive → b after a)</span>
+System.out.<span class="fn">println</span>(a.<span class="fn">compareTo</span>(<span class="nm">5</span>)); <span class="cm">// 0  (equal)</span></code></pre>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="section fade-in" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Real-World Examples</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- Example 1: Student -->
+    <div class="card">
+      <h3><span class="tag tag-cyan">EXAMPLE 1</span> Student — sort by marks</h3>
+      <pre data-lang="Java"><code><span class="kw">import</span> java.util.*;
+
+<span class="kw">class</span> <span class="cn">Student</span> <span class="kw">implements</span> <span class="cn">Comparable</span>&lt;<span class="cn">Student</span>&gt; {
+
+    <span class="cn">String</span> name;
+    <span class="kw">int</span>    marks;
+
+    <span class="cn">Student</span>(<span class="cn">String</span> name, <span class="kw">int</span> marks) {
+        <span class="kw">this</span>.name  = name;
+        <span class="kw">this</span>.marks = marks;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cn">Student</span> other) {
+        <span class="kw">return this</span>.marks - other.marks; <span class="cm">// ascending</span>
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="cn">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> name + <span class="st">"("</span> + marks + <span class="st">")"</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="cn">Main</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cn">String</span>[] args) {
+
+        <span class="cn">List</span>&lt;<span class="cn">Student</span>&gt; list = <span class="kw">new</span> <span class="cn">ArrayList</span>&lt;&gt;();
+        list.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Riya"</span>,  <span class="nm">85</span>));
+        list.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Sumit"</span>, <span class="nm">92</span>));
+        list.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Arjun"</span>, <span class="nm">78</span>));
+
+        <span class="cn">Collections</span>.<span class="fn">sort</span>(list); <span class="cm">// uses compareTo()</span>
+
+        System.out.<span class="fn">println</span>(list);
+        <span class="cm">// Output: [Arjun(78), Riya(85), Sumit(92)]</span>
+    }
+}</code></pre>
+      <div class="callout success">
+        <span class="callout-icon">✅</span>
+        <p><strong>Output:</strong> <code style="color:var(--accent4);font-family:monospace">[Arjun(78), Riya(85), Sumit(92)]</code> — sorted ascending by marks.</p>
+      </div>
+    </div>
+
+    <!-- Example 2: Employee multi-field -->
+    <div class="card">
+      <h3><span class="tag tag-purple">EXAMPLE 2</span> Employee — sort by salary, then name</h3>
+      <pre data-lang="Java"><code><span class="kw">class</span> <span class="cn">Employee</span> <span class="kw">implements</span> <span class="cn">Comparable</span>&lt;<span class="cn">Employee</span>&gt; {
+
+    <span class="cn">String</span> name;
+    <span class="kw">double</span> salary;
+
+    <span class="cn">Employee</span>(<span class="cn">String</span> name, <span class="kw">double</span> salary) {
+        <span class="kw">this</span>.name   = name;
+        <span class="kw">this</span>.salary = salary;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cn">Employee</span> other) {
+        <span class="cm">// Primary: salary ascending</span>
+        <span class="kw">int</span> result = <span class="cn">Double</span>.<span class="fn">compare</span>(<span class="kw">this</span>.salary, other.salary);
+
+        <span class="cm">// Secondary: if salary equal → sort by name</span>
+        <span class="kw">if</span> (result == <span class="nm">0</span>) {
+            result = <span class="kw">this</span>.name.<span class="fn">compareTo</span>(other.name);
+        }
+        <span class="kw">return</span> result;
+    }
+}</code></pre>
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <p><strong>Tip:</strong> Use <span class="inline-code">Double.compare(a, b)</span> instead of <span class="inline-code">a - b</span> for doubles/floats to avoid floating-point overflow bugs.</p>
+      </div>
+    </div>
+
+    <!-- Example 3: String natural -->
+    <div class="card">
+      <h3><span class="tag tag-green">EXAMPLE 3</span> String already implements Comparable</h3>
+      <pre data-lang="Java"><code><span class="cn">List</span>&lt;<span class="cn">String</span>&gt; names = <span class="cn">Arrays</span>.<span class="fn">asList</span>(<span class="st">"Zebra"</span>, <span class="st">"Apple"</span>, <span class="st">"Mango"</span>);
+<span class="cn">Collections</span>.<span class="fn">sort</span>(names);         <span class="cm">// lexicographic (dictionary) order</span>
+System.out.<span class="fn">println</span>(names);       <span class="cm">// [Apple, Mango, Zebra]</span>
+
+<span class="cm">// Behind the scenes, String.compareTo() compares char by char:</span>
+<span class="st">"Apple"</span>.<span class="fn">compareTo</span>(<span class="st">"Mango"</span>);    <span class="cm">// negative → Apple before Mango</span>
+<span class="st">"Zebra"</span>.<span class="fn">compareTo</span>(<span class="st">"Apple"</span>);    <span class="cm">// positive → Zebra after Apple</span></code></pre>
+    </div>
+
+    <!-- Example 4: TreeSet -->
+    <div class="card">
+      <h3><span class="tag tag-yellow">EXAMPLE 4</span> TreeSet uses compareTo() automatically</h3>
+      <pre data-lang="Java"><code><span class="cn">TreeSet</span>&lt;<span class="cn">Student</span>&gt; set = <span class="kw">new</span> <span class="cn">TreeSet</span>&lt;&gt;();
+set.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Riya"</span>,  <span class="nm">85</span>));
+set.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Sumit"</span>, <span class="nm">92</span>));
+set.<span class="fn">add</span>(<span class="kw">new</span> <span class="cn">Student</span>(<span class="st">"Arjun"</span>, <span class="nm">78</span>));
+
+<span class="cm">// TreeSet maintains sorted order using compareTo()</span>
+System.out.<span class="fn">println</span>(set);
+<span class="cm">// Output: [Arjun(78), Riya(85), Sumit(92)]</span>
+
+<span class="cm">// PriorityQueue also uses compareTo() for heap ordering</span>
+<span class="cn">PriorityQueue</span>&lt;<span class="cn">Student</span>&gt; pq = <span class="kw">new</span> <span class="cn">PriorityQueue</span>&lt;&gt;(set);
+System.out.<span class="fn">println</span>(pq.<span class="fn">poll</span>()); <span class="cm">// Arjun(78) ← lowest first</span></code></pre>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <p><strong>TreeSet without Comparable = Runtime crash!</strong> If your class doesn't implement Comparable and you haven't provided a Comparator, TreeSet throws <span class="inline-code">ClassCastException</span> at runtime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="section fade-in" id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Comparable vs Comparator</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Aspect</th>
+            <th>Comparable</th>
+            <th>Comparator</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Package</td>
+            <td><span class="inline-code">java.lang</span></td>
+            <td><span class="inline-code">java.util</span></td>
+          </tr>
+          <tr>
+            <td>Method</td>
+            <td><span class="inline-code">compareTo(T o)</span></td>
+            <td><span class="inline-code">compare(T o1, T o2)</span></td>
+          </tr>
+          <tr>
+            <td>Who defines it?</td>
+            <td>The class itself</td>
+            <td>External / separate class</td>
+          </tr>
+          <tr>
+            <td>Order types</td>
+            <td>Only ONE natural order</td>
+            <td>Multiple orders possible</td>
+          </tr>
+          <tr>
+            <td>Modifies class?</td>
+            <td>Yes (implements interface)</td>
+            <td>No (external)</td>
+          </tr>
+          <tr>
+            <td>Used by</td>
+            <td>Collections.sort, TreeSet, PriorityQueue</td>
+            <td>Collections.sort(list, cmp), TreeSet(cmp)</td>
+          </tr>
+          <tr>
+            <td>Best for</td>
+            <td>Default/natural sort</td>
+            <td>Multiple/custom/ad-hoc sorts</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3><span class="tag tag-cyan">COMPARABLE</span> Single natural order</h3>
+        <pre data-lang="Java"><code><span class="kw">class</span> <span class="cn">Student</span>
+    <span class="kw">implements</span> <span class="cn">Comparable</span>&lt;<span class="cn">Student</span>&gt; {
+
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cn">Student</span> o) {
+        <span class="kw">return this</span>.marks - o.marks;
+    }
+}
+<span class="cm">// Always sorts by marks</span>
+<span class="cn">Collections</span>.<span class="fn">sort</span>(list);</code></pre>
+      </div>
+
+      <div class="card">
+        <h3><span class="tag tag-purple">COMPARATOR</span> Flexible, multiple orders</h3>
+        <pre data-lang="Java"><code><span class="cm">// Sort by name</span>
+<span class="cn">Comparator</span>&lt;<span class="cn">Student</span>&gt; byName =
+    (a, b) -> a.name.<span class="fn">compareTo</span>(b.name);
+
+<span class="cm">// Sort by marks descending</span>
+<span class="cn">Comparator</span>&lt;<span class="cn">Student</span>&gt; byDesc =
+    (a, b) -> b.marks - a.marks;
+
+<span class="cn">Collections</span>.<span class="fn">sort</span>(list, byName);
+<span class="cn">Collections</span>.<span class="fn">sort</span>(list, byDesc);</code></pre>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <span class="callout-icon">🧠</span>
+      <p><strong>Rule of thumb:</strong> Use <strong>Comparable</strong> when there's one obvious natural order ("students always sort by marks"). Use <strong>Comparator</strong> when you need multiple sort strategies or can't modify the class.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section class="section fade-in" id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>sort() — Everywhere in Java</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-cyan">Collections.sort()</span> — for Lists</h3>
+      <pre data-lang="Java"><code><span class="cn">List</span>&lt;<span class="cn">Integer</span>&gt; nums = <span class="cn">Arrays</span>.<span class="fn">asList</span>(<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">5</span>, <span class="nm">9</span>);
+
+<span class="cm">// Natural order (uses compareTo)</span>
+<span class="cn">Collections</span>.<span class="fn">sort</span>(nums);
+System.out.<span class="fn">println</span>(nums); <span class="cm">// [1, 1, 3, 4, 5, 9]</span>
+
+<span class="cm">// Reverse order</span>
+<span class="cn">Collections</span>.<span class="fn">sort</span>(nums, <span class="cn">Collections</span>.<span class="fn">reverseOrder</span>());
+System.out.<span class="fn">println</span>(nums); <span class="cm">// [9, 5, 4, 3, 1, 1]</span>
+
+<span class="cm">// Same as list.sort() in Java 8+</span>
+nums.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">naturalOrder</span>());</code></pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-purple">Arrays.sort()</span> — for arrays</h3>
+      <pre data-lang="Java"><code><span class="kw">int</span>[] arr = {<span class="nm">5</span>, <span class="nm">2</span>, <span class="nm">8</span>, <span class="nm">1</span>, <span class="nm">9</span>};
+<span class="cn">Arrays</span>.<span class="fn">sort</span>(arr);
+<span class="cm">// Output: [1, 2, 5, 8, 9]</span>
+
+<span class="cn">String</span>[] words = {<span class="st">"Banana"</span>, <span class="st">"Apple"</span>, <span class="st">"Cherry"</span>};
+<span class="cn">Arrays</span>.<span class="fn">sort</span>(words);
+<span class="cm">// Output: [Apple, Banana, Cherry]</span>
+
+<span class="cm">// Partial array sort (index 1 to 3)</span>
+<span class="cn">Arrays</span>.<span class="fn">sort</span>(arr, <span class="nm">1</span>, <span class="nm">4</span>);
+
+<span class="cm">// Object array with Comparator</span>
+<span class="cn">Arrays</span>.<span class="fn">sort</span>(words, <span class="cn">Comparator</span>.<span class="fn">reverseOrder</span>());
+<span class="cm">// Output: [Cherry, Banana, Apple]</span></code></pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-green">Stream.sorted()</span> — Java 8+ streams</h3>
+      <pre data-lang="Java"><code><span class="cn">List</span>&lt;<span class="cn">Student</span>&gt; sorted = studentList.<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>()                         <span class="cm">// uses compareTo()</span>
+    .<span class="fn">collect</span>(<span class="cn">Collectors</span>.<span class="fn">toList</span>());
+
+<span class="cm">// Or with custom comparator</span>
+<span class="cn">List</span>&lt;<span class="cn">Student</span>&gt; byName = studentList.<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>(<span class="cn">Comparator</span>.<span class="fn">comparing</span>(s -> s.name))
+    .<span class="fn">collect</span>(<span class="cn">Collectors</span>.<span class="fn">toList</span>());
+
+<span class="cm">// Chained: by marks desc, then name asc</span>
+<span class="cn">List</span>&lt;<span class="cn">Student</span>&gt; complex = studentList.<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>(<span class="cn">Comparator</span>.<span class="fn">comparingInt</span>(<span class="cn">Student</span>::marks)
+                      .<span class="fn">reversed</span>()
+                      .<span class="fn">thenComparing</span>(s -> s.name))
+    .<span class="fn">collect</span>(<span class="cn">Collectors</span>.<span class="fn">toList</span>());</code></pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-yellow">Comparator.comparing()</span> — Modern Java 8 way</h3>
+      <pre data-lang="Java"><code><span class="cm">// Instead of writing lambdas, use factory methods:</span>
+
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">comparing</span>(<span class="cn">Employee</span>::getName));
+
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">comparingDouble</span>(<span class="cn">Employee</span>::getSalary));
+
+<span class="cm">// Chain multiple: salary asc, then name asc</span>
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">comparingDouble</span>(<span class="cn">Employee</span>::getSalary)
+                   .<span class="fn">thenComparing</span>(<span class="cn">Employee</span>::getName));
+
+<span class="cm">// Reverse a Comparable's natural order</span>
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">reverseOrder</span>());
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">naturalOrder</span>());</code></pre>
+    </div>
+  </section>
+
+  <!-- SECTION 7 -->
+  <section class="section fade-in" id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Gotchas & Tips</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-red">GOTCHA 1</span> Integer overflow in compareTo()</h3>
+      <pre data-lang="Java"><code><span class="cm">// ❌ WRONG — can overflow for large negatives</span>
+<span class="kw">return this</span>.value - other.value;
+
+<span class="cm">// ✅ SAFE — no overflow risk</span>
+<span class="kw">return</span> <span class="cn">Integer</span>.<span class="fn">compare</span>(<span class="kw">this</span>.value, other.value);
+
+<span class="cm">// Why? Integer.MIN_VALUE - 1 wraps to MAX_VALUE → wrong sort!</span></code></pre>
+      <div class="callout danger">
+        <span class="callout-icon">🚨</span>
+        <p>Always use <span class="inline-code">Integer.compare(a, b)</span>, <span class="inline-code">Double.compare(a, b)</span> for numeric comparisons — NOT subtraction.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-red">GOTCHA 2</span> Consistency with equals()</h3>
+      <pre data-lang="Java"><code><span class="cm">// If compareTo returns 0, equals() should return true</span>
+<span class="cm">// TreeSet uses compareTo, NOT equals — inconsistency = bugs!</span>
+
+<span class="kw">class</span> <span class="cn">Product</span> <span class="kw">implements</span> <span class="cn">Comparable</span>&lt;<span class="cn">Product</span>&gt; {
+    <span class="cn">String</span> name; <span class="kw">int</span> id;
+
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cn">Product</span> o) {
+        <span class="kw">return this</span>.name.<span class="fn">compareTo</span>(o.name); <span class="cm">// by name</span>
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="cn">Object</span> o) {
+        <span class="kw">return this</span>.id == ((<span class="cn">Product</span>)o).id; <span class="cm">// by id ← MISMATCH!</span>
+    }
+}
+<span class="cm">// TreeSet: two Products with same name but different ids</span>
+<span class="cm">// will be treated as DUPLICATES (compareTo=0) → data loss!</span></code></pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-green">TIP</span> Null-safe comparisons</h3>
+      <pre data-lang="Java"><code><span class="cm">// Handle nulls in Comparator</span>
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">nullsFirst</span>(
+    <span class="cn">Comparator</span>.<span class="fn">comparing</span>(<span class="cn">Employee</span>::getName)
+));
+
+<span class="kw">list</span>.<span class="fn">sort</span>(<span class="cn">Comparator</span>.<span class="fn">nullsLast</span>(
+    <span class="cn">Comparator</span>.<span class="fn">comparing</span>(<span class="cn">Employee</span>::getSalary)
+));</code></pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-cyan">QUICK RECAP</span> When to use what</h3>
+      <table class="compare-table">
+        <thead><tr><th>Scenario</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>Sort List of custom objects, one natural order</td><td><span class="inline-code">Comparable + Collections.sort(list)</span></td></tr>
+          <tr><td>Sort with multiple strategies</td><td><span class="inline-code">Comparator lambda</span></td></tr>
+          <tr><td>Sorted Set with no duplicates</td><td><span class="inline-code">TreeSet (uses Comparable)</span></td></tr>
+          <tr><td>Priority Queue (min-heap)</td><td><span class="inline-code">PriorityQueue (uses Comparable)</span></td></tr>
+          <tr><td>Sort in a stream pipeline</td><td><span class="inline-code">stream().sorted()</span></td></tr>
+          <tr><td>Sort int[] / String[] array</td><td><span class="inline-code">Arrays.sort()</span></td></tr>
+          <tr><td>Reverse natural order</td><td><span class="inline-code">Comparator.reverseOrder()</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>☕ Java Natural Sorting &amp; Comparable — Study Guide</p>
+    <p style="margin-top:8px;font-size:0.7rem;">Comparable · Comparator · Collections.sort · Arrays.sort · TreeSet · PriorityQueue · Stream.sorted</p>
+  </footer>
+
+</div>
+
+<script>
+  // Interactive sort demo
+  const items = [
+    { label: "Riya",  val: 85,  color: "#a78bfa" },
+    { label: "Arjun", val: 78,  color: "#ff6b6b" },
+    { label: "Priya", val: 95,  color: "#34d399" },
+    { label: "Sumit", val: 92,  color: "#00e5ff" },
+    { label: "Neha",  val: 67,  color: "#fbbf24" },
+  ];
+
+  let sorted = false;
+  const maxVal = 100;
+
+  function renderBars(data) {
+    const barsEl = document.getElementById('bars1');
+    const labelsEl = document.getElementById('labels1');
+    barsEl.innerHTML = '';
+    labelsEl.innerHTML = '';
+
+    data.forEach(item => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = (item.val / maxVal * 100) + '%';
+      bar.style.background = `linear-gradient(to top, ${item.color}cc, ${item.color}55)`;
+      bar.style.border = `1px solid ${item.color}44`;
+      bar.textContent = item.val;
+      barsEl.appendChild(bar);
+
+      const lbl = document.createElement('span');
+      lbl.textContent = item.label;
+      lbl.style.color = item.color;
+      labelsEl.appendChild(lbl);
+    });
+  }
+
+  function toggleSort() {
+    const btn = document.querySelector('.sort-btn');
+    const status = document.getElementById('sort-status');
+    if (!sorted) {
+      const s = [...items].sort((a, b) => a.val - b.val);
+      renderBars(s);
+      sorted = true;
+      btn.textContent = '↩ Reset ( unsorted )';
+      status.textContent = '// compareTo() returned negative for smaller values → moved left';
+      status.style.color = '#34d399';
+    } else {
+      renderBars(items);
+      sorted = false;
+      btn.textContent = '▶ Collections.sort( list )';
+      status.textContent = '';
+    }
+  }
+
+  // Initial render
+  renderBars(items);
+</script>
+</body>
+</html>

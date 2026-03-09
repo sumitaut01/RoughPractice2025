@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Map Interface — Complete Study Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink: #0c0f1a;
+  --paper: #f5f0e8;
+  --cream: #ede8d8;
+  --warm: #d4c9a8;
+  --muted: #8a8070;
+  --accent: #c84b2f;
+  --accent2: #2f6bc8;
+  --accent3: #2a8c5a;
+  --gold: #b8860b;
+  --surface: #1a1e2e;
+  --surface2: #242838;
+  --border-dark: #2e3448;
+
+  --hm-color: #e05c3a;
+  --hm-bg: #2a1208;
+  --lhm-color: #f0a050;
+  --lhm-bg: #1f1408;
+  --tm-color: #4a9eff;
+  --tm-bg: #08142a;
+  --chtm-color: #50d090;
+  --chtm-bg: #081a10;
+  --idhm-color: #c080ff;
+  --idhm-bg: #180828;
+  --enum-color: #ffcc44;
+  --enum-bg: #1a1508;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: #2e3448; border-radius: 3px; }
+
+/* ── HERO ────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(200,75,47,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 40%, rgba(47,107,200,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 90%, rgba(42,140,90,0.08) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  position: relative;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(48px, 9vw, 110px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  position: relative;
+  margin-bottom: 12px;
+}
+.hero-title .line1 { display: block; color: var(--paper); }
+.hero-title .line2 { display: block; color: var(--accent); font-style: italic; }
+.hero-title .line3 { display: block; color: var(--warm); font-size: 0.55em; font-weight: 300; letter-spacing: 2px; margin-top: 8px; }
+
+.hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 24px;
+  font-family: 'DM Mono', monospace;
+  position: relative;
+}
+
+.nav-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 40px;
+  position: relative;
+}
+.nav-pill {
+  padding: 8px 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--warm);
+  background: rgba(255,255,255,0.04);
+  transition: all 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+}
+.nav-pill:hover { background: var(--accent); border-color: var(--accent); color: white; transform: translateY(-2px); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 2px;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+/* ── LAYOUT ────────────────────────────────────────────────────── */
+.page { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+section { padding: 80px 0 60px; }
+
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-tag::after { content: ''; flex: 1; height: 1px; background: rgba(200,75,47,0.25); }
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 32px;
+  color: var(--paper);
+}
+.section-title em { color: var(--accent); font-style: italic; }
+
+/* ── HIERARCHY TREE ────────────────────────────────────────────── */
+.hierarchy {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: 16px;
+  padding: 32px;
+  overflow-x: auto;
+}
+.tree { font-family: 'DM Mono', monospace; font-size: 13px; }
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  position: relative;
+}
+.node-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.node-badge:hover { transform: scale(1.05); }
+.badge-interface { color: var(--tm-color); border-color: rgba(74,158,255,0.4); background: rgba(74,158,255,0.08); }
+.badge-abstract { color: var(--lhm-color); border-color: rgba(240,160,80,0.4); background: rgba(240,160,80,0.08); }
+.badge-class { color: var(--chtm-color); border-color: rgba(80,208,144,0.4); background: rgba(80,208,144,0.08); }
+.badge-class-r { color: var(--accent); border-color: rgba(200,75,47,0.4); background: rgba(200,75,47,0.08); }
+.badge-enum { color: var(--enum-color); border-color: rgba(255,204,68,0.4); background: rgba(255,204,68,0.08); }
+
+.node-desc { font-size: 11px; color: var(--muted); font-family: 'Outfit', sans-serif; }
+.tree-indent { padding-left: 28px; border-left: 1px dashed rgba(255,255,255,0.08); margin-left: 16px; }
+.tree-connector { color: rgba(255,255,255,0.2); font-size: 16px; margin-right: -4px; }
+
+/* ── IMPL CARDS ────────────────────────────────────────────────── */
+.impl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.impl-card {
+  border-radius: 14px;
+  border: 1px solid;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.impl-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+
+.card-head {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid;
+}
+.card-class-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.card-since {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+.card-body { padding: 16px 20px; }
+.card-tagline { font-size: 13px; margin-bottom: 14px; color: var(--warm); font-style: italic; }
+
+.prop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.prop {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.prop-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; }
+.prop-value { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; }
+
+.card-behavior { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+.card-behavior strong { color: var(--paper); }
+
+/* HashMap */
+.card-hm { background: var(--hm-bg); border-color: rgba(224,92,58,0.3); }
+.card-hm .card-head { border-color: rgba(224,92,58,0.2); background: rgba(224,92,58,0.08); }
+.card-hm .card-class-name { color: var(--hm-color); }
+
+/* LinkedHashMap */
+.card-lhm { background: var(--lhm-bg); border-color: rgba(240,160,80,0.3); }
+.card-lhm .card-head { border-color: rgba(240,160,80,0.2); background: rgba(240,160,80,0.08); }
+.card-lhm .card-class-name { color: var(--lhm-color); }
+
+/* TreeMap */
+.card-tm { background: var(--tm-bg); border-color: rgba(74,158,255,0.3); }
+.card-tm .card-head { border-color: rgba(74,158,255,0.2); background: rgba(74,158,255,0.08); }
+.card-tm .card-class-name { color: var(--tm-color); }
+
+/* ConcurrentHashMap */
+.card-chtm { background: var(--chtm-bg); border-color: rgba(80,208,144,0.3); }
+.card-chtm .card-head { border-color: rgba(80,208,144,0.2); background: rgba(80,208,144,0.08); }
+.card-chtm .card-class-name { color: var(--chtm-color); }
+
+/* IdentityHashMap */
+.card-idhm { background: var(--idhm-bg); border-color: rgba(192,128,255,0.3); }
+.card-idhm .card-head { border-color: rgba(192,128,255,0.2); background: rgba(192,128,255,0.08); }
+.card-idhm .card-class-name { color: var(--idhm-color); }
+
+/* EnumMap */
+.card-enum { background: var(--enum-bg); border-color: rgba(255,204,68,0.3); }
+.card-enum .card-head { border-color: rgba(255,204,68,0.2); background: rgba(255,204,68,0.08); }
+.card-enum .card-class-name { color: var(--enum-color); }
+
+/* ── METHODS SECTION ───────────────────────────────────────────── */
+.methods-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.mtab {
+  padding: 7px 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-family: 'Outfit', sans-serif;
+}
+.mtab:hover { border-color: var(--accent); color: var(--paper); }
+.mtab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+.method-panel { display: none; }
+.method-panel.active { display: block; }
+
+.method-cards { display: flex; flex-direction: column; gap: 16px; }
+
+.method-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.method-card:hover { border-color: rgba(200,75,47,0.4); }
+.method-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border-dark);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.method-sig {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: var(--lhm-color);
+}
+.method-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.mbadge {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mb-o1 { background: rgba(42,140,90,0.2); color: #50d090; border: 1px solid rgba(80,208,144,0.3); }
+.mb-olog { background: rgba(74,158,255,0.2); color: var(--tm-color); border: 1px solid rgba(74,158,255,0.3); }
+.mb-on { background: rgba(200,75,47,0.2); color: var(--hm-color); border: 1px solid rgba(200,75,47,0.3); }
+.mb-sync { background: rgba(192,128,255,0.2); color: var(--idhm-color); border: 1px solid rgba(192,128,255,0.3); }
+.mb-default { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid rgba(255,255,255,0.1); }
+.mb-java8 { background: rgba(255,204,68,0.15); color: var(--enum-color); border: 1px solid rgba(255,204,68,0.3); }
+
+.method-body { padding: 14px 20px; }
+.method-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+.method-desc strong { color: var(--paper); }
+.method-behaviors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+.behavior-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(0,0,0,0.25);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.bicon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.blabel { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; display: block; margin-bottom: 2px; }
+.bval { color: var(--paper); font-size: 12px; }
+
+/* ── CODE BLOCKS ───────────────────────────────────────────────── */
+.code-block {
+  background: #080c16;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 18px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+.code-block .kw { color: #c084fc; }
+.code-block .type { color: #60a5fa; }
+.code-block .str { color: #86efac; }
+.code-block .num { color: #fde68a; }
+.code-block .comment { color: #374151; font-style: italic; }
+.code-block .method-c { color: #fb923c; }
+.code-block .out { color: #6ee7b7; }
+.code-block .line-hl { background: rgba(200,75,47,0.12); display: block; margin: 0 -20px; padding: 0 20px; border-left: 2px solid var(--accent); }
+
+/* ── FAIL FAST / FAIL SAFE ─────────────────────────────────────── */
+.ff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+@media(max-width:700px){ .ff-grid { grid-template-columns: 1fr; } }
+
+.ff-card {
+  border-radius: 14px;
+  border: 1px solid;
+  overflow: hidden;
+}
+.ff-fast { background: rgba(200,75,47,0.06); border-color: rgba(200,75,47,0.3); }
+.ff-safe { background: rgba(42,140,90,0.06); border-color: rgba(42,140,90,0.3); }
+.ff-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ff-fast .ff-head { border-color: rgba(200,75,47,0.2); background: rgba(200,75,47,0.1); }
+.ff-safe .ff-head { border-color: rgba(42,140,90,0.2); background: rgba(42,140,90,0.1); }
+.ff-icon { font-size: 24px; }
+.ff-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; }
+.ff-fast .ff-title { color: var(--hm-color); }
+.ff-safe .ff-title { color: var(--chtm-color); }
+.ff-subtitle { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.ff-body { padding: 16px 20px; font-size: 13px; color: #94a3b8; line-height: 1.7; }
+.ff-body strong { color: var(--paper); }
+
+.ff-list { list-style: none; margin: 10px 0; }
+.ff-list li { display: flex; gap: 8px; padding: 4px 0; }
+.ff-list li::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.ff-safe .ff-list li::before { color: var(--chtm-color); }
+
+.exception-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  background: rgba(200,75,47,0.15);
+  border: 1px solid rgba(200,75,47,0.3);
+  border-radius: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--hm-color);
+  margin: 2px 3px;
+}
+
+/* ── COMPARISON TABLE ──────────────────────────────────────────── */
+.comp-wrapper { overflow-x: auto; }
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.comp-table th {
+  background: var(--surface2);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border-dark);
+  white-space: nowrap;
+}
+.comp-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  vertical-align: middle;
+}
+.comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+.comp-table .aspect-col { color: var(--warm); font-weight: 500; }
+.yes { color: var(--chtm-color); font-weight: 600; }
+.no { color: var(--hm-color); font-weight: 600; }
+.partial { color: var(--lhm-color); font-weight: 600; }
+.row-hm td:nth-child(2) { color: var(--hm-color); }
+.row-lhm td:nth-child(3) { color: var(--lhm-color); }
+.row-tm td:nth-child(4) { color: var(--tm-color); }
+.row-chtm td:nth-child(5) { color: var(--chtm-color); }
+
+/* ── ITERATOR DIAGRAM ──────────────────────────────────────────── */
+.iterator-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+@media(max-width:700px){ .iterator-visual { grid-template-columns: 1fr; } }
+
+.iter-box {
+  border-radius: 12px;
+  border: 1px solid;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.iter-ff { background: rgba(200,75,47,0.05); border-color: rgba(200,75,47,0.3); }
+.iter-fs { background: rgba(42,140,90,0.05); border-color: rgba(42,140,90,0.3); }
+.iter-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; font-family: 'DM Mono', monospace; }
+.iter-ff .iter-title { color: var(--hm-color); }
+.iter-fs .iter-title { color: var(--chtm-color); }
+
+.iter-steps { display: flex; flex-direction: column; gap: 6px; }
+.iter-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.step-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+.iter-ff .step-num { background: rgba(200,75,47,0.3); color: var(--hm-color); }
+.iter-fs .step-num { background: rgba(42,140,90,0.3); color: var(--chtm-color); }
+.step-text { color: #94a3b8; line-height: 1.4; }
+.step-text strong { color: var(--paper); }
+
+.iter-step.danger { border-color: rgba(200,75,47,0.3); background: rgba(200,75,47,0.08); }
+.iter-step.safe { border-color: rgba(42,140,90,0.3); background: rgba(42,140,90,0.08); }
+
+/* ── WHO USES WHAT ─────────────────────────────────────────────── */
+.use-case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.use-case {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 12.5px;
+  transition: all 0.2s;
+}
+.use-case:hover { border-color: rgba(200,75,47,0.3); }
+.uc-title { font-weight: 700; font-family: 'DM Mono', monospace; font-size: 13px; margin-bottom: 8px; }
+.uc-scenario { color: var(--muted); margin-bottom: 6px; font-size: 12px; }
+.uc-choice { font-weight: 600; }
+
+/* ── DIVIDER ───────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,75,47,0.3), rgba(47,107,200,0.3), transparent);
+  margin: 0;
+}
+
+/* Floating TOC indicator */
+.toc-indicator {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.toc-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.toc-dot.active { background: var(--accent); box-shadow: 0 0 10px rgba(200,75,47,0.5); }
+.toc-dot:hover { background: rgba(255,255,255,0.4); }
+
+@media(max-width:900px){ .toc-indicator { display: none; } }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* modcount highlight */
+.modcount-box {
+  background: rgba(192,128,255,0.07);
+  border: 1px solid rgba(192,128,255,0.25);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.modcount-box .mc-title { color: var(--idhm-color); font-weight: 700; font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+.modcount-box p { color: #94a3b8; line-height: 1.7; }
+.modcount-box strong { color: var(--paper); }
+</style>
+</head>
+<body>
+
+<!-- TOC Dots -->
+<div class="toc-indicator">
+  <div class="toc-dot active" onclick="scrollTo('#hero')" title="Home"></div>
+  <div class="toc-dot" onclick="scrollTo('#hierarchy')" title="Hierarchy"></div>
+  <div class="toc-dot" onclick="scrollTo('#implementations')" title="Implementations"></div>
+  <div class="toc-dot" onclick="scrollTo('#methods')" title="Methods"></div>
+  <div class="toc-dot" onclick="scrollTo('#failfast')" title="Fail-Fast / Fail-Safe"></div>
+  <div class="toc-dot" onclick="scrollTo('#comparison')" title="Comparison"></div>
+  <div class="toc-dot" onclick="scrollTo('#usecases')" title="Use Cases"></div>
+</div>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<div class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-eyebrow fade-up">☕ Java Collections Framework</div>
+  <h1 class="hero-title fade-up delay-1">
+    <span class="line1">Map</span>
+    <span class="line2">Interface</span>
+    <span class="line3">Complete Study Guide</span>
+  </h1>
+  <p class="hero-sub fade-up delay-2">
+    Hierarchy · Implementations · Methods · Fail-Fast · Fail-Safe · Gotchas
+  </p>
+
+  <div class="nav-pills fade-up delay-3">
+    <a class="nav-pill" href="#hierarchy">Hierarchy</a>
+    <a class="nav-pill" href="#implementations">Implementations</a>
+    <a class="nav-pill" href="#methods">Methods</a>
+    <a class="nav-pill" href="#failfast">Fail-Fast / Fail-Safe</a>
+    <a class="nav-pill" href="#comparison">Comparison</a>
+    <a class="nav-pill" href="#usecases">Use Cases</a>
+  </div>
+
+  <div class="scroll-hint">↓ scroll to explore</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ HIERARCHY ═══════════════════════════ -->
+<section id="hierarchy">
+<div class="page">
+  <div class="section-tag">Section 01 — Interface Hierarchy</div>
+  <h2 class="section-title">The <em>Map</em> Family Tree</h2>
+
+  <div class="hierarchy">
+    <div class="tree">
+
+      <div class="tree-node">
+        <span class="node-badge badge-interface">«interface» Map&lt;K,V&gt;</span>
+        <span class="node-desc">Root interface — key-value pairs, no duplicate keys</span>
+      </div>
+
+      <div class="tree-indent">
+
+        <div class="tree-node">
+          <span class="tree-connector">├─</span>
+          <span class="node-badge badge-interface">«interface» SortedMap&lt;K,V&gt;</span>
+          <span class="node-desc">extends Map — keys in natural/custom order</span>
+        </div>
+        <div class="tree-indent">
+          <div class="tree-node">
+            <span class="tree-connector">└─</span>
+            <span class="node-badge badge-interface">«interface» NavigableMap&lt;K,V&gt;</span>
+            <span class="node-desc">extends SortedMap — floor/ceiling/higher/lower navigation</span>
+          </div>
+          <div class="tree-indent">
+            <div class="tree-node">
+              <span class="tree-connector">└─</span>
+              <span class="node-badge badge-abstract">«abstract» AbstractMap&lt;K,V&gt;</span>
+              <span class="node-desc">skeletal implementation of Map</span>
+            </div>
+            <div class="tree-indent">
+              <div class="tree-node">
+                <span class="tree-connector">└─</span>
+                <span class="node-badge badge-class">TreeMap&lt;K,V&gt;</span>
+                <span class="node-desc">Red-Black tree · O(log n) · sorted · NavigableMap</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-node">
+          <span class="tree-connector">├─</span>
+          <span class="node-badge badge-interface">«interface» ConcurrentMap&lt;K,V&gt;</span>
+          <span class="node-desc">extends Map — thread-safe atomic operations</span>
+        </div>
+        <div class="tree-indent">
+          <div class="tree-node">
+            <span class="tree-connector">└─</span>
+            <span class="node-badge badge-interface">«interface» ConcurrentNavigableMap&lt;K,V&gt;</span>
+            <span class="node-desc">ConcurrentMap + NavigableMap</span>
+          </div>
+          <div class="tree-indent">
+            <div class="tree-node">
+              <span class="tree-connector">└─</span>
+              <span class="node-badge badge-class">ConcurrentSkipListMap&lt;K,V&gt;</span>
+              <span class="node-desc">Sorted + thread-safe · skip list</span>
+            </div>
+          </div>
+          <div class="tree-node">
+            <span class="tree-connector">└─</span>
+            <span class="node-badge badge-class">ConcurrentHashMap&lt;K,V&gt;</span>
+            <span class="node-desc">Segment/bucket locking · fail-safe iterator</span>
+          </div>
+        </div>
+
+        <div class="tree-node">
+          <span class="tree-connector">├─</span>
+          <span class="node-badge badge-abstract">«abstract» AbstractMap&lt;K,V&gt;</span>
+          <span class="node-desc">base class for most implementations</span>
+        </div>
+        <div class="tree-indent">
+          <div class="tree-node">
+            <span class="tree-connector">├─</span>
+            <span class="node-badge badge-class-r">HashMap&lt;K,V&gt;</span>
+            <span class="node-desc">Hash table · O(1) avg · most used · fail-fast</span>
+          </div>
+          <div class="tree-indent">
+            <div class="tree-node">
+              <span class="tree-connector">└─</span>
+              <span class="node-badge badge-class">LinkedHashMap&lt;K,V&gt;</span>
+              <span class="node-desc">HashMap + doubly-linked list · insertion order</span>
+            </div>
+          </div>
+          <div class="tree-node">
+            <span class="tree-connector">├─</span>
+            <span class="node-badge badge-class">WeakHashMap&lt;K,V&gt;</span>
+            <span class="node-desc">Weak references for keys — GC can collect</span>
+          </div>
+          <div class="tree-node">
+            <span class="tree-connector">├─</span>
+            <span class="node-badge badge-class">IdentityHashMap&lt;K,V&gt;</span>
+            <span class="node-desc">Uses == instead of .equals() for key comparison</span>
+          </div>
+          <div class="tree-node">
+            <span class="tree-connector">└─</span>
+            <span class="node-badge badge-enum">EnumMap&lt;K extends Enum&lt;K&gt;,V&gt;</span>
+            <span class="node-desc">Enum keys only · array-backed · extremely fast</span>
+          </div>
+        </div>
+
+        <div class="tree-node">
+          <span class="tree-connector">└─</span>
+          <span class="node-badge badge-class">Hashtable&lt;K,V&gt;</span>
+          <span class="node-desc">Legacy · synchronized · no null keys/values · avoid</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap; font-size:12px; font-family:'DM Mono',monospace;">
+    <span style="display:flex;align-items:center;gap:6px"><span class="node-badge badge-interface" style="font-size:10px">«interface»</span> Interface</span>
+    <span style="display:flex;align-items:center;gap:6px"><span class="node-badge badge-abstract" style="font-size:10px">«abstract»</span> Abstract Class</span>
+    <span style="display:flex;align-items:center;gap:6px"><span class="node-badge badge-class" style="font-size:10px">Class</span> Concrete Class</span>
+    <span style="display:flex;align-items:center;gap:6px"><span class="node-badge badge-class-r" style="font-size:10px">Class*</span> Most Used</span>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ IMPLEMENTATIONS ═══════════════════════════ -->
+<section id="implementations">
+<div class="page">
+  <div class="section-tag">Section 02 — Implementations</div>
+  <h2 class="section-title">Six <em>Key</em> Implementations</h2>
+
+  <div class="impl-grid">
+
+    <!-- HashMap -->
+    <div class="impl-card card-hm">
+      <div class="card-head">
+        <div class="card-class-name">HashMap</div>
+        <div class="card-since">java.util · since Java 1.2</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"The workhorse — fast, unordered, everywhere"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Ordering</span><span class="prop-value" style="color:var(--hm-color)">None</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--chtm-color)">1 allowed</span></div>
+          <div class="prop"><span class="prop-label">Null Values</span><span class="prop-value" style="color:var(--chtm-color)">Many allowed</span></div>
+          <div class="prop"><span class="prop-label">Thread Safe</span><span class="prop-value" style="color:var(--hm-color)">No</span></div>
+          <div class="prop"><span class="prop-label">put / get</span><span class="prop-value" style="color:var(--chtm-color)">O(1) avg</span></div>
+          <div class="prop"><span class="prop-label">Iterator</span><span class="prop-value" style="color:var(--hm-color)">Fail-Fast</span></div>
+        </div>
+        <div class="card-behavior">
+          <strong>Internals:</strong> Array of buckets (Node&lt;K,V&gt;[]). Each bucket is a linked list, upgraded to a <strong>Red-Black Tree</strong> when bucket size ≥ 8 (Java 8+). Default capacity 16, load factor 0.75. Rehashing doubles capacity when threshold exceeded.<br><br>
+          <strong>Key comparison:</strong> Uses <code>hashCode()</code> to find bucket, then <code>equals()</code> to match key.
+        </div>
+      </div>
+    </div>
+
+    <!-- LinkedHashMap -->
+    <div class="impl-card card-lhm">
+      <div class="card-head">
+        <div class="card-class-name">LinkedHashMap</div>
+        <div class="card-since">java.util · since Java 1.4 · extends HashMap</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"HashMap + insertion order memory"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Ordering</span><span class="prop-value" style="color:var(--lhm-color)">Insertion / Access</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--chtm-color)">1 allowed</span></div>
+          <div class="prop"><span class="prop-label">Null Values</span><span class="prop-value" style="color:var(--chtm-color)">Many allowed</span></div>
+          <div class="prop"><span class="prop-label">Thread Safe</span><span class="prop-value" style="color:var(--hm-color)">No</span></div>
+          <div class="prop"><span class="prop-label">put / get</span><span class="prop-value" style="color:var(--chtm-color)">O(1) avg</span></div>
+          <div class="prop"><span class="prop-label">Iterator</span><span class="prop-value" style="color:var(--hm-color)">Fail-Fast</span></div>
+        </div>
+        <div class="card-behavior">
+          <strong>Extra:</strong> Maintains a doubly-linked list connecting entries in insertion order. Override <code>accessOrder=true</code> for LRU cache (access order). <strong>removeEldestEntry()</strong> enables automatic eviction — perfect for LRU caches.
+        </div>
+      </div>
+    </div>
+
+    <!-- TreeMap -->
+    <div class="impl-card card-tm">
+      <div class="card-head">
+        <div class="card-class-name">TreeMap</div>
+        <div class="card-since">java.util · since Java 1.2 · Red-Black Tree</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"Sorted by key, navigation superpowers"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Ordering</span><span class="prop-value" style="color:var(--tm-color)">Natural / Comparator</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--hm-color)">No (throws NPE)</span></div>
+          <div class="prop"><span class="prop-label">Null Values</span><span class="prop-value" style="color:var(--chtm-color)">Allowed</span></div>
+          <div class="prop"><span class="prop-label">Thread Safe</span><span class="prop-value" style="color:var(--hm-color)">No</span></div>
+          <div class="prop"><span class="prop-label">put / get</span><span class="prop-value" style="color:var(--tm-color)">O(log n)</span></div>
+          <div class="prop"><span class="prop-label">Iterator</span><span class="prop-value" style="color:var(--hm-color)">Fail-Fast</span></div>
+        </div>
+        <div class="card-behavior">
+          <strong>NavigableMap methods:</strong> <code>firstKey()</code>, <code>lastKey()</code>, <code>floorKey(k)</code>, <code>ceilingKey(k)</code>, <code>headMap(k)</code>, <code>tailMap(k)</code>, <code>subMap(k1,k2)</code>. Keys must implement <code>Comparable</code> or provide a <code>Comparator</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ConcurrentHashMap -->
+    <div class="impl-card card-chtm">
+      <div class="card-head">
+        <div class="card-class-name">ConcurrentHashMap</div>
+        <div class="card-since">java.util.concurrent · since Java 1.5</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"Thread-safe, high-performance, no full lock"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Ordering</span><span class="prop-value" style="color:var(--hm-color)">None</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--hm-color)">Not allowed</span></div>
+          <div class="prop"><span class="prop-label">Null Values</span><span class="prop-value" style="color:var(--hm-color)">Not allowed</span></div>
+          <div class="prop"><span class="prop-label">Thread Safe</span><span class="prop-value" style="color:var(--chtm-color)">Yes (CAS+lock)</span></div>
+          <div class="prop"><span class="prop-label">put / get</span><span class="prop-value" style="color:var(--chtm-color)">O(1) avg</span></div>
+          <div class="prop"><span class="prop-label">Iterator</span><span class="prop-value" style="color:var(--chtm-color)">Fail-Safe</span></div>
+        </div>
+        <div class="card-behavior">
+          <strong>Java 7:</strong> 16 segments, each independently locked. <strong>Java 8+:</strong> CAS (Compare-And-Swap) for put + synchronized only on individual bucket heads. Iterator works on a <strong>snapshot</strong> — modifications during iteration don't throw, but may not be reflected.
+        </div>
+      </div>
+    </div>
+
+    <!-- IdentityHashMap -->
+    <div class="impl-card card-idhm">
+      <div class="card-head">
+        <div class="card-class-name">IdentityHashMap</div>
+        <div class="card-since">java.util · since Java 1.4</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"Reference equality, not .equals()"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Key Equality</span><span class="prop-value" style="color:var(--idhm-color)">== (reference)</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--chtm-color)">Allowed</span></div>
+          <div class="prop"><span class="prop-label">Thread Safe</span><span class="prop-value" style="color:var(--hm-color)">No</span></div>
+          <div class="prop"><span class="prop-label">Use Case</span><span class="prop-value" style="color:var(--idhm-color)">Serialization</span></div>
+        </div>
+        <div class="card-behavior">
+          Uses <code>System.identityHashCode()</code> instead of <code>hashCode()</code>. Two different String objects with the same value are treated as <strong>different keys</strong>. Used in serialization frameworks and topology-preserving graph algorithms.
+        </div>
+      </div>
+    </div>
+
+    <!-- EnumMap -->
+    <div class="impl-card card-enum">
+      <div class="card-head">
+        <div class="card-class-name">EnumMap</div>
+        <div class="card-since">java.util · since Java 1.5</div>
+      </div>
+      <div class="card-body">
+        <div class="card-tagline">"Enum keys only — blazing fast array-backed"</div>
+        <div class="prop-grid">
+          <div class="prop"><span class="prop-label">Key Type</span><span class="prop-value" style="color:var(--enum-color)">Enum only</span></div>
+          <div class="prop"><span class="prop-label">Ordering</span><span class="prop-value" style="color:var(--enum-color)">Enum ordinal</span></div>
+          <div class="prop"><span class="prop-label">Null Keys</span><span class="prop-value" style="color:var(--hm-color)">Not allowed</span></div>
+          <div class="prop"><span class="prop-label">Performance</span><span class="prop-value" style="color:var(--chtm-color)">O(1) — fastest</span></div>
+        </div>
+        <div class="card-behavior">
+          Internally uses a plain array indexed by enum ordinal. No hashing at all — just array index access. Extremely compact and fast. Key null throws <code>NullPointerException</code>.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ METHODS ═══════════════════════════ -->
+<section id="methods">
+<div class="page">
+  <div class="section-tag">Section 03 — Methods & Behaviour</div>
+  <h2 class="section-title">What happens when you <em>add, get,<br>replace, remove, duplicate</em>?</h2>
+
+  <div class="methods-tabs">
+    <button class="mtab active" onclick="showMethods('core')">Core Methods</button>
+    <button class="mtab" onclick="showMethods('add')">Add / Put</button>
+    <button class="mtab" onclick="showMethods('remove')">Remove / Clear</button>
+    <button class="mtab" onclick="showMethods('replace')">Replace / Update</button>
+    <button class="mtab" onclick="showMethods('query')">Query / Views</button>
+    <button class="mtab" onclick="showMethods('java8')">Java 8+ Methods</button>
+  </div>
+
+  <!-- CORE -->
+  <div class="method-panel active" id="mp-core">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V put(K key, V value)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) HashMap</span><span class="mbadge mb-olog">O(log n) TreeMap</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Associates <strong>key</strong> with <strong>value</strong>. Returns the <strong>previous value</strong> if key existed, or <strong>null</strong> if it's a new key (or if the previous value was null).</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">➕</span><div><span class="blabel">New key</span><span class="bval">Inserts entry, returns null</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔄</span><div><span class="blabel">Duplicate key</span><span class="bval">Replaces value, returns OLD value</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔢</span><div><span class="blabel">modCount</span><span class="bval">Incremented (structural change)</span></div></div>
+          <div class="behavior-row"><span class="bicon">⚠️</span><div><span class="blabel">TreeMap null key</span><span class="bval">Throws NullPointerException</span></div></div>
+        </div>
+        <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">Integer</span>&gt; map = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+<span class="type">Integer</span> r1 = map.<span class="method-c">put</span>(<span class="str">"a"</span>, <span class="num">1</span>);    <span class="comment">// r1 = null  (new key)</span>
+<span class="type">Integer</span> r2 = map.<span class="method-c">put</span>(<span class="str">"a"</span>, <span class="num">99</span>);   <span class="comment">// r2 = 1     (returns OLD value)</span>
+<span class="comment">// map now: {"a"=99}  — old value 1 replaced</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V get(Object key)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-olog">O(log n) TreeMap</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Returns value for <strong>key</strong>, or <strong>null</strong> if key not present (also if value is explicitly null — use <code>containsKey</code> to distinguish).</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">✅</span><div><span class="blabel">Key found</span><span class="bval">Returns mapped value</span></div></div>
+          <div class="behavior-row"><span class="bicon">❌</span><div><span class="blabel">Key absent</span><span class="bval">Returns null (does NOT throw)</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔢</span><div><span class="blabel">modCount</span><span class="bval">NOT incremented (read-only)</span></div></div>
+          <div class="behavior-row"><span class="bicon">⚡</span><div><span class="blabel">LinkedHashMap accessOrder</span><span class="bval">Moves entry to tail (LRU)</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V remove(Object key)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-olog">O(log n) TreeMap</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Removes the mapping for key. Returns the <strong>removed value</strong>, or <strong>null</strong> if not found.</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">✅</span><div><span class="blabel">Key found</span><span class="bval">Removes entry, returns old value</span></div></div>
+          <div class="behavior-row"><span class="bicon">❌</span><div><span class="blabel">Key absent</span><span class="bval">Returns null, no change</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔢</span><div><span class="blabel">modCount</span><span class="bval">Incremented (structural change)</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔄</span><div><span class="blabel">remove(key,value)</span><span class="bval">Only removes if value matches too</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- ADD/PUT -->
+  <div class="method-panel" id="mp-add">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V put(K key, V value)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Main insertion method. <strong>Duplicate key → replaces value, returns old.</strong> New key → returns null.</div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"city"</span>, <span class="str">"Pune"</span>);
+map.<span class="method-c">put</span>(<span class="str">"city"</span>, <span class="str">"Mumbai"</span>);  <span class="comment">// replaces "Pune", returns "Pune"</span>
+<span class="comment">// Duplicate key behavior: old value gone, new value stored</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">void putAll(Map&lt;? extends K, ? extends V&gt; m)</span>
+        <div class="method-badges"><span class="mbadge mb-on">O(n)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Copies all mappings from given map. For each key already present, value is <strong>overwritten</strong>.</div>
+        <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; src = <span class="type">Map</span>.<span class="method-c">of</span>(<span class="str">"x"</span>,<span class="num">1</span>, <span class="str">"y"</span>,<span class="num">2</span>);
+<span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; dst = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+dst.<span class="method-c">putAll</span>(src);   <span class="comment">// dst = {x=1, y=2}</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V putIfAbsent(K key, V value)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Only inserts if key is <strong>not already present</strong> (or mapped to null). Avoids accidental overwrite. Returns existing value if present, null if inserted.</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">➕</span><div><span class="blabel">Key absent</span><span class="bval">Inserts value, returns null</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔒</span><div><span class="blabel">Key present</span><span class="bval">Does nothing, returns current value</span></div></div>
+        </div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"score"</span>, <span class="num">10</span>);
+map.<span class="method-c">putIfAbsent</span>(<span class="str">"score"</span>, <span class="num">99</span>);  <span class="comment">// ignored — key exists</span>
+map.<span class="method-c">putIfAbsent</span>(<span class="str">"level"</span>, <span class="num">1</span>);   <span class="comment">// inserted — key absent</span>
+<span class="comment">// map: {score=10, level=1}</span></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- REMOVE -->
+  <div class="method-panel" id="mp-remove">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V remove(Object key)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Removes entry for key. Returns old value or null. <strong>modCount incremented</strong> → active iterators will throw <span class="exception-pill">ConcurrentModificationException</span>.</div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"a"</span>,<span class="num">1</span>); map.<span class="method-c">put</span>(<span class="str">"b"</span>,<span class="num">2</span>);
+<span class="type">Integer</span> old = map.<span class="method-c">remove</span>(<span class="str">"a"</span>);   <span class="comment">// returns 1</span>
+<span class="type">Integer</span> none = map.<span class="method-c">remove</span>(<span class="str">"z"</span>); <span class="comment">// returns null (not found)</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">boolean remove(Object key, Object value)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Conditional remove — only removes entry if <strong>both key AND value match</strong>. Safer for concurrent-style patterns.</div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"x"</span>, <span class="num">5</span>);
+map.<span class="method-c">remove</span>(<span class="str">"x"</span>, <span class="num">5</span>);   <span class="comment">// true — removed (both match)</span>
+map.<span class="method-c">put</span>(<span class="str">"x"</span>, <span class="num">5</span>);
+map.<span class="method-c">remove</span>(<span class="str">"x"</span>, <span class="num">99</span>);  <span class="comment">// false — NOT removed (value mismatch)</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">void clear()</span>
+        <div class="method-badges"><span class="mbadge mb-on">O(n)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Removes <strong>all mappings</strong>. Map becomes empty. modCount incremented. All references to removed values become unreachable (eligible for GC).</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">🗑️</span><div><span class="blabel">Effect</span><span class="bval">map.size() → 0</span></div></div>
+          <div class="behavior-row"><span class="bicon">🔢</span><div><span class="blabel">modCount</span><span class="bval">Incremented → iterators invalidated</span></div></div>
+          <div class="behavior-row"><span class="bicon">💾</span><div><span class="blabel">Capacity</span><span class="bval">HashMap keeps internal array (not shrunk)</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- REPLACE -->
+  <div class="method-panel" id="mp-replace">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V replace(K key, V value)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Replaces value <strong>only if key is already mapped</strong>. Does nothing for absent keys. Returns old value or null.</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">✅</span><div><span class="blabel">Key present</span><span class="bval">Replaces value, returns old</span></div></div>
+          <div class="behavior-row"><span class="bicon">❌</span><div><span class="blabel">Key absent</span><span class="bval">Does nothing, returns null</span></div></div>
+        </div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"age"</span>, <span class="num">25</span>);
+map.<span class="method-c">replace</span>(<span class="str">"age"</span>, <span class="num">26</span>);    <span class="comment">// replaces → 25 returned</span>
+map.<span class="method-c">replace</span>(<span class="str">"name"</span>, <span class="str">"X"</span>);  <span class="comment">// no-op, key absent</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">boolean replace(K key, V oldValue, V newValue)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Conditional replace — only updates if key is present <strong>AND current value equals oldValue</strong>. CAS-style pattern.</div>
+        <div class="code-block">
+map.<span class="method-c">put</span>(<span class="str">"status"</span>, <span class="str">"PENDING"</span>);
+map.<span class="method-c">replace</span>(<span class="str">"status"</span>, <span class="str">"PENDING"</span>, <span class="str">"DONE"</span>);   <span class="comment">// true ✅</span>
+map.<span class="method-c">replace</span>(<span class="str">"status"</span>, <span class="str">"PENDING"</span>, <span class="str">"FAIL"</span>);   <span class="comment">// false ❌ (was "DONE")</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">void replaceAll(BiFunction&lt;K,V,V&gt; fn)</span>
+        <div class="method-badges"><span class="mbadge mb-on">O(n)</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Replaces each entry's value with the result of applying the function. Like a bulk map transformation.</div>
+        <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; prices = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+prices.<span class="method-c">put</span>(<span class="str">"apple"</span>,<span class="num">10</span>); prices.<span class="method-c">put</span>(<span class="str">"mango"</span>,<span class="num">20</span>);
+prices.<span class="method-c">replaceAll</span>((k, v) -&gt; v * <span class="num">2</span>);  <span class="comment">// double all prices</span>
+<span class="comment">// {apple=20, mango=40}</span></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- QUERY -->
+  <div class="method-panel" id="mp-query">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">Set&lt;K&gt; keySet()</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Returns a <strong>Set view</strong> of all keys. This is a <strong>live view</strong> — modifications to the map are reflected in the set and vice versa.</div>
+        <div class="method-behaviors">
+          <div class="behavior-row"><span class="bicon">👁️</span><div><span class="blabel">Type</span><span class="bval">Live backed view (not a copy)</span></div></div>
+          <div class="behavior-row"><span class="bicon">⚠️</span><div><span class="blabel">Remove via iterator</span><span class="bval">Safe — removes from map too</span></div></div>
+          <div class="behavior-row"><span class="bicon">❌</span><div><span class="blabel">Add via keySet</span><span class="bval">UnsupportedOperationException</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">Collection&lt;V&gt; values()</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Returns a <strong>Collection view</strong> of all values. Also a live view. Allows duplicates (unlike keySet). Useful for iterating values without caring about keys.</div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Returns a <strong>Set of Map.Entry objects</strong>. Most efficient way to iterate both key and value. Entry provides <code>getKey()</code>, <code>getValue()</code>, <code>setValue()</code>.</div>
+        <div class="code-block">
+<span class="comment">// Most efficient iteration pattern:</span>
+<span class="kw">for</span> (<span class="type">Map.Entry</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; e : map.<span class="method-c">entrySet</span>()) {
+    <span class="type">System</span>.out.<span class="method-c">println</span>(e.<span class="method-c">getKey</span>() + <span class="str">" → "</span> + e.<span class="method-c">getValue</span>());
+    <span class="comment">// e.setValue(newVal) also works!</span>
+}</div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V getOrDefault(Object key, V defaultValue)</span>
+        <div class="method-badges"><span class="mbadge mb-o1">O(1) avg</span><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Returns value for key, or <strong>defaultValue</strong> if key not present. Avoids null checks.</div>
+        <div class="code-block">
+<span class="comment">// Old way:</span>
+<span class="type">Integer</span> v = map.<span class="method-c">get</span>(<span class="str">"x"</span>);
+<span class="kw">if</span> (v == <span class="kw">null</span>) v = <span class="num">0</span>;
+
+<span class="comment">// Java 8 way:</span>
+<span class="type">Integer</span> v = map.<span class="method-c">getOrDefault</span>(<span class="str">"x"</span>, <span class="num">0</span>);</div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- JAVA 8 -->
+  <div class="method-panel" id="mp-java8">
+  <div class="method-cards">
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V merge(K key, V value, BiFunction&lt;V,V,V&gt; remappingFn)</span>
+        <div class="method-badges"><span class="mbadge mb-java8">Java 8</span><span class="mbadge mb-o1">O(1) avg</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">If key absent or null → insert value. If key present → apply function to old+new value. If function returns null → remove key. <strong>Perfect for accumulation patterns.</strong></div>
+        <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; wordCount = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+<span class="type">String</span>[] words = {<span class="str">"hi"</span>, <span class="str">"hello"</span>, <span class="str">"hi"</span>, <span class="str">"hi"</span>};
+<span class="kw">for</span> (<span class="type">String</span> w : words) {
+    wordCount.<span class="method-c">merge</span>(w, <span class="num">1</span>, <span class="type">Integer</span>::sum);
+}
+<span class="comment">// {hi=3, hello=1}  — clean frequency count!</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V compute(K key, BiFunction&lt;K,V,V&gt; remappingFn)</span>
+        <div class="method-badges"><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Applies function to key and current value (may be null). If result is null → removes key. Most flexible compute method.</div>
+        <div class="code-block">
+map.<span class="method-c">compute</span>(<span class="str">"count"</span>, (k, v) -&gt; v == <span class="kw">null</span> ? <span class="num">1</span> : v + <span class="num">1</span>);
+<span class="comment">// If absent: sets to 1. If present: increments.</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">V computeIfAbsent(K key, Function&lt;K,V&gt; mappingFn)</span>
+        <div class="method-badges"><span class="mbadge mb-java8">Java 8</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Only computes if key is absent. Common pattern: lazy initialization of complex values (e.g., grouping into lists).</div>
+        <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">List</span>&lt;<span class="type">String</span>&gt;&gt; groups = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+groups.<span class="method-c">computeIfAbsent</span>(<span class="str">"fruits"</span>, k -&gt; <span class="kw">new</span> <span class="type">ArrayList</span>&lt;&gt;())
+      .<span class="method-c">add</span>(<span class="str">"apple"</span>);
+<span class="comment">// Creates list only if "fruits" key doesn't exist, then adds</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-sig">void forEach(BiConsumer&lt;K,V&gt; action)</span>
+        <div class="method-badges"><span class="mbadge mb-java8">Java 8</span><span class="mbadge mb-on">O(n)</span></div>
+      </div>
+      <div class="method-body">
+        <div class="method-desc">Functional iteration over all entries. Cleaner than for-each with entrySet().</div>
+        <div class="code-block">
+map.<span class="method-c">forEach</span>((key, value) -&gt;
+    <span class="type">System</span>.out.<span class="method-c">println</span>(key + <span class="str">" = "</span> + value)
+);</div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ FAIL FAST / FAIL SAFE ═══════════════════════════ -->
+<section id="failfast">
+<div class="page">
+  <div class="section-tag">Section 04 — Iterator Safety</div>
+  <h2 class="section-title"><em>Fail-Fast</em> vs <em>Fail-Safe</em><br>Iterators</h2>
+
+  <div class="modcount-box">
+    <div class="mc-title">🔑 The modCount Mechanism — Root of Everything</div>
+    <p>Every structural modification to a HashMap (<code>put</code> new key, <code>remove</code>, <code>clear</code>) increments an internal counter called <strong>modCount</strong>. When you create an iterator, it records the current <strong>expectedModCount = modCount</strong>. On every <code>next()</code> call, the iterator checks: <strong>if (modCount != expectedModCount) → throw ConcurrentModificationException</strong>. This is fail-fast. Note: <code>put</code> on an <em>existing key</em> (just updating value) does NOT structurally modify, so it does NOT increment modCount.</p>
+  </div>
+
+  <div class="ff-grid">
+    <div class="ff-card ff-fast">
+      <div class="ff-head">
+        <span class="ff-icon">⚡</span>
+        <div>
+          <div class="ff-title">Fail-Fast</div>
+          <div class="ff-subtitle">Throws immediately on modification</div>
+        </div>
+      </div>
+      <div class="ff-body">
+        <strong>Behaviour:</strong> Iterator checks <code>modCount</code> on every <code>next()</code> call. If the map was modified since iterator creation, throws <span class="exception-pill">ConcurrentModificationException</span> immediately.<br><br>
+        <strong>Which Maps:</strong>
+        <ul class="ff-list">
+          <li>HashMap</li>
+          <li>LinkedHashMap</li>
+          <li>TreeMap</li>
+          <li>Hashtable (legacy)</li>
+          <li>WeakHashMap</li>
+          <li>IdentityHashMap</li>
+        </ul>
+        <strong>Important:</strong> This is a <em>best-effort</em> guarantee — it's not guaranteed to throw in all concurrent cases. Do not rely on it for program correctness; it's only for detecting bugs.
+      </div>
+    </div>
+
+    <div class="ff-card ff-safe">
+      <div class="ff-head">
+        <span class="ff-icon">🛡️</span>
+        <div>
+          <div class="ff-title">Fail-Safe</div>
+          <div class="ff-subtitle">Never throws, may see stale data</div>
+        </div>
+      </div>
+      <div class="ff-body">
+        <strong>Behaviour:</strong> Iterator operates on a <strong>snapshot/copy</strong> of the data. Modifications to the original map are NOT reflected in ongoing iteration. No exception thrown.<br><br>
+        <strong>Which Maps:</strong>
+        <ul class="ff-list">
+          <li>ConcurrentHashMap</li>
+          <li>ConcurrentSkipListMap</li>
+          <li>Collections.synchronizedMap() — uses lock, not truly fail-safe</li>
+        </ul>
+        <strong>Trade-off:</strong> You may iterate over <em>stale or incomplete data</em>. New entries added during iteration may or may not be visible. Removed entries may still appear briefly.
+      </div>
+    </div>
+  </div>
+
+  <!-- ITERATOR STEP-BY-STEP -->
+  <h3 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:16px;color:var(--paper)">Step-by-step: What happens when you modify during iteration?</h3>
+
+  <div class="iterator-visual">
+    <div class="iter-box iter-ff">
+      <div class="iter-title">⚡ FAIL-FAST — HashMap</div>
+      <div class="iter-steps">
+        <div class="iter-step">
+          <span class="step-num">1</span>
+          <div class="step-text">HashMap has <strong>modCount = 5</strong></div>
+        </div>
+        <div class="iter-step">
+          <span class="step-num">2</span>
+          <div class="step-text">Iterator created → records <strong>expectedModCount = 5</strong></div>
+        </div>
+        <div class="iter-step">
+          <span class="step-num">3</span>
+          <div class="step-text"><code>iterator.next()</code> → checks modCount==5 ✅ returns entry</div>
+        </div>
+        <div class="iter-step danger">
+          <span class="step-num">4</span>
+          <div class="step-text"><strong>map.put("newKey", 99)</strong> → modCount becomes <strong>6</strong></div>
+        </div>
+        <div class="iter-step danger">
+          <span class="step-num">5</span>
+          <div class="step-text"><code>iterator.next()</code> → checks: 6 ≠ 5 → <strong>throws ConcurrentModificationException!</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="iter-box iter-fs">
+      <div class="iter-title">🛡️ FAIL-SAFE — ConcurrentHashMap</div>
+      <div class="iter-steps">
+        <div class="iter-step">
+          <span class="step-num">1</span>
+          <div class="step-text">ConcurrentHashMap has entries {a=1, b=2, c=3}</div>
+        </div>
+        <div class="iter-step">
+          <span class="step-num">2</span>
+          <div class="step-text">Iterator created — reflects current state of segments</div>
+        </div>
+        <div class="iter-step">
+          <span class="step-num">3</span>
+          <div class="step-text"><code>iterator.next()</code> → returns "a=1" normally</div>
+        </div>
+        <div class="iter-step safe">
+          <span class="step-num">4</span>
+          <div class="step-text"><strong>map.put("d", 4)</strong> → map modified in another thread</div>
+        </div>
+        <div class="iter-step safe">
+          <span class="step-num">5</span>
+          <div class="step-text"><code>iterator.next()</code> → continues normally. "d=4" may or may not appear. <strong>No exception.</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAFE REMOVAL PATTERN -->
+  <h3 style="font-family:'Fraunces',serif;font-size:22px;margin:28px 0 16px;color:var(--paper)">Safe removal during iteration (Fail-Fast maps)</h3>
+
+  <div class="code-block">
+<span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; map = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+map.<span class="method-c">put</span>(<span class="str">"a"</span>,<span class="num">1</span>); map.<span class="method-c">put</span>(<span class="str">"b"</span>,<span class="num">2</span>); map.<span class="method-c">put</span>(<span class="str">"c"</span>,<span class="num">3</span>);
+
+<span class="comment">// ❌ WRONG — throws ConcurrentModificationException</span>
+<span class="kw">for</span> (<span class="type">String</span> key : map.<span class="method-c">keySet</span>()) {
+    <span class="kw">if</span> (key.<span class="method-c">equals</span>(<span class="str">"b"</span>)) map.<span class="method-c">remove</span>(key);  <span class="comment">// modifies map during iteration!</span>
+}
+
+<span class="comment">// ✅ CORRECT Way 1 — use Iterator.remove()</span>
+<span class="type">Iterator</span>&lt;<span class="type">Map.Entry</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt;&gt; it = map.<span class="method-c">entrySet</span>().<span class="method-c">iterator</span>();
+<span class="kw">while</span> (it.<span class="method-c">hasNext</span>()) {
+    <span class="type">Map.Entry</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; e = it.<span class="method-c">next</span>();
+    <span class="kw">if</span> (e.<span class="method-c">getValue</span>() &lt; <span class="num">2</span>) it.<span class="method-c">remove</span>();  <span class="comment">// safe! uses iterator's remove</span>
+}
+
+<span class="comment">// ✅ CORRECT Way 2 — Java 8 removeIf (entrySet)</span>
+map.<span class="method-c">entrySet</span>().<span class="method-c">removeIf</span>(e -&gt; e.<span class="method-c">getValue</span>() &lt; <span class="num">2</span>);
+
+<span class="comment">// ✅ CORRECT Way 3 — collect keys to remove, then remove</span>
+<span class="type">List</span>&lt;<span class="type">String</span>&gt; toRemove = map.<span class="method-c">entrySet</span>().<span class="method-c">stream</span>()
+    .<span class="method-c">filter</span>(e -&gt; e.<span class="method-c">getValue</span>() &lt; <span class="num">2</span>)
+    .<span class="method-c">map</span>(<span class="type">Map.Entry</span>::getKey)
+    .<span class="method-c">collect</span>(<span class="type">Collectors</span>.<span class="method-c">toList</span>());
+toRemove.<span class="method-c">forEach</span>(map::<span class="method-c">remove</span>);</div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ COMPARISON ═══════════════════════════ -->
+<section id="comparison">
+<div class="page">
+  <div class="section-tag">Section 05 — Side-by-Side Comparison</div>
+  <h2 class="section-title">All Implementations <em>Compared</em></h2>
+
+  <div class="comp-wrapper">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th style="color:var(--hm-color)">HashMap</th>
+          <th style="color:var(--lhm-color)">LinkedHashMap</th>
+          <th style="color:var(--tm-color)">TreeMap</th>
+          <th style="color:var(--chtm-color)">ConcurrentHashMap</th>
+          <th style="color:var(--idhm-color)">IdentityHashMap</th>
+          <th style="color:var(--enum-color)">EnumMap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="aspect-col">Ordered?</td><td class="no">No</td><td class="yes">Insertion/Access</td><td class="yes">Sorted</td><td class="no">No</td><td class="no">No</td><td class="yes">Enum ordinal</td></tr>
+        <tr><td class="aspect-col">Null key?</td><td class="yes">1 allowed</td><td class="yes">1 allowed</td><td class="no">No (NPE)</td><td class="no">No (NPE)</td><td class="yes">Allowed</td><td class="no">No (NPE)</td></tr>
+        <tr><td class="aspect-col">Null values?</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><td class="aspect-col">Thread-safe?</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+        <tr><td class="aspect-col">put/get</td><td>O(1) avg</td><td>O(1) avg</td><td>O(log n)</td><td>O(1) avg</td><td>O(1) avg</td><td>O(1) — fastest</td></tr>
+        <tr><td class="aspect-col">Iterator</td><td class="no">Fail-Fast</td><td class="no">Fail-Fast</td><td class="no">Fail-Fast</td><td class="yes">Fail-Safe</td><td class="no">Fail-Fast</td><td class="no">Fail-Fast</td></tr>
+        <tr><td class="aspect-col">Key equality</td><td>equals()</td><td>equals()</td><td>compareTo()</td><td>equals()</td><td>== only</td><td>== (enum)</td></tr>
+        <tr><td class="aspect-col">Duplicate keys?</td><td class="no">No — replaced</td><td class="no">No — replaced</td><td class="no">No — replaced</td><td class="no">No — replaced</td><td class="partial">By reference</td><td class="no">No — replaced</td></tr>
+        <tr><td class="aspect-col">Implements</td><td>Map</td><td>Map</td><td>NavigableMap</td><td>ConcurrentMap</td><td>Map</td><td>Map</td></tr>
+        <tr><td class="aspect-col">Backed by</td><td>Hash table</td><td>Hash + DLL</td><td>Red-Black Tree</td><td>Hash segments</td><td>Hash table</td><td>Array</td></tr>
+        <tr><td class="aspect-col">Since Java</td><td>1.2</td><td>1.4</td><td>1.2</td><td>1.5</td><td>1.4</td><td>1.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════ USE CASES ═══════════════════════════ -->
+<section id="usecases">
+<div class="page">
+  <div class="section-tag">Section 06 — When to Use What</div>
+  <h2 class="section-title">Pick the <em>Right</em> Map</h2>
+
+  <div class="use-case-grid">
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--hm-color)">General Purpose</div>
+      <div class="uc-scenario">You need fast key-value storage, don't care about order, single-threaded.</div>
+      <div class="uc-choice" style="color:var(--hm-color)">→ HashMap</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--lhm-color)">Preserve Insertion Order</div>
+      <div class="uc-scenario">Building an ordered cache, JSON serialization that should preserve field order.</div>
+      <div class="uc-choice" style="color:var(--lhm-color)">→ LinkedHashMap</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--lhm-color)">LRU Cache</div>
+      <div class="uc-scenario">Evict least-recently-used entries when capacity exceeded.</div>
+      <div class="uc-choice" style="color:var(--lhm-color)">→ LinkedHashMap (accessOrder=true + removeEldestEntry)</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--tm-color)">Sorted Keys / Range Queries</div>
+      <div class="uc-scenario">Floor/ceiling queries, headMap, tailMap, subMap. e.g. routing tables, time-range queries.</div>
+      <div class="uc-choice" style="color:var(--tm-color)">→ TreeMap</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--chtm-color)">Multi-threaded Access</div>
+      <div class="uc-scenario">Multiple threads reading/writing. High concurrency, no full lock needed.</div>
+      <div class="uc-choice" style="color:var(--chtm-color)">→ ConcurrentHashMap</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--enum-color)">Enum Keys</div>
+      <div class="uc-scenario">Map with day-of-week, status codes, or any enum type as keys.</div>
+      <div class="uc-choice" style="color:var(--enum-color)">→ EnumMap (fastest possible)</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--idhm-color)">Reference Identity Keys</div>
+      <div class="uc-scenario">Object graph traversal, serialization tracking — same value but different objects as separate keys.</div>
+      <div class="uc-choice" style="color:var(--idhm-color)">→ IdentityHashMap</div>
+    </div>
+    <div class="use-case">
+      <div class="uc-title" style="color:var(--muted)">Avoid — Hashtable</div>
+      <div class="uc-scenario">Legacy synchronized map. Fully synchronized on every call — poor performance.</div>
+      <div class="uc-choice" style="color:var(--muted)">→ Use ConcurrentHashMap instead</div>
+    </div>
+  </div>
+
+  <div style="margin-top:40px">
+  <div class="section-tag" style="margin-bottom:16px">Quick Decision Tree</div>
+  <div class="code-block" style="font-size:13px; line-height:2">
+<span class="comment">Need thread-safety?</span>
+  <span class="kw">YES</span> → <span class="type">ConcurrentHashMap</span>  (no null keys/values)
+  <span class="kw">NO</span>  → <span class="comment">Need ordering?</span>
+              <span class="kw">SORTED BY KEY</span> → <span class="type">TreeMap</span>
+              <span class="kw">INSERTION ORDER</span> → <span class="type">LinkedHashMap</span>
+              <span class="kw">NO ORDER NEEDED</span> → <span class="comment">Key type?</span>
+                                    <span class="kw">ENUM</span>  → <span class="type">EnumMap</span>
+                                    <span class="kw">OTHER</span> → <span class="type">HashMap</span>  ← default choice</div>
+  </div>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+<div class="divider"></div>
+<footer style="text-align:center; padding:40px 20px; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:2px;">
+  JAVA MAP INTERFACE — COMPLETE STUDY GUIDE · HashMap · LinkedHashMap · TreeMap · ConcurrentHashMap · Fail-Fast · Fail-Safe
+</footer>
+
+<script>
+// Tab switching for methods
+function showMethods(panel) {
+  document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mp-' + panel).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// TOC dots
+function scrollTo(selector) {
+  document.querySelector(selector).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Active dot tracker
+const sections = ['#hero','#hierarchy','#implementations','#methods','#failfast','#comparison','#usecases'];
+const dots = document.querySelectorAll('.toc-dot');
+
+function updateDots() {
+  let current = 0;
+  sections.forEach((sel, i) => {
+    const el = document.querySelector(sel);
+    if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) current = i;
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === current));
+}
+
+window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

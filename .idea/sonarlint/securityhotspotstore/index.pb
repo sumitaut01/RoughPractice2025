@@ -83,12 +83,6 @@ U
 %src/main/java/selenium/xpathcss/xpaht,8\1\810b41d7d0b64a538317e66701d4111c17665156
 \
 ,src/main/java/reporters/ScreenShotUtils.java,f\f\ff821de7326aac714268fe6f3b37f05beb843afb
-]
--src/main/java/restassured/auth/R4_Oauth2.java,c\6\c61c66c9952eee3b5fc3cca517103b7623e88c45
-^
-.src/main/java/restassured/auth/R5_ApiKeys.java,6\5\65500f4ed537a229313e663a1e09a632005d0d31
-b
-2src/main/java/restassured/auth/R6_Preemeptive.java,e\2\e2f89177e5adad3bbbab550cd587ff62a0666f4b
 h
 8src/main/java/myproject/driverfactory/DriverFactory.java,9\4\9430ea1e6f72e149cd8ce08813b05dd254763664
 _
@@ -169,10 +163,6 @@ c
 3src/main/java/basics/threading/Runnable vs Callable,b\9\b9a9b6416b12b0d7fdac446c1326e639b92f9a1d
 V
 &src/main/java/basics/DeepCopyDemo.java,6\5\65999f00689a8b462b3b4523ef4c1f170a0f2956
-w
-Gsrc/main/java/restassured/fakerapiproject/endpoints/R1_GetProducts.java,d\8\d864b54c7ab657dd9f918d81ca2cdd4c8efbd8f7
-s
-Csrc/main/java/restassured/fakerapiproject/endpoints/R_0Generic.java,c\2\c2dd4c5f3902a8e60ef740ae375d8ea49eac7efd
 e
 5src/main/java/basics/javapgms/sorting/R1_ColSort.java,4\e\4e7ad911355293805acc1cb68ecefd631af104d4
 x
@@ -213,8 +203,6 @@ Y
 )src/main/java/xpath/New Text Document.txt,c\f\cf5dac2a1b4eff3ce651d06b754eeea5467b9228
 U
 %src/main/java/xpath/xpath_visual.html,a\5\a5f5085617a97b112c61fc4917fdc10a80b8eddc
-]
--src/main/java/restassured/auth/R2_Bearer.java,a\9\a9458618292ddb1580f1ef2a0d8237734582ddc3
 ]
 -src/main/java/basics/maven/02ReadingSystemEnv,b\b\bb3d28fed6393f99b4f2f5f38fbceba65727ae4c
 r
@@ -307,10 +295,6 @@ l
 <src/main/java/basics/designpattern/strategy/PaymentTest.java,e\a\ea3a10d2ada353ab15a9b4cf6d1129a34bfcb6ad
 n
 >src/main/java/basics/designpattern/strategy/PaypalPayment.java,a\d\ad478a24f52685111e2afe1951f60fc5ceb6523d
-a
-1src/main/java/basics/collections/map/loopmap.java,5\8\5859845695915b6b041ffec4860ff939b56b4126
-`
-0src/main/java/basics/collections/map/theory.java,6\4\64bba2448f84bf8c59e2e1819366781a553d9760
 d
 4src/main/java/basics/collections/set/R1_HashSet.java,5\2\524eabc64fbe4fa5ba9a5d3ff84c67a2be0811ff
 c
@@ -415,8 +399,6 @@ H
 src/main/java/git/gittag,7\6\76fe8dd3713a567f9c787f3698ccd2cb9a6055b3
 \
 ,src/main/java/git/mergeMaster Rebase Feature,1\f\1f9ce00d5cca5362bdcb7c1d5df9c66a2902684d
-\
-,src/main/java/objectmapper/R03_JsonNode.java,a\8\a8f4f3009a922446eb51c510f9f3f46fdf8f92e7
 I
 src/main/java/testng/Info,6\e\6ed9fb24ebfbe3614622bd36cd685351a869db8e
 I
@@ -441,18 +423,6 @@ _
 /src/main/java/basics/collections/Deque/R1_.java,8\a\8ae415698525ec487ba1fa12bac9092995cdb0fc
 x
 Hsrc/main/java/basics/collections/list/implemeting/R1_SinglyListImpl.java,3\5\35b01ba35c8329899450da3e50399eb35bb17fd7
-h
-8src/main/java/basics/collections/list/IteratorsDemo.java,9\0\90a2d195a3f454868cc578ca4779b0c4372501ca
-l
-<src/main/java/basics/collections/list/LinkedHashSetDemo.java,e\f\ef82f9eefc1824ddecedfff65bc0a76d6f0901bb
-i
-9src/main/java/basics/collections/list/LinkedListDemo.java,e\a\ea8855885e738675eb4ce30c78f89fe16be5dea5
-b
-2src/main/java/basics/collections/list/looping.java,b\0\b04ee36c7240865bad530ed0e3bf07e4e08f0ac0
-b
-2src/main/java/basics/collections/list/SetDemo.java,0\f\0fa539bc599c1e541ca00015a20980526c5f5496
-l
-<src/main/java/basics/collections/list/TreeSetComparator.java,7\b\7bf688d7033abc815b48caaaeb0d201fe6f03ef7
 f
 6src/main/java/basics/collections/list/TreeSetDemo.java,7\9\7988a8feabc4b783c10e7e8a51161e023e729853
 o
@@ -463,8 +433,6 @@ g
 7src/main/java/basics/collections/map/HashtableDemo.java,b\4\b4a242a05dc54ae9c266e6a1271398d739aab8ff
 k
 ;src/main/java/basics/collections/map/LinkedHashMapDemo.java,3\8\38877498ce22147d245fa0503f054135d84a68c2
-e
-5src/main/java/basics/collections/map/TreeMapDemo.java,e\5\e56f83d8ae1b101c59de63999a40902bf321da3b
 T
 $src/main/java/basics/R_XScanner.java,8\3\83fa2fedc2d0fc1f1122a18aaf0057759bed8956
 ]
@@ -485,8 +453,6 @@ U
 %src/main/java/basics/R_XOptional.java,8\0\8006b4838a05968e36c8c2cb355ea0dce9bc87ac
 ^
 .src/main/java/basics/readDataFromTextfile.java,0\c\0cd746e32407ea10f3853efd99731b39cb324244
-s
-Csrc/main/java/restassured/jacksonandtransient/R1_WithTransient.java,1\1\11d94c5733c943b0d932de21938516ed14328da6
 [
 +src/main/java/basics/collections/Rough.java,8\b\8b7cb942326338f010cc1885638c4f975b2b0c19
 g
@@ -497,34 +463,18 @@ o
 ?src/test/java/restassuredworkvalidations/ResponseValidator.java,e\c\ecf6be412140f6e47d1cf3eb9595885ce0a781c7
 d
 4src/test/java/restassuredworkvalidations/R1_Get.java,8\d\8dd92a5f5c35db7b98a605c4df93d98c1e8afad6
-[
-+src/main/java/restassured/00auth_guide.html,f\b\fbd953f0aea4957525cdfe832e32e60a1f1dd2f8
 _
 /src/main/java/restassured/00jsonpathgemini.html,c\e\ce6801d22682ff468e56eeb809a20432f35a176b
-k
-;src/main/java/restassured/00nested-response-validation.html,1\6\1607be700b30602a91a582e06fd869af3f9392bd
 l
 <src/main/java/restassured/00rest-assured-cheatsheet (1).html,1\6\16c4b8507e3fd22f813403654c09a937b5cb6284
 i
 9src/main/java/restassured/00rest-assured-study-guide.html,c\2\c2874481f8bef12dded57616ba1046b1b84797a6
-i
-9src/main/java/restassured/00restassured_study_guide._html,7\6\760ac500c593b1f9134d7d4df7dc4bfeca61932e
 i
 9src/main/java/restassured/00RestAssuredPayLoadStyles.html,6\2\62e0a8436ed5fdfec46753e3dff5317489539bdf
 X
 (src/main/java/restassured/BasicJson.json,f\a\fa65b3a827705490abc84481ce1b6c23d65769cd
 i
 9src/main/java/restassured/Authentication Vs Authorization,d\2\d2735cd9c5373334d3eb09d7ab4c58d3d10af2e3
-e
-5src/main/java/restassured/CompleJsonWithJsonPath.java,b\1\b1543882082e646e0964fe20d16749353c526d00
-[
-+src/main/java/restassured/DateResponse.java,8\b\8b611d50c4ac5510ca3c73467101d789de4e461f
-X
-(src/main/java/restassured/notes_401vs403,1\a\1a6fca02086aecb1bc62370296f7d5caf282af7e
-Y
-)src/main/java/restassured/notes_api_chars,d\4\d49edad0b08cdc2729745e2868818d0692004a38
-Z
-*src/main/java/restassured/notes_api_chars2,3\f\3fcb8a8a1b657066b4e36bd6ed0d02c9e10172b3
 b
 2src/main/java/restassured/R2_RestAssuredBasic.java,d\1\d14ab3c7b8b667a2f7e00835b874b2c73808d259
 m
@@ -543,8 +493,6 @@ a
 1src/main/java/restassured/R14_HeadernHeaders.java,b\8\b8ae5242e08984b00be3f7abfa7f469a02f7890e
 k
 ;src/main/java/restassured/R11_ObjectMapper_JsonPropery.java,8\7\873bc9b383c6b406019d3d54bc5b13afb5a1bb85
-]
--src/main/java/restassured/R10_ResponseAs.java,e\d\ed59a38c1b9a0a8c6d6e4b4efa177860414b1ff6
 S
 #src/main/java/oopsbank/Account.java,7\3\73ba9c5e515cb38601df1679354753a09fffe5e6
 T

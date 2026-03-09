@@ -16,7 +16,7 @@ public class R1_WithTransient {
 
         Dummy d1=new Dummy("sumit", 200);
         String d1s= new ObjectMapper().writeValueAsString(d1);
-        System.out.println(d1s);//{"name":"sumit"}  Objectmapper respects transiet field by default
+        System.out.println(d1s);//{"name":"sumit"}  Objectmapper respects transiet field by default //   public transient int salry;
 
         System.out.println("--Separator-----");
 
