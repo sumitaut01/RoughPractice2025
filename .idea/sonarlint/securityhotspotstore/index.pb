@@ -155,8 +155,6 @@ Y
 )src/main/java/basics/log4j/TestLog4j.java,8\e\8e485af873da5519f6ac8bc6511b2f20448543f7
 Q
 !src/main/java/basics/maven/01info,2\9\29cb471e7638544341041df1447d3e7cc7760af3
-h
-8src/main/java/basics/streams/epamParallelTestBrokenLinks,8\1\81d8384647f2fa3dad8df2c0d5bec484445d7e66
 O
 src/main/java/basics/swift/info,a\0\a0b6f2e8ee665dcded6b6d48f4835ff2343c2899
 c
@@ -261,8 +259,6 @@ V
 &src/main/java/basics/jsonPathDemo.java,9\4\94425cfb5cbbc4fd237cf93015e2e8e875928f02
 [
 +src/main/java/basics/R17_AbstractClass.java,7\8\783df22c42e79e7e988b208c04aada6dfcf83270
-Z
-*src/main/java/basics/streams/R5_Rough.java,3\e\3e5f97c07a4fea63b569ecc6c30addf0e1dddb3e
 c
 3src/main/java/basics/streams/R7_ParallelStream.java,a\b\abcf9787be621f014f4ed977dfa3832973c8ac5e
 [
