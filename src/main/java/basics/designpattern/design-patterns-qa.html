@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Patterns for QA Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --code-bg: #0d1117;
+    --tag-java: #f59e0b;
+    --tag-selenium: #10b981;
+    --tag-rest: #00d4ff;
+    --tag-testng: #7c3aed;
+    --tag-excel: #34d399;
+    --tag-json: #fb7185;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0f1729 50%, #0a0e1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .logo-badge {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .header-title h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .header-title p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .stack-pills {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid;
+  }
+  .pill-java { color: var(--tag-java); border-color: var(--tag-java); background: rgba(245,158,11,0.08); }
+  .pill-selenium { color: var(--tag-selenium); border-color: var(--tag-selenium); background: rgba(16,185,129,0.08); }
+  .pill-rest { color: var(--tag-rest); border-color: var(--tag-rest); background: rgba(0,212,255,0.08); }
+  .pill-testng { color: var(--tag-testng); border-color: var(--tag-testng); background: rgba(124,58,237,0.08); }
+
+  /* TAB NAV */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    letter-spacing: 0.3px;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-icon { font-size: 1rem; }
+
+  /* CONTENT */
+  .content {
+    padding: 36px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* OVERVIEW GRID */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .overview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--accent));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .overview-card:hover {
+    border-color: var(--card-accent, var(--accent));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .overview-card:hover::before { transform: scaleX(1); }
+
+  .card-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .t-sel { background: rgba(16,185,129,0.15); color: var(--tag-selenium); }
+  .t-rest { background: rgba(0,212,255,0.15); color: var(--tag-rest); }
+  .t-tng { background: rgba(124,58,237,0.15); color: var(--tag-testng); }
+  .t-xls { background: rgba(52,211,153,0.15); color: var(--tag-excel); }
+  .t-json { background: rgba(251,113,133,0.15); color: var(--tag-json); }
+  .t-java { background: rgba(245,158,11,0.15); color: var(--tag-java); }
+
+  /* PATTERN SECTION */
+  .pattern-section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .section-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+
+  .pattern-intent {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .pattern-intent strong { color: var(--accent); font-weight: 600; }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #0d1117;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .code-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .code-filename::before {
+    content: '●';
+    color: var(--accent3);
+    font-size: 0.8rem;
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #c792ea; font-weight: 600; }
+  .cls { color: #82aaff; }
+  .fn { color: #82cfff; }
+  .str { color: #c3e88d; }
+  .cmt { color: #546e7a; font-style: italic; }
+  .ann { color: #ffcb6b; }
+  .num { color: #f78c6c; }
+  .typ { color: #ffcb6b; }
+  .var { color: #eeffff; }
+  .op { color: #89ddff; }
+
+  /* USE CASE BOX */
+  .use-case-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 16px 0;
+  }
+
+  .use-case-box h4 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .use-case-box ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .use-case-box li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.5;
+  }
+
+  .use-case-box li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  /* WARNING / PRO TIP */
+  .pro-tip {
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .pro-tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  .pro-tip p {
+    font-size: 0.79rem;
+    color: #fcd34d;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .pro-tip strong { font-weight: 700; color: var(--accent4); }
+
+  /* DIVIDER */
+  .pattern-divider {
+    border: none;
+    border-top: 1px dashed #1e293b;
+    margin: 32px 0;
+  }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .content { padding: 24px 20px; }
+    .header { padding: 20px 20px 0; }
+    .stack-pills { display: none; }
+  }
+
+  /* CHEATSHEET TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    margin: 16px 0;
+  }
+
+  th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    color: var(--accent);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border);
+    font-weight: 700;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td:first-child { color: var(--text); font-weight: 600; }
+
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  /* Scroll highlight active tab */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4a5568; }
+
+  .category-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    margin: 28px 0 12px;
+  }
+
+  .combo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #a78bfa;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo-badge">⬡</div>
+    <div class="header-title">
+      <h1>Design Patterns for QA Automation</h1>
+      <p>Selenium · RestAssured · TestNG · Excel · JSON · Java</p>
+    </div>
+    <div class="stack-pills">
+      <span class="pill pill-java">Java</span>
+      <span class="pill pill-selenium">Selenium</span>
+      <span class="pill pill-rest">RestAssured</span>
+      <span class="pill pill-testng">TestNG</span>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('overview')">
+      <span class="tab-icon">🗺</span> Overview
+    </button>
+    <button class="tab-btn" onclick="showTab('pom')">
+      <span class="tab-icon">📄</span> Page Object
+    </button>
+    <button class="tab-btn" onclick="showTab('singleton')">
+      <span class="tab-icon">🔒</span> Singleton
+    </button>
+    <button class="tab-btn" onclick="showTab('factory')">
+      <span class="tab-icon">🏭</span> Factory
+    </button>
+    <button class="tab-btn" onclick="showTab('builder')">
+      <span class="tab-icon">🔨</span> Builder
+    </button>
+    <button class="tab-btn" onclick="showTab('strategy')">
+      <span class="tab-icon">⚔</span> Strategy
+    </button>
+    <button class="tab-btn" onclick="showTab('facade')">
+      <span class="tab-icon">🎭</span> Facade
+    </button>
+    <button class="tab-btn" onclick="showTab('decorator')">
+      <span class="tab-icon">🎨</span> Decorator
+    </button>
+    <button class="tab-btn" onclick="showTab('observer')">
+      <span class="tab-icon">👁</span> Observer
+    </button>
+    <button class="tab-btn" onclick="showTab('dataprovider')">
+      <span class="tab-icon">📊</span> Data Driven
+    </button>
+    <button class="tab-btn" onclick="showTab('cheatsheet')">
+      <span class="tab-icon">⚡</span> Cheat Sheet
+    </button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- =================== OVERVIEW =================== -->
+<div id="tab-overview" class="tab-panel active">
+  <div class="category-label">Creational Patterns</div>
+  <div class="overview-grid">
+    <div class="overview-card" style="--card-accent: #7c3aed" onclick="showTab('singleton')">
+      <div class="card-number">PATTERN 01 · CREATIONAL</div>
+      <div class="card-title">Singleton</div>
+      <div class="card-desc">One instance only — WebDriver, DB conn, Config loader</div>
+      <div class="card-tags">
+        <span class="tag t-sel">Selenium</span>
+        <span class="tag t-rest">RestAssured</span>
+        <span class="tag t-java">Java</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #10b981" onclick="showTab('factory')">
+      <div class="card-number">PATTERN 02 · CREATIONAL</div>
+      <div class="card-title">Factory Method</div>
+      <div class="card-desc">Instantiate browser/driver/env config without knowing concrete class</div>
+      <div class="card-tags">
+        <span class="tag t-sel">Selenium</span>
+        <span class="tag t-java">Java</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #f59e0b" onclick="showTab('builder')">
+      <div class="card-number">PATTERN 03 · CREATIONAL</div>
+      <div class="card-title">Builder</div>
+      <div class="card-desc">Step-by-step construction of request payloads and test objects</div>
+      <div class="card-tags">
+        <span class="tag t-rest">RestAssured</span>
+        <span class="tag t-json">JSON</span>
+        <span class="tag t-java">Java</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-label">Structural Patterns</div>
+  <div class="overview-grid">
+    <div class="overview-card" style="--card-accent: #00d4ff" onclick="showTab('pom')">
+      <div class="card-number">PATTERN 04 · STRUCTURAL</div>
+      <div class="card-title">Page Object Model</div>
+      <div class="card-desc">Encapsulate UI interactions — maintainable Selenium test layers</div>
+      <div class="card-tags">
+        <span class="tag t-sel">Selenium</span>
+        <span class="tag t-tng">TestNG</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #ef4444" onclick="showTab('facade')">
+      <div class="card-number">PATTERN 05 · STRUCTURAL</div>
+      <div class="card-title">Facade</div>
+      <div class="card-desc">Simple API over complex RestAssured + Auth + DB operations</div>
+      <div class="card-tags">
+        <span class="tag t-rest">RestAssured</span>
+        <span class="tag t-tng">TestNG</span>
+        <span class="tag t-json">JSON</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #06b6d4" onclick="showTab('decorator')">
+      <div class="card-number">PATTERN 06 · STRUCTURAL</div>
+      <div class="card-title">Decorator</div>
+      <div class="card-desc">Add retry, logging, screenshot to WebDriver without subclassing</div>
+      <div class="card-tags">
+        <span class="tag t-sel">Selenium</span>
+        <span class="tag t-java">Java</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-label">Behavioral Patterns</div>
+  <div class="overview-grid">
+    <div class="overview-card" style="--card-accent: #a855f7" onclick="showTab('strategy')">
+      <div class="card-number">PATTERN 07 · BEHAVIORAL</div>
+      <div class="card-title">Strategy</div>
+      <div class="card-desc">Swap auth strategies (Bearer, Basic, OAuth2) at runtime</div>
+      <div class="card-tags">
+        <span class="tag t-rest">RestAssured</span>
+        <span class="tag t-java">Java</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #f97316" onclick="showTab('observer')">
+      <div class="card-number">PATTERN 08 · BEHAVIORAL</div>
+      <div class="card-title">Observer / Listener</div>
+      <div class="card-desc">TestNG listeners for screenshots, reporting, test lifecycle hooks</div>
+      <div class="card-tags">
+        <span class="tag t-tng">TestNG</span>
+        <span class="tag t-sel">Selenium</span>
+      </div>
+    </div>
+    <div class="overview-card" style="--card-accent: #34d399" onclick="showTab('dataprovider')">
+      <div class="card-number">PATTERN 09 · BEHAVIORAL</div>
+      <div class="card-title">Data-Driven (Template Method)</div>
+      <div class="card-desc">Excel & JSON driven @DataProvider with Apache POI + Jackson</div>
+      <div class="card-tags">
+        <span class="tag t-tng">TestNG</span>
+        <span class="tag t-xls">Excel</span>
+        <span class="tag t-json">JSON</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PAGE OBJECT =================== -->
+<div id="tab-pom" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(0,212,255,0.1);color:var(--accent)">POM</div>
+      <div>
+        <div class="section-title">Page Object Model (POM)</div>
+        <div class="section-subtitle">structural · selenium · testng</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Encapsulate every page's locators and interactions into a dedicated class. Tests only call high-level methods like <strong>loginPage.login(user, pass)</strong> — no XPaths leak into test code. Locator changes require a fix in exactly ONE place.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">BasePage.java</span>
+        <span class="code-lang">Java · Selenium</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">BasePage</span> {
+
+    <span class="kw">protected</span> <span class="typ">WebDriver</span> driver;
+    <span class="kw">protected</span> <span class="typ">WebDriverWait</span> wait;
+
+    <span class="kw">public</span> <span class="fn">BasePage</span>(<span class="typ">WebDriver</span> driver) {
+        <span class="kw">this</span>.driver <span class="op">=</span> driver;
+        <span class="kw">this</span>.wait <span class="op">=</span> <span class="kw">new</span> <span class="cls">WebDriverWait</span>(driver, <span class="cls">Duration</span>.ofSeconds(<span class="num">10</span>));
+        <span class="cls">PageFactory</span>.initElements(driver, <span class="kw">this</span>);
+    }
+
+    <span class="kw">protected void</span> <span class="fn">click</span>(<span class="typ">WebElement</span> el) {
+        wait.until(<span class="cls">ExpectedConditions</span>.elementToBeClickable(el)).click();
+    }
+
+    <span class="kw">protected void</span> <span class="fn">type</span>(<span class="typ">WebElement</span> el, <span class="typ">String</span> text) {
+        wait.until(<span class="cls">ExpectedConditions</span>.visibilityOf(el)).clear();
+        el.sendKeys(text);
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">LoginPage.java</span>
+        <span class="code-lang">Java · Selenium</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">LoginPage</span> <span class="kw">extends</span> <span class="cls">BasePage</span> {
+
+    <span class="ann">@FindBy</span>(id <span class="op">=</span> <span class="str">"username"</span>)
+    <span class="kw">private</span> <span class="typ">WebElement</span> usernameInput;
+
+    <span class="ann">@FindBy</span>(id <span class="op">=</span> <span class="str">"password"</span>)
+    <span class="kw">private</span> <span class="typ">WebElement</span> passwordInput;
+
+    <span class="ann">@FindBy</span>(css <span class="op">=</span> <span class="str">"button[type='submit']"</span>)
+    <span class="kw">private</span> <span class="typ">WebElement</span> loginBtn;
+
+    <span class="ann">@FindBy</span>(css <span class="op">=</span> <span class="str">".error-msg"</span>)
+    <span class="kw">private</span> <span class="typ">WebElement</span> errorMsg;
+
+    <span class="kw">public</span> <span class="fn">LoginPage</span>(<span class="typ">WebDriver</span> driver) { <span class="kw">super</span>(driver); }
+
+    <span class="cmt">// Returns next page on success — fluent chaining</span>
+    <span class="kw">public</span> <span class="cls">DashboardPage</span> <span class="fn">login</span>(<span class="typ">String</span> user, <span class="typ">String</span> pass) {
+        type(usernameInput, user);
+        type(passwordInput, pass);
+        click(loginBtn);
+        <span class="kw">return new</span> <span class="cls">DashboardPage</span>(driver);
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">getError</span>() {
+        <span class="kw">return</span> wait.until(
+            <span class="cls">ExpectedConditions</span>.visibilityOf(errorMsg)).getText();
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">LoginTest.java</span>
+        <span class="code-lang">Java · TestNG</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">LoginTest</span> <span class="kw">extends</span> <span class="cls">BaseTest</span> {
+
+    <ann>@Test</ann>
+    <span class="kw">public void</span> <span class="fn">validLogin_shouldShowDashboard</span>() {
+        <span class="typ">DashboardPage</span> dash <span class="op">=</span> <span class="kw">new</span> <span class="cls">LoginPage</span>(driver)
+            .login(<span class="str">"sumit@x4v.com"</span>, <span class="str">"Password@1"</span>);
+
+        <span class="cls">Assert</span>.assertTrue(dash.isLoaded(), <span class="str">"Dashboard not loaded"</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">invalidLogin_shouldShowError</span>() {
+        <span class="cls">LoginPage</span> loginPage <span class="op">=</span> <span class="kw">new</span> <span class="cls">LoginPage</span>(driver);
+        loginPage.login(<span class="str">"bad@user.com"</span>, <span class="str">"wrong"</span>);
+        <span class="cls">Assert</span>.assertEquals(loginPage.getError(), <span class="str">"Invalid credentials"</span>);
+    }
+}</pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>When to use in X4V project</h4>
+      <ul>
+        <li>Each Angular module screen (pricing rules UI, config pages) → separate Page Object</li>
+        <li>Common header/nav bar → BasePage or separate HeaderComponent class</li>
+        <li>Reuse DashboardPage.goTo*() for navigation across tests</li>
+        <li>Combine with DriverFactory (Singleton) for thread-safe parallel runs via TestNG</li>
+      </ul>
+    </div>
+
+    <div class="pro-tip">
+      <span class="pro-tip-icon">💡</span>
+      <p><strong>Pro Tip:</strong> Use <strong>ScreenshotListener</strong> (Observer pattern) in combination — any test failure auto-captures a screenshot, saving the page object context. See Observer tab for implementation.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== SINGLETON =================== -->
+<div id="tab-singleton" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(124,58,237,0.1);color:#a78bfa">01</div>
+      <div>
+        <div class="section-title">Singleton Pattern</div>
+        <div class="section-subtitle">creational · thread-safe · driver management · config</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Ensure a class has <strong>only one instance</strong> and provide a global access point to it. In QA automation: WebDriver per thread, DB connection, Config loader, Token cache.
+    </div>
+
+    <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:16px;font-family:'JetBrains Mono',monospace;">
+      ⚠ Regular Singleton breaks parallel tests. Use <strong>ThreadLocal Singleton</strong> for TestNG parallel execution.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">DriverManager.java — ThreadLocal Singleton</span>
+        <span class="code-lang">Java · Selenium · TestNG Parallel</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">DriverManager</span> {
+
+    <span class="cmt">// ThreadLocal ensures each thread gets its own WebDriver</span>
+    <span class="kw">private static final</span> <span class="typ">ThreadLocal</span><span class="op">&lt;</span><span class="typ">WebDriver</span><span class="op">&gt;</span> driverHolder
+        <span class="op">=</span> <span class="kw">new</span> <span class="cls">ThreadLocal</span><span class="op">&lt;&gt;</span>();
+
+    <span class="kw">private</span> <span class="fn">DriverManager</span>() {} <span class="cmt">// prevent instantiation</span>
+
+    <span class="kw">public static</span> <span class="typ">WebDriver</span> <span class="fn">getDriver</span>() {
+        <span class="kw">if</span> (driverHolder.get() <span class="op">==</span> <span class="kw">null</span>) {
+            <span class="cls">String</span> browser <span class="op">=</span> <span class="cls">ConfigManager</span>.get(<span class="str">"browser"</span>);
+            driverHolder.set(<span class="cls">DriverFactory</span>.create(browser)); <span class="cmt">// Factory pattern!</span>
+        }
+        <span class="kw">return</span> driverHolder.get();
+    }
+
+    <span class="kw">public static void</span> <span class="fn">quitDriver</span>() {
+        <span class="kw">if</span> (driverHolder.get() <span class="op">!=</span> <span class="kw">null</span>) {
+            driverHolder.get().quit();
+            driverHolder.remove(); <span class="cmt">// critical — avoid memory leak</span>
+        }
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">ConfigManager.java — Singleton Config Loader</span>
+        <span class="code-lang">Java</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">ConfigManager</span> {
+
+    <span class="kw">private static</span> <span class="cls">ConfigManager</span> instance;
+    <span class="kw">private final</span> <span class="typ">Properties</span> props <span class="op">=</span> <span class="kw">new</span> <span class="cls">Properties</span>();
+
+    <span class="kw">private</span> <span class="fn">ConfigManager</span>() {
+        <span class="typ">String</span> env <span class="op">=</span> <span class="cls">System</span>.getProperty(<span class="str">"env"</span>, <span class="str">"qa"</span>);
+        <span class="kw">try</span> (<span class="typ">InputStream</span> is <span class="op">=</span> getClass().getClassLoader()
+            .getResourceAsStream(<span class="str">"config/"</span> <span class="op">+</span> env <span class="op">+</span> <span class="str">".properties"</span>)) {
+            props.load(is);
+        } <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"Config load failed: "</span> <span class="op">+</span> env, e);
+        }
+    }
+
+    <span class="kw">public static synchronized</span> <span class="cls">ConfigManager</span> <span class="fn">getInstance</span>() {
+        <span class="kw">if</span> (instance <span class="op">==</span> <span class="kw">null</span>) instance <span class="op">=</span> <span class="kw">new</span> <span class="cls">ConfigManager</span>();
+        <span class="kw">return</span> instance;
+    }
+
+    <span class="kw">public static</span> <span class="typ">String</span> <span class="fn">get</span>(<span class="typ">String</span> key) {
+        <span class="kw">return</span> <span class="fn">getInstance</span>().props.getProperty(key);
+    }
+}
+
+<span class="cmt">// Usage: ConfigManager.get("base.url") → "https://qa.x4v.com/api"</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">TokenCache.java — Singleton for RestAssured Auth Token</span>
+        <span class="code-lang">Java · RestAssured</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">TokenCache</span> {
+
+    <span class="kw">private static volatile</span> <span class="cls">TokenCache</span> instance; <span class="cmt">// DCL Singleton</span>
+    <span class="kw">private</span> <span class="typ">String</span> token;
+    <span class="kw">private</span> <span class="typ">long</span> expiresAt;
+
+    <span class="kw">private</span> <span class="fn">TokenCache</span>() {}
+
+    <span class="kw">public static</span> <span class="cls">TokenCache</span> <span class="fn">getInstance</span>() {
+        <span class="kw">if</span> (instance <span class="op">==</span> <span class="kw">null</span>) {
+            <span class="kw">synchronized</span> (<span class="cls">TokenCache</span>.<span class="kw">class</span>) {
+                <span class="kw">if</span> (instance <span class="op">==</span> <span class="kw">null</span>) instance <span class="op">=</span> <span class="kw">new</span> <span class="cls">TokenCache</span>();
+            }
+        }
+        <span class="kw">return</span> instance;
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">getToken</span>() {
+        <span class="kw">if</span> (token <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> isExpired()) refreshToken();
+        <span class="kw">return</span> token;
+    }
+
+    <span class="kw">private void</span> <span class="fn">refreshToken</span>() {
+        token <span class="op">=</span> <span class="cls">RestAssured</span>.given()
+            .contentType(<span class="str">"application/json"</span>)
+            .body(<span class="str">"""{"username":"admin","password":"secret"}"""</span>)
+            .post(<span class="cls">ConfigManager</span>.get(<span class="str">"auth.url"</span>))
+            .jsonPath().getString(<span class="str">"token"</span>);
+        expiresAt <span class="op">=</span> <span class="cls">System</span>.currentTimeMillis() <span class="op">+</span> <span class="num">3600_000L</span>;
+    }
+
+    <span class="kw">private boolean</span> <span class="fn">isExpired</span>() {
+        <span class="kw">return</span> <span class="cls">System</span>.currentTimeMillis() <span class="op">&gt;</span> expiresAt;
+    }
+}</pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>Real usage in your framework</h4>
+      <ul>
+        <li>DriverManager.getDriver() → used inside every BasePage constructor</li>
+        <li>ConfigManager.get("base.url") → auto-switches QA/UAT via -Denv=uat Maven arg</li>
+        <li>TokenCache.getInstance().getToken() → reused across all RestAssured tests without re-login</li>
+        <li>DBConnectionManager (similar pattern) → single JDBC connection pool per test run</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =================== FACTORY =================== -->
+<div id="tab-factory" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(16,185,129,0.1);color:var(--accent3)">02</div>
+      <div>
+        <div class="section-title">Factory Method Pattern</div>
+        <div class="section-subtitle">creational · browser/driver instantiation · environment switching</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Define an interface for creating an object, but let subclasses or a factory class decide which class to instantiate. Perfect for <strong>browser selection</strong> (Chrome/Firefox/Edge) and <strong>environment-aware base URIs</strong> for RestAssured.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">DriverFactory.java</span>
+        <span class="code-lang">Java · Selenium</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">DriverFactory</span> {
+
+    <span class="kw">public static</span> <span class="typ">WebDriver</span> <span class="fn">create</span>(<span class="typ">String</span> browser) {
+        <span class="kw">return switch</span> (browser.toLowerCase()) {
+            <span class="kw">case</span> <span class="str">"chrome"</span>  <span class="op">-&gt;</span> buildChrome();
+            <span class="kw">case</span> <span class="str">"firefox"</span> <span class="op">-&gt;</span> buildFirefox();
+            <span class="kw">case</span> <span class="str">"edge"</span>    <span class="op">-&gt;</span> buildEdge();
+            <span class="kw">default</span>        <span class="op">-&gt;</span> <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(
+                                    <span class="str">"Unknown browser: "</span> <span class="op">+</span> browser);
+        };
+    }
+
+    <span class="kw">private static</span> <span class="typ">WebDriver</span> <span class="fn">buildChrome</span>() {
+        <span class="typ">ChromeOptions</span> opts <span class="op">=</span> <span class="kw">new</span> <span class="cls">ChromeOptions</span>();
+        opts.addArguments(<span class="str">"--headless=new"</span>, <span class="str">"--no-sandbox"</span>,
+                          <span class="str">"--disable-dev-shm-usage"</span>);
+        <span class="kw">return new</span> <span class="cls">ChromeDriver</span>(opts);
+    }
+
+    <span class="kw">private static</span> <span class="typ">WebDriver</span> <span class="fn">buildFirefox</span>() {
+        <span class="typ">FirefoxOptions</span> opts <span class="op">=</span> <span class="kw">new</span> <span class="cls">FirefoxOptions</span>();
+        opts.addArguments(<span class="str">"-headless"</span>);
+        <span class="kw">return new</span> <span class="cls">FirefoxDriver</span>(opts);
+    }
+
+    <span class="kw">private static</span> <span class="typ">WebDriver</span> <span class="fn">buildEdge</span>() {
+        <span class="kw">return new</span> <span class="cls">EdgeDriver</span>(<span class="kw">new</span> <span class="cls">EdgeOptions</span>());
+    }
+}
+
+<span class="cmt">// Run: mvn test -Dbrowser=firefox -Denv=uat</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">ApiClientFactory.java — RestAssured Base URI factory</span>
+        <span class="code-lang">Java · RestAssured</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">ApiClientFactory</span> {
+
+    <span class="kw">public static</span> <span class="typ">RequestSpecification</span> <span class="fn">getSpec</span>(<span class="typ">String</span> service) {
+        <span class="typ">String</span> baseUrl <span class="op">=</span> <span class="kw">switch</span> (service) {
+            <span class="kw">case</span> <span class="str">"pricing"</span>   <span class="op">-&gt;</span> <span class="cls">ConfigManager</span>.get(<span class="str">"pricing.url"</span>);
+            <span class="kw">case</span> <span class="str">"auth"</span>      <span class="op">-&gt;</span> <span class="cls">ConfigManager</span>.get(<span class="str">"auth.url"</span>);
+            <span class="kw">case</span> <span class="str">"inventory"</span> <span class="op">-&gt;</span> <span class="cls">ConfigManager</span>.get(<span class="str">"inventory.url"</span>);
+            <span class="kw">default</span>          <span class="op">-&gt;</span> <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(service);
+        };
+
+        <span class="kw">return</span> <span class="cls">RestAssured</span>.given()
+            .baseUri(baseUrl)
+            .contentType(<span class="cls">ContentType</span>.JSON)
+            .header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span>
+                <span class="op">+</span> <span class="cls">TokenCache</span>.getInstance().getToken())
+            .log().ifValidationFails();
+    }
+}
+
+<span class="cmt">// Usage:
+// ApiClientFactory.getSpec("pricing")
+//     .body(payload).post("/v1/rules/calculate")
+//     .then().statusCode(200);</span></pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>When to use in X4V project</h4>
+      <ul>
+        <li>DriverFactory → called inside DriverManager, controlled by -Dbrowser Maven param</li>
+        <li>ApiClientFactory → each microservice gets its own RequestSpecification with correct base URL</li>
+        <li>DBConnectionFactory → create PostgreSQL or Oracle connection based on -Ddb param</li>
+        <li>TestDataFactory → build test data objects from Excel rows or JSON files</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =================== BUILDER =================== -->
+<div id="tab-builder" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(245,158,11,0.1);color:var(--accent4)">03</div>
+      <div>
+        <div class="section-title">Builder Pattern</div>
+        <div class="section-subtitle">creational · request payload · test data objects · json</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Construct complex objects step by step. Separate construction from representation. Ideal for <strong>building API request payloads</strong>, test data objects from JSON/Excel, and fluent RestAssured request builders.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">PricingRuleRequest.java — Builder for X4V pricing API</span>
+        <span class="code-lang">Java · RestAssured · JSON</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">PricingRuleRequest</span> {
+
+    <span class="kw">private final</span> <span class="typ">String</span>  ruleCode;
+    <span class="kw">private final</span> <span class="typ">String</span>  vehicleType;
+    <span class="kw">private final</span> <span class="typ">int</span>     powerRank;
+    <span class="kw">private final</span> <span class="typ">double</span>  basePrice;
+    <span class="kw">private final</span> <span class="typ">boolean</span> isActive;
+    <span class="kw">private final</span> <span class="typ">List</span><span class="op">&lt;</span><span class="typ">String</span><span class="op">&gt;</span> tags;
+
+    <span class="kw">private</span> <span class="fn">PricingRuleRequest</span>(<span class="typ">Builder</span> b) {
+        <span class="kw">this</span>.ruleCode    <span class="op">=</span> b.ruleCode;
+        <span class="kw">this</span>.vehicleType <span class="op">=</span> b.vehicleType;
+        <span class="kw">this</span>.powerRank   <span class="op">=</span> b.powerRank;
+        <span class="kw">this</span>.basePrice   <span class="op">=</span> b.basePrice;
+        <span class="kw">this</span>.isActive    <span class="op">=</span> b.isActive;
+        <span class="kw">this</span>.tags        <span class="op">=</span> b.tags;
+    }
+
+    <span class="kw">public static class</span> <span class="cls">Builder</span> {
+        <span class="kw">private</span> <span class="typ">String</span>  ruleCode;
+        <span class="kw">private</span> <span class="typ">String</span>  vehicleType  <span class="op">=</span> <span class="str">"EV"</span>;       <span class="cmt">// sensible defaults</span>
+        <span class="kw">private</span> <span class="typ">int</span>     powerRank    <span class="op">=</span> <span class="num">1</span>;
+        <span class="kw">private</span> <span class="typ">double</span>  basePrice    <span class="op">=</span> <span class="num">0.0</span>;
+        <span class="kw">private</span> <span class="typ">boolean</span> isActive     <span class="op">=</span> <span class="kw">true</span>;
+        <span class="kw">private</span> <span class="typ">List</span><span class="op">&lt;</span><span class="typ">String</span><span class="op">&gt;</span> tags <span class="op">=</span> <span class="cls">Collections</span>.emptyList();
+
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">ruleCode</span>(<span class="typ">String</span> v)     { <span class="kw">this</span>.ruleCode    <span class="op">=</span> v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">vehicleType</span>(<span class="typ">String</span> v)  { <span class="kw">this</span>.vehicleType <span class="op">=</span> v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">powerRank</span>(<span class="typ">int</span> v)       { <span class="kw">this</span>.powerRank   <span class="op">=</span> v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">basePrice</span>(<span class="typ">double</span> v)    { <span class="kw">this</span>.basePrice   <span class="op">=</span> v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">inactive</span>()             { <span class="kw">this</span>.isActive    <span class="op">=</span> <span class="kw">false</span>; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">tags</span>(<span class="typ">List</span><span class="op">&lt;</span><span class="typ">String</span><span class="op">&gt;</span> v) { <span class="kw">this</span>.tags        <span class="op">=</span> v; <span class="kw">return this</span>; }
+
+        <span class="kw">public</span> <span class="cls">PricingRuleRequest</span> <span class="fn">build</span>() {
+            <span class="cls">Objects</span>.requireNonNull(ruleCode, <span class="str">"ruleCode is required"</span>);
+            <span class="kw">return new</span> <span class="cls">PricingRuleRequest</span>(<span class="kw">this</span>);
+        }
+    }
+
+    <span class="cmt">// Jackson / Gson serialize this to JSON automatically</span>
+}
+
+<span class="cmt">// Clean test:
+// var req = new PricingRuleRequest.Builder()
+//     .ruleCode("RULE_EV_TIER2")
+//     .powerRank(3)
+//     .basePrice(45999.00)
+//     .tags(List.of("ev", "tier2"))
+//     .build();</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">TestDataBuilder.java — Build test objects from JSON file</span>
+        <span class="code-lang">Java · Jackson · JSON</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">TestDataBuilder</span> {
+
+    <span class="kw">private static final</span> <span class="typ">ObjectMapper</span> MAPPER <span class="op">=</span> <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+
+    <span class="cmt">// Load from src/test/resources/testdata/pricing_rules.json</span>
+    <span class="kw">public static</span> <span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> <span class="typ">T</span> <span class="fn">fromJson</span>(<span class="typ">String</span> path, <span class="cls">Class</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> type) {
+        <span class="kw">try</span> (<span class="typ">InputStream</span> is <span class="op">=</span> <span class="cls">TestDataBuilder</span>.<span class="kw">class</span>
+                .getClassLoader().getResourceAsStream(path)) {
+            <span class="kw">return</span> MAPPER.readValue(is, type);
+        } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"JSON load error: "</span> <span class="op">+</span> path, e);
+        }
+    }
+
+    <span class="kw">public static</span> <span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> <span class="typ">List</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> <span class="fn">fromJsonArray</span>(<span class="typ">String</span> path, <span class="cls">Class</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> type) {
+        <span class="kw">try</span> (<span class="typ">InputStream</span> is <span class="op">=</span> <span class="cls">TestDataBuilder</span>.<span class="kw">class</span>
+                .getClassLoader().getResourceAsStream(path)) {
+            <span class="typ">JavaType</span> listType <span class="op">=</span> MAPPER.getTypeFactory()
+                                      .constructCollectionType(<span class="cls">List</span>.<span class="kw">class</span>, type);
+            <span class="kw">return</span> MAPPER.readValue(is, listType);
+        } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e);
+        }
+    }
+}
+
+<span class="cmt">// Usage:
+// PricingRuleRequest req = TestDataBuilder
+//     .fromJson("testdata/create_rule.json", PricingRuleRequest.class);</span></pre>
+    </div>
+
+    <div class="pro-tip">
+      <span class="pro-tip-icon">💡</span>
+      <p><strong>JSON file tip:</strong> Keep a <code>testdata/</code> folder in <code>src/test/resources</code>. Name files per scenario: <code>create_rule_valid.json</code>, <code>create_rule_missing_code.json</code>. Use Builder with overrides for variations: <code>new PricingRuleRequest.Builder().from(base).ruleCode(null).build()</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== STRATEGY =================== -->
+<div id="tab-strategy" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(168,85,247,0.1);color:#c084fc">07</div>
+      <div>
+        <div class="section-title">Strategy Pattern</div>
+        <div class="section-subtitle">behavioral · auth strategies · environment switching</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Define a family of algorithms, encapsulate each one, and make them interchangeable. In QA: swap <strong>auth mechanisms</strong> (Bearer, Basic, OAuth2, API Key) at runtime without changing test code.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">AuthStrategy.java + implementations</span>
+        <span class="code-lang">Java · RestAssured</span>
+      </div>
+<pre><span class="cmt">// Strategy interface</span>
+<span class="kw">public interface</span> <span class="cls">AuthStrategy</span> {
+    <span class="typ">RequestSpecification</span> <span class="fn">apply</span>(<span class="typ">RequestSpecification</span> spec);
+}
+
+<span class="cmt">// Concrete Strategy 1 — Bearer Token</span>
+<span class="kw">public class</span> <span class="cls">BearerTokenAuth</span> <span class="kw">implements</span> <span class="cls">AuthStrategy</span> {
+    <span class="kw">private final</span> <span class="typ">String</span> token;
+
+    <span class="kw">public</span> <span class="fn">BearerTokenAuth</span>(<span class="typ">String</span> token) { <span class="kw">this</span>.token <span class="op">=</span> token; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">RequestSpecification</span> <span class="fn">apply</span>(<span class="typ">RequestSpecification</span> spec) {
+        <span class="kw">return</span> spec.header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> <span class="op">+</span> token);
+    }
+}
+
+<span class="cmt">// Concrete Strategy 2 — Basic Auth</span>
+<span class="kw">public class</span> <span class="cls">BasicAuth</span> <span class="kw">implements</span> <span class="cls">AuthStrategy</span> {
+    <span class="kw">private final</span> <span class="typ">String</span> user, pass;
+
+    <span class="kw">public</span> <span class="fn">BasicAuth</span>(<span class="typ">String</span> user, <span class="typ">String</span> pass) {
+        <span class="kw">this</span>.user <span class="op">=</span> user; <span class="kw">this</span>.pass <span class="op">=</span> pass;
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">RequestSpecification</span> <span class="fn">apply</span>(<span class="typ">RequestSpecification</span> spec) {
+        <span class="kw">return</span> spec.auth().basic(user, pass);
+    }
+}
+
+<span class="cmt">// Concrete Strategy 3 — API Key</span>
+<span class="kw">public class</span> <span class="cls">ApiKeyAuth</span> <span class="kw">implements</span> <span class="cls">AuthStrategy</span> {
+    <span class="kw">private final</span> <span class="typ">String</span> key;
+    <span class="kw">public</span> <span class="fn">ApiKeyAuth</span>(<span class="typ">String</span> k) { <span class="kw">this</span>.key <span class="op">=</span> k; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">RequestSpecification</span> <span class="fn">apply</span>(<span class="typ">RequestSpecification</span> spec) {
+        <span class="kw">return</span> spec.header(<span class="str">"x-api-key"</span>, key);
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">ApiClient.java — Context that uses Auth Strategy</span>
+        <span class="code-lang">Java · RestAssured</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">ApiClient</span> {
+
+    <span class="kw">private</span> <span class="typ">AuthStrategy</span> authStrategy;
+    <span class="kw">private final</span> <span class="typ">String</span>   baseUrl;
+
+    <span class="kw">public</span> <span class="fn">ApiClient</span>(<span class="typ">String</span> baseUrl, <span class="typ">AuthStrategy</span> auth) {
+        <span class="kw">this</span>.baseUrl      <span class="op">=</span> baseUrl;
+        <span class="kw">this</span>.authStrategy <span class="op">=</span> auth;
+    }
+
+    <span class="cmt">// Switch auth at runtime — no test change needed</span>
+    <span class="kw">public void</span> <span class="fn">setAuth</span>(<span class="typ">AuthStrategy</span> auth) { <span class="kw">this</span>.authStrategy <span class="op">=</span> auth; }
+
+    <span class="kw">public</span> <span class="typ">Response</span> <span class="fn">get</span>(<span class="typ">String</span> path) {
+        <span class="kw">return</span> authStrategy.apply(<span class="cls">RestAssured</span>.given()
+            .baseUri(baseUrl).log().ifValidationFails())
+            .get(path);
+    }
+
+    <span class="kw">public</span> <span class="typ">Response</span> <span class="fn">post</span>(<span class="typ">String</span> path, <span class="typ">Object</span> body) {
+        <span class="kw">return</span> authStrategy.apply(<span class="cls">RestAssured</span>.given()
+            .baseUri(baseUrl).contentType(<span class="str">"application/json"</span>))
+            .body(body).post(path);
+    }
+}
+
+<span class="cmt">// QA env: Bearer token
+// ApiClient client = new ApiClient(qaUrl, new BearerTokenAuth(token));
+
+// UAT env: switch to Basic
+// client.setAuth(new BasicAuth("admin", "secret"));</span></pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>Combine with ConfigManager</h4>
+      <ul>
+        <li>Read auth.type from config: bearer / basic / apikey</li>
+        <li>Build the right AuthStrategy in ApiClientFactory</li>
+        <li>Test code never changes — only config changes between environments</li>
+        <li>Add NoAuth strategy for public endpoints (no boilerplate null checks)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =================== FACADE =================== -->
+<div id="tab-facade" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(239,68,68,0.1);color:#f87171">05</div>
+      <div>
+        <div class="section-title">Facade Pattern</div>
+        <div class="section-subtitle">structural · api helper · db + rest combined operations</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Provide a simplified interface to a complex subsystem. In tests: wrap RestAssured + DB validation + JSON parsing behind a clean <strong>PricingApiHelper</strong> class — tests read like business requirements.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">PricingApiHelper.java — Facade over RestAssured + DB</span>
+        <span class="code-lang">Java · RestAssured · PostgreSQL</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">PricingApiHelper</span> {
+
+    <span class="kw">private final</span> <span class="cls">ApiClient</span>  apiClient;
+    <span class="kw">private final</span> <span class="cls">DBHelper</span>   db;
+    <span class="kw">private final</span> <span class="cls">ObjectMapper</span> mapper <span class="op">=</span> <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+
+    <span class="kw">public</span> <span class="fn">PricingApiHelper</span>() {
+        <span class="kw">this</span>.apiClient <span class="op">=</span> <span class="cls">ApiClientFactory</span>.getClient(<span class="str">"pricing"</span>);
+        <span class="kw">this</span>.db        <span class="op">=</span> <span class="cls">DBHelper</span>.getInstance();
+    }
+
+    <span class="cmt">/** Creates a pricing rule via API and verifies DB persistence */</span>
+    <span class="kw">public</span> <span class="typ">PricingRuleResponse</span> <span class="fn">createRuleAndVerify</span>(<span class="typ">PricingRuleRequest</span> req) {
+        <span class="cmt">// 1. POST via RestAssured</span>
+        <span class="typ">Response</span> resp <span class="op">=</span> apiClient.post(<span class="str">"/v1/pricing/rules"</span>, req);
+        resp.then().statusCode(<span class="num">201</span>);
+
+        <span class="typ">PricingRuleResponse</span> created <span class="op">=</span> resp.as(<span class="cls">PricingRuleResponse</span>.<span class="kw">class</span>);
+
+        <span class="cmt">// 2. Verify persisted in DB (PostgreSQL)</span>
+        <span class="typ">Map</span><span class="op">&lt;</span><span class="typ">String</span>, <span class="typ">Object</span><span class="op">&gt;</span> dbRow <span class="op">=</span> db.queryRow(
+            <span class="str">"SELECT * FROM pricing_rules WHERE rule_code = ?"</span>,
+            req.getRuleCode());
+
+        <span class="cls">Assert</span>.assertEquals(dbRow.get(<span class="str">"power_rank"</span>),
+            req.getPowerRank(), <span class="str">"DB power_rank mismatch"</span>);
+
+        <span class="kw">return</span> created;
+    }
+
+    <span class="cmt">/** Calculates price — wraps complex GET with query params */</span>
+    <span class="kw">public double</span> <span class="fn">calculatePrice</span>(<span class="typ">String</span> ruleCode, <span class="typ">String</span> vehicleId) {
+        <span class="kw">return</span> apiClient.get(<span class="str">"/v1/pricing/calculate?rule="</span>
+                <span class="op">+</span> ruleCode <span class="op">+</span> <span class="str">"&vehicle="</span> <span class="op">+</span> vehicleId)
+            .then().statusCode(<span class="num">200</span>)
+            .extract().path(<span class="str">"calculatedPrice"</span>);
+    }
+
+    <span class="kw">public void</span> <span class="fn">deleteRuleAndVerify</span>(<span class="typ">String</span> ruleId) {
+        apiClient.delete(<span class="str">"/v1/pricing/rules/"</span> <span class="op">+</span> ruleId)
+            .then().statusCode(<span class="num">204</span>);
+        <span class="typ">boolean</span> inDb <span class="op">=</span> db.exists(
+            <span class="str">"SELECT 1 FROM pricing_rules WHERE id = ?"</span>, ruleId);
+        <span class="cls">Assert</span>.assertFalse(inDb, <span class="str">"Rule still exists in DB after delete"</span>);
+    }
+}
+
+<span class="cmt">// Test becomes readable:
+// helper.createRuleAndVerify(rule);
+// double price = helper.calculatePrice("RULE_01", "VH_999");
+// helper.deleteRuleAndVerify(rule.getId());</span></pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>Facade layers in your framework</h4>
+      <ul>
+        <li>PricingApiHelper → wraps pricing microservice + PostgreSQL validations</li>
+        <li>AuthHelper → login, refresh token, logout in one call</li>
+        <li>TestSetupHelper → create preconditions (insert test data, set rules active)</li>
+        <li>ReportHelper → write Extent Report step with response + DB snapshot</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =================== DECORATOR =================== -->
+<div id="tab-decorator" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(6,182,212,0.1);color:#22d3ee">06</div>
+      <div>
+        <div class="section-title">Decorator Pattern</div>
+        <div class="section-subtitle">structural · webdriver wrapping · logging · screenshots · retry</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Attach additional responsibilities to an object dynamically. In Selenium: wrap WebDriver with <strong>logging, screenshot-on-failure, and retry behavior</strong> without modifying driver code or using inheritance.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">LoggingWebDriver.java — Decorator over WebDriver</span>
+        <span class="code-lang">Java · Selenium</span>
+      </div>
+<pre><span class="cmt">// Decorator — wraps real driver, adds logging to every action</span>
+<span class="kw">public class</span> <span class="cls">LoggingWebDriver</span> <span class="kw">implements</span> <span class="typ">WebDriver</span> {
+
+    <span class="kw">private final</span> <span class="typ">WebDriver</span> delegate;
+    <span class="kw">private static final</span> <span class="typ">Logger</span> log <span class="op">=</span>
+        <span class="cls">LogManager</span>.getLogger(<span class="cls">LoggingWebDriver</span>.<span class="kw">class</span>);
+
+    <span class="kw">public</span> <span class="fn">LoggingWebDriver</span>(<span class="typ">WebDriver</span> driver) { <span class="kw">this</span>.delegate <span class="op">=</span> driver; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">get</span>(<span class="typ">String</span> url) {
+        log.info(<span class="str">"→ Navigating to: {}"</span>, url);
+        delegate.get(url);
+        log.info(<span class="str">"✓ Page loaded: {}"</span>, delegate.getTitle());
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">WebElement</span> <span class="fn">findElement</span>(<span class="typ">By</span> by) {
+        log.debug(<span class="str">"→ findElement: {}"</span>, by);
+        <span class="kw">try</span> {
+            <span class="typ">WebElement</span> el <span class="op">=</span> delegate.findElement(by);
+            log.debug(<span class="str">"✓ Found: {}"</span>, by);
+            <span class="kw">return</span> el;
+        } <span class="kw">catch</span> (<span class="typ">NoSuchElementException</span> e) {
+            log.error(<span class="str">"✗ Not found: {}"</span>, by);
+            <span class="kw">throw</span> e;
+        }
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">quit</span>() {
+        log.info(<span class="str">"→ Quitting browser"</span>);
+        delegate.quit();
+    }
+
+    <span class="cmt">// Delegate all other WebDriver methods...
+    @Override public String getCurrentUrl() { return delegate.getCurrentUrl(); }
+    @Override public String getTitle()       { return delegate.getTitle(); }
+    // ... etc</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">RetryFilter.java — RestAssured Filter Decorator (retry on 503)</span>
+        <span class="code-lang">Java · RestAssured</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">RetryFilter</span> <span class="kw">implements</span> <span class="typ">Filter</span> {
+
+    <span class="kw">private static final int</span> MAX_RETRIES <span class="op">=</span> <span class="num">3</span>;
+    <span class="kw">private static final long</span> WAIT_MS    <span class="op">=</span> <span class="num">1000L</span>;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">Response</span> <span class="fn">filter</span>(<span class="typ">FilterableRequestSpecification</span> req,
+                           <span class="typ">FilterableResponseSpecification</span> respSpec,
+                           <span class="typ">FilterContext</span> ctx) {
+        <span class="typ">Response</span> resp <span class="op">=</span> <span class="kw">null</span>;
+        <span class="kw">for</span> (<span class="typ">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> MAX_RETRIES; i<span class="op">++</span>) {
+            resp <span class="op">=</span> ctx.next(req, respSpec);
+            <span class="kw">if</span> (resp.statusCode() <span class="op">!=</span> <span class="num">503</span>) <span class="kw">break</span>;
+            <span class="cls">System</span>.out.printf(<span class="str">"Retry %d/%d after 503%n"</span>, i<span class="op">+</span><span class="num">1</span>, MAX_RETRIES);
+            <span class="kw">try</span> { <span class="cls">Thread</span>.sleep(WAIT_MS <span class="op">*</span> (i <span class="op">+</span> <span class="num">1</span>)); }
+            <span class="kw">catch</span> (<span class="typ">InterruptedException</span> ie) {
+                <span class="cls">Thread</span>.currentThread().interrupt();
+            }
+        }
+        <span class="kw">return</span> resp;
+    }
+}
+
+<span class="cmt">// Attach to any request spec:
+// RestAssured.given().filter(new RetryFilter()).filter(new TimingFilter())
+//     .get("/v1/pricing/rules");</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- =================== OBSERVER =================== -->
+<div id="tab-observer" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(249,115,22,0.1);color:#fb923c">08</div>
+      <div>
+        <div class="section-title">Observer / Listener Pattern</div>
+        <div class="section-subtitle">behavioral · testng listeners · screenshot on failure · extent reports</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Define a one-to-many dependency. When test lifecycle events fire (onTestFailure, onStart, onFinish), all registered observers react. In TestNG this is the <strong>ITestListener</strong> and <strong>ISuiteListener</strong> system.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">TestListener.java — Screenshot + ExtentReport on failure</span>
+        <span class="code-lang">Java · TestNG · Selenium</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">TestListener</span> <span class="kw">implements</span> <span class="typ">ITestListener</span> {
+
+    <ann>@Override</ann>
+    <span class="kw">public void</span> <span class="fn">onTestStart</span>(<span class="typ">ITestResult</span> result) {
+        <span class="cls">ExtentManager</span>.createTest(result.getName(),
+            result.getMethod().getDescription());
+        <span class="cls">System</span>.out.printf(<span class="str">"▶ START: %s%n"</span>, result.getName());
+    }
+
+    <ann>@Override</ann>
+    <span class="kw">public void</span> <span class="fn">onTestSuccess</span>(<span class="typ">ITestResult</span> result) {
+        <span class="cls">ExtentManager</span>.getTest().pass(<span class="str">"✓ PASSED"</span>);
+    }
+
+    <ann>@Override</ann>
+    <span class="kw">public void</span> <span class="fn">onTestFailure</span>(<span class="typ">ITestResult</span> result) {
+        <span class="cmt">// 1. Capture screenshot</span>
+        <span class="typ">String</span> path <span class="op">=</span> <span class="fn">captureScreenshot</span>(result.getName());
+
+        <span class="cmt">// 2. Log to Extent Report with screenshot attachment</span>
+        <span class="cls">ExtentManager</span>.getTest()
+            .fail(result.getThrowable())
+            .addScreenCaptureFromPath(path, <span class="str">"Failure Screenshot"</span>);
+    }
+
+    <ann>@Override</ann>
+    <span class="kw">public void</span> <span class="fn">onTestSkipped</span>(<span class="typ">ITestResult</span> result) {
+        <span class="cls">ExtentManager</span>.getTest().skip(result.getThrowable());
+    }
+
+    <span class="kw">private</span> <span class="typ">String</span> <span class="fn">captureScreenshot</span>(<span class="typ">String</span> testName) {
+        <span class="typ">String</span> path <span class="op">=</span> <span class="str">"screenshots/"</span> <span class="op">+</span> testName <span class="op">+</span> <span class="str">"_"</span>
+            <span class="op">+</span> <span class="cls">System</span>.currentTimeMillis() <span class="op">+</span> <span class="str">".png"</span>;
+        <span class="typ">TakesScreenshot</span> ts <span class="op">=</span> (<span class="typ">TakesScreenshot</span>) <span class="cls">DriverManager</span>.getDriver();
+        <span class="typ">File</span> src <span class="op">=</span> ts.getScreenshotAs(<span class="cls">OutputType</span>.FILE);
+        <span class="kw">try</span> { <span class="cls">FileUtils</span>.copyFile(src, <span class="kw">new</span> <span class="cls">File</span>(path)); }
+        <span class="kw">catch</span> (<span class="typ">IOException</span> e) { e.printStackTrace(); }
+        <span class="kw">return</span> path;
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">testng.xml — Register Listener</span>
+        <span class="code-lang">XML · TestNG</span>
+      </div>
+<pre><span class="op">&lt;</span><span class="cls">suite</span> name<span class="op">=</span><span class="str">"X4V Unite Suite"</span> parallel<span class="op">=</span><span class="str">"methods"</span> thread-count<span class="op">=</span><span class="str">"4"</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="cls">listeners</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="cls">listener</span> class-name<span class="op">=</span><span class="str">"com.x4v.listeners.TestListener"</span><span class="op">/&gt;</span>
+    <span class="op">&lt;</span><span class="cls">listener</span> class-name<span class="op">=</span><span class="str">"com.x4v.listeners.RetryListener"</span><span class="op">/&gt;</span>
+    <span class="op">&lt;</span><span class="cls">listener</span> class-name<span class="op">=</span><span class="str">"com.x4v.listeners.SuiteListener"</span><span class="op">/&gt;</span>
+  <span class="op">&lt;/</span><span class="cls">listeners</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="cls">test</span> name<span class="op">=</span><span class="str">"Pricing API Tests"</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="cls">classes</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="cls">class</span> name<span class="op">=</span><span class="str">"com.x4v.tests.PricingRuleTest"</span><span class="op">/&gt;</span>
+    <span class="op">&lt;/</span><span class="cls">classes</span><span class="op">&gt;</span>
+  <span class="op">&lt;/</span><span class="cls">test</span><span class="op">&gt;</span>
+
+<span class="op">&lt;/</span><span class="cls">suite</span><span class="op">&gt;</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">RetryListener.java — IRetryAnalyzer implementation</span>
+        <span class="code-lang">Java · TestNG</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">RetryAnalyzer</span> <span class="kw">implements</span> <span class="typ">IRetryAnalyzer</span> {
+
+    <span class="kw">private int</span> retryCount <span class="op">=</span> <span class="num">0</span>;
+    <span class="kw">private static final int</span> MAX_RETRY <span class="op">=</span> <span class="num">2</span>;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">retry</span>(<span class="typ">ITestResult</span> result) {
+        <span class="kw">if</span> (retryCount <span class="op">&lt;</span> MAX_RETRY) {
+            retryCount<span class="op">++</span>;
+            <span class="cls">System</span>.out.printf(<span class="str">"⟳ Retry %d/%d: %s%n"</span>,
+                retryCount, MAX_RETRY, result.getName());
+            <span class="kw">return true</span>;
+        }
+        <span class="kw">return false</span>;
+    }
+}
+
+<span class="cmt">// Apply globally via RetryListener (IAnnotationTransformer):
+// public class RetryListener implements IAnnotationTransformer {
+//   @Override
+//   public void transform(ITestAnnotation ann, ...) {
+//     ann.setRetryAnalyzer(RetryAnalyzer.class);
+//   }
+// }</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- =================== DATA DRIVEN =================== -->
+<div id="tab-dataprovider" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(52,211,153,0.1);color:var(--accent3)">09</div>
+      <div>
+        <div class="section-title">Data-Driven Pattern (Template Method)</div>
+        <div class="section-subtitle">behavioral · testng @dataprovider · excel (apache poi) · json · jackson</div>
+      </div>
+    </div>
+    <div class="pattern-intent">
+      <strong>Intent:</strong> Separate test logic from test data. The test algorithm stays fixed; only the data varies. Drive tests from <strong>Excel sheets</strong> (via Apache POI) or <strong>JSON files</strong> (via Jackson) — same test method, many data rows.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">ExcelReader.java — Apache POI Excel → Object[][]</span>
+        <span class="code-lang">Java · Apache POI · TestNG</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">ExcelReader</span> {
+
+    <span class="kw">public static</span> <span class="typ">Object</span>[][] <span class="fn">readSheet</span>(<span class="typ">String</span> filePath, <span class="typ">String</span> sheetName) {
+        <span class="kw">try</span> (<span class="typ">FileInputStream</span> fis <span class="op">=</span> <span class="kw">new</span> <span class="cls">FileInputStream</span>(filePath);
+             <span class="typ">Workbook</span>          wb  <span class="op">=</span> <span class="kw">new</span> <span class="cls">XSSFWorkbook</span>(fis)) {
+
+            <span class="typ">Sheet</span> sheet <span class="op">=</span> wb.getSheet(sheetName);
+            <span class="typ">int</span> rows <span class="op">=</span> sheet.getPhysicalNumberOfRows();
+            <span class="typ">int</span> cols <span class="op">=</span> sheet.getRow(<span class="num">0</span>).getPhysicalNumberOfCells();
+
+            <span class="cmt">// Row 0 = headers, Row 1+ = data</span>
+            <span class="typ">Object</span>[][] data <span class="op">=</span> <span class="kw">new</span> <span class="typ">Object</span>[rows <span class="op">-</span> <span class="num">1</span>][cols];
+            <span class="kw">for</span> (<span class="typ">int</span> r <span class="op">=</span> <span class="num">1</span>; r <span class="op">&lt;</span> rows; r<span class="op">++</span>) {
+                <span class="typ">Row</span> row <span class="op">=</span> sheet.getRow(r);
+                <span class="kw">for</span> (<span class="typ">int</span> c <span class="op">=</span> <span class="num">0</span>; c <span class="op">&lt;</span> cols; c<span class="op">++</span>) {
+                    data[r<span class="op">-</span><span class="num">1</span>][c] <span class="op">=</span> <span class="fn">getCellValue</span>(row.getCell(c));
+                }
+            }
+            <span class="kw">return</span> data;
+
+        } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"Excel read error: "</span> <span class="op">+</span> filePath, e);
+        }
+    }
+
+    <span class="kw">private static</span> <span class="typ">Object</span> <span class="fn">getCellValue</span>(<span class="typ">Cell</span> cell) {
+        <span class="kw">if</span> (cell <span class="op">==</span> <span class="kw">null</span>) <span class="kw">return</span> <span class="str">""</span>;
+        <span class="kw">return switch</span> (cell.getCellType()) {
+            <span class="kw">case</span> STRING  <span class="op">-&gt;</span> cell.getStringCellValue();
+            <span class="kw">case</span> NUMERIC <span class="op">-&gt;</span> (<span class="typ">long</span>) cell.getNumericCellValue(); <span class="cmt">// avoid 1.0 → 1</span>
+            <span class="kw">case</span> BOOLEAN <span class="op">-&gt;</span> cell.getBooleanCellValue();
+            <span class="kw">case</span> FORMULA <span class="op">-&gt;</span> cell.getStringCellValue();
+            <span class="kw">default</span>      <span class="op">-&gt;</span> <span class="str">""</span>;
+        };
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">PricingRuleTest.java — Excel + JSON @DataProvider tests</span>
+        <span class="code-lang">Java · TestNG · RestAssured</span>
+      </div>
+<pre><span class="kw">public class</span> <span class="cls">PricingRuleTest</span> {
+
+    <span class="kw">private static final</span> <span class="typ">String</span> EXCEL_PATH
+        <span class="op">=</span> <span class="str">"src/test/resources/testdata/pricing_rules.xlsx"</span>;
+
+    <span class="cmt">// ── Excel-driven DataProvider ────────────────────────────────</span>
+    <span class="ann">@DataProvider</span>(name <span class="op">=</span> <span class="str">"pricingRulesExcel"</span>)
+    <span class="kw">public</span> <span class="typ">Object</span>[][] <span class="fn">excelData</span>() {
+        <span class="kw">return</span> <span class="cls">ExcelReader</span>.readSheet(EXCEL_PATH, <span class="str">"CreateRule"</span>);
+    }
+
+    <span class="ann">@Test</span>(dataProvider <span class="op">=</span> <span class="str">"pricingRulesExcel"</span>)
+    <span class="kw">public void</span> <span class="fn">createRule_fromExcel</span>(
+            <span class="typ">String</span> ruleCode, <span class="typ">long</span> powerRank,
+            <span class="typ">double</span> basePrice, <span class="typ">String</span> vehicleType) {
+
+        <span class="typ">PricingRuleRequest</span> req <span class="op">=</span> <span class="kw">new</span> <span class="cls">PricingRuleRequest</span>.<span class="cls">Builder</span>()
+            .ruleCode(ruleCode)
+            .powerRank((<span class="typ">int</span>) powerRank)
+            .basePrice(basePrice)
+            .vehicleType(vehicleType)
+            .build();
+
+        <span class="kw">new</span> <span class="cls">PricingApiHelper</span>().createRuleAndVerify(req);
+    }
+
+    <span class="cmt">// ── JSON-driven DataProvider ─────────────────────────────────</span>
+    <span class="ann">@DataProvider</span>(name <span class="op">=</span> <span class="str">"pricingRulesJson"</span>)
+    <span class="kw">public</span> <span class="typ">Object</span>[][] <span class="fn">jsonData</span>() {
+        <span class="typ">List</span><span class="op">&lt;</span><span class="cls">PricingRuleRequest</span><span class="op">&gt;</span> list <span class="op">=</span> <span class="cls">TestDataBuilder</span>
+            .fromJsonArray(<span class="str">"testdata/pricing_rules.json"</span>,
+                           <span class="cls">PricingRuleRequest</span>.<span class="kw">class</span>);
+
+        <span class="kw">return</span> list.stream()
+            .map(r <span class="op">-&gt;</span> <span class="kw">new</span> <span class="typ">Object</span>[]{ r })
+            .toArray(<span class="typ">Object</span>[][]::new);
+    }
+
+    <span class="ann">@Test</span>(dataProvider <span class="op">=</span> <span class="str">"pricingRulesJson"</span>)
+    <span class="kw">public void</span> <span class="fn">createRule_fromJson</span>(<span class="typ">PricingRuleRequest</span> req) {
+        <span class="kw">new</span> <span class="cls">PricingApiHelper</span>().createRuleAndVerify(req);
+    }
+}</pre>
+    </div>
+
+    <div class="use-case-box">
+      <h4>Excel sheet structure (pricing_rules.xlsx → CreateRule sheet)</h4>
+      <ul>
+        <li>Row 1 (headers): ruleCode | powerRank | basePrice | vehicleType | expectedStatus</li>
+        <li>Row 2+: RULE_EV_T1 | 3 | 45999 | EV | 201</li>
+        <li>Add a "RunFlag" column — filter rows where RunFlag = Y before returning data</li>
+        <li>Use named sheets per test suite: CreateRule, UpdateRule, DeleteRule, NegativeScenarios</li>
+      </ul>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">pricing_rules.json — test data file</span>
+        <span class="code-lang">JSON</span>
+      </div>
+<pre>[
+  {
+    <span class="str">"ruleCode"</span>:    <span class="str">"RULE_EV_T1"</span>,
+    <span class="str">"vehicleType"</span>: <span class="str">"EV"</span>,
+    <span class="str">"powerRank"</span>:   <span class="num">3</span>,
+    <span class="str">"basePrice"</span>:   <span class="num">45999.00</span>,
+    <span class="str">"isActive"</span>:    <span class="kw">true</span>,
+    <span class="str">"tags"</span>:        [<span class="str">"ev"</span>, <span class="str">"tier1"</span>]
+  },
+  {
+    <span class="str">"ruleCode"</span>:    <span class="str">"RULE_ICE_T2"</span>,
+    <span class="str">"vehicleType"</span>: <span class="str">"ICE"</span>,
+    <span class="str">"powerRank"</span>:   <span class="num">1</span>,
+    <span class="str">"basePrice"</span>:   <span class="num">32000.00</span>,
+    <span class="str">"isActive"</span>:    <span class="kw">true</span>,
+    <span class="str">"tags"</span>:        [<span class="str">"ice"</span>, <span class="str">"tier2"</span>]
+  }
+]</pre>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CHEAT SHEET =================== -->
+<div id="tab-cheatsheet" class="tab-panel">
+  <div class="pattern-section">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(0,212,255,0.1);color:var(--accent)">⚡</div>
+      <div>
+        <div class="section-title">Quick Reference Cheat Sheet</div>
+        <div class="section-subtitle">all patterns · when to use · which stack</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Pattern</th>
+          <th>Category</th>
+          <th>Problem it Solves</th>
+          <th>Where in Your Framework</th>
+          <th>Stack</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dot" style="background:#7c3aed"></span>Singleton</td>
+          <td>Creational</td>
+          <td>Shared resource that must exist only once per thread/run</td>
+          <td>DriverManager, ConfigManager, TokenCache, DBHelper</td>
+          <td><span class="tag t-sel">Selenium</span> <span class="tag t-rest">REST</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#10b981"></span>Factory Method</td>
+          <td>Creational</td>
+          <td>Create objects without specifying exact class; switch impl via config</td>
+          <td>DriverFactory (chrome/firefox/edge), ApiClientFactory (service URL switching)</td>
+          <td><span class="tag t-sel">Selenium</span> <span class="tag t-rest">REST</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#f59e0b"></span>Builder</td>
+          <td>Creational</td>
+          <td>Construct complex objects step by step with optional fields</td>
+          <td>PricingRuleRequest.Builder, TestDataBuilder from JSON/Excel</td>
+          <td><span class="tag t-rest">REST</span> <span class="tag t-json">JSON</span> <span class="tag t-xls">Excel</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#00d4ff"></span>Page Object Model</td>
+          <td>Structural</td>
+          <td>Decouple UI locators from test logic; single change point</td>
+          <td>LoginPage, DashboardPage, RulesConfigPage extend BasePage</td>
+          <td><span class="tag t-sel">Selenium</span> <span class="tag t-tng">TestNG</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#ef4444"></span>Facade</td>
+          <td>Structural</td>
+          <td>Simplify complex subsystem — hide RestAssured + DB behind clean API</td>
+          <td>PricingApiHelper, AuthHelper, TestSetupHelper</td>
+          <td><span class="tag t-rest">REST</span> <span class="tag t-tng">TestNG</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#06b6d4"></span>Decorator</td>
+          <td>Structural</td>
+          <td>Add behavior (logging, retry, screenshot) without changing original class</td>
+          <td>LoggingWebDriver, RetryFilter, TimingFilter for RestAssured</td>
+          <td><span class="tag t-sel">Selenium</span> <span class="tag t-rest">REST</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#a855f7"></span>Strategy</td>
+          <td>Behavioral</td>
+          <td>Swap algorithms (auth schemes) at runtime without changing callers</td>
+          <td>BearerTokenAuth, BasicAuth, ApiKeyAuth — swapped per env in config</td>
+          <td><span class="tag t-rest">REST</span> <span class="tag t-java">Java</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#f97316"></span>Observer / Listener</td>
+          <td>Behavioral</td>
+          <td>React to lifecycle events (test start/fail/finish) without polling</td>
+          <td>TestListener, RetryAnalyzer, SuiteListener for ExtentReports</td>
+          <td><span class="tag t-tng">TestNG</span> <span class="tag t-sel">Selenium</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#34d399"></span>Data-Driven (Template)</td>
+          <td>Behavioral</td>
+          <td>Same test logic, many data sets — decouple data from code</td>
+          <td>@DataProvider reading Excel via POI or JSON via Jackson</td>
+          <td><span class="tag t-tng">TestNG</span> <span class="tag t-xls">Excel</span> <span class="tag t-json">JSON</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:32px">
+      <div class="category-label">Recommended Pattern Combinations</div>
+      <div class="two-col">
+        <div class="use-case-box">
+          <h4>🔒 Parallel Selenium Suite</h4>
+          <ul>
+            <li>ThreadLocal Singleton → DriverManager</li>
+            <li>Factory → DriverFactory (browser from -Dbrowser param)</li>
+            <li>POM → Page classes extend BasePage</li>
+            <li>Observer → TestListener (screenshot + Extent)</li>
+            <li>Data-Driven → Excel @DataProvider for UI test data</li>
+          </ul>
+        </div>
+        <div class="use-case-box">
+          <h4>🌐 RestAssured API Suite</h4>
+          <ul>
+            <li>Singleton → ConfigManager + TokenCache</li>
+            <li>Factory → ApiClientFactory per microservice</li>
+            <li>Builder → Request payload objects</li>
+            <li>Strategy → Auth switching per env</li>
+            <li>Facade → PricingApiHelper (REST + DB)</li>
+            <li>Decorator → RetryFilter + TimingFilter</li>
+            <li>Data-Driven → JSON @DataProvider</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="category-label">Project Folder Structure</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">Recommended Maven Project Layout</span>
+          <span class="code-lang">Maven · Java</span>
+        </div>
+<pre>src/
+├── main/java/com/x4v/
+│   └── (production code — not test code)
+└── test/
+    ├── java/com/x4v/
+    │   ├── base/
+    │   │   ├── BasePage.java              <span class="cmt">← POM base</span>
+    │   │   └── BaseTest.java              <span class="cmt">← @BeforeMethod setup</span>
+    │   ├── config/
+    │   │   ├── ConfigManager.java         <span class="cmt">← Singleton</span>
+    │   │   └── DriverManager.java         <span class="cmt">← ThreadLocal Singleton</span>
+    │   ├── factory/
+    │   │   ├── DriverFactory.java         <span class="cmt">← Factory Method</span>
+    │   │   └── ApiClientFactory.java      <span class="cmt">← Factory + Strategy</span>
+    │   ├── auth/
+    │   │   ├── AuthStrategy.java          <span class="cmt">← Strategy interface</span>
+    │   │   ├── BearerTokenAuth.java
+    │   │   └── BasicAuth.java
+    │   ├── helper/
+    │   │   ├── PricingApiHelper.java      <span class="cmt">← Facade</span>
+    │   │   └── DBHelper.java
+    │   ├── listeners/
+    │   │   ├── TestListener.java          <span class="cmt">← Observer</span>
+    │   │   └── RetryAnalyzer.java
+    │   ├── model/
+    │   │   └── PricingRuleRequest.java    <span class="cmt">← Builder</span>
+    │   ├── pages/
+    │   │   ├── LoginPage.java             <span class="cmt">← POM</span>
+    │   │   └── DashboardPage.java
+    │   ├── utils/
+    │   │   ├── ExcelReader.java           <span class="cmt">← Data-Driven</span>
+    │   │   └── TestDataBuilder.java
+    │   └── tests/
+    │       ├── PricingRuleTest.java
+    │       └── LoginTest.java
+    └── resources/
+        ├── config/
+        │   ├── qa.properties
+        │   └── uat.properties
+        ├── testdata/
+        │   ├── pricing_rules.xlsx
+        │   └── pricing_rules.json
+        └── testng.xml</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>

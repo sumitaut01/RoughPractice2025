@@ -22,4 +22,10 @@ public class JavaScriptExecutor {
         File file=sc.getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(file, new File("D:\\Resurrection 2025.png"));
     }
+
+
+
+
+
+
 }

@@ -1,6 +1,7 @@
 package basics.lambdaexpressions;
 
 import org.apache.http.io.SessionOutputBuffer;
+import org.testng.annotations.Test;
 
 import java.util.function.*;
 
@@ -28,6 +29,19 @@ public class RoughRefresher {
 
 
 
+
+
+
+
+    }
+
+
+
+    @Test
+    public void Rough(){
+
+        Supplier<String> st=()->"this is it";
+        System.out.println(st.get());//this isit
 
 
 

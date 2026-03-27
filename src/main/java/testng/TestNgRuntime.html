@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestNG Advanced Concepts Study Guide</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        h3 { color: #16a085; }
+        code { background-color: #272822; color: #f8f8f2; padding: 2px 5px; border-radius: 3px; font-family: 'Consolas', monospace; }
+        pre { background-color: #272822; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Consolas', monospace; line-height: 1.4; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #3498db; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .note { background-color: #e7f3fe; border-left: 6px solid #2196F3; margin-bottom: 15px; padding: 10px; }
+        .footer { margin-top: 50px; font-size: 0.9em; color: #7f8c8d; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>TestNG Advanced Study Guide</h1>
+    <p>This guide covers dynamic test suite generation, the <code>@Factory</code> annotation, and data-driven execution.</p>
+
+    <hr>
+
+    <h2>1. Generating <code>testng.xml</code> at Runtime</h2>
+    <p>Useful when you don't know which tests to run until the application starts (e.g., based on a database flag).</p>
+    
+    <h3>Programmatic Suite Creation</h3>
+    <pre>
+XmlSuite suite = new XmlSuite();
+suite.setName("DynamicSuite");
+
+XmlTest test = new XmlTest(suite);
+test.setName("ParameterTest");
+
+List&lt;XmlClass&gt; classes = new ArrayList&lt;&gt;();
+classes.add(new XmlClass("com.tests.LoginTest"));
+test.setXmlClasses(classes);
+
+TestNG tng = new TestNG();
+tng.setXmlSuites(Arrays.asList(suite));
+tng.run();</pre>
+
+    <hr>
+
+    <h2>2. The <code>@Factory</code> Annotation</h2>
+    <p>A Factory produces multiple <b>instances</b> of a test class. Each instance acts as its own separate "world" with its own state.</p>
+
+    
+
+    <h3>Key Differences</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>@DataProvider</th>
+                <th>@Factory</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Target</b></td>
+                <td>Method-level</td>
+                <td>Class-level</td>
+            </tr>
+            <tr>
+                <td><b>Behavior</b></td>
+                <td>Runs one method multiple times</td>
+                <td>Creates multiple class objects</td>
+            </tr>
+            <tr>
+                <td><b>State</b></td>
+                <td>Shared variables can cause conflicts</td>
+                <td>Each instance has private variables</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>3. Data-Driven Factory (The Hybrid Approach)</h2>
+    <p>Combining <code>@DataProvider</code> with <code>@Factory</code> allows you to read from external sources (Excel/JSON) to spawn test instances.</p>
+
+    <h3>The Template Class</h3>
+    <pre>
+public class BrowserTest {
+    private String browser;
+    
+    public BrowserTest(String browser) { this.browser = browser; }
+
+    @Test
+    public void testLogo() {
+        System.out.println("Testing logo on: " + browser);
+    }
+}</pre>
+
+    <h3>The Factory Logic</h3>
+    <pre>
+public class MyFactory {
+    @Factory(dataProvider = "source")
+    public Object[] create(String b) {
+        return new Object[] { new BrowserTest(b) };
+    }
+
+    @DataProvider
+    public Object[][] source() {
+        // Replace with Excel/JSON reading logic
+        return new Object[][] { {"Chrome"}, {"Firefox"}, {"Edge"} };
+    }
+}</pre>
+
+    <div class="note">
+        <strong>Pro Tip:</strong> Use <code>suite.toXml()</code> if you need to debug your programmatic suite and see exactly what the XML structure looks like before execution.
+    </div>
+
+    <div class="footer">
+        Generated for Test Automation Study &copy; 2026
+    </div>
+
+</body>
+</html>

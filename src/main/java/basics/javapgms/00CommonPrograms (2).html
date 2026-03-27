@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Programs — Live Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;--surface:#0c1018;--card:#101520;--border:#1c2438;
+  --orange:#f97316;--cyan:#22d3ee;--green:#4ade80;--violet:#a78bfa;
+  --pink:#f472b6;--yellow:#fbbf24;--red:#f87171;
+  --text:#dde4f0;--muted:#4a5568;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(34,211,238,.03)1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.03)1px,transparent 1px);
+  background-size:56px 56px;pointer-events:none;z-index:0}
+
+header{position:relative;z-index:1;text-align:center;padding:40px 20px 24px}
+.badge{display:inline-block;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);
+  color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;margin-bottom:14px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,68px);letter-spacing:3px;line-height:1;
+  background:linear-gradient(135deg,#f97316,#fbbf24 35%,#22d3ee 70%,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:var(--muted);font-size:13px;margin-top:8px;letter-spacing:.5px}
+
+.layout{display:grid;grid-template-columns:255px 1fr;min-height:calc(100vh - 170px);position:relative;z-index:1}
+
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:12px 0;position:sticky;top:0;height:calc(100vh - 170px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--border)}
+.cat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 18px 5px}
+.prog-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 18px;background:none;border:none;
+  color:#7a8ba8;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;
+  text-align:left;transition:all .15s;border-left:2px solid transparent}
+.prog-btn:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.prog-btn.active{background:rgba(34,211,238,.07);border-left-color:var(--cyan);color:var(--cyan)}
+.pnum{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:18px;flex-shrink:0}
+.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.de{background:var(--green)}.dm{background:var(--yellow)}.dh{background:var(--pink)}
+
+.main{padding:24px 28px;overflow-y:auto}
+.prog-header{margin-bottom:20px}
+.prog-title{display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap}
+.prog-title h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px}
+.tag{padding:3px 10px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px}
+.easy{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.medium{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25)}
+.hard{background:rgba(244,114,182,.1);color:var(--pink);border:1px solid rgba(244,114,182,.25)}
+.cat-tag{background:rgba(34,211,238,.08);color:var(--cyan);border:1px solid rgba(34,211,238,.2)}
+.prog-desc{color:#6a7a9a;font-size:13px}
+
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:18px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--cyan));border-radius:2px;transition:width .3s}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0}
+@media(max-width:860px){.panels{grid-template-columns:1fr}.layout{grid-template-columns:1fr}}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.panel-head{background:var(--surface);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.panel-head span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.pdot2{width:8px;height:8px;border-radius:50%}
+.panel-body{padding:14px 16px}
+
+pre.code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:#b0bdd0;white-space:pre;overflow-x:auto}
+.kw{color:#f472b6}.ty{color:#38bdf8}.fn{color:#fbbf24}.st{color:#4ade80}.cm{color:#374560;font-style:italic}.nu{color:#fb923c}
+
+.viz-controls{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.btn{padding:7px 15px;border-radius:6px;border:1px solid var(--border);background:var(--surface);
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.4);color:var(--cyan)}
+.btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.spd{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.spd input{width:70px;accent-color:var(--cyan)}
+.step-info{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto}
+
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:18px;min-height:150px}
+.slabel{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+/* cells */
+.arr-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end}
+.cell{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.cv{min-width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  border-radius:6px;border:2px solid var(--border);background:var(--card);
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;transition:all .3s}
+.ci{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.cv.hi{border-color:var(--cyan);background:rgba(34,211,238,.12);color:var(--cyan);transform:translateY(-4px);box-shadow:0 4px 14px rgba(34,211,238,.2)}
+.cv.ok{border-color:var(--green);background:rgba(74,222,128,.14);color:var(--green);transform:translateY(-5px) scale(1.07);box-shadow:0 5px 16px rgba(74,222,128,.2)}
+.cv.pl{border-color:var(--orange);background:rgba(249,115,22,.12);color:var(--orange)}
+.cv.pr{border-color:var(--violet);background:rgba(167,139,250,.12);color:var(--violet)}
+.cv.seen{border-color:var(--yellow);background:rgba(251,191,36,.08);color:var(--yellow)}
+.cv.dup{border-color:var(--pink);background:rgba(244,114,182,.14);color:var(--pink);animation:pulse .45s ease}
+.cv.dim{opacity:.3}
+.cv.fst{border-color:var(--orange);background:rgba(249,115,22,.13);color:var(--orange)}
+.cv.snd{border-color:var(--violet);background:rgba(167,139,250,.13);color:var(--violet)}
+
+/* chars */
+.char-row{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px}
+.cc{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.chv{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border-radius:5px;border:2px solid var(--border);background:var(--card);
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;transition:all .28s}
+.chv.ac{border-color:var(--cyan);background:rgba(34,211,238,.12);color:var(--cyan);transform:scale(1.14)}
+.chv.mt{border-color:var(--green);background:rgba(74,222,128,.1);color:var(--green)}
+.chv.sw{border-color:var(--orange);background:rgba(249,115,22,.1);color:var(--orange);animation:bounce .38s ease}
+.chv.uq{border-color:var(--yellow);background:rgba(251,191,36,.1);color:var(--yellow)}
+.chv.dp{border-color:var(--pink);background:rgba(244,114,182,.1);color:var(--pink)}
+.chv.wn{border-color:var(--violet);background:rgba(167,139,250,.09);color:var(--violet)}
+.chv.fd{border-color:var(--green);background:rgba(74,222,128,.18);color:var(--green);transform:scale(1.18);box-shadow:0 0 14px rgba(74,222,128,.3)}
+.ptr-l{color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700}
+.ptr-r{color:var(--violet);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700}
+
+/* map */
+.map-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.me{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:3px 9px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;transition:all .28s;color:#8899bb}
+.me.ne{border-color:var(--cyan);background:rgba(34,211,238,.09);color:var(--cyan);animation:popIn .3s ease}
+.me.ht{border-color:var(--green);background:rgba(74,222,128,.1);color:var(--green);animation:pulse .38s ease}
+.me.red{border-color:var(--red);background:rgba(248,113,113,.08);color:var(--red)}
+
+/* var boxes */
+.vrow{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.vb{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 12px;min-width:70px;text-align:center}
+.vb .vn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.vb .vv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);transition:all .28s}
+.vb.upd .vv{color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.35);animation:popIn .3s ease}
+.vb.res .vv{color:var(--green)}
+
+/* log */
+.log{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-top:12px;max-height:90px;overflow-y:auto}
+.log::-webkit-scrollbar{width:2px}.log::-webkit-scrollbar-thumb{background:var(--border)}
+.ll{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8}
+.ll.cur{color:var(--cyan)}.ll.win{color:var(--green)}
+
+/* result banner */
+.rb{display:none;align-items:center;gap:9px;background:rgba(74,222,128,.07);
+  border:1px solid rgba(74,222,128,.28);border-radius:9px;padding:11px 16px;margin-top:12px}
+.rb.show{display:flex;animation:popIn .38s ease}
+.rb-t{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green)}
+
+/* matrix */
+.mat-wrap{display:inline-grid;gap:5px}
+.mc{width:42px;height:42px;display:flex;align-items:center;justify-content:center;
+  border-radius:6px;border:2px solid var(--border);background:var(--card);
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;transition:all .32s}
+.mc.pd{border-color:var(--cyan);background:rgba(34,211,238,.11);color:var(--cyan)}
+.mc.ad{border-color:var(--orange);background:rgba(249,115,22,.11);color:var(--orange)}
+.mc.bd{border-color:var(--pink);background:rgba(244,114,182,.14);color:var(--pink)}
+
+/* star */
+.sg{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9}
+.sr{display:flex;gap:2px}
+.sc{display:inline-block;width:15px;text-align:center;transition:all .28s}
+.sc.lit{color:var(--yellow);text-shadow:0 0 6px rgba(251,191,36,.5);animation:starPop .28s ease}
+.sc.sp{color:transparent}
+
+/* fib */
+.frow{display:flex;gap:5px;flex-wrap:wrap}
+.fc{min-width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border-radius:6px;border:2px solid var(--border);background:var(--card);
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;transition:all .32s;color:var(--muted)}
+.fc.nw{border-color:var(--cyan);background:rgba(34,211,238,.13);color:var(--cyan);animation:popIn .38s ease}
+.fc.ap{border-color:var(--orange);background:rgba(249,115,22,.11);color:var(--orange)}
+.fc.bp{border-color:var(--violet);background:rgba(167,139,250,.11);color:var(--violet)}
+
+/* freq bars */
+.fbars{display:flex;gap:4px;align-items:flex-end;height:58px;margin-top:6px}
+.fbw{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fb{width:20px;background:var(--border);border-radius:2px 2px 0 0;transition:height .38s,background .28s}
+.fb.ab{background:var(--cyan)}.fb.db{background:var(--pink)}
+.fbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+
+@keyframes popIn{from{transform:scale(.72);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.11)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}70%{transform:translateY(-3px)}}
+@keyframes starPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">&#9749; Java Visualizer</div>
+  <h1>Live Program Animator</h1>
+  <p class="sub">Watch every iteration &middot; Step through logic &middot; See variables change in real time</p>
+</header>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="cat-label">Arrays</div>
+  <button class="prog-btn active" onclick="loadProg(0)"><span class="pnum">01</span><span class="pdot de"></span>Two Sum</button>
+  <button class="prog-btn" onclick="loadProg(1)"><span class="pnum">02</span><span class="pdot dm"></span>Find Duplicates</button>
+  <button class="prog-btn" onclick="loadProg(2)"><span class="pnum">03</span><span class="pdot dm"></span>Second Largest</button>
+  <button class="prog-btn" onclick="loadProg(3)"><span class="pnum">04</span><span class="pdot dh"></span>Matrix Diagonal</button>
+  <button class="prog-btn" onclick="loadProg(15)"><span class="pnum">05</span><span class="pdot dm"></span>Segregate 0s &amp; 1s</button>
+  <button class="prog-btn" onclick="loadProg(16)"><span class="pnum">06</span><span class="pdot dh"></span>Merge Sorted Array</button>
+  <button class="prog-btn" onclick="loadProg(17)"><span class="pnum">07</span><span class="pdot dh"></span>Max Subarray (Kadane)</button>
+  <button class="prog-btn" onclick="loadProg(18)"><span class="pnum">08</span><span class="pdot dm"></span>Left Shift Array</button>
+  <button class="prog-btn" onclick="loadProg(19)"><span class="pnum">09</span><span class="pdot dm"></span>Intersection of Arrays</button>
+  <button class="prog-btn" onclick="loadProg(20)"><span class="pnum">10</span><span class="pdot dh"></span>Subarray Zero Sum</button>
+  <div class="cat-label">Strings</div>
+  <button class="prog-btn" onclick="loadProg(4)"><span class="pnum">11</span><span class="pdot de"></span>Reverse String</button>
+  <button class="prog-btn" onclick="loadProg(5)"><span class="pnum">12</span><span class="pdot de"></span>Palindrome</button>
+  <button class="prog-btn" onclick="loadProg(6)"><span class="pnum">13</span><span class="pdot dm"></span>Anagram Check</button>
+  <button class="prog-btn" onclick="loadProg(7)"><span class="pnum">14</span><span class="pdot de"></span>Char Frequency</button>
+  <button class="prog-btn" onclick="loadProg(8)"><span class="pnum">15</span><span class="pdot dm"></span>First Non-Repeat</button>
+  <button class="prog-btn" onclick="loadProg(9)"><span class="pnum">16</span><span class="pdot dh"></span>Longest Substring</button>
+  <button class="prog-btn" onclick="loadProg(21)"><span class="pnum">17</span><span class="pdot de"></span>Remove Spaces</button>
+  <button class="prog-btn" onclick="loadProg(22)"><span class="pnum">18</span><span class="pdot dm"></span>Duplicate Words</button>
+  <button class="prog-btn" onclick="loadProg(23)"><span class="pnum">19</span><span class="pdot dh"></span>Longest Common Prefix</button>
+  <button class="prog-btn" onclick="loadProg(24)"><span class="pnum">20</span><span class="pdot de"></span>Vowel &amp; Consonant</button>
+  <button class="prog-btn" onclick="loadProg(25)"><span class="pnum">21</span><span class="pdot dm"></span>Remove Special Chars</button>
+  <div class="cat-label">Numbers</div>
+  <button class="prog-btn" onclick="loadProg(10)"><span class="pnum">22</span><span class="pdot de"></span>Sum of Digits</button>
+  <button class="prog-btn" onclick="loadProg(11)"><span class="pnum">23</span><span class="pdot dm"></span>Fibonacci</button>
+  <button class="prog-btn" onclick="loadProg(12)"><span class="pnum">24</span><span class="pdot dm"></span>Prime Check</button>
+  <button class="prog-btn" onclick="loadProg(13)"><span class="pnum">25</span><span class="pdot de"></span>Reverse Number</button>
+  <button class="prog-btn" onclick="loadProg(26)"><span class="pnum">26</span><span class="pdot dm"></span>Factorial (Recursion)</button>
+  <button class="prog-btn" onclick="loadProg(27)"><span class="pnum">27</span><span class="pdot de"></span>Odd / Even</button>
+  <button class="prog-btn" onclick="loadProg(28)"><span class="pnum">28</span><span class="pdot de"></span>Count Digits</button>
+  <button class="prog-btn" onclick="loadProg(29)"><span class="pnum">29</span><span class="pdot dh"></span>Roman to Integer</button>
+  <div class="cat-label">Sorting</div>
+  <button class="prog-btn" onclick="loadProg(30)"><span class="pnum">30</span><span class="pdot dm"></span>Desc Sort (Arrays)</button>
+  <button class="prog-btn" onclick="loadProg(31)"><span class="pnum">31</span><span class="pdot dh"></span>Sort Map By Value</button>
+  <div class="cat-label">Pattern</div>
+  <button class="prog-btn" onclick="loadProg(14)"><span class="pnum">32</span><span class="pdot dh"></span>Star Pyramid</button>
+  <button class="prog-btn" onclick="loadProg(32)"><span class="pnum">33</span><span class="pdot dm"></span>Number Triangle</button>
+  <button class="prog-btn" onclick="loadProg(33)"><span class="pnum">34</span><span class="pdot de"></span>Odd/Even Pattern</button>
+</nav>
+<main class="main" id="mainArea"></main>
+</div>
+
+<script>
+// ── helpers (no nested backticks) ──────────────────────────────────────────
+function cell(v, cls, idx) {
+  return '<div class="cell"><div class="cv ' + cls + '">' + v + '</div><div class="ci">' + idx + '</div></div>';
+}
+function charCell(c, cls, ptr) {
+  return '<div class="cc"><div class="chv ' + cls + '">' + c + '</div>' + (ptr ? '<div class="' + ptr + '">' + ptr.replace('ptr-l','L').replace('ptr-r','R') + '</div>' : '') + '</div>';
+}
+function mapEntry(k, v, cls) {
+  return '<div class="me ' + cls + '"><span style="color:var(--muted)">' + k + '</span>:<span style="font-weight:700">' + v + '</span></div>';
+}
+function varBox(name, val, cls, color) {
+  var style = color ? ' style="color:' + color + '"' : '';
+  return '<div class="vb ' + (cls||'') + '"><div class="vn">' + name + '</div><div class="vv"' + style + '>' + val + '</div></div>';
+}
+function resultBanner(icon, text) {
+  return '<div class="rb show"><span style="font-size:18px">' + icon + '</span><span class="rb-t">' + text + '</span></div>';
+}
+function infoLine(html) {
+  return '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted);margin:6px 0">' + html + '</div>';
+}
+function colorize(code) {
+  var KW  = ['int','boolean','char','void','return','new','if','else','for','while','class','public','static','null','true','false','import'];
+  var TY  = ['HashMap','HashSet','LinkedHashSet','ArrayList','List','Set','Map','Integer','Character','String','Math'];
+  // Tokenize: split into comment | string | char-literal | word | number | other
+  var out = '', i = 0, n = code.length;
+  while (i < n) {
+    // line comment
+    if (code[i]==='/' && code[i+1]==='/') {
+      var end = code.indexOf('\n', i);
+      if (end===-1) end = n;
+      out += '<span class="cm">' + esc(code.slice(i, end)) + '</span>';
+      i = end;
+    }
+    // double-quoted string
+    else if (code[i]==='"') {
+      var j = i+1;
+      while (j < n && code[j]!=='"') { if(code[j]==='\\')j++; j++; }
+      out += '<span class="st">' + esc(code.slice(i, j+1)) + '</span>';
+      i = j+1;
+    }
+    // single-quoted char literal
+    else if (code[i]==="'") {
+      var j = i+1;
+      while (j < n && code[j]!=="'") { if(code[j]==='\\')j++; j++; }
+      out += '<span class="st">' + esc(code.slice(i, j+1)) + '</span>';
+      i = j+1;
+    }
+    // word (identifier or keyword)
+    else if (/[A-Za-z_]/.test(code[i])) {
+      var j = i;
+      while (j < n && /[A-Za-z0-9_]/.test(code[j])) j++;
+      var word = code.slice(i, j);
+      if (KW.indexOf(word) !== -1)       out += '<span class="kw">' + word + '</span>';
+      else if (TY.indexOf(word) !== -1)  out += '<span class="ty">' + word + '</span>';
+      else                               out += word;
+      i = j;
+    }
+    // number
+    else if (/[0-9]/.test(code[i])) {
+      var j = i;
+      while (j < n && /[0-9]/.test(code[j])) j++;
+      out += '<span class="nu">' + code.slice(i, j) + '</span>';
+      i = j;
+    }
+    // HTML-unsafe chars
+    else if (code[i]==='<') { out += '&lt;'; i++; }
+    else if (code[i]==='>') { out += '&gt;'; i++; }
+    else if (code[i]==='&') { out += '&amp;'; i++; }
+    else { out += code[i]; i++; }
+  }
+  return out;
+}
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function col(text, c) { return '<span style="color:var(--' + c + ')">' + text + '</span>'; }
+
+// ── PROGRAMS ──────────────────────────────────────────────────────────────
+var PROGRAMS = [
+
+// 0 Two Sum
+{ title:'Two Sum', diff:'easy', cat:'Array',
+  desc:'Find two indices whose values add up to the target using HashMap complement lookup.',
+  code:'int[] twoSum(int[] nums, int target) {\n  HashMap<Integer,Integer> map = new HashMap<>();\n  for (int i = 0; i < nums.length; i++) {\n    int comp = target - nums[i];\n    if (map.containsKey(comp))\n      return new int[]{map.get(comp), i};\n    map.put(nums[i], i);\n  }\n  return new int[]{};\n}',
+  input:{nums:[2,7,11,15],target:9},
+  buildSteps: function(d) {
+    var nums=d.nums, target=d.target, steps=[], map={};
+    for (var i=0;i<nums.length;i++) {
+      var comp=target-nums[i], hit=map.hasOwnProperty(comp);
+      var s={i:i,comp:comp,map:JSON.parse(JSON.stringify(map)),hit:hit,hitIdx:hit?map[comp]:null,done:false};
+      if (hit) { s.done=true; s.result=[map[comp],i]; steps.push(s); break; }
+      map[nums[i]]=i; s.mapAfter=JSON.parse(JSON.stringify(map));
+      steps.push(s);
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var nums=d.nums;
+    var cells='';
+    for (var i=0;i<nums.length;i++) {
+      var cls='';
+      if (step.done && (i===step.result[0]||i===step.result[1])) cls='ok';
+      else if (i===step.i) cls='hi';
+      else { var m=step.mapAfter||step.map; if (m.hasOwnProperty(nums[i])) cls='seen'; }
+      cells+=cell(nums[i],cls,i);
+    }
+    var map=step.mapAfter||step.map;
+    var mapHtml=''; var keys=Object.keys(map);
+    if (keys.length===0) mapHtml='<span style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:11px">(empty)</span>';
+    for (var k=0;k<keys.length;k++) mapHtml+=mapEntry(keys[k],' idx '+map[keys[k]],'ne');
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+=infoLine('target = '+col(d.target,'cyan')+' &nbsp;|&nbsp; complement = '+col(step.comp,'yellow')+' &nbsp;|&nbsp; in map? '+col(step.hit?'YES':'NO', step.hit?'green':'red'));
+    stage+='<div class="slabel" style="margin-top:10px">HashMap</div><div class="map-grid">'+mapHtml+'</div>';
+    if (step.done) stage+=resultBanner('&#127919;','Found! indices ['+step.result[0]+','+step.result[1]+'] &rarr; '+nums[step.result[0]]+' + '+nums[step.result[1]]+' = '+d.target);
+    var log='i='+step.i+', nums[i]='+nums[step.i]+', comp='+step.comp+' &rarr; '+(step.hit?'FOUND in map!':'not in map &rarr; store {'+nums[step.i]+':'+step.i+'}');
+    return {stage:stage,log:log};
+  }
+},
+
+// 1 Find Duplicates
+{ title:'Find Duplicates', diff:'medium', cat:'Array',
+  desc:'Use HashSet — Set.add() returns false when element already exists.',
+  code:'List<Integer> findDups(int[] arr) {\n  Set<Integer> seen = new HashSet<>();\n  Set<Integer> dups = new LinkedHashSet<>();\n  for (int n : arr) {\n    if (!seen.add(n))  // false = already present\n      dups.add(n);\n  }\n  return new ArrayList<>(dups);\n}',
+  input:{arr:[1,2,3,2,4,3,5]},
+  buildSteps: function(d) {
+    var arr=d.arr, steps=[], seen=[], dups=[];
+    function inArr(a,v){for(var x=0;x<a.length;x++)if(a[x]===v)return true;return false;}
+    for (var i=0;i<arr.length;i++) {
+      var isDup=inArr(seen,arr[i]);
+      if (isDup) { if(!inArr(dups,arr[i]))dups.push(arr[i]); }
+      else seen.push(arr[i]);
+      steps.push({i:i,cur:arr[i],isDup:isDup,seen:seen.slice(),dups:dups.slice(),done:i===arr.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var arr=d.arr, cells='';
+    for (var i=0;i<arr.length;i++) {
+      var cls='';
+      if (i===step.i) cls=step.isDup?'dup':'hi';
+      else { var inDup=false; for(var x=0;x<step.dups.length;x++)if(step.dups[x]===arr[i])inDup=true;
+        if (inDup&&i<step.i) cls='dup'; else if (i<step.i) cls='seen'; }
+      cells+=cell(arr[i],cls,i);
+    }
+    var seenHtml='', dupsHtml='';
+    for(var s=0;s<step.seen.length;s++) seenHtml+=mapEntry(step.seen[s],'','ne');
+    for(var x=0;x<step.dups.length;x++) dupsHtml+=mapEntry(step.dups[x],'','ht');
+    if (!seenHtml) seenHtml='<span style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\',monospace">(empty)</span>';
+    if (!dupsHtml) dupsHtml='<span style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\',monospace">(none)</span>';
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+=infoLine('Current: '+col(step.cur,'cyan')+' &rarr; seen.add() = '+col(step.isDup?'false (DUPLICATE!)':'true', step.isDup?'pink':'green'));
+    stage+='<div style="display:flex;gap:18px;flex-wrap:wrap">';
+    stage+='<div><div class="slabel">Seen Set</div><div class="map-grid">'+seenHtml+'</div></div>';
+    stage+='<div><div class="slabel">Duplicates</div><div class="map-grid">'+dupsHtml+'</div></div></div>';
+    if (step.done) stage+=resultBanner('&#127919;','Duplicates: ['+step.dups.join(', ')+']');
+    return {stage:stage, log:'i='+step.i+', arr[i]='+step.cur+' &rarr; '+(step.isDup?'DUPLICATE':'new element added to seen')};
+  }
+},
+
+// 2 Second Largest
+{ title:'Second Largest', diff:'medium', cat:'Array',
+  desc:'Single pass tracking first and second maximum simultaneously.',
+  code:'int findSecond(int[] arr) {\n  int first = Integer.MIN_VALUE;\n  int second = Integer.MIN_VALUE;\n  for (int n : arr) {\n    if (n > first) {\n      second = first;\n      first = n;\n    } else if (n > second && n != first) {\n      second = n;\n    }\n  }\n  return second;\n}',
+  input:{arr:[3,1,5,9,2,6]},
+  buildSteps: function(d) {
+    var arr=d.arr, steps=[], first=-Infinity, second=-Infinity;
+    for (var i=0;i<arr.length;i++) {
+      var n=arr[i], action='skip';
+      if (n>first){second=first;first=n;action='new first';}
+      else if(n>second&&n!==first){second=n;action='new second';}
+      steps.push({i:i,n:n,first:first,second:second,action:action,done:i===arr.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var arr=d.arr, cells='';
+    for(var i=0;i<arr.length;i++){
+      var cls='';
+      if(i===step.i) cls='hi';
+      else if(arr[i]===step.first&&i<step.i) cls='fst';
+      else if(arr[i]===step.second&&i<step.i) cls='snd';
+      cells+=cell(arr[i],cls,i);
+    }
+    var f=step.first===-Infinity?'MIN':step.first;
+    var s2=step.second===-Infinity?'MIN':step.second;
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('first', f, step.action==='new first'?'upd':'', step.action==='new first'?'var(--orange)':'');
+    stage+=varBox('second', s2, step.action==='new second'?'upd':'', step.action==='new second'?'var(--violet)':'');
+    stage+=varBox('current', step.n, 'upd', 'var(--cyan)');
+    stage+=varBox('action', step.action, '', step.action==='skip'?'var(--muted)':step.action==='new first'?'var(--orange)':'var(--violet)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#127942;','2nd Largest = '+step.second);
+    var log='n='+step.n+' &rarr; ';
+    if(step.action==='new first') log+='n > first('+f+'): second&larr;'+f+', first&larr;'+step.n;
+    else if(step.action==='new second') log+='n > second('+s2+'): second&larr;'+step.n;
+    else log+='n &le; first and n &le; second &rarr; skip';
+    return {stage:stage,log:log};
+  }
+},
+
+// 3 Matrix Diagonal
+{ title:'Matrix Diagonal Sum', diff:'hard', cat:'Array',
+  desc:'Sum primary diagonal (i==j) and anti-diagonal (i+j==n-1), subtract center if odd n.',
+  code:'int diagonalSum(int[][] mat) {\n  int n = mat.length, sum = 0;\n  for (int i = 0; i < n; i++) {\n    sum += mat[i][i];       // primary\n    sum += mat[i][n-1-i];  // anti-diagonal\n  }\n  if (n % 2 == 1)\n    sum -= mat[n/2][n/2];  // counted twice\n  return sum;\n}',
+  input:{mat:[[1,2,3],[4,5,6],[7,8,9]]},
+  buildSteps: function(d) {
+    var mat=d.mat, n=mat.length, steps=[], sum=0;
+    for(var i=0;i<n;i++){
+      var p=mat[i][i], a=mat[i][n-1-i], both=(i===n-1-i);
+      sum+=both?p:(p+a);
+      steps.push({i:i,primary:[i,i],anti:[i,n-1-i],both:both,pVal:p,aVal:a,sum:sum,done:i===n-1});
+    }
+    if(n%2===1){
+      var center=mat[Math.floor(n/2)][Math.floor(n/2)];
+      sum-=center;
+      steps[steps.length-1].finalSum=sum;
+      steps[steps.length-1].centerVal=center;
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var mat=d.mat, n=mat.length;
+    var priSet={}, antiSet={};
+    for(var i=0;i<=step.i;i++){priSet[i+','+i]=1;antiSet[i+','+(n-1-i)]=1;}
+    var matHtml='<div class="mat-wrap" style="grid-template-columns:repeat('+n+',42px)">';
+    for(var r=0;r<n;r++) for(var c=0;c<n;c++){
+      var ip=priSet[r+','+c], ia=antiSet[r+','+c];
+      var cls=ip&&ia?'bd':ip?'pd':ia?'ad':'';
+      matHtml+='<div class="mc '+cls+'">'+mat[r][c]+'</div>';
+    }
+    matHtml+='</div>';
+    var finalSum=step.finalSum!==undefined?step.finalSum:step.sum;
+    var stage='<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">'+matHtml;
+    stage+='<div><div class="vrow" style="flex-direction:column;gap:7px">';
+    stage+=varBox('sum', step.sum, 'upd', 'var(--cyan)');
+    stage+='</div><div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted);line-height:2;margin-top:8px">';
+    stage+=col('&#9632;','cyan')+' Primary (i=j)<br>';
+    stage+=col('&#9632;','orange')+' Anti (i+j=n-1)<br>';
+    stage+=col('&#9632;','pink')+' Both (center)</div></div></div>';
+    if(step.done) stage+=resultBanner('&#127919;','Diagonal Sum = '+finalSum);
+    var log='i='+step.i+': primary['+step.i+']['+step.i+']='+step.pVal;
+    if(!step.both) log+=' + anti['+step.i+']['+(n-1-step.i)+']='+step.aVal;
+    else log+=' (center, count once)';
+    log+=' &rarr; sum='+step.sum;
+    return {stage:stage,log:log};
+  }
+},
+
+// 4 Reverse String
+{ title:'Reverse String', diff:'easy', cat:'String',
+  desc:'Two-pointer swap: L moves right, R moves left until they meet in the middle.',
+  code:'String reverse(String s) {\n  char[] ch = s.toCharArray();\n  int l = 0, r = ch.length - 1;\n  while (l < r) {\n    char tmp = ch[l];\n    ch[l] = ch[r];\n    ch[r] = tmp;\n    l++; r--;\n  }\n  return new String(ch);\n}',
+  input:{s:'JAVA'},
+  buildSteps: function(d) {
+    var arr=d.s.split(''), steps=[], l=0, r=arr.length-1;
+    while(l<r){
+      steps.push({arr:arr.slice(),l:l,r:r,action:'swap'});
+      var t=arr[l];arr[l]=arr[r];arr[r]=t;
+      steps.push({arr:arr.slice(),l:l,r:r,action:'swapped'});
+      l++;r--;
+    }
+    steps.push({arr:arr.slice(),l:l,r:r,action:'done',done:true});
+    return steps;
+  },
+  render: function(step) {
+    var chars='';
+    for(var i=0;i<step.arr.length;i++){
+      var cls='', ptr='';
+      if(i===step.l&&!step.done){cls=step.action==='swapped'?'sw':'pl';ptr='ptr-l';}
+      else if(i===step.r&&!step.done){cls=step.action==='swapped'?'sw':'pr';ptr='ptr-r';}
+      else if(step.done) cls='mt';
+      chars+=charCell(step.arr[i],cls,ptr);
+    }
+    var stage='<div class="slabel">char array</div><div class="char-row">'+chars+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('left L', step.done?'-':step.l, '', 'var(--orange)');
+    stage+=varBox('right R', step.done?'-':step.r, '', 'var(--violet)');
+    stage+=varBox('action', step.action, 'upd', 'var(--cyan)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128260;','Reversed: "'+step.arr.join()+'"');
+    var log='';
+    if(step.action==='swap') log='l='+step.l+', r='+step.r+': swapping ch['+step.l+']='+step.arr[step.l]+' and ch['+step.r+']='+step.arr[step.r];
+    else if(step.action==='swapped') log='Swapped! Now l='+(step.l+1)+', r='+(step.r-1);
+    else log='Done! l &ge; r &rarr; loop ends';
+    return {stage:stage,log:log};
+  }
+},
+
+// 5 Palindrome
+{ title:'Palindrome Check', diff:'easy', cat:'String',
+  desc:'Two pointers converge from both ends comparing characters.',
+  code:'boolean isPalindrome(String s) {\n  int l = 0, r = s.length() - 1;\n  while (l < r) {\n    if (s.charAt(l) != s.charAt(r))\n      return false;\n    l++; r--;\n  }\n  return true;\n}',
+  input:{s:'RACECAR'},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], l=0, r=s.length-1;
+    while(l<r){
+      var m=s[l]===s[r];
+      steps.push({l:l,r:r,s:s,action:m?'match':'mismatch',done:!m,result:m?null:false});
+      if(!m) return steps;
+      l++;r--;
+    }
+    steps.push({l:l,r:r,s:s,action:'done',done:true,result:true});
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var cls='', ptr='';
+      if(i===step.l&&step.action!=='done'){cls=step.action==='mismatch'?'dp':'pl';ptr='ptr-l';}
+      else if(i===step.r&&step.action!=='done'){cls=step.action==='mismatch'?'dp':'pr';ptr='ptr-r';}
+      else if(step.done&&step.result) cls='mt';
+      chars+=charCell(d.s[i],cls,ptr);
+    }
+    var match=step.action==='match';
+    var stage='<div class="slabel">Characters</div><div class="char-row">'+chars+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('s['+step.l+']', d.s[step.l]||'-', '', 'var(--orange)');
+    stage+=varBox('s['+step.r+']', d.s[step.r]||'-', '', 'var(--violet)');
+    stage+=varBox('match?', step.done&&step.result?'DONE':match?'YES':'NO', '', match||step.result?'var(--green)':'var(--red)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner(step.result?'&#9989;':'&#10060;','"'+d.s+'" is '+(step.result?'':'NOT ')+'a palindrome');
+    var log='';
+    if(step.done&&step.result) log='l &ge; r: all matched &rarr; isPalindrome = true';
+    else if(step.action==='mismatch') log='s['+step.l+']='+d.s[step.l]+' &ne; s['+step.r+']='+d.s[step.r]+' &rarr; return false';
+    else log='s['+step.l+']='+d.s[step.l]+' == s['+step.r+']='+d.s[step.r]+' &check; &rarr; l++, r--';
+    return {stage:stage,log:log};
+  }
+},
+
+// 6 Anagram
+{ title:'Anagram Check', diff:'medium', cat:'String',
+  desc:'Build frequency array: increment for string a, decrement for b. All zeros = anagram.',
+  code:'boolean isAnagram(String a, String b) {\n  if (a.length() != b.length()) return false;\n  int[] freq = new int[26];\n  for (int i = 0; i < a.length(); i++) {\n    freq[a.charAt(i) - \'a\']++;\n    freq[b.charAt(i) - \'a\']--;\n  }\n  for (int f : freq)\n    if (f != 0) return false;\n  return true;\n}',
+  input:{a:'listen',b:'silent'},
+  buildSteps: function(d) {
+    var a=d.a, b=d.b, steps=[], freq=[];
+    for(var z=0;z<26;z++)freq.push(0);
+    for(var i=0;i<a.length;i++){
+      freq[a.charCodeAt(i)-97]++;
+      freq[b.charCodeAt(i)-97]--;
+      steps.push({i:i,ca:a[i],cb:b[i],freq:freq.slice(),done:i===a.length-1,result:freq.every(function(x){return x===0;})});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var aChars='', bChars='';
+    for(var i=0;i<d.a.length;i++) aChars+=charCell(d.a[i], i===step.i?'ac':i<step.i?'mt':'', '');
+    for(var i=0;i<d.b.length;i++) bChars+=charCell(d.b[i], i===step.i?'ac':i<step.i?'mt':'', '');
+    var freqHtml='';
+    for(var i=0;i<step.freq.length;i++){
+      if(step.freq[i]===0) continue;
+      var ch=String.fromCharCode(97+i);
+      var cls=step.freq[i]>0?'ne':'red';
+      freqHtml+=mapEntry("'"+ch+"'", (step.freq[i]>0?'+':'')+step.freq[i], cls);
+    }
+    if(!freqHtml) freqHtml='<span style="color:var(--green);font-family:\'JetBrains Mono\',monospace;font-size:12px">All zeros! &check;</span>';
+    var stage='<div style="display:flex;gap:16px;margin-bottom:10px">';
+    stage+='<div><div class="slabel">String A: "'+d.a+'"</div><div class="char-row">'+aChars+'</div></div>';
+    stage+='<div><div class="slabel">String B: "'+d.b+'"</div><div class="char-row">'+bChars+'</div></div></div>';
+    stage+=infoLine("freq['"+step.ca+"'-'a']++ &nbsp;|&nbsp; freq['"+step.cb+"'-'a']--");
+    stage+='<div class="slabel">Frequency Array (non-zero only)</div><div class="map-grid">'+freqHtml+'</div>';
+    if(step.done) stage+=resultBanner(step.result?'&#9989;':'&#10060;','"'+d.a+'" and "'+d.b+'" are '+(step.result?'':'NOT ')+'anagrams');
+    return {stage:stage,log:'i='+step.i+': a[i]='+step.ca+' freq++ | b[i]='+step.cb+' freq--'};
+  }
+},
+
+// 7 Char Frequency
+{ title:'Char Frequency', diff:'easy', cat:'String',
+  desc:'HashMap counts each character using getOrDefault to avoid null checks.',
+  code:'void charFrequency(String s) {\n  Map<Character,Integer> map = new LinkedHashMap<>();\n  for (char c : s.toCharArray())\n    map.put(c, map.getOrDefault(c, 0) + 1);\n  map.forEach((k,v) ->\n    System.out.println(k + " -> " + v));\n}',
+  input:{s:'aabbcda'},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], map={}, keys=[];
+    for(var i=0;i<s.length;i++){
+      var c=s[i];
+      if(!map.hasOwnProperty(c)){map[c]=0;keys.push(c);}
+      var prev=map[c]; map[c]++;
+      var snap={};for(var k=0;k<keys.length;k++)snap[keys[k]]=map[keys[k]];
+      steps.push({i:i,c:c,prev:prev,cur:map[c],map:snap,keys:keys.slice(),done:i===s.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++) chars+=charCell(d.s[i], i===step.i?'ac':i<step.i?'mt':'','');
+    var maxV=1; for(var k=0;k<step.keys.length;k++) if(step.map[step.keys[k]]>maxV) maxV=step.map[step.keys[k]];
+    var bars='', mapHtml='';
+    for(var k=0;k<step.keys.length;k++){
+      var key=step.keys[k], val=step.map[key];
+      var h=Math.round((val/maxV)*46)+4;
+      bars+='<div class="fbw"><div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--cyan);margin-bottom:2px">'+val+'</div>';
+      bars+='<div class="fb '+(key===step.c?'ab':'')+'" style="height:'+h+'px"></div>';
+      bars+='<div class="fbl">\''+key+'\'</div></div>';
+      mapHtml+=mapEntry("'"+key+"'", val, key===step.c?'ne':'');
+    }
+    var stage='<div class="slabel">String</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine("getOrDefault('"+step.c+"', 0) = "+step.prev+" &rarr; put('"+step.c+"', "+step.cur+")");
+    stage+='<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start">';
+    stage+='<div><div class="slabel">HashMap</div><div class="map-grid">'+mapHtml+'</div></div>';
+    stage+='<div><div class="slabel">Bar Chart</div><div class="fbars">'+bars+'</div></div></div>';
+    if(step.done){
+      var summary='';for(var k=0;k<step.keys.length;k++)summary+="'"+step.keys[k]+"':"+step.map[step.keys[k]]+' ';
+      stage+=resultBanner('&#128202;','Done! '+summary);
+    }
+    return {stage:stage,log:"i="+step.i+", char='"+step.c+"': prev="+step.prev+" &rarr; count="+step.cur};
+  }
+},
+
+// 8 First Non-Repeat
+{ title:'First Non-Repeat', diff:'medium', cat:'String',
+  desc:'Two passes: first count all frequencies, then find first char with frequency = 1.',
+  code:'char firstNonRepeat(String s) {\n  int[] freq = new int[256];\n  for (char c : s.toCharArray())\n    freq[c]++;           // Pass 1: count\n  for (char c : s.toCharArray())\n    if (freq[c] == 1)\n      return c;          // Pass 2: first unique\n  return \'\\0\';\n}',
+  input:{s:'aabbcde'},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], freq={};
+    for(var i=0;i<s.length;i++){
+      freq[s[i]]=(freq[s[i]]||0)+1;
+      steps.push({pass:1,i:i,c:s[i],freq:JSON.parse(JSON.stringify(freq)),done:false});
+    }
+    for(var i=0;i<s.length;i++){
+      var u=freq[s[i]]===1;
+      steps.push({pass:2,i:i,c:s[i],freq:JSON.parse(JSON.stringify(freq)),isUnique:u,done:u,result:u?s[i]:null});
+      if(u) break;
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var cls='';
+      if(step.pass===1){cls=i===step.i?'ac':i<step.i?'mt':'';}
+      else{if(i<step.i)cls='dp';if(i===step.i)cls=step.isUnique?'fd':'dp';}
+      chars+=charCell(d.s[i],cls,'');
+    }
+    var mapHtml=''; var keys=Object.keys(step.freq);
+    for(var k=0;k<keys.length;k++){
+      var v=step.freq[keys[k]];
+      mapHtml+=mapEntry("'"+keys[k]+"'", v, v>1?'ht':v===1?'ne':'');
+    }
+    var stage='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    stage+='<span class="tag '+(step.pass===1?'easy':'medium')+'">Pass '+step.pass+'</span>';
+    stage+='<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted)">'+(step.pass===1?'Building frequency count':'Finding first with freq=1')+'</span></div>';
+    stage+='<div class="char-row">'+chars+'</div>';
+    var info=step.pass===1?"freq['"+step.c+"']++ = "+step.freq[step.c]:"freq['"+step.c+"'] = "+step.freq[step.c]+" &rarr; "+(step.isUnique?'UNIQUE! &check;':'skip');
+    stage+=infoLine(info);
+    stage+='<div class="slabel">Frequency Map</div><div class="map-grid">'+mapHtml+'</div>';
+    if(step.done) stage+=resultBanner('&#128269;',"First non-repeating = '"+step.result+"'");
+    return {stage:stage,log:'Pass '+step.pass+', i='+step.i+": '"+step.c+"' freq="+step.freq[step.c]+(step.pass===2?(step.isUnique?' &rarr; RETURN &check;':' &rarr; skip'):'')};
+  }
+},
+
+// 9 Longest Substring
+{ title:'Longest Substring (No Repeat)', diff:'hard', cat:'String',
+  desc:'Sliding window: expand right, shrink left when duplicate. Track max window size.',
+  code:'int lengthOfLongest(String s) {\n  HashMap<Character,Integer> map = new HashMap<>();\n  int max = 0, left = 0;\n  for (int r = 0; r < s.length(); r++) {\n    char c = s.charAt(r);\n    if (map.containsKey(c))\n      left = Math.max(left, map.get(c)+1);\n    map.put(c, r);\n    max = Math.max(max, r - left + 1);\n  }\n  return max;\n}',
+  input:{s:'abcabcbb'},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], map={}, left=0, max=0;
+    for(var r=0;r<s.length;r++){
+      var c=s[r], pl=left;
+      var dup=map.hasOwnProperty(c)&&map[c]>=left;
+      if(dup)left=Math.max(left,map[c]+1);
+      map[c]=r;
+      var win=r-left+1; if(win>max)max=win;
+      steps.push({r:r,left:left,c:c,dup:dup,map:JSON.parse(JSON.stringify(map)),win:win,max:max,prevLeft:pl,done:r===s.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var cls='', ptr='';
+      if(i>=step.left&&i<=step.r){cls='wn';if(i===step.r){cls=step.dup?'dp':'ac';}}
+      if(i<step.left) cls='dim';
+      if(i===step.left) ptr='ptr-l';
+      if(i===step.r) ptr='ptr-r';
+      chars+=charCell(d.s[i],cls,ptr);
+    }
+    var mapHtml=''; var keys=Object.keys(step.map);
+    for(var k=0;k<keys.length;k++) mapHtml+=mapEntry("'"+keys[k]+"'", 'idx '+step.map[keys[k]], keys[k]===step.c?'ne':'');
+    var stage='<div class="slabel">Sliding Window</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine('r='+step.r+', left='+step.left+', char=\''+step.c+'\' '+(step.dup?col('&rarr; duplicate! left moved to '+step.left,'pink'):'')+' window='+step.win);
+    stage+='<div class="vrow">';
+    stage+=varBox('left', step.left, '', 'var(--orange)');
+    stage+=varBox('right', step.r, '', 'var(--violet)');
+    stage+=varBox('window', step.win, 'upd', 'var(--cyan)');
+    stage+=varBox('max', step.max, 'res', '');
+    stage+='</div>';
+    stage+='<div class="slabel">HashMap (char &rarr; last index)</div><div class="map-grid">'+mapHtml+'</div>';
+    if(step.done) stage+=resultBanner('&#128207;','Longest substring without repeat = '+step.max+' chars');
+    var log='r='+step.r+': \''+step.c+'\''+(step.dup?' DUPLICATE &rarr; left='+step.left:' new &rarr; add to map')+' | win='+step.win+' | max='+step.max;
+    return {stage:stage,log:log};
+  }
+},
+
+// 10 Sum of Digits
+{ title:'Sum of Digits', diff:'easy', cat:'Number',
+  desc:'Extract last digit with n%10, accumulate to sum, then remove with n/10.',
+  code:'int sumDigits(int n) {\n  int sum = 0;\n  while (n > 0) {\n    sum += n % 10;  // last digit\n    n   /= 10;      // remove last digit\n  }\n  return sum;\n}',
+  input:{n:1234},
+  buildSteps: function(d) {
+    var n=d.n, steps=[], sum=0;
+    while(n>0){
+      var digit=n%10; sum+=digit;
+      steps.push({n:n,digit:digit,sum:sum,original:d.n,done:Math.floor(n/10)===0});
+      n=Math.floor(n/10);
+    }
+    return steps;
+  },
+  render: function(step) {
+    var stage='<div class="slabel">Digit Extraction</div><div class="vrow">';
+    stage+=varBox('n', step.n, '', 'var(--cyan)');
+    stage+=varBox('n % 10', step.digit, 'upd', 'var(--yellow)');
+    stage+=varBox('sum', step.sum, 'upd', 'var(--green)');
+    stage+=varBox('n / 10', Math.floor(step.n/10), '', 'var(--violet)');
+    stage+='</div>';
+    var orig=String(step.original).split('');
+    var running='<div style="background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:12px;margin-top:12px">';
+    running+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">Running total formula</div>';
+    running+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">';
+    for(var i=0;i<orig.length;i++){
+      running+=col(orig[i],'cyan');
+      if(i<orig.length-1) running+='<span style="color:var(--muted)">+</span>';
+    }
+    running+='<span style="color:var(--muted)">=</span>'+col(step.sum,'green')+'</div></div>';
+    stage+=running;
+    if(step.done) stage+=resultBanner('&#128290;','Sum of digits of '+step.original+' = '+step.sum);
+    return {stage:stage, log:'n='+step.n+': digit='+step.n+'%10='+step.digit+' &rarr; sum='+step.sum+' | n becomes '+Math.floor(step.n/10)};
+  }
+},
+
+// 11 Fibonacci
+{ title:'Fibonacci Series', diff:'medium', cat:'Number',
+  desc:'Iterative: keep a and b, compute c=a+b, then shift a=b, b=c.',
+  code:'void printFib(int n) {\n  int a = 0, b = 1;\n  for (int i = 0; i < n; i++) {\n    System.out.print(a + " ");\n    int c = a + b;\n    a = b;\n    b = c;\n  }\n}',
+  input:{n:8},
+  buildSteps: function(d) {
+    var a=0, b=1, steps=[], series=[];
+    for(var i=0;i<d.n;i++){
+      series.push(a);
+      var c=a+b;
+      steps.push({i:i,a:a,b:b,c:c,series:series.slice(),done:i===d.n-1});
+      var na=b;b=c;a=na;
+    }
+    return steps;
+  },
+  render: function(step) {
+    var cells='';
+    for(var i=0;i<step.series.length;i++){
+      var cls=i===step.i?'nw':i===step.i-1?'bp':i===step.i-2?'ap':'';
+      cells+='<div class="fc '+cls+'">'+step.series[i]+'</div>';
+    }
+    var stage='<div class="slabel">Series so far</div><div class="frow">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('a', step.a, '', 'var(--orange)');
+    stage+=varBox('b', step.b, '', 'var(--violet)');
+    stage+=varBox('c = a+b', step.c, 'upd', 'var(--cyan)');
+    stage+=varBox('i', step.i, '', '');
+    stage+='</div>';
+    stage+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--muted);margin-top:10px;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px">';
+    stage+='print '+col(step.a,'cyan')+' &rarr; c='+step.a+'+'+step.b+'='+col(step.c,'yellow')+' &rarr; a&larr;'+step.b+', b&larr;'+step.c;
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#127744;','Fibonacci('+step.series.length+'): '+step.series.join(' '));
+    return {stage:stage,log:'i='+step.i+': print a='+step.a+' | c='+step.a+'+'+step.b+'='+step.c+' | shift: a&larr;'+step.b+', b&larr;'+step.c};
+  }
+},
+
+// 12 Prime Check
+{ title:'Prime Number Check', diff:'medium', cat:'Number',
+  desc:'Only check divisors up to sqrt(n). Any factor beyond sqrt(n) pairs with one below it.',
+  code:'boolean isPrime(int n) {\n  if (n < 2) return false;\n  if (n == 2) return true;\n  if (n % 2 == 0) return false;\n  for (int i = 3; i * i <= n; i += 2) {\n    if (n % i == 0) return false;\n  }\n  return true;\n}',
+  input:{n:17},
+  buildSteps: function(d) {
+    var n=d.n, steps=[];
+    if(n<2){steps.push({n:n,done:true,result:false,reason:'n < 2'});return steps;}
+    if(n===2){steps.push({n:n,done:true,result:true,reason:'n = 2'});return steps;}
+    if(n%2===0){steps.push({n:n,done:true,result:false,reason:'even number'});return steps;}
+    for(var i=3;i*i<=n;i+=2){
+      var rem=n%i;
+      steps.push({n:n,i:i,rem:rem,div:rem===0,sqrtN:Math.sqrt(n).toFixed(2),done:rem===0,result:rem===0?false:null});
+      if(rem===0) return steps;
+    }
+    steps.push({n:n,done:true,result:true,i:null,sqrtN:Math.sqrt(n).toFixed(2)});
+    return steps;
+  },
+  render: function(step) {
+    var limit=Math.ceil(Math.sqrt(step.n));
+    var odds=[], i=3; while(i<=limit){odds.push(i);i+=2;}
+    var cells='';
+    for(var k=0;k<odds.length;k++){
+      var cls='';
+      if(step.i===null&&step.done) cls='ok';
+      else if(odds[k]<step.i) cls='seen';
+      else if(odds[k]===step.i) cls=step.div?'dup':'hi';
+      cells+=cell(odds[k],cls,'&divide;');
+    }
+    if(!cells) cells='<span style="color:var(--green);font-family:\'JetBrains Mono\',monospace;font-size:12px">No divisors to check</span>';
+    var stage='<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:var(--muted);margin-bottom:12px">Checking '+col(step.n,'cyan')+' &nbsp;|&nbsp; &radic;'+step.n+' &asymp; '+col(step.sqrtN||Math.sqrt(step.n).toFixed(2),'yellow')+'</div>';
+    stage+='<div class="slabel">Candidate divisors (odd, up to &radic;n)</div><div class="arr-row">'+cells+'</div>';
+    if(step.i){
+      stage+='<div class="vrow">';
+      stage+=varBox('i', step.i, 'upd', 'var(--cyan)');
+      stage+=varBox(step.n+' % '+step.i, step.rem, '', 'var(--yellow)');
+      stage+=varBox('divisible?', step.div?'YES':'NO', '', step.div?'var(--red)':'var(--green)');
+      stage+='</div>';
+    }
+    if(step.done) stage+=resultBanner(step.result?'&#9989;':'&#10060;',step.n+' is '+(step.result?'':'NOT ')+'a prime number');
+    var log='';
+    if(step.i) log='i='+step.i+': '+step.n+'%'+step.i+'='+step.rem+' &rarr; '+(step.div?'DIVISIBLE! &rarr; not prime':'not divisible &rarr; continue');
+    else log=(step.reason||'No divisor found up to &radic;n')+' &rarr; isPrime='+step.result;
+    return {stage:stage,log:log};
+  }
+},
+
+// 13 Reverse Number
+{ title:'Reverse Number', diff:'easy', cat:'Number',
+  desc:'Pop last digit with n%10, push to reversed result with rev*10+digit.',
+  code:'int reverse(int n) {\n  int rev = 0;\n  while (n != 0) {\n    int digit = n % 10;     // pop last\n    rev = rev * 10 + digit; // push\n    n /= 10;\n  }\n  return rev;\n}',
+  input:{n:1234},
+  buildSteps: function(d) {
+    var n=d.n, steps=[], rev=0;
+    while(n!==0){
+      var digit=n%10, newRev=rev*10+digit;
+      steps.push({n:n,digit:digit,rev:rev,newRev:newRev,original:d.n,done:Math.floor(n/10)===0});
+      rev=newRev; n=Math.floor(n/10);
+    }
+    return steps;
+  },
+  render: function(step) {
+    var stage='<div class="slabel">Step-by-step reversal</div><div class="vrow">';
+    stage+=varBox('n', step.n, '', 'var(--cyan)');
+    stage+=varBox('digit = n%10', step.digit, 'upd', 'var(--yellow)');
+    stage+=varBox('rev (before)', step.rev, '', 'var(--muted)');
+    stage+=varBox('new rev', step.newRev, 'upd', 'var(--green)');
+    stage+='</div>';
+    stage+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:12px;margin-top:12px">';
+    stage+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">Formula: rev = rev &times; 10 + digit</div>';
+    stage+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px">'+step.rev+' &times; 10 + '+step.digit+' = '+col(step.newRev,'green')+'</div></div>';
+    if(step.done) stage+=resultBanner('&#128260;','Reverse of '+step.original+' = '+step.newRev);
+    return {stage:stage,log:'n='+step.n+': digit='+step.digit+' | rev='+step.rev+'&times;10+'+step.digit+'='+step.newRev+' | n becomes '+Math.floor(step.n/10)};
+  }
+},
+
+// 14 Star Pyramid
+{ title:'Star Pyramid', diff:'hard', cat:'Pattern',
+  desc:'Row i: print (n-i) spaces then (2i-1) stars. Formula: spaces=n-i, stars=2i-1.',
+  code:'void pyramid(int n) {\n  for (int i = 1; i <= n; i++) {\n    for (int s = 0; s < n-i; s++)\n      System.out.print(" ");\n    for (int j = 0; j < 2*i-1; j++)\n      System.out.print("*");\n    System.out.println();\n  }\n}',
+  input:{n:5},
+  buildSteps: function(d) {
+    var steps=[];
+    for(var i=1;i<=d.n;i++) steps.push({i:i,n:d.n,spaces:d.n-i,stars:2*i-1,rowsDone:i,done:i===d.n});
+    return steps;
+  },
+  render: function(step) {
+    var rows='';
+    for(var i=1;i<=step.rowsDone;i++){
+      var sp=step.n-i, st=2*i-1;
+      rows+='<div class="sr">';
+      for(var s=0;s<sp;s++) rows+='<span class="sc sp">&middot;</span>';
+      for(var j=0;j<st;j++) rows+='<span class="sc lit">&#9733;</span>';
+      rows+='</div>';
+    }
+    var stage='<div class="slabel">Pyramid (n='+step.n+')</div><div class="sg">'+rows+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('row i', step.i, 'upd', 'var(--cyan)');
+    stage+=varBox('spaces n-i', step.spaces, '', 'var(--muted)');
+    stage+=varBox('stars 2i-1', step.stars, 'upd', 'var(--yellow)');
+    stage+=varBox('total width', step.spaces+step.stars, '', 'var(--violet)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#11088;','Pyramid with n='+step.n+' complete! Bottom row has '+(2*step.n-1)+' stars.');
+    return {stage:stage,log:'Row i='+step.i+': spaces='+step.spaces+', stars='+step.stars+' &rarr; width='+(step.spaces+step.stars)+' (always '+(2*step.n-1)+')'};
+  }
+}
+
+,
+
+// 15 Segregate 0s and 1s
+{ title:'Segregate 0s and 1s', diff:'medium', cat:'Array',
+  desc:'Count 0s in one pass, then fill array: first count(0) slots = 0, rest = 1.',
+  code:'void segregate(int[] arr) {\n  int count0 = 0;\n  for (int x : arr)\n    if (x == 0) count0++;\n  for (int i = 0; i < arr.length; i++)\n    arr[i] = (i < count0) ? 0 : 1;\n}',
+  input:{arr:[1,0,1,0,0,1,1,0]},
+  buildSteps: function(d) {
+    var arr=d.arr, steps=[], count0=0;
+    for(var i=0;i<arr.length;i++){
+      if(arr[i]===0) count0++;
+      steps.push({phase:'count',i:i,cur:arr[i],count0:count0,arr:arr.slice()});
+    }
+    var out=arr.slice();
+    for(var i=0;i<out.length;i++){
+      out[i]=(i<count0)?0:1;
+      steps.push({phase:'fill',i:i,count0:count0,arr:out.slice(),done:i===out.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=0;i<step.arr.length;i++){
+      var cls='';
+      if(step.phase==='count'){cls=i===step.i?(step.arr[i]===0?'ok':'hi'):''; }
+      else{cls=i===step.i?'hi':step.arr[i]===0?'ok':'seen';}
+      cells+=cell(step.arr[i],cls,i);
+    }
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('phase', step.phase, '', 'var(--violet)');
+    stage+=varBox('i', step.i, 'upd', 'var(--cyan)');
+    if(step.phase==='count') stage+=varBox('count0', step.count0, 'upd', 'var(--green)');
+    else stage+=varBox('fill < '+step.count0+'?', step.i+'<'+step.count0+'='+( step.i<step.count0?'0':'1'), 'upd', step.i<step.count0?'var(--green)':'var(--orange)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#10003;','Segregated: ['+step.arr.join(',')+']');
+    var log=step.phase==='count'?'arr['+step.i+']='+step.arr[step.i]+(step.arr[step.i]===0?' &rarr; count0='+step.count0:''):('i='+step.i+': '+(step.i<step.count0?'i<count0 &rarr; fill 0':'i>=count0 &rarr; fill 1'));
+    return {stage:stage,log:log};
+  }
+},
+
+// 16 Merge Sorted Array
+{ title:'Merge Sorted Array', diff:'hard', cat:'Array',
+  desc:'Two pointers i,j compare both arrays; pick smaller into result. Append remainder.',
+  code:'int[] merge(int[] a, int[] b) {\n  int i=0, j=0, k=0;\n  int[] res = new int[a.length+b.length];\n  while (i<a.length && j<b.length)\n    res[k++] = (a[i]<=b[j]) ? a[i++] : b[j++];\n  while (i<a.length) res[k++]=a[i++];\n  while (j<b.length) res[k++]=b[j++];\n  return res;\n}',
+  input:{a:[1,3,5,7],b:[2,4,6,8]},
+  buildSteps: function(d) {
+    var a=d.a, b=d.b, steps=[], res=[], i=0, j=0;
+    while(i<a.length && j<b.length){
+      var pick=a[i]<=b[j]?'a':'b', val=pick==='a'?a[i]:b[j];
+      res.push(val);
+      steps.push({i:i,j:j,res:res.slice(),pick:pick,val:val,phase:'merge'});
+      if(pick==='a') i++; else j++;
+    }
+    while(i<a.length){res.push(a[i]);steps.push({i:i,j:j,res:res.slice(),pick:'a',val:a[i],phase:'tail'});i++;}
+    while(j<b.length){res.push(b[j]);steps.push({i:i,j:j,res:res.slice(),pick:'b',val:b[j],phase:'tail'});j++;}
+    steps[steps.length-1].done=true;
+    return steps;
+  },
+  render: function(step, d) {
+    var aCells='', bCells='';
+    for(var i=0;i<d.a.length;i++) aCells+=cell(d.a[i], i===step.i&&step.pick==='a'?'hi':i<step.i?'dim':'', i);
+    for(var j=0;j<d.b.length;j++) bCells+=cell(d.b[j], j===step.j&&step.pick==='b'?'hi':j<step.j?'dim':'', j);
+    var rCells=''; for(var k=0;k<step.res.length;k++) rCells+=cell(step.res[k], k===step.res.length-1?'ok':'seen', k);
+    var stage='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">';
+    stage+='<div><div class="slabel">Array A</div><div class="arr-row">'+aCells+'</div></div>';
+    stage+='<div><div class="slabel">Array B</div><div class="arr-row">'+bCells+'</div></div></div>';
+    stage+='<div class="slabel">Result</div><div class="arr-row">'+rCells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('i (A)', step.i, step.pick==='a'?'upd':'', 'var(--orange)');
+    stage+=varBox('j (B)', step.j, step.pick==='b'?'upd':'', 'var(--violet)');
+    stage+=varBox('picked', step.val, 'upd', step.pick==='a'?'var(--cyan)':'var(--yellow)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#10003;','Merged: ['+step.res.join(',')+']');
+    return {stage:stage, log:'i='+step.i+' j='+step.j+': a[i]='+( d.a[step.i]||'end')+' vs b[j]='+( d.b[step.j]||'end')+' &rarr; pick '+step.pick+'['+step.val+']'};
+  }
+},
+
+// 17 Kadane's Max Subarray
+{ title:'Max Subarray - Kadane', diff:'hard', cat:'Array',
+  desc:'At each step pick: extend current subarray OR start fresh. Track global max.',
+  code:'int maxSubarray(int[] arr) {\n  int cur = arr[0], max = arr[0];\n  for (int i=1; i<arr.length; i++) {\n    cur = Math.max(arr[i], cur + arr[i]);\n    max = Math.max(max, cur);\n  }\n  return max;\n}',
+  input:{arr:[-2,1,-3,4,-1,2,1,-5,4]},
+  buildSteps: function(d) {
+    var arr=d.arr, steps=[], cur=arr[0], max=arr[0];
+    steps.push({i:0,arr:arr,cur:cur,max:max,extended:false});
+    for(var i=1;i<arr.length;i++){
+      var ext=cur+arr[i], fresh=arr[i];
+      var extended=ext>=fresh;
+      cur=extended?ext:fresh;
+      if(cur>max) max=cur;
+      steps.push({i:i,arr:arr,cur:cur,max:max,extended:extended,ext:ext,fresh:fresh,done:i===arr.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=0;i<d.arr.length;i++){
+      var cls=i===step.i?'hi':i<step.i?'seen':'';
+      cells+=cell(d.arr[i],cls,i);
+    }
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('arr[i]', d.arr[step.i], '', 'var(--cyan)');
+    if(step.i>0){
+      stage+=varBox('cur+arr[i]', step.ext, '', 'var(--muted)');
+      stage+=varBox('decision', step.extended?'extend':'restart', 'upd', step.extended?'var(--green)':'var(--orange)');
+    }
+    stage+=varBox('cur', step.cur, 'upd', 'var(--yellow)');
+    stage+=varBox('max', step.max, 'res', '');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128200;','Max subarray sum = '+step.max);
+    var log='i='+step.i+': arr[i]='+d.arr[step.i];
+    if(step.i>0) log+=' | cur+arr[i]='+step.ext+' vs arr[i]='+step.fresh+' &rarr; '+(step.extended?'extend cur':'restart from arr[i]')+' &rarr; cur='+step.cur;
+    log+=' | max='+step.max;
+    return {stage:stage,log:log};
+  }
+},
+
+// 18 Left Shift Array
+{ title:'Left Shift Array', diff:'medium', cat:'Array',
+  desc:'Save first element, shift all elements one left, place saved value at end.',
+  code:'void leftShift(int[] arr) {\n  int first = arr[0];\n  for (int i=0; i<arr.length-1; i++)\n    arr[i] = arr[i+1];\n  arr[arr.length-1] = first;\n}',
+  input:{arr:[1,2,3,4,5]},
+  buildSteps: function(d) {
+    var arr=d.arr.slice(), steps=[], first=arr[0];
+    steps.push({arr:arr.slice(),i:-1,first:first,phase:'save'});
+    for(var i=0;i<arr.length-1;i++){
+      arr[i]=arr[i+1];
+      steps.push({arr:arr.slice(),i:i,first:first,phase:'shift'});
+    }
+    arr[arr.length-1]=first;
+    steps.push({arr:arr.slice(),i:arr.length-1,first:first,phase:'place',done:true});
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=0;i<step.arr.length;i++){
+      var cls=i===step.i?(step.phase==='place'?'ok':'hi'):step.phase==='shift'&&i<step.i?'seen':'';
+      cells+=cell(step.arr[i],cls,i);
+    }
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('first saved', step.first, '', 'var(--orange)');
+    stage+=varBox('phase', step.phase, 'upd', 'var(--cyan)');
+    if(step.i>=0) stage+=varBox('i', step.i, '', 'var(--muted)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#8592;','Left shifted: ['+step.arr.join(',')+']');
+    var log='';
+    if(step.phase==='save') log='Save first='+step.first+' &rarr; start shifting left';
+    else if(step.phase==='shift') log='arr['+step.i+'] = arr['+(step.i+1)+'] = '+step.arr[step.i];
+    else log='Place saved first ('+step.first+') at arr['+(step.arr.length-1)+']';
+    return {stage:stage,log:log};
+  }
+},
+
+// 19 Intersection of Arrays
+{ title:'Intersection of Arrays', diff:'medium', cat:'Array',
+  desc:'Add elements of array A to a HashSet, then check each element of B against it.',
+  code:'List<Integer> intersection(int[] a, int[] b) {\n  Set<Integer> set = new HashSet<>();\n  List<Integer> res = new ArrayList<>();\n  for (int x : a) set.add(x);\n  for (int x : b)\n    if (set.contains(x)) {\n      res.add(x);\n      set.remove(x); // avoid dupes\n    }\n  return res;\n}',
+  input:{a:[1,2,3,4,5],b:[3,4,5,6,7]},
+  buildSteps: function(d) {
+    var a=d.a, b=d.b, steps=[], set=[], res=[];
+    function inSet(v){for(var x=0;x<set.length;x++)if(set[x]===v)return true;return false;}
+    for(var i=0;i<a.length;i++){set.push(a[i]);steps.push({phase:'build',i:i,set:set.slice(),res:res.slice(),cur:a[i]});}
+    for(var j=0;j<b.length;j++){
+      var found=inSet(b[j]);
+      if(found){res.push(b[j]);set.splice(set.indexOf(b[j]),1);}
+      steps.push({phase:'check',j:j,set:set.slice(),res:res.slice(),cur:b[j],found:found,done:j===b.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var aCells='', bCells='';
+    for(var i=0;i<d.a.length;i++) aCells+=cell(d.a[i], step.phase==='build'&&i===step.i?'hi':step.phase==='check'?'seen':'', i);
+    for(var j=0;j<d.b.length;j++){
+      var cls='';
+      if(step.phase==='check'){if(j===step.j)cls=step.found?'ok':'hi';else if(j<step.j)cls='seen';}
+      bCells+=cell(d.b[j],cls,j);
+    }
+    var setHtml=''; for(var s=0;s<step.set.length;s++) setHtml+=mapEntry(step.set[s],'','ne');
+    var resHtml=''; for(var r=0;r<step.res.length;r++) resHtml+=mapEntry(step.res[r],'','ht');
+    if(!setHtml) setHtml='<span style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\',monospace">(empty)</span>';
+    if(!resHtml) resHtml='<span style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\',monospace">(none yet)</span>';
+    var stage='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">';
+    stage+='<div><div class="slabel">Array A</div><div class="arr-row">'+aCells+'</div></div>';
+    stage+='<div><div class="slabel">Array B</div><div class="arr-row">'+bCells+'</div></div></div>';
+    stage+='<div style="display:flex;gap:16px;flex-wrap:wrap">';
+    stage+='<div><div class="slabel">HashSet (from A)</div><div class="map-grid">'+setHtml+'</div></div>';
+    stage+='<div><div class="slabel">Intersection</div><div class="map-grid">'+resHtml+'</div></div></div>';
+    if(step.done) stage+=resultBanner('&#8745;','Intersection: ['+step.res.join(',')+']');
+    var log=step.phase==='build'?'Add a['+step.i+']='+step.cur+' to HashSet':'Check b['+step.j+']='+step.cur+' in set &rarr; '+(step.found?'FOUND! &rarr; add to result':'not found');
+    return {stage:stage,log:log};
+  }
+},
+
+// 20 Subarray with Zero Sum
+{ title:'Subarray Zero Sum', diff:'hard', cat:'Array',
+  desc:'Use prefix sum + HashSet. If prefixSum seen before, a zero-sum subarray exists.',
+  code:'boolean hasZeroSumSubarray(int[] arr) {\n  Set<Integer> set = new HashSet<>();\n  set.add(0);\n  int prefixSum = 0;\n  for (int x : arr) {\n    prefixSum += x;\n    if (set.contains(prefixSum))\n      return true;\n    set.add(prefixSum);\n  }\n  return false;\n}',
+  input:{arr:[3,4,-7,3,1,3,-4,-2,-2]},
+  buildSteps: function(d) {
+    var arr=d.arr, steps=[], set=[0], psum=0;
+    for(var i=0;i<arr.length;i++){
+      psum+=arr[i];
+      var found=set.indexOf(psum)!==-1;
+      steps.push({i:i,arr:arr,psum:psum,set:set.slice(),found:found,done:found||i===arr.length-1});
+      if(found) break;
+      set.push(psum);
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=0;i<d.arr.length;i++) cells+=cell(d.arr[i], i===step.i?(step.found?'ok':'hi'):i<step.i?'seen':'', i);
+    var setHtml=''; for(var s=0;s<step.set.length;s++) setHtml+=mapEntry(step.set[s],'', s===0?'':'ne');
+    var stage='<div class="slabel">Array</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('prefixSum', step.psum, 'upd', 'var(--cyan)');
+    stage+=varBox('in set?', step.found?'YES':'NO', '', step.found?'var(--green)':'var(--muted)');
+    stage+='</div>';
+    stage+='<div class="slabel">Prefix Sum Set</div><div class="map-grid">'+setHtml+'</div>';
+    if(step.done) stage+=resultBanner(step.found?'&#9989;':'&#10060;','Zero-sum subarray '+(step.found?'EXISTS':'not found'));
+    return {stage:stage,log:'i='+step.i+': arr[i]='+d.arr[step.i]+' &rarr; prefixSum='+step.psum+(step.found?' ALREADY IN SET &rarr; zero-sum subarray found!':' &rarr; add to set')};
+  }
+},
+
+// 21 Remove Spaces
+{ title:'Remove Spaces', diff:'easy', cat:'String',
+  desc:'Use trim() to remove leading/trailing spaces, replaceAll to collapse internal spaces.',
+  code:'String removeSpaces(String s) {\n  return s.trim().replaceAll("\\\\s+", " ");\n  // OR using StringBuilder:\n  // StringBuilder sb = new StringBuilder();\n  // for (char c : s.toCharArray())\n  //   if (c != \' \') sb.append(c);\n  // return sb.toString();\n}',
+  input:{s:'  hello   world  '},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], sb='';
+    var arr=s.split('');
+    for(var i=0;i<arr.length;i++){
+      var isSpace=arr[i]===' ';
+      if(!isSpace) sb+=arr[i];
+      steps.push({i:i,c:arr[i],isSpace:isSpace,sb:sb,s:s,done:i===arr.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var c=d.s[i]===(' ')?'_':d.s[i];
+      var cls=i===step.i?(step.isSpace?'dup':'ok'):i<step.i?'seen':'';
+      chars+=charCell(c, cls, '');
+    }
+    var stage='<div class="slabel">Input (spaces shown as _)</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine("char='"+( step.c===' '?'SPACE':step.c)+"' &rarr; "+(step.isSpace?col('skip (space)','pink'):col('keep','green')));
+    stage+='<div class="slabel" style="margin-top:10px">Result so far</div>';
+    stage+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:16px;color:var(--cyan);letter-spacing:2px">"'+step.sb+'"</div>';
+    if(step.done) stage+=resultBanner('&#10003;','"'+step.sb+'" (length='+step.sb.length+')');
+    return {stage:stage,log:'i='+step.i+': \''+( step.c===' '?'SPACE':step.c)+'\' &rarr; '+(step.isSpace?'skip':'append &rarr; "'+step.sb+'"')};
+  }
+},
+
+// 22 Duplicate Words in String
+{ title:'Duplicate Words', diff:'medium', cat:'String',
+  desc:'Split into words, use HashMap to count frequency, collect words with count > 1.',
+  code:'List<String> findDupWords(String s) {\n  Map<String,Integer> map = new LinkedHashMap<>();\n  for (String w : s.split(" "))\n    map.put(w, map.getOrDefault(w,0)+1);\n  List<String> dups = new ArrayList<>();\n  for (Map.Entry<String,Integer> e : map.entrySet())\n    if (e.getValue() > 1) dups.add(e.getKey());\n  return dups;\n}',
+  input:{s:'the cat sat on the mat the cat'},
+  buildSteps: function(d) {
+    var words=d.s.split(' '), steps=[], map={}, keys=[];
+    for(var i=0;i<words.length;i++){
+      var w=words[i];
+      if(!map.hasOwnProperty(w)){map[w]=0;keys.push(w);}
+      map[w]++;
+      steps.push({i:i,w:w,map:JSON.parse(JSON.stringify(map)),keys:keys.slice(),words:words,done:i===words.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var wCells='';
+    for(var i=0;i<step.words.length;i++){
+      var cls=i===step.i?(step.map[step.w]>1?'dup':'hi'):i<step.i?(step.map[step.words[i]]>1?'dup':'seen'):'';
+      wCells+='<div class="me '+cls+'" style="font-size:12px">'+step.words[i]+'</div>';
+    }
+    var mapHtml='';
+    for(var k=0;k<step.keys.length;k++){
+      var v=step.map[step.keys[k]];
+      mapHtml+=mapEntry(step.keys[k], v, v>1?'ht':step.keys[k]===step.w?'ne':'');
+    }
+    var dups=[];for(var k=0;k<step.keys.length;k++)if(step.map[step.keys[k]]>1)dups.push(step.keys[k]);
+    var stage='<div class="slabel">Words</div><div class="map-grid">'+wCells+'</div>';
+    stage+='<div class="slabel" style="margin-top:10px">Word Frequency</div><div class="map-grid">'+mapHtml+'</div>';
+    if(step.done) stage+=resultBanner('&#128101;','Duplicates: ['+dups.join(', ')+']');
+    return {stage:stage,log:'word="'+step.w+'" &rarr; count='+step.map[step.w]+(step.map[step.w]>1?' (DUPLICATE)':'')};
+  }
+},
+
+// 23 Longest Common Prefix
+{ title:'Longest Common Prefix', diff:'hard', cat:'String',
+  desc:'Take first string as prefix candidate. Shorten it until each word starts with it.',
+  code:'String longestPrefix(String[] arr) {\n  String prefix = arr[0];\n  for (int i=1; i<arr.length; i++)\n    while (!arr[i].startsWith(prefix))\n      prefix = prefix.substring(0, prefix.length()-1);\n  return prefix;\n}',
+  input:{words:['flower','flow','flight']},
+  buildSteps: function(d) {
+    var arr=d.words, steps=[], prefix=arr[0];
+    steps.push({i:0,prefix:prefix,words:arr,action:'init'});
+    for(var i=1;i<arr.length;i++){
+      while(!arr[i].startsWith(prefix)){
+        steps.push({i:i,prefix:prefix,words:arr,action:'trim',cur:arr[i]});
+        prefix=prefix.substring(0,prefix.length-1);
+        steps.push({i:i,prefix:prefix,words:arr,action:'trimmed',cur:arr[i]});
+        if(prefix.length===0) break;
+      }
+      steps.push({i:i,prefix:prefix,words:arr,action:'match',cur:arr[i],done:i===arr.length-1});
+    }
+    steps[steps.length-1].done=true;
+    return steps;
+  },
+  render: function(step) {
+    var wCells='';
+    for(var i=0;i<step.words.length;i++){
+      var w=step.words[i], p=step.prefix;
+      var html='';
+      for(var j=0;j<w.length;j++){
+        var cls=j<p.length?'chv mt':'chv';
+        html+='<span class="'+cls+'" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px;border:1px solid var(--border);margin:1px">'+w[j]+'</span>';
+      }
+      wCells+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted);width:60px">'+w+'</span>'+html+'</div>';
+    }
+    var stage='<div class="slabel">Words &amp; prefix match</div>'+wCells;
+    stage+='<div class="vrow">';
+    stage+=varBox('prefix', '"'+step.prefix+'"', step.action==='trimmed'?'upd':'', 'var(--cyan)');
+    stage+=varBox('action', step.action, '', step.action==='match'?'var(--green)':step.action==='trim'?'var(--pink)':'var(--muted)');
+    if(step.cur) stage+=varBox('checking', '"'+step.cur+'"', '', 'var(--yellow)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128279;','Longest Common Prefix = "'+step.prefix+'"');
+    return {stage:stage,log:'prefix="'+step.prefix+'" | '+( step.action==='trim'?'"'+step.cur+'" does not start with prefix &rarr; trim 1 char':step.action==='match'?'"'+step.cur+'" starts with "'+step.prefix+'" &check;':'initial prefix = first word')};
+  }
+},
+
+// 24 Vowel & Consonant Count
+{ title:'Vowel & Consonant Count', diff:'easy', cat:'String',
+  desc:'Check each char: if in {a,e,i,o,u} increment vowels, else if letter increment consonants.',
+  code:'void countVowelsCons(String s) {\n  int v=0, c=0;\n  s = s.toLowerCase();\n  for (char ch : s.toCharArray()) {\n    if ("aeiou".indexOf(ch) >= 0) v++;\n    else if (Character.isLetter(ch)) c++;\n  }\n  System.out.println("Vowels:"+v+" Cons:"+c);\n}',
+  input:{s:'Hello World'},
+  buildSteps: function(d) {
+    var s=d.s.toLowerCase(), steps=[], v=0, c=0;
+    var vowels='aeiou';
+    for(var i=0;i<s.length;i++){
+      var ch=s[i], isVowel=vowels.indexOf(ch)>=0, isCons=/[a-z]/.test(ch)&&!isVowel, isOther=!isVowel&&!isCons;
+      if(isVowel) v++;
+      else if(isCons) c++;
+      steps.push({i:i,ch:ch,isVowel:isVowel,isCons:isCons,isOther:isOther,v:v,c:c,s:s,done:i===s.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<step.s.length;i++){
+      var cls=i===step.i?(step.isVowel?'ok':step.isCons?'hi':'dim'):i<step.i?(('aeiou'.indexOf(step.s[i])>=0)?'ok':(/[a-z]/.test(step.s[i])?'seen':'dim')):'';
+      chars+=charCell(step.s[i], cls, '');
+    }
+    var stage='<div class="slabel">String (lowercase)</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine("'"+step.ch+"' &rarr; "+col(step.isVowel?'VOWEL':step.isCons?'CONSONANT':'OTHER (skip)', step.isVowel?'green':step.isCons?'cyan':'muted'));
+    stage+='<div class="vrow">';
+    stage+=varBox('vowels (v)', step.v, step.isVowel?'upd':'', 'var(--green)');
+    stage+=varBox('consonants (c)', step.c, step.isCons?'upd':'', 'var(--cyan)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128290;','Vowels='+step.v+' | Consonants='+step.c);
+    return {stage:stage,log:'ch=\''+step.ch+'\' &rarr; '+(step.isVowel?'vowel v='+step.v:step.isCons?'consonant c='+step.c:'skip (non-letter)')};
+  }
+},
+
+// 25 Remove Special Characters
+{ title:'Remove Special Chars', diff:'medium', cat:'String',
+  desc:'Keep only letters and digits using Character.isLetterOrDigit() check per character.',
+  code:'String removeSpecial(String s) {\n  StringBuilder sb = new StringBuilder();\n  for (char c : s.toCharArray())\n    if (Character.isLetterOrDigit(c))\n      sb.append(c);\n  return sb.toString();\n}',
+  input:{s:'He@llo! W#orld123'},
+  buildSteps: function(d) {
+    var s=d.s, steps=[], sb='';
+    for(var i=0;i<s.length;i++){
+      var c=s[i], keep=/[a-zA-Z0-9]/.test(c);
+      if(keep) sb+=c;
+      steps.push({i:i,c:c,keep:keep,sb:sb,done:i===s.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var c=d.s[i], keep=/[a-zA-Z0-9]/.test(c);
+      var cls=i===step.i?(step.keep?'ok':'dup'):i<step.i?(keep?'seen':'dim'):'';
+      chars+=charCell(c==='!'?'!':c==='@'?'@':c==='#'?'#':c, cls, '');
+    }
+    var stage='<div class="slabel">Input String</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine("'"+step.c+"' &rarr; isLetterOrDigit? "+col(step.keep?'YES &rarr; keep':'NO &rarr; remove', step.keep?'green':'pink'));
+    stage+='<div class="slabel" style="margin-top:10px">Result so far</div>';
+    stage+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:16px;color:var(--cyan)">"'+step.sb+'"</div>';
+    if(step.done) stage+=resultBanner('&#10003;','Result: "'+step.sb+'"');
+    return {stage:stage,log:'i='+step.i+': \''+step.c+'\' &rarr; '+(step.keep?'keep &rarr; "'+step.sb+'"':'remove (special char)')};
+  }
+},
+
+// 26 Factorial Recursion
+{ title:'Factorial (Recursion)', diff:'medium', cat:'Number',
+  desc:'factorial(n) = n * factorial(n-1). Stack unwinds from base case n=0 back up.',
+  code:'int factorial(int n) {\n  if (n == 0 || n == 1)\n    return 1;        // base case\n  return n * factorial(n - 1);\n}',
+  input:{n:5},
+  buildSteps: function(d) {
+    var steps=[], calls=[];
+    function fact(n){
+      calls.push(n);
+      steps.push({n:n,calls:calls.slice(),phase:'call',stack:calls.slice()});
+      if(n<=1){steps.push({n:n,calls:calls.slice(),phase:'base',result:1,stack:calls.slice()});return 1;}
+      var r=fact(n-1);
+      calls.pop();
+      var res=n*r;
+      steps.push({n:n,sub:r,result:res,calls:calls.slice(),phase:'return',stack:calls.slice()});
+      return res;
+    }
+    fact(d.n);
+    steps[steps.length-1].done=true;
+    return steps;
+  },
+  render: function(step) {
+    var stackHtml='';
+    for(var i=step.stack.length-1;i>=0;i--){
+      var isTop=i===step.stack.length-1;
+      stackHtml+='<div style="background:var(--card);border:1px solid '+(isTop?'var(--cyan)':'var(--border)')+';border-radius:5px;padding:6px 14px;font-family:\'JetBrains Mono\',monospace;font-size:12px;color:'+(isTop?'var(--cyan)':'var(--muted)')+';margin-bottom:3px">factorial('+step.stack[i]+')</div>';
+    }
+    var stage='<div style="display:flex;gap:20px;flex-wrap:wrap">';
+    stage+='<div><div class="slabel">Call Stack (top = current)</div>'+stackHtml+'</div>';
+    stage+='<div><div class="vrow" style="flex-direction:column;gap:8px">';
+    stage+=varBox('n', step.n, step.phase==='call'?'upd':'', 'var(--cyan)');
+    if(step.phase==='return') stage+=varBox('n * sub', step.n+' * '+step.sub+' = '+step.result, 'upd', 'var(--green)');
+    if(step.phase==='base') stage+=varBox('base case', 'return 1', 'upd', 'var(--yellow)');
+    stage+=varBox('phase', step.phase, '', step.phase==='return'?'var(--green)':step.phase==='base'?'var(--yellow)':'var(--cyan)');
+    stage+='</div></div></div>';
+    if(step.done) stage+=resultBanner('&#8734;','factorial('+step.stack[0]+') = '+step.result);
+    var log='';
+    if(step.phase==='call') log='Call factorial('+step.n+') &rarr; push to stack (depth='+step.stack.length+')';
+    else if(step.phase==='base') log='n='+step.n+' &le; 1 &rarr; base case, return 1';
+    else log='return '+step.n+' * '+step.sub+' = '+step.result+' &rarr; pop stack';
+    return {stage:stage,log:log};
+  }
+},
+
+// 27 Odd / Even
+{ title:'Odd / Even', diff:'easy', cat:'Number',
+  desc:'Check n % 2. If remainder is 0 the number is even, otherwise odd.',
+  code:'String oddEven(int n) {\n  return (n % 2 == 0) ? "Even" : "Odd";\n}\n// Print 1 to 20, label each:\nvoid printOddEven(int limit) {\n  for (int i=1; i<=limit; i++)\n    System.out.println(i + " is " + oddEven(i));\n}',
+  input:{limit:10},
+  buildSteps: function(d) {
+    var steps=[];
+    for(var i=1;i<=d.limit;i++) steps.push({i:i,even:i%2===0,rem:i%2,done:i===d.limit});
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=1;i<=d.limit;i++){
+      var e=i%2===0;
+      var cls=i===step.i?(e?'ok':'hi'):i<step.i?(e?'seen':'pl'):'';
+      cells+=cell(i,cls,'');
+    }
+    var stage='<div class="slabel">Numbers 1 to '+d.limit+'</div><div class="arr-row">'+cells+'</div>';
+    stage+=infoLine(step.i+' % 2 = '+step.rem+' &rarr; '+col(step.even?'EVEN':'ODD', step.even?'green':'orange'));
+    stage+='<div class="vrow">';
+    stage+=varBox('n', step.i, '', 'var(--cyan)');
+    stage+=varBox('n % 2', step.rem, 'upd', 'var(--yellow)');
+    stage+=varBox('result', step.even?'Even':'Odd', 'upd', step.even?'var(--green)':'var(--orange)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#9889;','All '+d.limit+' numbers classified!');
+    return {stage:stage,log:'n='+step.i+': '+step.i+'%2='+step.rem+' &rarr; '+(step.even?'Even':'Odd')};
+  }
+},
+
+// 28 Count Digits
+{ title:'Count Digits', diff:'easy', cat:'Number',
+  desc:'Divide by 10 repeatedly and count iterations, OR use String.valueOf(n).length().',
+  code:'int countDigits(int n) {\n  if (n == 0) return 1;\n  int count = 0;\n  n = Math.abs(n);\n  while (n > 0) {\n    count++;\n    n /= 10;\n  }\n  return count;\n}',
+  input:{n:748392},
+  buildSteps: function(d) {
+    var n=Math.abs(d.n), steps=[], count=0;
+    while(n>0){
+      count++;
+      steps.push({n:n,count:count,digit:n%10,original:d.n,done:Math.floor(n/10)===0});
+      n=Math.floor(n/10);
+    }
+    return steps;
+  },
+  render: function(step) {
+    var origStr=String(Math.abs(step.original));
+    var cells='';
+    for(var i=0;i<origStr.length;i++){
+      var cls=i>=origStr.length-step.count?'ok':'dim';
+      cells+=cell(origStr[i],cls,i);
+    }
+    var stage='<div class="slabel">Digits of '+step.original+'</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('n', step.n, '', 'var(--cyan)');
+    stage+=varBox('n / 10', Math.floor(step.n/10), '', 'var(--muted)');
+    stage+=varBox('count', step.count, 'upd', 'var(--green)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128290;',Math.abs(step.original)+' has '+step.count+' digits');
+    return {stage:stage,log:'n='+step.n+': count++ &rarr; '+step.count+' | n/10 &rarr; '+Math.floor(step.n/10)};
+  }
+},
+
+// 29 Roman to Integer
+{ title:'Roman to Integer', diff:'hard', cat:'Number',
+  desc:'If current value < next value, subtract it (IV=4). Otherwise add it.',
+  code:'int romanToInt(String s) {\n  Map<Character,Integer> map = new HashMap<>();\n  map.put(\'I\',1);map.put(\'V\',5);map.put(\'X\',10);\n  map.put(\'L\',50);map.put(\'C\',100);map.put(\'D\',500);map.put(\'M\',1000);\n  int result = 0;\n  for (int i=0; i<s.length(); i++) {\n    int cur = map.get(s.charAt(i));\n    int nxt = (i+1<s.length()) ? map.get(s.charAt(i+1)) : 0;\n    if (cur < nxt) result -= cur;\n    else           result += cur;\n  }\n  return result;\n}',
+  input:{s:'MCMXCIV'},
+  buildSteps: function(d) {
+    var map={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+    var s=d.s, steps=[], result=0;
+    for(var i=0;i<s.length;i++){
+      var cur=map[s[i]], nxt=i+1<s.length?map[s[i+1]]:0;
+      var sub=cur<nxt;
+      if(sub) result-=cur; else result+=cur;
+      steps.push({i:i,c:s[i],cur:cur,nxt:nxt,sub:sub,result:result,s:s,done:i===s.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var chars='';
+    for(var i=0;i<d.s.length;i++){
+      var cls=i===step.i?(step.sub?'dup':'ok'):i<step.i?'seen':'';
+      chars+=charCell(d.s[i],cls,'');
+    }
+    var stage='<div class="slabel">Roman Numeral</div><div class="char-row">'+chars+'</div>';
+    stage+=infoLine("cur='"+step.c+"'="+step.cur+' &nbsp;|&nbsp; next='+(step.nxt||0)+' &nbsp;|&nbsp; '+col(step.sub?'cur < next &rarr; SUBTRACT':'cur &ge; next &rarr; ADD', step.sub?'pink':'green'));
+    stage+='<div class="vrow">';
+    stage+=varBox('cur val', step.cur, '', 'var(--cyan)');
+    stage+=varBox('next val', step.nxt||0, '', 'var(--muted)');
+    stage+=varBox('operation', step.sub?'-'+step.cur:'+'+step.cur, 'upd', step.sub?'var(--pink)':'var(--green)');
+    stage+=varBox('result', step.result, 'res', '');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#127981;','"'+d.s+'" = '+step.result);
+    return {stage:stage,log:'\''+step.c+'\'='+step.cur+(step.nxt?' next='+step.nxt+' '+( step.sub?'&rarr; subtract: result-='+step.cur:'&rarr; add: result+='+step.cur):'&rarr; add: result+='+step.cur)+' | result='+step.result};
+  }
+},
+
+// 30 Desc Sort
+{ title:'Desc Sort (Arrays)', diff:'medium', cat:'Sorting',
+  desc:'Arrays.sort() with Collections.reverseOrder() sorts Integer[] in descending order.',
+  code:'Integer[] descSort(Integer[] a) {\n  Arrays.sort(a, Collections.reverseOrder());\n  return a;\n  // Ascending first:  Arrays.sort(a);\n  // Descending:        Arrays.sort(a, Collections.reverseOrder());\n}',
+  input:{arr:[5,1,8,3,9,2,7,4,6]},
+  buildSteps: function(d) {
+    var arr=d.arr.slice(), steps=[];
+    // simulate insertion sort descending for visualization
+    steps.push({arr:arr.slice(),i:-1,j:-1,phase:'initial'});
+    for(var i=1;i<arr.length;i++){
+      var key=arr[i], j=i-1;
+      steps.push({arr:arr.slice(),i:i,j:j,key:key,phase:'pick'});
+      while(j>=0 && arr[j]<key){
+        arr[j+1]=arr[j];
+        steps.push({arr:arr.slice(),i:i,j:j,key:key,phase:'shift'});
+        j--;
+      }
+      arr[j+1]=key;
+      steps.push({arr:arr.slice(),i:i,j:j+1,key:key,phase:'place',done:i===d.arr.length-1});
+    }
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var k=0;k<step.arr.length;k++){
+      var cls='';
+      if(step.phase==='pick'&&k===step.i) cls='hi';
+      else if(step.phase==='shift'&&(k===step.j+1||k===step.j)) cls='pl';
+      else if(step.phase==='place'&&k===step.j) cls='ok';
+      else if(k<step.i&&step.phase!=='initial') cls='seen';
+      cells+=cell(step.arr[k],cls,k);
+    }
+    var stage='<div class="slabel">Array (sorting descending)</div><div class="arr-row">'+cells+'</div>';
+    stage+='<div class="vrow">';
+    if(step.i>0){
+      stage+=varBox('key', step.key, '', 'var(--cyan)');
+      stage+=varBox('phase', step.phase, 'upd', 'var(--yellow)');
+    } else {
+      stage+=varBox('phase', 'initial', '', 'var(--muted)');
+    }
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#8595;','Descending: ['+step.arr.join(',')+']');
+    var log='';
+    if(step.phase==='initial') log='Start: ['+step.arr.join(',')+'] &rarr; insertion sort descending';
+    else if(step.phase==='pick') log='i='+step.i+': pick key='+step.key;
+    else if(step.phase==='shift') log='arr['+step.j+']='+step.arr[step.j+1]+' < key='+step.key+' &rarr; shift right';
+    else log='Place key='+step.key+' at position '+step.j;
+    return {stage:stage,log:log};
+  }
+},
+
+// 31 Sort Map By Value
+{ title:'Sort Map By Value', diff:'hard', cat:'Sorting',
+  desc:'Collect Map entries into a List, then sort the List using a Comparator on getValue().',
+  code:'Map<String,Integer> sortByValue(Map<String,Integer> map) {\n  List<Map.Entry<String,Integer>> list =\n    new ArrayList<>(map.entrySet());\n  list.sort((a,b) -> a.getValue()-b.getValue());\n  Map<String,Integer> result = new LinkedHashMap<>();\n  for (Map.Entry<String,Integer> e : list)\n    result.put(e.getKey(), e.getValue());\n  return result;\n}',
+  input:{map:{banana:3,apple:1,cherry:2,date:5,elderberry:4}},
+  buildSteps: function(d) {
+    var entries=Object.entries(d.map), steps=[];
+    steps.push({entries:entries.slice(),phase:'collect',i:-1});
+    // bubble sort by value for visualization
+    var arr=entries.slice();
+    for(var i=0;i<arr.length-1;i++){
+      for(var j=0;j<arr.length-1-i;j++){
+        var swap=arr[j][1]>arr[j+1][1];
+        steps.push({entries:arr.slice(),phase:'compare',j:j,swap:swap});
+        if(swap){var t=arr[j];arr[j]=arr[j+1];arr[j+1]=t;steps.push({entries:arr.slice(),phase:'swapped',j:j});}
+      }
+    }
+    steps.push({entries:arr.slice(),phase:'done',done:true});
+    return steps;
+  },
+  render: function(step) {
+    var mapHtml='';
+    for(var i=0;i<step.entries.length;i++){
+      var cls=step.phase==='compare'&&(i===step.j||i===step.j+1)?(step.swap?'red':'ne'):step.phase==='swapped'&&(i===step.j||i===step.j+1)?'ht':step.phase==='done'?'ne':'';
+      mapHtml+=mapEntry(step.entries[i][0], step.entries[i][1], cls);
+    }
+    var stage='<div class="slabel">Map entries</div><div class="map-grid" style="flex-direction:column">'+mapHtml+'</div>';
+    if(step.phase==='compare'){
+      stage+=infoLine('"'+step.entries[step.j][0]+'"='+step.entries[step.j][1]+' vs "'+step.entries[step.j+1][0]+'"='+step.entries[step.j+1][1]+' &rarr; '+col(step.swap?'swap':'keep', step.swap?'pink':'green'));
+    }
+    if(step.done) stage+=resultBanner('&#128202;','Sorted: '+step.entries.map(function(e){return e[0]+'='+e[1];}).join(', '));
+    return {stage:stage,log:step.phase==='collect'?'Collect entries into List':step.phase==='done'?'Sort complete!':'Compare ['+step.j+']='+step.entries[step.j][1]+' vs ['+( step.j+1)+']='+step.entries[step.j+1][1]+(step.swap?' &rarr; swap':'')};
+  }
+},
+
+// 32 Number Triangle Pattern
+{ title:'Number Triangle', diff:'medium', cat:'Pattern',
+  desc:'Nested loops: outer loop for rows, inner loop prints numbers 1 to i.',
+  code:'void numberTriangle(int n) {\n  for (int i=1; i<=n; i++) {\n    for (int j=1; j<=i; j++)\n      System.out.print(j + " ");\n    System.out.println();\n  }\n}',
+  input:{n:5},
+  buildSteps: function(d) {
+    var steps=[];
+    for(var i=1;i<=d.n;i++) steps.push({i:i,n:d.n,nums:Array.from({length:i},function(_,k){return k+1;}),rowsDone:i,done:i===d.n});
+    return steps;
+  },
+  render: function(step) {
+    var rows='';
+    for(var i=1;i<=step.rowsDone;i++){
+      rows+='<div class="sr">';
+      for(var j=1;j<=i;j++){
+        var active=i===step.i;
+        rows+='<div class="fc" style="width:28px;height:28px;font-size:11px;border-color:'+(active?'var(--cyan)':'var(--border)')+';color:'+(active?'var(--cyan)':'var(--muted)')+'">'+j+'</div>';
+      }
+      rows+='</div>';
+    }
+    var stage='<div class="slabel">Number Triangle (n='+step.n+')</div><div style="display:flex;flex-direction:column;gap:4px">'+rows+'</div>';
+    stage+='<div class="vrow">';
+    stage+=varBox('row i', step.i, 'upd', 'var(--cyan)');
+    stage+=varBox('cols 1..i', '1 to '+step.i, '', 'var(--yellow)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#128290;','Triangle with n='+step.n+' complete!');
+    return {stage:stage,log:'Row i='+step.i+': print 1 to '+step.i+' &rarr; "'+step.nums.join(' ')+'"'};
+  }
+},
+
+// 33 Odd/Even Pattern
+{ title:'Odd/Even Pattern', diff:'easy', cat:'Pattern',
+  desc:'Print numbers 1 to n, labeling each as Odd or Even in a visual grid.',
+  code:'void oddEvenPattern(int n) {\n  for (int i=1; i<=n; i++) {\n    if (i % 2 == 0)\n      System.out.println(i + " -> Even");\n    else\n      System.out.println(i + " -> Odd");\n  }\n}',
+  input:{n:12},
+  buildSteps: function(d) {
+    var steps=[];
+    for(var i=1;i<=d.n;i++) steps.push({i:i,even:i%2===0,n:d.n,done:i===d.n});
+    return steps;
+  },
+  render: function(step, d) {
+    var cells='';
+    for(var i=1;i<=d.n;i++){
+      var e=i%2===0, cls=i===step.i?(e?'ok':'hi'):i<step.i?(e?'seen':'pl'):'';
+      cells+=cell(i,cls,e?'E':'O');
+    }
+    var stage='<div class="slabel">Grid (E=Even, O=Odd)</div><div class="arr-row" style="flex-wrap:wrap">'+cells+'</div>';
+    stage+=infoLine(step.i+' % 2 = '+step.i%2+' &rarr; '+col(step.even?'EVEN':'ODD', step.even?'green':'orange'));
+    stage+='<div class="vrow">';
+    stage+=varBox('i', step.i, 'upd', 'var(--cyan)');
+    stage+=varBox('i % 2', step.i%2, '', 'var(--yellow)');
+    stage+=varBox('label', step.even?'Even':'Odd', 'upd', step.even?'var(--green)':'var(--orange)');
+    stage+='</div>';
+    if(step.done) stage+=resultBanner('&#9889;','Pattern for 1 to '+d.n+' complete!');
+    return {stage:stage,log:'i='+step.i+': '+step.i+'%2='+step.i%2+' &rarr; '+(step.even?'Even':'Odd')};
+  }
+}
+
+]; // end PROGRAMS
+
+// ── ENGINE ────────────────────────────────────────────────────────────────
+var cur=0, step=0, steps=[], timer=null, speed=700;
+
+function loadProg(idx) {
+  clearInterval(timer); timer=null;
+  cur=idx; step=0;
+  steps=PROGRAMS[idx].buildSteps(PROGRAMS[idx].input);
+  var btns=document.querySelectorAll('.prog-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',i===idx);
+  renderAll();
+}
+
+function renderAll() {
+  var p=PROGRAMS[cur];
+  var s=steps[step];
+  var viz=p.render(s,p.input);
+  var pct=Math.round(((step+1)/steps.length)*100);
+  var html='<div class="prog-header">';
+  html+='<div class="prog-title"><h2>'+p.title+'</h2>';
+  html+='<span class="tag '+p.diff+'">'+p.diff+'</span>';
+  html+='<span class="tag cat-tag">'+p.cat+'</span></div>';
+  html+='<p class="prog-desc">'+p.desc+'</p></div>';
+  html+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  html+='<div class="panels">';
+  // Code panel
+  html+='<div class="panel"><div class="panel-head"><span class="pdot2" style="background:var(--orange)"></span><span>Java Code</span></div>';
+  html+='<div class="panel-body"><pre class="code">'+colorize(p.code)+'</pre></div></div>';
+  // Viz panel
+  html+='<div class="panel"><div class="panel-head"><span class="pdot2" style="background:var(--cyan)"></span><span>Step '+( step+1)+' / '+steps.length+'</span></div>';
+  html+='<div class="panel-body">';
+  html+='<div class="viz-controls">';
+  html+='<button class="btn" onclick="prevStep()" '+(step===0?'disabled':'')+'>&#9664; Prev</button>';
+  html+='<button class="btn primary" id="playBtn" onclick="togglePlay()">'+(timer?'&#9646;&#9646; Pause':'&#9654; Play')+'</button>';
+  html+='<button class="btn" onclick="nextStep()" '+(step===steps.length-1?'disabled':'')+'>Next &#9654;</button>';
+  html+='<button class="btn" onclick="resetStep()">&#8634; Reset</button>';
+  html+='<div class="spd"><span>Speed</span><input type="range" min="200" max="1500" step="100" value="'+speed+'" oninput="setSpeed(this.value)"></div>';
+  html+='<span class="step-info">'+pct+'% done</span></div>';
+  html+='<div class="stage" id="vizStage">'+viz.stage+'</div>';
+  html+='<div class="log"><div class="ll cur">&#9655; '+viz.log+'</div></div>';
+  html+='</div></div></div>';
+  document.getElementById('mainArea').innerHTML=html;
+}
+
+function nextStep(){if(step<steps.length-1){step++;renderAll();}else{clearInterval(timer);timer=null;}}
+function prevStep(){if(step>0){step--;renderAll();}}
+function resetStep(){clearInterval(timer);timer=null;step=0;renderAll();}
+function togglePlay(){
+  if(timer){clearInterval(timer);timer=null;renderAll();}
+  else{
+    timer=setInterval(function(){
+      if(step<steps.length-1){step++;renderAll();}
+      else{clearInterval(timer);timer=null;renderAll();}
+    },speed);
+    renderAll();
+  }
+}
+function setSpeed(v){
+  speed=parseInt(v);
+  if(timer){clearInterval(timer);
+    timer=setInterval(function(){
+      if(step<steps.length-1){step++;renderAll();}
+      else{clearInterval(timer);timer=null;renderAll();}
+    },speed);
+  }
+}
+
+// init
+window.onload=function(){loadProg(0);};
+</script>
+</body>
+</html>

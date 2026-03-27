@@ -52,6 +52,12 @@ public class MainThrowingException {
 
     public static void main(String[] args) throws Exception {
         System.out.println("hi");
+
+        //throw new Exception("test"){};
+        //hi
+        //Exception in thread "main" basics.exceptiohandling.MainThrowingException$1: test
+        //	at basics.exceptiohandling.MainThrowingException.main(MainThrowingException.java:56)
+
     }
 
 

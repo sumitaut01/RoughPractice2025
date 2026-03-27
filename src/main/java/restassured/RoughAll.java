@@ -70,6 +70,29 @@ public class RoughAll {
     }
 
 
+
+
+
+    @Test
+    public void RoughRA(){
+
+     Response resp= RestAssured.given().baseUri("").basePath("").header("","")
+              .contentType(ContentType.JSON)
+              .accept(ContentType.JSON)
+              .pathParam("","")
+              .queryParam("", "")
+              .post();
+
+
+          //new ObjectMapper().readValue(resp, TypeReferenceDemo)
+
+
+
+
+
+    }
+
+
 }
 
 

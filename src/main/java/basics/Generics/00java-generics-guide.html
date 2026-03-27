@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Generics — QA Engineer's Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #13161e;
+    --panel:    #181c26;
+    --border:   #232840;
+    --accent:   #5b8aff;
+    --accent2:  #ff6b6b;
+    --accent3:  #43e97b;
+    --accent4:  #f7971e;
+    --text:     #e2e8f8;
+    --muted:    #6b7599;
+    --tab-w:    260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: var(--tab-w); min-width: var(--tab-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-header .logo { font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  .sidebar-header h1 { font-size: 17px; font-weight: 800; line-height: 1.3; color: var(--text); }
+  .sidebar-header h1 span { color: var(--accent); }
+  .section-label { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); padding: 18px 20px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.18s; font-size: 13px; font-weight: 600; color: var(--muted); user-select: none; }
+  .nav-item:hover { color: var(--text); background: rgba(91,138,255,0.06); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(91,138,255,0.1); }
+  .nav-item .icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .nav-item.active .icon { background: rgba(91,138,255,0.2); }
+  .badge { margin-left: auto; font-size: 9px; font-family: 'JetBrains Mono', monospace; background: rgba(91,138,255,0.15); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
+  .badge.green { background: rgba(67,233,123,0.12); color: var(--accent3); }
+  .badge.orange { background: rgba(247,151,30,0.12); color: var(--accent4); }
+  .badge.red { background: rgba(255,107,107,0.12); color: var(--accent2); }
+
+  /* MAIN */
+  .main { flex: 1; overflow-y: auto; padding: 36px 44px; background: var(--bg); }
+  .tab-content { display: none; animation: fadeIn 0.25s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* TYPOGRAPHY */
+  .page-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .page-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+  h2 { font-size: 16px; font-weight: 700; color: var(--accent); margin: 32px 0 12px; letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px; }
+  h2::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--accent); border-radius: 2px; }
+  h3 { font-size: 13px; font-weight: 700; color: var(--accent4); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  p { font-size: 14px; line-height: 1.75; color: #b0bdd8; margin-bottom: 14px; }
+
+  /* CODE */
+  pre { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; overflow-x: auto; margin: 14px 0 22px; position: relative; }
+  pre::before { content: attr(data-lang); position: absolute; top: 10px; right: 14px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.7; color: #c9d4f0; }
+  .kw  { color: #7eb6ff; }
+  .cls { color: #ffd580; }
+  .str { color: #98e06a; }
+  .num { color: #ff9e64; }
+  .cmt { color: #4f5f82; font-style: italic; }
+  .ann { color: #cc99ff; }
+  .met { color: #5fd4e8; }
+  .typ { color: #f7971e; }
+
+  /* CALLOUTS */
+  .callout { border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-size: 13.5px; line-height: 1.65; border-left: 3px solid; }
+  .callout.info    { background: rgba(91,138,255,0.07);  border-color: var(--accent);  color: #a8bfff; }
+  .callout.success { background: rgba(67,233,123,0.07);  border-color: var(--accent3); color: #7de8aa; }
+  .callout.warn    { background: rgba(247,151,30,0.07);  border-color: var(--accent4); color: #f7c06a; }
+  .callout.danger  { background: rgba(255,107,107,0.07); border-color: var(--accent2); color: #ff9898; }
+  .callout strong  { font-weight: 700; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0 24px; }
+  th { background: var(--panel); color: var(--accent); font-weight: 700; text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--border); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #b0bdd8; font-family: 'JetBrains Mono', monospace; font-size: 12px; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(91,138,255,0.04); }
+
+  /* FLOW */
+  .flow { display: flex; align-items: center; gap: 0; margin: 20px 0; flex-wrap: wrap; gap: 6px; }
+  .flow-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text); white-space: nowrap; }
+  .flow-arrow { color: var(--muted); font-size: 18px; padding: 0 2px; }
+
+  /* TREE */
+  .tree { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 2; }
+  .tree .dir  { color: var(--accent); font-weight: 700; }
+  .tree .file { color: #b0bdd8; }
+  .tree .note { color: var(--muted); }
+  .tree .hi   { color: var(--accent3); font-weight: 600; }
+  .tree .warn { color: var(--accent4); }
+
+  /* CARDS */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin: 16px 0 24px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; transition: border-color 0.2s; }
+  .card:hover { border-color: var(--accent); }
+  .card .card-icon { font-size: 22px; margin-bottom: 8px; }
+  .card .card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .card .card-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">QA Engineer's Guide</div>
+    <h1>Java <span>Generics</span><br>Complete Reference</h1>
+  </div>
+
+  <div class="section-label">Foundations</div>
+  <div class="nav-item active" onclick="showTab('what', this)"><div class="icon">📖</div> What Are Generics? <span class="badge">Start</span></div>
+  <div class="nav-item" onclick="showTab('core', this)"><div class="icon">⚙️</div> Core Java Usage <span class="badge">5 topics</span></div>
+
+  <div class="section-label">Generic Patterns</div>
+  <div class="nav-item" onclick="showTab('class', this)"><div class="icon">📦</div> Generic Class</div>
+  <div class="nav-item" onclick="showTab('method', this)"><div class="icon">🔧</div> Generic Method</div>
+  <div class="nav-item" onclick="showTab('bounds', this)"><div class="icon">🔒</div> Bounds &amp; Wildcards <span class="badge orange">Key</span></div>
+
+  <div class="section-label">Test Automation</div>
+  <div class="nav-item" onclick="showTab('wrapper', this)"><div class="icon">🌐</div> Response Wrapper</div>
+  <div class="nav-item" onclick="showTab('schema', this)"><div class="icon">✅</div> Schema Validator <span class="badge green">New</span></div>
+  <div class="nav-item" onclick="showTab('chain', this)"><div class="icon">⛓️</div> Validation Chain <span class="badge green">New</span></div>
+  <div class="nav-item" onclick="showTab('extractor', this)"><div class="icon">🔍</div> Field Extractor <span class="badge green">New</span></div>
+  <div class="nav-item" onclick="showTab('comparator', this)"><div class="icon">📊</div> Response Comparator <span class="badge green">New</span></div>
+  <div class="nav-item" onclick="showTab('dataprovider', this)"><div class="icon">📋</div> Data Provider</div>
+  <div class="nav-item" onclick="showTab('threadlocal', this)"><div class="icon">🧵</div> ThreadLocal Context <span class="badge red">Parallel</span></div>
+  <div class="nav-item" onclick="showTab('db', this)"><div class="icon">🗄️</div> DB Helper</div>
+
+  <div class="section-label">Full Picture</div>
+  <div class="nav-item" onclick="showTab('fullflow', this)"><div class="icon">🚀</div> Full Flow Example <span class="badge green">E2E</span></div>
+  <div class="nav-item" onclick="showTab('structure', this)"><div class="icon">🗂️</div> Folder Structure</div>
+  <div class="nav-item" onclick="showTab('reference', this)"><div class="icon">📌</div> Quick Reference</div>
+</nav>
+
+<main class="main">
+
+  <!-- WHAT -->
+  <div id="what" class="tab-content active">
+    <div class="page-title">What Are Java Generics?</div>
+    <div class="page-subtitle">Write type-safe, reusable code — catch errors at compile time, not runtime.</div>
+    <div class="callout info"><strong>Core Idea:</strong> Generics let you write a class, interface, or method once and use it with any data type — while the compiler enforces type safety for you.</div>
+    <h2>The Problem Without Generics</h2>
+    <pre data-lang="java"><code><span class="cls">List</span> list = <span class="kw">new</span> <span class="cls">ArrayList</span>();
+list.<span class="met">add</span>(<span class="str">"hello"</span>);
+list.<span class="met">add</span>(<span class="num">123</span>);             <span class="cmt">// No error at compile time!</span>
+
+<span class="cls">String</span> s = (<span class="cls">String</span>) list.<span class="met">get</span>(<span class="num">1</span>);  <span class="cmt">// ❌ ClassCastException at RUNTIME!</span></code></pre>
+    <h2>The Fix With Generics</h2>
+    <pre data-lang="java"><code><span class="cls">List</span>&lt;<span class="typ">String</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+list.<span class="met">add</span>(<span class="str">"hello"</span>);
+list.<span class="met">add</span>(<span class="num">123</span>);  <span class="cmt">// ❌ Compile-time error — caught immediately!</span></code></pre>
+    <h2>Key Benefits</h2>
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🛡️</div><div class="card-title">Type Safety</div><div class="card-desc">Errors caught at compile time, not runtime surprises.</div></div>
+      <div class="card"><div class="card-icon">♻️</div><div class="card-title">Reusability</div><div class="card-desc">Write once, use with any type — no duplication.</div></div>
+      <div class="card"><div class="card-icon">✂️</div><div class="card-title">No Casting</div><div class="card-desc">Compiler knows the type — manual casts eliminated.</div></div>
+      <div class="card"><div class="card-icon">📖</div><div class="card-title">Readable Code</div><div class="card-desc">Intent is clear — List&lt;User&gt; tells the story.</div></div>
+    </div>
+    <h2>Type Parameter Naming Conventions</h2>
+    <table>
+      <tr><th>Letter</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>T</td><td>Type</td><td>Box&lt;T&gt;</td></tr>
+      <tr><td>E</td><td>Element</td><td>List&lt;E&gt;</td></tr>
+      <tr><td>K</td><td>Key</td><td>Map&lt;K, V&gt;</td></tr>
+      <tr><td>V</td><td>Value</td><td>Map&lt;K, V&gt;</td></tr>
+      <tr><td>R</td><td>Return type</td><td>Function&lt;T, R&gt;</td></tr>
+      <tr><td>N</td><td>Number</td><td>Calculator&lt;N extends Number&gt;</td></tr>
+    </table>
+  </div>
+
+  <!-- CORE -->
+  <div id="core" class="tab-content">
+    <div class="page-title">Core Java Usage</div>
+    <div class="page-subtitle">Five essential patterns you must master before using generics in test automation.</div>
+    <div class="flow">
+      <div class="flow-box">Generic Class</div><div class="flow-arrow">→</div>
+      <div class="flow-box">Generic Method</div><div class="flow-arrow">→</div>
+      <div class="flow-box">Generic Interface</div><div class="flow-arrow">→</div>
+      <div class="flow-box">Bounded Types</div><div class="flow-arrow">→</div>
+      <div class="flow-box">Wildcards</div>
+    </div>
+    <div class="callout info">Use the left sidebar tabs to dive into each pattern individually with full code examples.</div>
+    <h2>Learning Path</h2>
+    <table>
+      <tr><th>Level</th><th>Topic</th><th>What You Learn</th></tr>
+      <tr><td>1 — Beginner</td><td>Generic Class / Method</td><td>Write reusable containers and utilities</td></tr>
+      <tr><td>2 — Intermediate</td><td>Bounds &amp; Wildcards</td><td>Constrain and flex type parameters</td></tr>
+      <tr><td>3 — Practical</td><td>Collections + Wrappers</td><td>List&lt;T&gt;, Map&lt;K,V&gt;, custom response wrappers</td></tr>
+      <tr><td>4 — Advanced</td><td>Framework Patterns</td><td>ThreadLocal&lt;T&gt;, RowMapper&lt;T&gt;, ResponseValidator&lt;T&gt;</td></tr>
+    </table>
+  </div>
+
+  <!-- GENERIC CLASS -->
+  <div id="class" class="tab-content">
+    <div class="page-title">Generic Class</div>
+    <div class="page-subtitle">T is a placeholder — plug in the real type at usage time.</div>
+    <pre data-lang="java"><code><span class="cmt">// T is a "Type Parameter" — placeholder for a real type</span>
+<span class="kw">public class</span> <span class="cls">Box</span>&lt;<span class="typ">T</span>&gt; {
+    <span class="kw">private</span> <span class="typ">T</span> value;
+
+    <span class="kw">public void</span> <span class="met">set</span>(<span class="typ">T</span> value)  { <span class="kw">this</span>.value = value; }
+    <span class="kw">public</span>  <span class="typ">T</span>   <span class="met">get</span>()         { <span class="kw">return</span> value; }
+}
+
+<span class="cmt">// Usage — same class, different types</span>
+<span class="cls">Box</span>&lt;<span class="cls">String</span>&gt;  stringBox = <span class="kw">new</span> <span class="cls">Box</span>&lt;&gt;();
+<span class="cls">Box</span>&lt;<span class="cls">Integer</span>&gt; intBox    = <span class="kw">new</span> <span class="cls">Box</span>&lt;&gt;();
+
+stringBox.<span class="met">set</span>(<span class="str">"Sumit"</span>);
+intBox.<span class="met">set</span>(<span class="num">42</span>);
+
+<span class="cls">System</span>.out.<span class="met">println</span>(stringBox.<span class="met">get</span>()); <span class="cmt">// Sumit</span>
+<span class="cls">System</span>.out.<span class="met">println</span>(intBox.<span class="met">get</span>());    <span class="cmt">// 42</span></code></pre>
+    <h2>Multiple Type Parameters</h2>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">Pair</span>&lt;<span class="typ">K</span>, <span class="typ">V</span>&gt; {
+    <span class="kw">private final</span> <span class="typ">K</span> key;
+    <span class="kw">private final</span> <span class="typ">V</span> value;
+
+    <span class="kw">public</span> <span class="cls">Pair</span>(<span class="typ">K</span> key, <span class="typ">V</span> value) { <span class="kw">this</span>.key = key; <span class="kw">this</span>.value = value; }
+    <span class="kw">public</span> <span class="typ">K</span> <span class="met">getKey</span>()   { <span class="kw">return</span> key;   }
+    <span class="kw">public</span> <span class="typ">V</span> <span class="met">getValue</span>() { <span class="kw">return</span> value; }
+}
+
+<span class="cmt">// Usage</span>
+<span class="cls">Pair</span>&lt;<span class="cls">String</span>, <span class="cls">Integer</span>&gt; entry = <span class="kw">new</span> <span class="cls">Pair</span>&lt;&gt;(<span class="str">"powerRank"</span>, <span class="num">5</span>);</code></pre>
+    <div class="callout success"><strong>QA Use-case:</strong> Use generic classes for ApiResponseWrapper&lt;T&gt;, TestContext&lt;T&gt;, and result holders across your framework.</div>
+  </div>
+
+  <!-- GENERIC METHOD -->
+  <div id="method" class="tab-content">
+    <div class="page-title">Generic Method</div>
+    <div class="page-subtitle">Declare &lt;T&gt; before the return type — makes a method generic independent of the class.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">Utils</span> {
+
+    <span class="cmt">// &lt;T&gt; before return type = this method is generic</span>
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="kw">void</span> <span class="met">printArray</span>(<span class="typ">T</span>[] array) {
+        <span class="kw">for</span> (<span class="typ">T</span> item : array) <span class="cls">System</span>.out.<span class="met">print</span>(item + <span class="str">" "</span>);
+        <span class="cls">System</span>.out.<span class="met">println</span>();
+    }
+
+    <span class="cmt">// Generic method with return type</span>
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">List</span>&lt;<span class="typ">T</span>&gt; <span class="met">asList</span>(<span class="typ">T</span>... items) {
+        <span class="kw">return new</span> <span class="cls">ArrayList</span>&lt;&gt;(<span class="cls">Arrays</span>.<span class="met">asList</span>(items));
+    }
+}
+
+<span class="cmt">// Compiler infers T from arguments — no explicit type needed</span>
+<span class="cls">String</span>[]  names = {<span class="str">"Sumit"</span>, <span class="str">"Ravi"</span>, <span class="str">"Priya"</span>};
+<span class="cls">Integer</span>[] nums  = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>};
+<span class="cls">Utils</span>.<span class="met">printArray</span>(names); <span class="cmt">// Sumit Ravi Priya</span>
+<span class="cls">Utils</span>.<span class="met">printArray</span>(nums);  <span class="cmt">// 10 20 30</span></code></pre>
+    <h2>Generic Deserializer Method (Framework Pattern)</h2>
+    <pre data-lang="java"><code><span class="cmt">// Deserialize any JSON into any type — one method for all endpoints</span>
+<span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="typ">T</span> <span class="met">fromJson</span>(<span class="cls">String</span> json, <span class="cls">Class</span>&lt;<span class="typ">T</span>&gt; clazz) <span class="kw">throws</span> <span class="cls">Exception</span> {
+    <span class="kw">return new</span> <span class="cls">ObjectMapper</span>().<span class="met">readValue</span>(json, clazz);
+}
+
+<span class="cmt">// Usage — T is inferred from the target variable</span>
+<span class="cls">User</span>        user = <span class="met">fromJson</span>(responseBody, <span class="cls">User</span>.<span class="kw">class</span>);
+<span class="cls">PricingRule</span> rule = <span class="met">fromJson</span>(responseBody, <span class="cls">PricingRule</span>.<span class="kw">class</span>);</code></pre>
+    <div class="callout warn"><strong>Key Rule:</strong> The &lt;T&gt; must appear before the return type. The compiler infers T from the argument — no explicit type needed at the call site.</div>
+  </div>
+
+  <!-- BOUNDS -->
+  <div id="bounds" class="tab-content">
+    <div class="page-title">Bounds &amp; Wildcards</div>
+    <div class="page-subtitle">Control which types are allowed — essential for flexible but safe generic code.</div>
+    <h2>Upper Bounded — extends</h2>
+    <pre data-lang="java"><code><span class="cmt">// T must be Number or a subclass (Integer, Double, Float...)</span>
+<span class="kw">public static</span> &lt;<span class="typ">T</span> <span class="kw">extends</span> <span class="cls">Number</span>&gt; <span class="kw">double</span> <span class="met">sum</span>(<span class="cls">List</span>&lt;<span class="typ">T</span>&gt; list) {
+    <span class="kw">double</span> total = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="typ">T</span> item : list) total += item.<span class="met">doubleValue</span>();
+    <span class="kw">return</span> total;
+}
+<span class="met">sum</span>(<span class="cls">List</span>.<span class="met">of</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>));          <span class="cmt">// 6.0  ✅</span>
+<span class="met">sum</span>(<span class="cls">List</span>.<span class="met">of</span>(<span class="num">1.5</span>, <span class="num">2.5</span>));       <span class="cmt">// 4.0  ✅</span></code></pre>
+    <h2>Wildcards</h2>
+    <pre data-lang="java"><code><span class="cmt">// ? extends T — read only (producer)</span>
+<span class="kw">public void</span> <span class="met">readNumbers</span>(<span class="cls">List</span>&lt;? <span class="kw">extends</span> <span class="cls">Number</span>&gt; list) {
+    <span class="kw">for</span> (<span class="cls">Number</span> n : list) <span class="cls">System</span>.out.<span class="met">println</span>(n);
+}
+
+<span class="cmt">// ? super T — write only (consumer)</span>
+<span class="kw">public void</span> <span class="met">addNumbers</span>(<span class="cls">List</span>&lt;? <span class="kw">super</span> <span class="cls">Integer</span>&gt; list) {
+    list.<span class="met">add</span>(<span class="num">10</span>); list.<span class="met">add</span>(<span class="num">20</span>);
+}
+
+<span class="cmt">// ? — unbounded (any type, no read/write guarantee)</span>
+<span class="kw">public void</span> <span class="met">printList</span>(<span class="cls">List</span>&lt;?&gt; list) {
+    <span class="kw">for</span> (<span class="cls">Object</span> obj : list) <span class="cls">System</span>.out.<span class="met">println</span>(obj);
+}</code></pre>
+    <div class="callout info"><strong>PECS = Producer Extends, Consumer Super</strong><br><br>Use <code>? extends T</code> when you only READ. Use <code>? super T</code> when you only WRITE. Use <code>?</code> when you do neither.</div>
+    <table>
+      <tr><th>Wildcard</th><th>Can Read?</th><th>Can Write?</th><th>Use When</th></tr>
+      <tr><td>? extends T</td><td>✅ Yes (as T)</td><td>❌ No</td><td>Reading / iterating a list</td></tr>
+      <tr><td>? super T</td><td>⚠️ As Object</td><td>✅ Yes</td><td>Adding items to a list</td></tr>
+      <tr><td>?</td><td>⚠️ As Object</td><td>❌ No</td><td>Printing, size check</td></tr>
+    </table>
+  </div>
+
+  <!-- WRAPPER -->
+  <div id="wrapper" class="tab-content">
+    <div class="page-title">Generic API Response Wrapper</div>
+    <div class="page-subtitle">Parse any API response body into any POJO — one class serves all endpoints.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">ApiResponseWrapper</span>&lt;<span class="typ">T</span>&gt; {
+
+    <span class="kw">private int</span>    statusCode;
+    <span class="kw">private</span> <span class="typ">T</span>      body;
+    <span class="kw">private</span> <span class="cls">String</span> errorMessage;
+
+    <span class="cmt">// Static factory — T inferred from the Class argument</span>
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">ApiResponseWrapper</span>&lt;<span class="typ">T</span>&gt; <span class="met">from</span>(
+            <span class="cls">Response</span> response, <span class="cls">Class</span>&lt;<span class="typ">T</span>&gt; clazz) {
+
+        <span class="cls">ApiResponseWrapper</span>&lt;<span class="typ">T</span>&gt; w = <span class="kw">new</span> <span class="cls">ApiResponseWrapper</span>&lt;&gt;();
+        w.statusCode = response.<span class="met">getStatusCode</span>();
+        <span class="kw">try</span> {
+            w.body = <span class="kw">new</span> <span class="cls">ObjectMapper</span>().<span class="met">readValue</span>(response.<span class="met">asString</span>(), clazz);
+        } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+            w.errorMessage = e.<span class="met">getMessage</span>();
+        }
+        <span class="kw">return</span> w;
+    }
+
+    <span class="kw">public int</span>    <span class="met">getStatusCode</span>()   { <span class="kw">return</span> statusCode;   }
+    <span class="kw">public</span> <span class="typ">T</span>      <span class="met">getBody</span>()         { <span class="kw">return</span> body;         }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="met">getErrorMessage</span>() { <span class="kw">return</span> errorMessage; }
+}
+
+<span class="cmt">// ── Usage ────────────────────────────────────────────────</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testGetUser</span>() {
+    <span class="cls">Response</span> response = <span class="met">given</span>().<span class="met">get</span>(<span class="str">"/users/1"</span>);
+    <span class="cls">ApiResponseWrapper</span>&lt;<span class="cls">User</span>&gt; result = <span class="cls">ApiResponseWrapper</span>.<span class="met">from</span>(response, <span class="cls">User</span>.<span class="kw">class</span>);
+
+    <span class="cls">Assert</span>.<span class="met">assertEquals</span>(result.<span class="met">getStatusCode</span>(), <span class="num">200</span>);
+    <span class="cls">Assert</span>.<span class="met">assertEquals</span>(result.<span class="met">getBody</span>().<span class="met">getName</span>(), <span class="str">"Sumit"</span>);
+}</code></pre>
+    <div class="callout success"><strong>Benefit:</strong> One wrapper class serves User, PricingRule, Product, Order — no duplication across API test classes.</div>
+  </div>
+
+  <!-- SCHEMA -->
+  <div id="schema" class="tab-content">
+    <div class="page-title">Generic Schema Validator</div>
+    <div class="page-subtitle">Validate JSON schema AND deserialize into a typed POJO — fluent and chainable.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">SchemaValidator</span>&lt;<span class="typ">T</span>&gt; {
+
+    <span class="kw">private final</span> <span class="cls">Class</span>&lt;<span class="typ">T</span>&gt;    type;
+    <span class="kw">private final</span> <span class="cls">ObjectMapper</span> mapper = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+
+    <span class="kw">public</span> <span class="cls">SchemaValidator</span>(<span class="cls">Class</span>&lt;<span class="typ">T</span>&gt; type) { <span class="kw">this</span>.type = type; }
+
+    <span class="cmt">// Validate against a schema file in classpath/schemas/</span>
+    <span class="kw">public</span> <span class="cls">SchemaValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">validateSchema</span>(<span class="cls">Response</span> response, <span class="cls">String</span> schemaFile) {
+        response.<span class="met">then</span>().<span class="met">body</span>(<span class="cls">JsonSchemaValidator</span>
+            .<span class="met">matchesJsonSchemaInClasspath</span>(<span class="str">"schemas/"</span> + schemaFile));
+        <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public</span> <span class="typ">T</span> <span class="met">deserialize</span>(<span class="cls">Response</span> response) <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="kw">return</span> mapper.<span class="met">readValue</span>(response.<span class="met">asString</span>(), type);
+    }
+
+    <span class="cmt">// One-shot: validate schema + return typed object</span>
+    <span class="kw">public</span> <span class="typ">T</span> <span class="met">validateAndDeserialize</span>(<span class="cls">Response</span> response, <span class="cls">String</span> schemaFile)
+            <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="met">validateSchema</span>(response, schemaFile);
+        <span class="kw">return</span> <span class="met">deserialize</span>(response);
+    }
+}
+
+<span class="cmt">// ── Usage ────────────────────────────────────────────────</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">testPricingRule</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+    <span class="cls">Response</span> response = <span class="met">given</span>().<span class="met">spec</span>(requestSpec).<span class="met">get</span>(<span class="str">"/pricing/rules/1"</span>);
+
+    <span class="cls">PricingRule</span> rule = <span class="kw">new</span> <span class="cls">SchemaValidator</span>&lt;&gt;(<span class="cls">PricingRule</span>.<span class="kw">class</span>)
+        .<span class="met">validateAndDeserialize</span>(response, <span class="str">"pricing-rule-schema.json"</span>);
+
+    <span class="cls">Assert</span>.<span class="met">assertEquals</span>(rule.<span class="met">getPowerRank</span>(), <span class="num">5</span>);
+}</code></pre>
+    <div class="callout warn"><strong>Schema files</strong> live in src/test/resources/schemas/. The validator auto-prefixes the path — just pass the filename.</div>
+  </div>
+
+  <!-- VALIDATION CHAIN -->
+  <div id="chain" class="tab-content">
+    <div class="page-title">Generic Validation Chain</div>
+    <div class="page-subtitle">Fluent builder — chain HTTP + body + custom lambda validations on ANY response type.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; {
+
+    <span class="kw">private final</span> <span class="cls">Response</span>   response;
+    <span class="kw">private final</span> <span class="typ">T</span>          body;
+    <span class="kw">private final</span> <span class="cls">SoftAssert</span> softAssert = <span class="kw">new</span> <span class="cls">SoftAssert</span>();
+
+    <span class="kw">private</span> <span class="cls">ResponseValidator</span>(<span class="cls">Response</span> r, <span class="typ">T</span> body) { <span class="kw">this</span>.response = r; <span class="kw">this</span>.body = body; }
+
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">of</span>(<span class="cls">Response</span> r, <span class="cls">Class</span>&lt;<span class="typ">T</span>&gt; clazz) <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="typ">T</span> body = <span class="kw">new</span> <span class="cls">ObjectMapper</span>().<span class="met">readValue</span>(r.<span class="met">asString</span>(), clazz);
+        <span class="kw">return new</span> <span class="cls">ResponseValidator</span>&lt;&gt;(r, body);
+    }
+
+    <span class="cmt">// HTTP-level checks</span>
+    <span class="kw">public</span> <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">statusIs</span>(<span class="kw">int</span> expected) {
+        softAssert.<span class="met">assertEquals</span>(response.<span class="met">getStatusCode</span>(), expected, <span class="str">"Status mismatch"</span>);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public</span> <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">responseTimeLessThan</span>(<span class="kw">long</span> ms) {
+        softAssert.<span class="met">assertTrue</span>(response.<span class="met">getTime</span>() &lt; ms, <span class="str">"Slow response: "</span> + response.<span class="met">getTime</span>() + <span class="str">"ms"</span>);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="cmt">// Body field checks via method references</span>
+    <span class="kw">public</span> &lt;<span class="typ">F</span>&gt; <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">fieldEquals</span>(<span class="cls">String</span> name, <span class="cls">Function</span>&lt;<span class="typ">T</span>,<span class="typ">F</span>&gt; fn, <span class="typ">F</span> expected) {
+        softAssert.<span class="met">assertEquals</span>(fn.<span class="met">apply</span>(body), expected, <span class="str">"Field ["</span> + name + <span class="str">"] mismatch"</span>);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public</span> &lt;<span class="typ">F</span> <span class="kw">extends</span> <span class="cls">Comparable</span>&lt;<span class="typ">F</span>&gt;&gt; <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">fieldGreaterThan</span>(
+            <span class="cls">String</span> name, <span class="cls">Function</span>&lt;<span class="typ">T</span>,<span class="typ">F</span>&gt; fn, <span class="typ">F</span> threshold) {
+        <span class="typ">F</span> actual = fn.<span class="met">apply</span>(body);
+        softAssert.<span class="met">assertTrue</span>(actual.<span class="met">compareTo</span>(threshold) &gt; <span class="num">0</span>,
+            <span class="str">"["</span> + name + <span class="str">"] = "</span> + actual + <span class="str">" not &gt; "</span> + threshold);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="cmt">// Custom lambda validation</span>
+    <span class="kw">public</span> <span class="cls">ResponseValidator</span>&lt;<span class="typ">T</span>&gt; <span class="met">validate</span>(<span class="cls">String</span> desc, <span class="cls">Predicate</span>&lt;<span class="typ">T</span>&gt; condition) {
+        softAssert.<span class="met">assertTrue</span>(condition.<span class="met">test</span>(body), <span class="str">"Failed: "</span> + desc);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="cmt">// Terminal — runs all soft asserts, returns typed body</span>
+    <span class="kw">public</span> <span class="typ">T</span> <span class="met">assertAllAndGet</span>() { softAssert.<span class="met">assertAll</span>(); <span class="kw">return</span> body; }
+}
+
+<span class="cmt">// ── Usage ────────────────────────────────────────────────</span>
+<span class="cls">PricingRule</span> rule = <span class="cls">ResponseValidator</span>.<span class="met">of</span>(response, <span class="cls">PricingRule</span>.<span class="kw">class</span>)
+    .<span class="met">statusIs</span>(<span class="num">200</span>)
+    .<span class="met">responseTimeLessThan</span>(<span class="num">2000</span>)
+    .<span class="met">fieldEquals</span>(<span class="str">"ruleName"</span>,  <span class="cls">PricingRule</span>::<span class="met">getRuleName</span>,  <span class="str">"TIER_DISCOUNT"</span>)
+    .<span class="met">fieldEquals</span>(<span class="str">"powerRank"</span>, <span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>, <span class="num">5</span>)
+    .<span class="met">fieldGreaterThan</span>(<span class="str">"price"</span>, <span class="cls">PricingRule</span>::<span class="met">getPrice</span>, <span class="num">0.0</span>)
+    .<span class="met">validate</span>(<span class="str">"discount 0–100"</span>, r -&gt; r.<span class="met">getDiscount</span>() &gt;= <span class="num">0</span> &amp;&amp; r.<span class="met">getDiscount</span>() &lt;= <span class="num">100</span>)
+    .<span class="met">assertAllAndGet</span>();</code></pre>
+  </div>
+
+  <!-- EXTRACTOR -->
+  <div id="extractor" class="tab-content">
+    <div class="page-title">Generic Field Extractor</div>
+    <div class="page-subtitle">Pull typed fields from any POJO using method references — no casting, no magic strings.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">FieldExtractor</span>&lt;<span class="typ">T</span>&gt; {
+
+    <span class="kw">private final</span> <span class="typ">T</span> body;
+    <span class="kw">public</span> <span class="cls">FieldExtractor</span>(<span class="typ">T</span> body) { <span class="kw">this</span>.body = body; }
+
+    <span class="cmt">// Extract via Function — compile-time safe</span>
+    <span class="kw">public</span> &lt;<span class="typ">F</span>&gt; <span class="typ">F</span> <span class="met">get</span>(<span class="cls">Function</span>&lt;<span class="typ">T</span>, <span class="typ">F</span>&gt; extractor) {
+        <span class="kw">return</span> extractor.<span class="met">apply</span>(body);
+    }
+
+    <span class="cmt">// Extract list of sub-fields</span>
+    <span class="kw">public</span> &lt;<span class="typ">F</span>&gt; <span class="cls">List</span>&lt;<span class="typ">F</span>&gt; <span class="met">getList</span>(<span class="cls">Function</span>&lt;<span class="typ">T</span>, <span class="cls">List</span>&lt;<span class="typ">F</span>&gt;&gt; extractor) {
+        <span class="kw">return</span> extractor.<span class="met">apply</span>(body);
+    }
+
+    <span class="cmt">// Extract + assert in one shot</span>
+    <span class="kw">public</span> &lt;<span class="typ">F</span>&gt; <span class="typ">F</span> <span class="met">getAndAssert</span>(<span class="cls">Function</span>&lt;<span class="typ">T</span>, <span class="typ">F</span>&gt; extractor, <span class="typ">F</span> expected, <span class="cls">String</span> field) {
+        <span class="typ">F</span> actual = extractor.<span class="met">apply</span>(body);
+        <span class="cls">Assert</span>.<span class="met">assertEquals</span>(actual, expected, <span class="str">"Mismatch on ["</span> + field + <span class="str">"]"</span>);
+        <span class="kw">return</span> actual;
+    }
+}
+
+<span class="cmt">// ── Usage ────────────────────────────────────────────────</span>
+<span class="cls">FieldExtractor</span>&lt;<span class="cls">PricingRule</span>&gt; fx = <span class="kw">new</span> <span class="cls">FieldExtractor</span>&lt;&gt;(rule);
+
+<span class="cls">String</span>       name = fx.<span class="met">get</span>(<span class="cls">PricingRule</span>::<span class="met">getRuleName</span>);
+<span class="kw">int</span>          rank = fx.<span class="met">getAndAssert</span>(<span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>, <span class="num">5</span>, <span class="str">"powerRank"</span>);
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; tags = fx.<span class="met">getList</span>(<span class="cls">PricingRule</span>::<span class="met">getTags</span>);</code></pre>
+    <div class="callout info"><strong>Method References:</strong> PricingRule::getRuleName IS a Function&lt;PricingRule, String&gt; — compiler infers both type parameters automatically.</div>
+  </div>
+
+  <!-- COMPARATOR -->
+  <div id="comparator" class="tab-content">
+    <div class="page-title">Generic Response Comparator</div>
+    <div class="page-subtitle">Compare two API responses field by field — regression and diff testing against saved baselines.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">ResponseComparator</span>&lt;<span class="typ">T</span>&gt; {
+
+    <span class="kw">private final</span> <span class="typ">T</span>          baseline;
+    <span class="kw">private final</span> <span class="typ">T</span>          actual;
+    <span class="kw">private final</span> <span class="cls">SoftAssert</span> softAssert = <span class="kw">new</span> <span class="cls">SoftAssert</span>();
+
+    <span class="kw">public</span> <span class="cls">ResponseComparator</span>(<span class="typ">T</span> baseline, <span class="typ">T</span> actual) {
+        <span class="kw">this</span>.baseline = baseline; <span class="kw">this</span>.actual = actual;
+    }
+
+    <span class="kw">public</span> &lt;<span class="typ">F</span>&gt; <span class="cls">ResponseComparator</span>&lt;<span class="typ">T</span>&gt; <span class="met">compareField</span>(<span class="cls">String</span> name, <span class="cls">Function</span>&lt;<span class="typ">T</span>,<span class="typ">F</span>&gt; fn) {
+        softAssert.<span class="met">assertEquals</span>(fn.<span class="met">apply</span>(actual), fn.<span class="met">apply</span>(baseline),
+            <span class="str">"Regression: ["</span> + name + <span class="str">"] changed"</span>);
+        <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public</span> <span class="cls">ResponseComparator</span>&lt;<span class="typ">T</span>&gt; <span class="met">ignore</span>(<span class="cls">String</span> reason) {
+        <span class="cls">System</span>.out.<span class="met">println</span>(<span class="str">"Skipping: "</span> + reason); <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public void</span> <span class="met">assertNoDifferences</span>() { softAssert.<span class="met">assertAll</span>(); }
+}
+
+<span class="cmt">// ── Regression Test ──────────────────────────────────────</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">regressionTestPricingRule</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+    <span class="cls">PricingRule</span> baseline = <span class="met">loadFromSnapshot</span>(<span class="str">"rule_1_baseline.json"</span>, <span class="cls">PricingRule</span>.<span class="kw">class</span>);
+    <span class="cls">PricingRule</span> actual   = <span class="kw">new</span> <span class="cls">ObjectMapper</span>().<span class="met">readValue</span>(
+                               <span class="met">given</span>().<span class="met">spec</span>(requestSpec).<span class="met">get</span>(<span class="str">"/pricing/rules/1"</span>).<span class="met">asString</span>(),
+                               <span class="cls">PricingRule</span>.<span class="kw">class</span>);
+
+    <span class="kw">new</span> <span class="cls">ResponseComparator</span>&lt;&gt;(baseline, actual)
+        .<span class="met">compareField</span>(<span class="str">"ruleName"</span>,  <span class="cls">PricingRule</span>::<span class="met">getRuleName</span>)
+        .<span class="met">compareField</span>(<span class="str">"powerRank"</span>, <span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>)
+        .<span class="met">compareField</span>(<span class="str">"discount"</span>,  <span class="cls">PricingRule</span>::<span class="met">getDiscount</span>)
+        .<span class="met">ignore</span>(<span class="str">"createdAt — timestamp changes every run"</span>)
+        .<span class="met">assertNoDifferences</span>();
+}</code></pre>
+    <div class="callout success"><strong>Baseline snapshots</strong> live in src/test/resources/testdata/snapshots/. Save a known-good response once — compare automatically on every run.</div>
+  </div>
+
+  <!-- DATA PROVIDER -->
+  <div id="dataprovider" class="tab-content">
+    <div class="page-title">Generic Data Provider</div>
+    <div class="page-subtitle">Load typed test data from JSON files — one loader for any POJO, wired to @DataProvider.</div>
+    <pre data-lang="java"><code><span class="kw">public class</span> <span class="cls">GenericDataProvider</span> {
+
+    <span class="cmt">// Generic loader — reads JSON array into List&lt;T&gt;</span>
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">List</span>&lt;<span class="typ">T</span>&gt; <span class="met">loadTestData</span>(<span class="cls">String</span> filePath, <span class="cls">Class</span>&lt;<span class="typ">T</span>&gt; clazz)
+            <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="cls">ObjectMapper</span> mapper = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+        <span class="kw">return</span> mapper.<span class="met">readValue</span>(
+            <span class="kw">new</span> <span class="cls">File</span>(filePath),
+            mapper.<span class="met">getTypeFactory</span>().<span class="met">constructCollectionType</span>(<span class="cls">List</span>.<span class="kw">class</span>, clazz)
+        );
+    }
+
+    <span class="cmt">// Convert List&lt;T&gt; to Object[][] for TestNG</span>
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">Object</span>[][] <span class="met">toDataProvider</span>(<span class="cls">List</span>&lt;<span class="typ">T</span>&gt; list) {
+        <span class="kw">return</span> list.<span class="met">stream</span>()
+                   .<span class="met">map</span>(item -&gt; <span class="kw">new</span> <span class="cls">Object</span>[]{item})
+                   .<span class="met">toArray</span>(<span class="cls">Object</span>[][]::new);
+    }
+
+    <span class="ann">@DataProvider</span>(name = <span class="str">"pricingRules"</span>)
+    <span class="kw">public static</span> <span class="cls">Object</span>[][] <span class="met">pricingRules</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="kw">return</span> <span class="met">toDataProvider</span>(<span class="met">loadTestData</span>(
+            <span class="str">"src/test/resources/testdata/pricing-rules.json"</span>, <span class="cls">PricingRule</span>.<span class="kw">class</span>));
+    }
+}
+
+<span class="cmt">// ── Usage ────────────────────────────────────────────────</span>
+<span class="ann">@Test</span>(dataProvider = <span class="str">"pricingRules"</span>, dataProviderClass = <span class="cls">GenericDataProvider</span>.<span class="kw">class</span>)
+<span class="kw">public void</span> <span class="met">testPricingRule</span>(<span class="cls">PricingRule</span> rule) {
+    <span class="cmt">// rule is strongly typed — no casting needed!</span>
+    <span class="cls">Assert</span>.<span class="met">assertTrue</span>(rule.<span class="met">getPowerRank</span>() &gt; <span class="num">0</span>);
+}</code></pre>
+  </div>
+
+  <!-- THREADLOCAL -->
+  <div id="threadlocal" class="tab-content">
+    <div class="page-title">Generic ThreadLocal Context</div>
+    <div class="page-subtitle">Thread-safe storage for parallel test execution — one class powers both WebDriver and RestAssured spec management.</div>
+    <pre data-lang="java"><code><span class="cmt">// Generic ThreadLocal holder — works for ANY type T</span>
+<span class="kw">public class</span> <span class="cls">TestContext</span>&lt;<span class="typ">T</span>&gt; {
+    <span class="kw">private final</span> <span class="cls">ThreadLocal</span>&lt;<span class="typ">T</span>&gt; context = <span class="kw">new</span> <span class="cls">ThreadLocal</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="met">set</span>(<span class="typ">T</span> value) { context.<span class="met">set</span>(value);    }
+    <span class="kw">public</span> <span class="typ">T</span>    <span class="met">get</span>()        { <span class="kw">return</span> context.<span class="met">get</span>(); }
+    <span class="kw">public void</span> <span class="met">remove</span>()    { context.<span class="met">remove</span>();      }
+}
+
+<span class="cmt">// ── WebDriver Manager ────────────────────────────────────</span>
+<span class="kw">public class</span> <span class="cls">DriverManager</span> {
+    <span class="kw">private static final</span> <span class="cls">TestContext</span>&lt;<span class="cls">WebDriver</span>&gt; ctx = <span class="kw">new</span> <span class="cls">TestContext</span>&lt;&gt;();
+
+    <span class="kw">public static void</span>      <span class="met">setDriver</span>(<span class="cls">WebDriver</span> d) { ctx.<span class="met">set</span>(d);        }
+    <span class="kw">public static</span> <span class="cls">WebDriver</span> <span class="met">getDriver</span>()            { <span class="kw">return</span> ctx.<span class="met">get</span>(); }
+    <span class="kw">public static void</span>      <span class="met">removeDriver</span>()         { ctx.<span class="met">remove</span>();     }
+}
+
+<span class="cmt">// ── API Client Manager ───────────────────────────────────</span>
+<span class="kw">public class</span> <span class="cls">ApiClientManager</span> {
+    <span class="kw">private static final</span> <span class="cls">TestContext</span>&lt;<span class="cls">RequestSpecification</span>&gt; ctx = <span class="kw">new</span> <span class="cls">TestContext</span>&lt;&gt;();
+
+    <span class="kw">public static void</span>                 <span class="met">setSpec</span>(<span class="cls">RequestSpecification</span> s) { ctx.<span class="met">set</span>(s);    }
+    <span class="kw">public static</span> <span class="cls">RequestSpecification</span> <span class="met">getSpec</span>()                       { <span class="kw">return</span> ctx.<span class="met">get</span>(); }
+}
+
+<span class="cmt">// ── BaseTest ─────────────────────────────────────────────</span>
+<span class="ann">@BeforeMethod</span>
+<span class="kw">public void</span> <span class="met">setUp</span>() {
+    <span class="cls">DriverManager</span>.<span class="met">setDriver</span>(<span class="kw">new</span> <span class="cls">ChromeDriver</span>());  <span class="cmt">// stored per-thread</span>
+}
+
+<span class="ann">@AfterMethod</span>
+<span class="kw">public void</span> <span class="met">tearDown</span>() {
+    <span class="cls">DriverManager</span>.<span class="met">getDriver</span>().<span class="met">quit</span>();
+    <span class="cls">DriverManager</span>.<span class="met">removeDriver</span>();  <span class="cmt">// ⚠️ CRITICAL — prevent memory leak!</span>
+}</code></pre>
+    <div class="callout danger"><strong>Always call remove() in @AfterMethod!</strong> Skipping this causes memory leaks in parallel TestNG thread pools — each thread keeps a reference to the driver forever.</div>
+  </div>
+
+  <!-- DB HELPER -->
+  <div id="db" class="tab-content">
+    <div class="page-title">Generic DB Query Helper</div>
+    <div class="page-subtitle">Works for PostgreSQL and Oracle — one helper, any return type via functional RowMapper&lt;T&gt;.</div>
+    <pre data-lang="java"><code><span class="cmt">// Functional interface — maps one ResultSet row to type T</span>
+<span class="ann">@FunctionalInterface</span>
+<span class="kw">public interface</span> <span class="cls">RowMapper</span>&lt;<span class="typ">T</span>&gt; {
+    <span class="typ">T</span> <span class="met">map</span>(<span class="cls">ResultSet</span> rs) <span class="kw">throws</span> <span class="cls">Exception</span>;
+}
+
+<span class="kw">public class</span> <span class="cls">DbHelper</span> {
+
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">List</span>&lt;<span class="typ">T</span>&gt; <span class="met">queryForList</span>(
+            <span class="cls">Connection</span> conn, <span class="cls">String</span> sql, <span class="cls">RowMapper</span>&lt;<span class="typ">T</span>&gt; mapper) <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+        <span class="cls">List</span>&lt;<span class="typ">T</span>&gt; results = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="kw">try</span> (<span class="cls">PreparedStatement</span> stmt = conn.<span class="met">prepareStatement</span>(sql);
+             <span class="cls">ResultSet</span> rs           = stmt.<span class="met">executeQuery</span>()) {
+            <span class="kw">while</span> (rs.<span class="met">next</span>()) results.<span class="met">add</span>(mapper.<span class="met">map</span>(rs));
+        }
+        <span class="kw">return</span> results;
+    }
+
+    <span class="kw">public static</span> &lt;<span class="typ">T</span>&gt; <span class="cls">Optional</span>&lt;<span class="typ">T</span>&gt; <span class="met">queryForOne</span>(
+            <span class="cls">Connection</span> conn, <span class="cls">String</span> sql, <span class="cls">RowMapper</span>&lt;<span class="typ">T</span>&gt; mapper) <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="cls">List</span>&lt;<span class="typ">T</span>&gt; r = <span class="met">queryForList</span>(conn, sql, mapper);
+        <span class="kw">return</span> r.<span class="met">isEmpty</span>() ? <span class="cls">Optional</span>.<span class="met">empty</span>() : <span class="cls">Optional</span>.<span class="met">of</span>(r.<span class="met">get</span>(<span class="num">0</span>));
+    }
+}
+
+<span class="cmt">// ── Usage — PostgreSQL ───────────────────────────────────</span>
+<span class="cls">List</span>&lt;<span class="cls">PricingRule</span>&gt; rules = <span class="cls">DbHelper</span>.<span class="met">queryForList</span>(
+    pgConn,
+    <span class="str">"SELECT id, rule_name, power_rank FROM pricing_rules WHERE active = true"</span>,
+    rs -&gt; <span class="kw">new</span> <span class="cls">PricingRule</span>(rs.<span class="met">getInt</span>(<span class="str">"id"</span>), rs.<span class="met">getString</span>(<span class="str">"rule_name"</span>), rs.<span class="met">getInt</span>(<span class="str">"power_rank"</span>))
+);
+
+<span class="cmt">// ── Usage — Oracle (identical API!) ──────────────────────</span>
+<span class="cls">List</span>&lt;<span class="cls">Product</span>&gt; products = <span class="cls">DbHelper</span>.<span class="met">queryForList</span>(
+    oracleConn,
+    <span class="str">"SELECT code, price FROM products"</span>,
+    rs -&gt; <span class="kw">new</span> <span class="cls">Product</span>(rs.<span class="met">getString</span>(<span class="str">"code"</span>), rs.<span class="met">getDouble</span>(<span class="str">"price"</span>))
+);</code></pre>
+    <div class="callout info"><strong>Lambda as RowMapper:</strong> The lambda IS the RowMapper&lt;T&gt; implementation. Works identically for PostgreSQL and Oracle — just swap the Connection.</div>
+  </div>
+
+  <!-- FULL FLOW -->
+  <div id="fullflow" class="tab-content">
+    <div class="page-title">Full End-to-End Test</div>
+    <div class="page-subtitle">All generic layers wired together — schema, validation chain, field extraction, regression compare.</div>
+    <div class="flow" style="margin-bottom:28px;">
+      <div class="flow-box" style="border-color:var(--accent);color:var(--accent);">Response</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">SchemaValidator</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">ResponseValidator</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">FieldExtractor</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">ResponseComparator</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color:var(--accent3);color:var(--accent3);">✅ Pass</div>
+    </div>
+    <pre data-lang="java"><code><span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="met">fullPricingRuleValidation</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+    <span class="cls">Response</span> response = <span class="met">given</span>()
+                           .<span class="met">spec</span>(<span class="cls">ApiClientManager</span>.<span class="met">getSpec</span>())
+                           .<span class="met">get</span>(<span class="str">"/pricing/rules/1"</span>);
+
+    <span class="cmt">// ① Schema validation + typed deserialization</span>
+    <span class="cls">PricingRule</span> rule = <span class="kw">new</span> <span class="cls">SchemaValidator</span>&lt;&gt;(<span class="cls">PricingRule</span>.<span class="kw">class</span>)
+                           .<span class="met">validateAndDeserialize</span>(response, <span class="str">"pricing-rule.json"</span>);
+
+    <span class="cmt">// ② Full validation chain — HTTP + body + custom logic</span>
+    <span class="cls">PricingRule</span> validated = <span class="cls">ResponseValidator</span>.<span class="met">of</span>(response, <span class="cls">PricingRule</span>.<span class="kw">class</span>)
+        .<span class="met">statusIs</span>(<span class="num">200</span>)
+        .<span class="met">responseTimeLessThan</span>(<span class="num">2000</span>)
+        .<span class="met">fieldEquals</span>(<span class="str">"ruleName"</span>,  <span class="cls">PricingRule</span>::<span class="met">getRuleName</span>,  <span class="str">"TIER_DISCOUNT"</span>)
+        .<span class="met">fieldEquals</span>(<span class="str">"powerRank"</span>, <span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>, <span class="num">5</span>)
+        .<span class="met">fieldGreaterThan</span>(<span class="str">"price"</span>, <span class="cls">PricingRule</span>::<span class="met">getPrice</span>, <span class="num">0.0</span>)
+        .<span class="met">validate</span>(<span class="str">"discount must be 0–100"</span>,
+                  r -&gt; r.<span class="met">getDiscount</span>() &gt;= <span class="num">0</span> &amp;&amp; r.<span class="met">getDiscount</span>() &lt;= <span class="num">100</span>)
+        .<span class="met">assertAllAndGet</span>();
+
+    <span class="cmt">// ③ Field extraction for downstream assertions</span>
+    <span class="cls">FieldExtractor</span>&lt;<span class="cls">PricingRule</span>&gt; fx = <span class="kw">new</span> <span class="cls">FieldExtractor</span>&lt;&gt;(validated);
+    <span class="kw">int</span> rank = fx.<span class="met">getAndAssert</span>(<span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>, <span class="num">5</span>, <span class="str">"powerRank"</span>);
+
+    <span class="cmt">// ④ Regression compare against saved baseline</span>
+    <span class="cls">PricingRule</span> baseline = <span class="met">loadFromSnapshot</span>(<span class="str">"rule_1_baseline.json"</span>, <span class="cls">PricingRule</span>.<span class="kw">class</span>);
+    <span class="kw">new</span> <span class="cls">ResponseComparator</span>&lt;&gt;(baseline, validated)
+        .<span class="met">compareField</span>(<span class="str">"ruleName"</span>,  <span class="cls">PricingRule</span>::<span class="met">getRuleName</span>)
+        .<span class="met">compareField</span>(<span class="str">"powerRank"</span>, <span class="cls">PricingRule</span>::<span class="met">getPowerRank</span>)
+        .<span class="met">ignore</span>(<span class="str">"createdAt — timestamp"</span>)
+        .<span class="met">assertNoDifferences</span>();
+}</code></pre>
+  </div>
+
+  <!-- STRUCTURE -->
+  <div id="structure" class="tab-content">
+    <div class="page-title">Folder Structure</div>
+    <div class="page-subtitle">Where every file lives — organised by responsibility so core/ never imports from tests/.</div>
+    <h2>Java Source</h2>
+    <div class="tree">
+<span class="dir">src/test/java/com/x4v/</span><br>
+│<br>
+├── <span class="dir">base/</span><br>
+│   └── <span class="file">BaseTest.java</span>                 <span class="note">← TestNG setup / teardown</span><br>
+│<br>
+├── <span class="hi">core/</span>                               <span class="note">← 🔴 ALL GENERIC FRAMEWORK FILES</span><br>
+│   ├── <span class="dir">response/</span><br>
+│   │   ├── <span class="hi">ApiResponseWrapper.java</span>     <span class="note">← Generic response wrapper</span><br>
+│   │   ├── <span class="hi">ResponseValidator.java</span>      <span class="note">← Fluent validation chain</span><br>
+│   │   └── <span class="hi">ResponseComparator.java</span>     <span class="note">← Regression comparator</span><br>
+│   ├── <span class="dir">schema/</span><br>
+│   │   └── <span class="hi">SchemaValidator.java</span>        <span class="note">← JSON schema validator</span><br>
+│   ├── <span class="dir">extractor/</span><br>
+│   │   └── <span class="hi">FieldExtractor.java</span>         <span class="note">← Typed field extractor</span><br>
+│   ├── <span class="dir">db/</span><br>
+│   │   ├── <span class="hi">DbHelper.java</span>               <span class="note">← Generic DB query helper</span><br>
+│   │   └── <span class="hi">RowMapper.java</span>              <span class="note">← @FunctionalInterface</span><br>
+│   └── <span class="dir">context/</span><br>
+│       ├── <span class="hi">TestContext.java</span>            <span class="note">← Generic ThreadLocal&lt;T&gt;</span><br>
+│       ├── <span class="hi">DriverManager.java</span>          <span class="note">← WebDriver context</span><br>
+│       └── <span class="hi">ApiClientManager.java</span>       <span class="note">← RequestSpec context</span><br>
+│<br>
+├── <span class="dir">data/</span><br>
+│   ├── <span class="dir">providers/</span><br>
+│   │   └── <span class="file">GenericDataProvider.java</span>   <span class="note">← @DataProvider methods</span><br>
+│   └── <span class="dir">models/</span><br>
+│       ├── <span class="file">PricingRule.java</span><br>
+│       ├── <span class="file">User.java</span><br>
+│       └── <span class="file">Product.java</span><br>
+│<br>
+├── <span class="dir">utils/</span><br>
+│   └── <span class="file">SoftAssertUtil.java</span><br>
+│<br>
+└── <span class="dir">tests/</span><br>
+    ├── <span class="dir">api/</span>   └── <span class="file">PricingRuleTest.java</span><br>
+    ├── <span class="dir">ui/</span>    └── <span class="file">LoginTest.java</span><br>
+    └── <span class="dir">db/</span>    └── <span class="file">PricingDbTest.java</span>
+    </div>
+    <h2>Resources</h2>
+    <div class="tree">
+<span class="dir">src/test/resources/</span><br>
+├── <span class="warn">schemas/</span>                            <span class="note">← JSON Schema files</span><br>
+│   ├── <span class="file">pricing-rule-schema.json</span><br>
+│   └── <span class="file">user-schema.json</span><br>
+├── <span class="warn">testdata/</span><br>
+│   ├── <span class="file">users.json</span><br>
+│   ├── <span class="file">pricing-rules.json</span><br>
+│   └── <span class="dir">snapshots/</span>                    <span class="note">← Baselines for ResponseComparator</span><br>
+│       └── <span class="file">rule_1_baseline.json</span><br>
+├── <span class="dir">config/</span><br>
+│   ├── <span class="file">qa.properties</span><br>
+│   └── <span class="file">uat.properties</span><br>
+└── <span class="file">testng.xml</span>
+    </div>
+    <h2>Golden Rules</h2>
+    <table>
+      <tr><th>What</th><th>Where</th><th>Rule</th></tr>
+      <tr><td>Generic framework code</td><td>core/</td><td>Never imports from tests/</td></tr>
+      <tr><td>POJOs</td><td>data/models/</td><td>Shared by tests + DB helpers</td></tr>
+      <tr><td>@DataProvider</td><td>data/providers/</td><td>Separate from test logic</td></tr>
+      <tr><td>@Test classes</td><td>tests/</td><td>Only consumer of core/</td></tr>
+      <tr><td>JSON schemas</td><td>resources/schemas/</td><td>Auto-loaded by SchemaValidator</td></tr>
+      <tr><td>Baseline snapshots</td><td>resources/testdata/snapshots/</td><td>Loaded by ResponseComparator</td></tr>
+    </table>
+  </div>
+
+  <!-- QUICK REF -->
+  <div id="reference" class="tab-content">
+    <div class="page-title">Quick Reference</div>
+    <div class="page-subtitle">Everything at a glance — all generic classes, patterns, and when to use each.</div>
+    <h2>Generic Classes Built</h2>
+    <table>
+      <tr><th>Class</th><th>Type Param</th><th>Purpose</th><th>Location</th></tr>
+      <tr><td>ApiResponseWrapper&lt;T&gt;</td><td>T = any POJO</td><td>Wrap + deserialize response</td><td>core/response/</td></tr>
+      <tr><td>SchemaValidator&lt;T&gt;</td><td>T = any POJO</td><td>Schema validate + deserialize</td><td>core/schema/</td></tr>
+      <tr><td>ResponseValidator&lt;T&gt;</td><td>T = any POJO</td><td>Fluent validation chain</td><td>core/response/</td></tr>
+      <tr><td>FieldExtractor&lt;T&gt;</td><td>T = any POJO</td><td>Type-safe field extraction</td><td>core/extractor/</td></tr>
+      <tr><td>ResponseComparator&lt;T&gt;</td><td>T = any POJO</td><td>Regression field diffing</td><td>core/response/</td></tr>
+      <tr><td>TestContext&lt;T&gt;</td><td>T = Driver/Spec</td><td>ThreadLocal parallel safety</td><td>core/context/</td></tr>
+      <tr><td>RowMapper&lt;T&gt;</td><td>T = any POJO</td><td>Map DB rows to typed objects</td><td>core/db/</td></tr>
+      <tr><td>DbHelper (generic methods)</td><td>T = any POJO</td><td>Query any table, any DB</td><td>core/db/</td></tr>
+    </table>
+    <h2>Wildcard Cheat Sheet</h2>
+    <table>
+      <tr><th>Syntax</th><th>Meaning</th><th>Use When</th></tr>
+      <tr><td>&lt;T extends X&gt;</td><td>T must be X or subclass</td><td>Bound the input type</td></tr>
+      <tr><td>? extends T</td><td>Unknown subtype of T</td><td>Reading from a collection</td></tr>
+      <tr><td>? super T</td><td>Unknown supertype of T</td><td>Writing to a collection</td></tr>
+      <tr><td>?</td><td>Any type</td><td>Don't care / print only</td></tr>
+    </table>
+    <h2>Learning Path</h2>
+    <div class="flow" style="flex-direction:column; align-items:flex-start; gap:6px;">
+      <div class="flow-box" style="border-color:var(--accent);">1. Generic Class → Box&lt;T&gt;, Pair&lt;K,V&gt;</div>
+      <div class="flow-arrow" style="padding-left:20px;">↓</div>
+      <div class="flow-box">2. Generic Method → &lt;T&gt; T fromJson(String, Class&lt;T&gt;)</div>
+      <div class="flow-arrow" style="padding-left:20px;">↓</div>
+      <div class="flow-box">3. Bounds → &lt;T extends Number&gt; double sum(List&lt;T&gt;)</div>
+      <div class="flow-arrow" style="padding-left:20px;">↓</div>
+      <div class="flow-box">4. Wildcards → ? extends T, ? super T, PECS rule</div>
+      <div class="flow-arrow" style="padding-left:20px;">↓</div>
+      <div class="flow-box">5. Framework patterns → ThreadLocal&lt;T&gt;, RowMapper&lt;T&gt;</div>
+      <div class="flow-arrow" style="padding-left:20px;">↓</div>
+      <div class="flow-box" style="border-color:var(--accent3);color:var(--accent3);">6. Full API layer → SchemaValidator → ResponseValidator → Comparator</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function showTab(id, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
