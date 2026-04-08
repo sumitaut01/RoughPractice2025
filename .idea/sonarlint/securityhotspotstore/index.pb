@@ -153,8 +153,6 @@ _
 /src/main/java/cheatsheets/sprintboot_gemni.html,3\9\39284caebdf9a420dcf84572c79613f8e8b8f067
 M
 src/main/java/cicd/azure/file,4\c\4c1bd321ef38e2976dd5b0366aec2b0ffbd54102
-J
-src/main/java/git/01Basics,0\a\0a11370763b05006bf43abb51bf37f30df68c7cf
 ]
 -src/main/java/basics/R_2BigDecimalBigInt.java,5\2\520d4b0af7404d3de5bb30bfb8103cc8c2e2c706
 e
@@ -207,14 +205,10 @@ l
 <src/main/java/basics/maven/R_01ProfilesVariablesFromPOm.java,e\2\e29d0ea27a2dcdd1577dd624cc32dd6b1cc678f2
 b
 2src/main/java/basics/lambdaexpressions/Theory.java,e\c\ece32c27211e05a8e79ea6961b8529bef544cfcd
-W
-'src/main/java/basics/jdbc/JdbcWork.java,3\1\310f0f7e16760143be957a081545ec2266afb339
 [
 +src/main/java/basics/javapgms/Ramakant.java,a\b\ab49e569efd97cf7afd929ba87a931b8740a84e7
 h
 8src/main/java/basics/javapgms/UST_CreditCardMasking.java,8\b\8b14346257d44c2cd1d6828f62a23149f5f3a668
-[
-+src/main/java/basics/R_Encapsulation01.java,0\e\0e9bb94ebae547fd9b01f5304b263d7965a26299
 ]
 -src/main/java/basics/ResourceLoaderFiles.java,2\7\276a8a4d9d12821e3891a5a319dc6739a38deb2c
 V
@@ -333,8 +327,6 @@ V
 &src/main/java/basics/jsonPathFrom.java,d\e\de871d8c6607529c054c52be4013f232ac56ff76
 _
 /src/main/java/basics/MainInterviewQuetions.java,8\5\850d3ce900d3302c05873df604eaca8b1615a6d2
-U
-%src/main/java/basics/NullConcept.java,3\f\3fa044d9ba56a5b9da6e34fe3acf2e9fc07c7a72
 c
 3src/main/java/basics/OverRidingCovarintObject1.java,2\3\23e75e3baca390f58dbce067cdadf23e6fb5bf46
 X
@@ -377,14 +369,6 @@ K
 src/main/java/cicd/resource,f\7\f729752e83670ee0a275a8822727ba4c2902108d
 M
 src/main/java/git/gemini.html,e\9\e9a985c048e2fca99178cb3055e1cdfbd5da32c6
-N
-src/main/java/git/git checkout,7\2\72dbe7c9857dd67135b95559f0e74c219459f540
-[
-+src/main/java/git/git checkout -b newbranch,7\f\7fb290e2e2a84e4f910d5c71208866e92c0f4d0d
-K
-src/main/java/git/git fetch,e\1\e18198eef3b005b04344b781b3e5bab32690a50e
-[
-+src/main/java/git/git general working style,9\1\9197c804b0b06017b5852dfafef9d3a8359e3001
 R
 "src/main/java/git/git reset revert,d\5\d59261845deeea81d2cdc9b081b6739eb3d211c1
 _
