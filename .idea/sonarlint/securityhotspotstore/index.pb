@@ -61,8 +61,6 @@ i
 9src/main/java/basics/collections/set/R3_NavigableSet.java,0\a\0a29fde7e7e3d6da8c0d97525032cc57bf27882a
 Q
 !src/main/java/jenkins/Jenkinsfile,1\6\164f8760756c51b9ac4f5b4c8168c3a207561744
-Z
-*src/main/java/selenium/R_XPageFactory.java,3\a\3a48f0c851360518bbc00b3cd641f9f90134d08f
 ]
 -.idea/sonarlint/securityhotspotstore/index.pb,8\8\88a9255124c95bdc913197c120a8d560edc59c8e
 `
@@ -287,12 +285,6 @@ b
 2src/main/java/restassured/R13_RestConfiigDemo.java,b\d\bd334b2cff52b27f934fbf1a9e360feedbc2271f
 a
 1src/main/java/restassured/R14_HeadernHeaders.java,b\8\b8ae5242e08984b00be3f7abfa7f469a02f7890e
-R
-"src/main/java/sql/Transactions.sql,b\5\b52aa2e23398a7264003eb89bb5c658d7b5ea3bf
-V
-&src/main/java/sql/functions_basics.sql,3\2\32b1b5beaf3b1033eb3fef6e743716ca311bab74
-O
-src/main/java/sql/SupabaseNotes,2\5\25065c28a5472f59ad46b4df8c2d7539578486dd
 g
 7src/main/java/basics/accesstypes/package1/R1_Class.java,f\6\f6f962f1605a1a2596f331aa25e1492f70f3bbfe
 [
@@ -457,3 +449,31 @@ h
 ,src/main/java/restassured/PathVsExtract.java,2\5\254db3fc5726bd10214fbb22c460e22cf4623c9a
 s
 Csrc/main/java/restassured/R2_RestAssuredBaseicRequestBodyTypes.java,e\0\e03e1f97d22593a9db0648663780e7d9c46f9976
+O
+src/main/java/sql/SupabaseNotes,2\5\25065c28a5472f59ad46b4df8c2d7539578486dd
+_
+/src/main/java/seleniumutils/JavaScriptUtil.java,5\6\56958ea635f9b98443a35f9a8af3dba11c1f260f
+_
+/src/main/java/sql/Stored Procedure Vs Functions,5\6\563c426bab5868b1cfb9ce6d4573e36c4d770187
+V
+&src/main/java/sql/functions_basics.sql,3\2\32b1b5beaf3b1033eb3fef6e743716ca311bab74
+R
+"src/main/java/sql/Transactions.sql,b\5\b52aa2e23398a7264003eb89bb5c658d7b5ea3bf
+K
+src/main/java/sql/Notes.sql,f\9\f9152b57a6582fb55f6e67b57ce8e29860923c18
+U
+%src/main/java/selenium/R2_Frames.java,2\6\26e9e354235bcfac30d7d5bd21438f54760ea538
+U
+%src/main/java/selenium/R1_Basics.java,d\a\da266d794cfb0849626fbfcd478e41cdfac0e3e7
+T
+$src/main/java/selenium/RoughAll.java,1\0\10227fb04dda986230b8dc1e9e530964aa588625
+_
+/src/main/java/selenium/R3_WindowsSwitching.java,6\3\633b03221680a24013d008f47a68707fda7c85c6
+V
+&src/main/java/selenium/R4_Actions.java,8\d\8deee08f224fc97fcab02d501e80e0302df44150
+T
+$src/main/java/selenium/R4_Waits.java,6\5\65acec111c22abc4a31f592058bf82e2b1feeff6
+W
+'src/main/java/selenium/R6_XpathCss.java,2\3\23c891b6c01ce74af62b0113a68f0b82b1be9857
+\
+,src/main/java/selenium/R7_TableHandling.java,4\4\44024fe21c7924d93623909f6e8675d4c95a9dbe

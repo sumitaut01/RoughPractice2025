@@ -283,4 +283,37 @@ public class RoughAll {
 
 
     }
+
+
+
+    @Test
+    public void Rough090526(){
+
+        WebDriver driver=new ChromeDriver();
+        driver.manage().deleteAllCookies();
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        driver.get("https://www.amazon.in");
+        System.out.println(driver.getTitle());
+        By searchBox=By.id("twotabsearchtextbox");
+        driver.findElement(searchBox).sendKeys("iphone");
+        driver.findElement(searchBox).submit();
+        String sParent=driver.getWindowHandle();
+        List<WebElement> els=driver.findElements(By.tagName("a"));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
 }
