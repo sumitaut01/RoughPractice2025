@@ -27,16 +27,6 @@ Y
 )src/main/java/basics/Rx_Immutability.java,2\b\2b4d9ee4fb615b7c7744c9c043f5829fbcbc595e
 e
 5src/main/java/basics/Rx_IncrementDecOperatorsXOR.java,8\a\8aa06a3cb179c7e846a7959f33976aa9725a03a0
-`
-0src/main/java/seleniumutils/ScreenShotUtils.java,4\1\410f78233524dcb03c238673ecfc074ca51c2b47
-[
-+src/main/java/seleniumutils/WebActions.java,9\4\9480e0689147d5107b9eba6d80e1798647dd8fac
-d
-4src/main/java/basics/javapgms/bytype/hashmapset/info,3\a\3a63f2d0c685546c84b665825946c1d0f32c6985
-d
-4src/main/java/basics/javapgms/bytype/hashmapset/list,b\b\bbd0577729f8b30155b2ede32a5a0ab4385b9b1e
-o
-?src/main/java/basics/javapgms/bytype/hashmapset/R1_Anagram.java,1\a\1a37f488a312e0700019ddfe45d78a9b2c267688
 7
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 @
@@ -55,8 +45,6 @@ _
 /src/main/java/myproject/utils/ConfigReader.java,4\6\46213aa03cbc65014b50d3b36b75081c09ae5e94
 e
 5src/main/java/basics/javapgms/R33_NeedInHaystack.java,1\9\198a8133fcdadefa3cb19df682ab81065cf4d23d
-j
-:src/main/java/basics/collections/set/R2_LinkedHashSet.java,9\b\9bee3ac5ef8c9b61cd6c1d06410d5a41a756eaee
 i
 9src/main/java/basics/collections/set/R3_NavigableSet.java,0\a\0a29fde7e7e3d6da8c0d97525032cc57bf27882a
 Q
@@ -85,24 +73,12 @@ L
 src/main/java/basics/log4j/2,6\e\6e39f9c92986150e0759ee8a2ab507f8001ee44d
 U
 %src/main/java/basics/log4j/3LogLevels,0\5\05c3c4cd496039f172fce060ec7d6c67771225cb
-Y
-)src/main/java/basics/log4j/TestLog4j.java,8\e\8e485af873da5519f6ac8bc6511b2f20448543f7
-Q
-!src/main/java/basics/maven/01info,2\9\29cb471e7638544341041df1447d3e7cc7760af3
 O
 src/main/java/basics/swift/info,a\0\a0b6f2e8ee665dcded6b6d48f4835ff2343c2899
 c
 3src/main/java/basics/threading/Runnable vs Callable,b\9\b9a9b6416b12b0d7fdac446c1326e639b92f9a1d
 V
 &src/main/java/basics/DeepCopyDemo.java,6\5\65999f00689a8b462b3b4523ef4c1f170a0f2956
-e
-5src/main/java/basics/javapgms/sorting/R1_ColSort.java,4\e\4e7ad911355293805acc1cb68ecefd631af104d4
-x
-Hsrc/main/java/basics/javapgms/sorting/R2_IntersectionOfSortedArrays.java,5\1\51739bccf585c6c308e1c51e127df7b15f38eb53
-p
-@src/main/java/basics/javapgms/sorting/R3_UnionOfSortedArray.java,7\8\78cf1cca2794750bafcb181b81272f1e014ae8c2
-^
-.src/main/java/basics/javapgms/rough/Rough.java,6\7\6783c4e1788e78925d9e840303427b1b50dc0099
 m
 =src/main/java/basics/javapgms/patterns/pracFloydTriangle.java,8\1\81491cc550672a5c96d68370728e65c1875f5b45
 b
@@ -131,8 +107,6 @@ c
 3src/main/java/basics/javapgms/R_36MaxOccurence.java,7\2\7292fd53ad3ec05df8ed0a0a6c823d50132c11a8
 U
 %src/main/java/xpath/xpath_visual.html,a\5\a5f5085617a97b112c61fc4917fdc10a80b8eddc
-]
--src/main/java/basics/maven/02ReadingSystemEnv,b\b\bb3d28fed6393f99b4f2f5f38fbceba65727ae4c
 [
 +src/main/java/basics/RXX_LoselyCoupled.java,0\5\05fcf89858b1d19a7a3b38302204f56135b6c6f3
 v
@@ -167,18 +141,6 @@ c
 3src/main/java/basics/javapgms/patterns/Pattern.java,1\7\178d7c08409c8ec0eee51411b5f268df3381ce54
 d
 4src/main/java/basics/javapgms/patterns/Pattern1.java,4\9\49c53a5c9f545da72586264ca3f270c885cd6416
-g
-7src/main/java/basics/designpattern/factory/car/Car.java,f\9\f9a8b2329e66cc2fb58cbabf76c57f4b97a88b04
-n
->src/main/java/basics/designpattern/factory/car/CarFactory.java,2\4\2448ebff9deffa88c4b5aedc39bc19ae9bc53f43
-k
-;src/main/java/basics/designpattern/factory/car/CarTest.java,4\9\49bbf6f5d4ab5362e9e584960568d5019f04a936
-i
-9src/main/java/basics/designpattern/factory/car/Sedan.java,e\c\ecdfa6222d73366c2446f926c270e03a0db319c7
-g
-7src/main/java/basics/designpattern/factory/car/Suv.java,e\7\e70e2c33f1163021d519f6b095b0bf82977a529b
-i
-9src/main/java/basics/designpattern/factory/car/Truck.java,2\a\2a2aa6f58b6aab9576f96fb19fe497de3aa5a17c
 o
 ?src/main/java/basics/designpattern/strategy/PaymentContext.java,2\9\2919773a2bb429faabdd12e761e9a5a94c83aec1
 p
@@ -187,8 +149,6 @@ l
 <src/main/java/basics/designpattern/strategy/PaymentTest.java,e\a\ea3a10d2ada353ab15a9b4cf6d1129a34bfcb6ad
 n
 >src/main/java/basics/designpattern/strategy/PaypalPayment.java,a\d\ad478a24f52685111e2afe1951f60fc5ceb6523d
-d
-4src/main/java/basics/collections/set/R1_HashSet.java,5\2\524eabc64fbe4fa5ba9a5d3ff84c67a2be0811ff
 c
 3src/main/java/basics/OverRidingCovarintObject2.java,3\7\37cd81faf8791bdccfedceafa731b3bf3cadb402
 a
@@ -199,10 +159,6 @@ R
 "src/main/java/basics/R3_Class.java,b\d\bdc7caa5a331d722ce2971314e10019175332152
 Z
 *src/main/java/basics/R15_PolyMorphism.java,d\e\deca624f939d408e3ef70b6c1ff67c45ea365db4
-l
-<src/main/java/basics/maven/R_01ProfilesVariablesFromPOm.java,e\2\e29d0ea27a2dcdd1577dd624cc32dd6b1cc678f2
-b
-2src/main/java/basics/lambdaexpressions/Theory.java,e\c\ece32c27211e05a8e79ea6961b8529bef544cfcd
 [
 +src/main/java/basics/javapgms/Ramakant.java,a\b\ab49e569efd97cf7afd929ba87a931b8740a84e7
 h
@@ -299,16 +255,8 @@ i
 9src/main/java/restassured/00RestAssuredPayLoadStyles.html,6\2\62e0a8436ed5fdfec46753e3dff5317489539bdf
 h
 8src/main/java/restassured/00json-schema-study-guide.html,6\d\6d0a54275658a05a6203d9d262190d3a96f88e64
-d
-4src/main/java/restassured/R_10ResponseAsTypeDef.java,6\6\66ced555c5ce991315408a3d83f28e2efa5ea66c
-[
-+src/main/java/restassured/R_0BasicJson.java,6\f\6fbc209e800f151b29bd9c543626ff81b2ba9688
-[
-+src/main/java/restassured/00auth_guide.html,f\b\fbd953f0aea4957525cdfe832e32e60a1f1dd2f8
 [
 +src/main/java/restassured/R25_AllVerbs.java,1\6\16429418c9a642c90d8c46502e1cde4016d6942f
-`
-0src/main/java/restassured/R_31Authorization.java,4\f\4fd57293c02f93e0386e420a07d4e76c1557b2af
 `
 0src/main/java/basics/Java_Memory_Visualizer.html,4\1\412c94ae48142d7923a35f1621f288497973e807
 V
@@ -353,10 +301,6 @@ _
 /src/main/java/cheatsheets/New Text Document.txt,d\c\dc59c21e55651d3bfcdff36662bb8ec07fe0c0bd
 l
 <src/main/java/cheatsheets/spring_boot_canvas_cheatsheet.html,3\d\3dadb224add6a8f50cf862eaa03e2e8708a9a294
-\
-,src/main/java/cicd/aws instance docker setup,2\b\2bb39d25d7cb618b370ead5cec3434c5529e1393
-K
-src/main/java/cicd/resource,f\7\f729752e83670ee0a275a8822727ba4c2902108d
 M
 src/main/java/git/gemini.html,e\9\e9a985c048e2fca99178cb3055e1cdfbd5da32c6
 R
@@ -379,8 +323,6 @@ X
 (src/main/java/objectmapper/JsonNodeNotes,e\b\eb71e7daf4bfd8a83b40fc568c382e99dd0aab14
 \
 ,src/main/java/objectmapper/R03_JsonNode.java,a\8\a8f4f3009a922446eb51c510f9f3f46fdf8f92e7
-S
-#src/main/java/oopsbank/Account.java,7\3\73ba9c5e515cb38601df1679354753a09fffe5e6
 T
 $src/main/java/oopsbank/BankMain.java,4\4\44a64ba82dbbe743052c3be5b77e11836e473bfb
 Z
@@ -423,8 +365,6 @@ p
 @src/main/java/restassured/roughpractice/serialization/Users.java,c\1\c124dabb7d748977feb2a0d55a9fac7e78df4037
 n
 >src/main/java/restassured/validations/R1_SchemaValidation.java,9\1\913244b8fed87de25ebfd124232bca4524b92e9e
-g
-7src/main/java/restassured/00json-any-getter-setter.html,7\3\735ed902723f0125027b5bc2435bdb16ca3eec27
 X
 (src/main/java/restassured/notes_401vs403,1\a\1a6fca02086aecb1bc62370296f7d5caf282af7e
 Y
@@ -450,8 +390,6 @@ Csrc/main/java/restassured/R2_RestAssuredBaseicRequestBodyTypes.java,e\0\e03e1f
 O
 src/main/java/sql/SupabaseNotes,2\5\25065c28a5472f59ad46b4df8c2d7539578486dd
 _
-/src/main/java/seleniumutils/JavaScriptUtil.java,5\6\56958ea635f9b98443a35f9a8af3dba11c1f260f
-_
 /src/main/java/sql/Stored Procedure Vs Functions,5\6\563c426bab5868b1cfb9ce6d4573e36c4d770187
 V
 &src/main/java/sql/functions_basics.sql,3\2\32b1b5beaf3b1033eb3fef6e743716ca311bab74
@@ -459,19 +397,3 @@ R
 "src/main/java/sql/Transactions.sql,b\5\b52aa2e23398a7264003eb89bb5c658d7b5ea3bf
 K
 src/main/java/sql/Notes.sql,f\9\f9152b57a6582fb55f6e67b57ce8e29860923c18
-U
-%src/main/java/selenium/R2_Frames.java,2\6\26e9e354235bcfac30d7d5bd21438f54760ea538
-U
-%src/main/java/selenium/R1_Basics.java,d\a\da266d794cfb0849626fbfcd478e41cdfac0e3e7
-T
-$src/main/java/selenium/RoughAll.java,1\0\10227fb04dda986230b8dc1e9e530964aa588625
-_
-/src/main/java/selenium/R3_WindowsSwitching.java,6\3\633b03221680a24013d008f47a68707fda7c85c6
-V
-&src/main/java/selenium/R4_Actions.java,8\d\8deee08f224fc97fcab02d501e80e0302df44150
-T
-$src/main/java/selenium/R4_Waits.java,6\5\65acec111c22abc4a31f592058bf82e2b1feeff6
-W
-'src/main/java/selenium/R6_XpathCss.java,2\3\23c891b6c01ce74af62b0113a68f0b82b1be9857
-\
-,src/main/java/selenium/R7_TableHandling.java,4\4\44024fe21c7924d93623909f6e8675d4c95a9dbe

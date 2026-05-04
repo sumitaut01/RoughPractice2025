@@ -8,12 +8,14 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 public class RoughAll {
 
     public static void main(String[] args) throws JsonProcessingException {
 
 
-        Response response=RestAssured.given().header("","")
+        Response response = RestAssured.given().header("", "")
                 .contentType(ContentType.JSON)
                 .baseUri("")
                 .basePath("")
@@ -22,74 +24,73 @@ public class RoughAll {
                 .auth().oauth2(" ")
                 .post("{pathparakey}/somemoreurl");
 
-        System.out.println("titme take is "+response.getTime());
+        System.out.println("titme take is " + response.getTime());
 
 
-        JsonPath jsonpath=response.jsonPath();
+        JsonPath jsonpath = response.jsonPath();
 
-        Temp t=response.as(Temp.class);
-
-
-        ObjectMapper objectMapper= new ObjectMapper();
-        Temp xx=objectMapper.readValue(response.asString(), Temp.class);
+        Temp t = response.as(Temp.class);
 
 
-
-
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        Temp xx = objectMapper.readValue(response.asString(), Temp.class);
 
 
     }
 
 
-
-
-
     @Test
-    public void roughagain(){
+    public void roughagain() {
 
-      Response response=RestAssured.given().
-              baseUri("")
-              .basePath("")
-              .header("","")
-              .contentType(ContentType.JSON)
-              .queryParam("", "")
-              .pathParam("", "")
-              .body("")
-              .post();
-
-
-      JsonPath resp=response.jsonPath();
-
-      resp.get("");
-      resp.getMap("");
+        Response response = RestAssured.given().
+                baseUri("")
+                .basePath("")
+                .header("", "")
+                .contentType(ContentType.JSON)
+                .queryParam("", "")
+                .pathParam("", "")
+                .body("")
+                .post();
 
 
+        JsonPath resp = response.jsonPath();
+
+        resp.get("");
+        resp.getMap("");
 
 
     }
 
 
+    @Test
+    public void RoughRA() {
 
+        Response resp = RestAssured.given().baseUri("").basePath("").header("", "")
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .pathParam("", "")
+                .queryParam("", "")
+                .post();
+
+
+        //new ObjectMapper().readValue(resp, TypeReferenceDemo)
+
+
+    }
 
 
     @Test
-    public void RoughRA(){
+    public void Rough290426() {
 
-     Response resp= RestAssured.given().baseUri("").basePath("").header("","")
-              .contentType(ContentType.JSON)
-              .accept(ContentType.JSON)
-              .pathParam("","")
-              .queryParam("", "")
-              .post();
-
-
-          //new ObjectMapper().readValue(resp, TypeReferenceDemo)
-
-
-
-
-
+        Response response = RestAssured.given().baseUri("").basePath("")
+                .queryParam("", "")
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .pathParam("first", "order")
+                .header("", "").auth().oauth2(" ")
+                .body("").post("/{first}");
+        JsonPath respJsonPath = response.jsonPath();
+        var x = response.as(Map[].class);
     }
 
 

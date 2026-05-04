@@ -296,14 +296,14 @@ public class Rough {
 
 
     @Test(dataProvider = "mine")
-    public void dataRun(String un,String password) {
-        System.out.println(un +" "+password);
+    public void dataRun(String un, String password) {
+        System.out.println(un + " " + password);
         //Sumit Sumtpws
         //Amit AmitPwd
     }
 
 
-    @DataProvider (name = "mine")
+    @DataProvider(name = "mine")
     public Object[][] myprovider() {
         Object[][] data = new Object[2][2];
         data[0][0] = "Sumit";
@@ -327,12 +327,12 @@ public class Rough {
 
 
     @Test
-    public void StringImmutable(){
+    public void StringImmutable() {
 
-      String s1="sumit"; //scp
-        String s2="sumit";//scp  s1,s2 point to same
+        String s1 = "sumit"; //scp
+        String s2 = "sumit";//scp  s1,s2 point to same
 
-        String s3=new String("Sumit");// heap
+        String s3 = new String("Sumit");// heap
 
 
         System.out.println(System.identityHashCode(s1));
@@ -340,39 +340,36 @@ public class Rough {
         System.out.println(System.identityHashCode(s3));
 
 
-
     }
-
-
 
 
     // extra
 
     @Test
-    public void rev(){
+    public void rev() {
 
-        String str="sumit";
-        String rev="";
-        for(int i=str.length()-1;i>=0;i--){
-            rev=rev+str.charAt(i);
+        String str = "sumit";
+        String rev = "";
+        for (int i = str.length() - 1; i >= 0; i--) {
+            rev = rev + str.charAt(i);
         }
         System.out.println(rev);//timus
     }
 
     @Test
-    public void firsNonRepeated(){
-        String str="software services";
+    public void firsNonRepeated() {
+        String str = "software services";
 
-        LinkedHashMap<Character,Integer> lhm=new LinkedHashMap<>();
-        for(Character c: str.toCharArray()){
-          lhm.put(c,lhm.getOrDefault(c, 0)+1);
+        LinkedHashMap<Character, Integer> lhm = new LinkedHashMap<>();
+        for (Character c : str.toCharArray()) {
+            lhm.put(c, lhm.getOrDefault(c, 0) + 1);
         }
         System.out.println(lhm);
 
-        for(Map.Entry<Character,Integer> es:lhm.entrySet()){
+        for (Map.Entry<Character, Integer> es : lhm.entrySet()) {
 
-            if(es.getValue()==1){
-                System.out.println(es.getKey()+" "+es.getValue());
+            if (es.getValue() == 1) {
+                System.out.println(es.getKey() + " " + es.getValue());
                 break;
             }
         }
@@ -384,24 +381,102 @@ public class Rough {
 
 
     @Test
-    public void RemoveDuplicates(){
+    public void RemoveDuplicates() {
 
 
-        String str="banaans";
+        String str = "banaans";
         // bans
 
-        String woDups="";
+        String woDups = "";
 
 
-        for(char c:str.toCharArray()){
+        for (char c : str.toCharArray()) {
 
-            if(woDups.indexOf(c)==-1){
-                woDups=woDups+c;
+            if (woDups.indexOf(c) == -1) {
+                woDups = woDups + c;
             }
         }
 
         System.out.println(woDups);//bans
     }
+
+
+    @Test
+    public void charCountAgain() {
+        String str = "this is is";
+        HashMap<Character, Integer> hm = new HashMap<>();
+        for (Character c : str.toCharArray()) {
+            hm.put(c,hm.getOrDefault(c,0)+1);
+        }
+        System.out.println(hm);//{ =2, s=3, t=1, h=1, i=3}
+        hm.forEach((k,v)->System.out.println(k+"=>"+v));
+        // =>2
+        //s=>3
+        //t=>1
+        //h=>1
+        //i=>3
+    }
+
+    @Test
+    public  void TwoSumRough(){
+
+     int arr[]={0,1,2,3,4,6,7,8,9};
+     int eSum=9;
+
+
+     HashMap<Integer,Integer> hm=new HashMap<>();
+
+     for(int i=0;i<arr.length;i++){
+         int num=eSum-arr[i];
+         if(hm.containsKey(num)){
+             System.out.println(arr[i] + " " +num);
+         }
+         else{
+             hm.put(arr[i],i);
+         }
+     }
+    }
+
+
+
+
+    @Test
+    public void DuplicatesInarray(){
+
+       int arr[]={1,2,3,2,4,6,6,1};
+       // via double loop
+        for(int i=0;i<arr.length;i++){
+            for(int j=0;j< arr.length;j++){
+                if(i==j)continue;;
+                if(arr[i]==arr[j]){
+                    System.out.println(arr[i]);
+                }
+            }
+        }
+
+
+    }
+
+
+    @Test
+    public void segregate(){
+
+        int arr[]={0,1,0,1,0,0,1,1};
+        int j=0;
+        System.out.println(Arrays.toString(arr));
+        for (int i=0;i<arr.length;i++){
+
+          if(arr[i]==0){
+              int temp=arr[i];
+                      arr[i]=arr[j];
+                      arr[j]=temp;
+              j++;
+          }
+        }
+        System.out.println(Arrays.toString(arr));
+
+    }
+
 }
 
 

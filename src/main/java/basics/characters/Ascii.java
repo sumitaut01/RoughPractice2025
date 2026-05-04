@@ -5,13 +5,11 @@ public class Ascii {
 
     public static void main(String[] args) {
 
-
         for (int i=0;i<256;i++){
             char ch=(char)i;
             if(Character.isAlphabetic(ch)){
                 System.out.println(i +" "+ch);
             }
-
         }
     }
     //65 A

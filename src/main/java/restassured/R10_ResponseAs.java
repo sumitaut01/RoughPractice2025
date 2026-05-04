@@ -145,6 +145,10 @@ public class R10_ResponseAs {
         byte[] bArray = response.asByteArray();
 
 
+
+
+
+
         wireMockServer.stop();
 
 

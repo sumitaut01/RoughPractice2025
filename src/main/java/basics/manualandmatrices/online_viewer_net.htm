@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Concepts Guide</title>
+<style>
+body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+h1, h2 { color: #2c3e50; }
+code { background: #f4f4f4; padding: 2px 5px; }
+.section { margin-bottom: 40px; }
+</style>
+</head>
+<body>
+
+<h1>Comprehensive QA & Automation Guide</h1>
+
+<div class="section">
+<h2>1. Parallel Execution in Cucumber</h2>
+<p>Parallel execution means running multiple test scenarios simultaneously to reduce execution time.</p>
+<h3>Example (TestNG + Cucumber):</h3>
+<pre><code>@DataProvider(parallel = true)
+public Object[][] scenarios() {
+    return super.scenarios();
+}</code></pre>
+<p><b>Benefits:</b> Faster execution, better CI/CD efficiency.</p>
+<p><b>Challenge:</b> Thread safety, shared resources.</p>
+</div>
+
+<div class="section">
+<h2>2. Conditional Hooks vs Tagged Hooks</h2>
+<p><b>Conditional Hooks:</b> Run based on runtime condition.</p>
+<pre><code>@Before
+public void setup(Scenario scenario) {
+    if(scenario.getName().contains("Login")) {
+        // run setup
+    }
+}</code></pre>
+<p><b>Tagged Hooks:</b> Run based on tags.</p>
+<pre><code>@Before("@smoke")
+public void setup() { }</code></pre>
+</div>
+
+<div class="section">
+<h2>3. CI vs CD</h2>
+<ul>
+<li><b>CI:</b> Automatically build and test code on commit.</li>
+<li><b>CD:</b> Automatically deploy code.</li>
+</ul>
+<p><b>Example:</b> Jenkins pipeline builds -> runs tests -> deploys to QA.</p>
+</div>
+
+<div class="section">
+<h2>4. Root Cause Analysis Techniques</h2>
+<ul>
+<li>5 Whys</li>
+<li>Fishbone Diagram</li>
+<li>Pareto Analysis</li>
+</ul>
+<p><b>Example (5 Whys):</b></p>
+<p>Bug → Why? API failed → Why? Null data → Why? Validation missing</p>
+</div>
+
+<div class="section">
+<h2>5. Git Cherry Pick</h2>
+<p>Used to pick a specific commit from one branch to another.</p>
+<pre><code>git cherry-pick commit_id</code></pre>
+</div>
+
+<div class="section">
+<h2>6. Estimation Techniques in Agile</h2>
+<ul>
+<li>Story Points</li>
+<li>Planning Poker</li>
+<li>T-Shirt Sizing</li>
+</ul>
+<p><b>Metrics:</b> Velocity, Burn-down chart.</p>
+</div>
+
+<div class="section">
+<h2>7. Test Plan Document</h2>
+<p>Includes scope, objectives, resources, schedule.</p>
+</div>
+
+<div class="section">
+<h2>8. Test Plan vs Test Strategy</h2>
+<ul>
+<li><b>Plan:</b> Project-specific</li>
+<li><b>Strategy:</b> Organization-level</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>9. Test Case Design Techniques</h2>
+<ul>
+<li>Boundary Value Analysis</li>
+<li>Equivalence Partitioning</li>
+<li>Decision Table</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>10. Defect Leakage</h2>
+<p>Formula:</p>
+<pre><code>Leakage = (Defects found in production / Total defects) * 100</code></pre>
+</div>
+
+<div class="section">
+<h2>11. Test Pyramid</h2>
+<ul>
+<li>Unit Tests (base)</li>
+<li>API Tests</li>
+<li>UI Tests (top)</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>12. Broken Link Testing in Parallel</h2>
+<pre><code>links.parallelStream().forEach(link -> {
+    // check HTTP response
+});</code></pre>
+</div>
+
+<div class="section">
+<h2>13. Annotation Transformer</h2>
+<p>Used in TestNG to modify annotations at runtime.</p>
+<pre><code>public class Transformer implements IAnnotationTransformer {
+ public void transform(...) {
+   annotation.setRetryAnalyzer(Retry.class);
+ }
+}</code></pre>
+</div>
+
+</body>
+</html>

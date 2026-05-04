@@ -99,6 +99,31 @@ public class R7_SecondMaxArray {
         System.out.println(second);
     }
 
+
+    @Test
+    public void rough290426(){
+
+        int a[] = {15, 3, 12, 7,99};
+        int first = 0, second = 0;
+
+        for( int item :a){
+
+            if(item>first){
+                second=first;
+                first=item;
+            }
+            else {
+             if(item>second){
+                 second=item;
+             }
+            }
+
+        }
+
+        System.out.println(first);
+        System.out.println(second);
+
+    }
 }
 
 
