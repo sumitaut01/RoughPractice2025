@@ -3,6 +3,8 @@ package selenium;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -21,6 +23,27 @@ public class JavaScriptExecutor {
         TakesScreenshot sc=(TakesScreenshot) driver;
         File file=sc.getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(file, new File("D:\\Resurrection 2025.png"));
+    }
+
+
+
+
+    @Test
+    public void Rough(){
+
+        WebDriver driver;
+        driver=new ChromeDriver();
+        JavascriptExecutor js=(JavascriptExecutor)driver;
+
+
+        driver.get("https://www.rediff.com/");
+
+        js.executeScript("alert('message sent from selenium')");
+        js.executeScript("console.log('message sent from selenium')");
+
+        System.out.println("wait");
+
+
     }
 
 

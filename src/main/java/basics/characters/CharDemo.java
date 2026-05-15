@@ -13,8 +13,6 @@ public class CharDemo {
 //    int code = c;  // implicitly converted to int
 //System.out.println(code); // 65
     public static void main(String[] args) {
-
-
         char a = 67;//possible
         System.out.println(a);//C
 

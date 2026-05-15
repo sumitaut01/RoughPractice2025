@@ -63,4 +63,24 @@ public class Rough {
 
         System.out.println(res);
     }
+
+
+    @Test
+    public void demo(){
+     String name="sumit";
+     System.out.println(name);//sumit
+        System.out.println(name+"xx");//sumitxx
+        System.out.println(name);//sumit
+
+        StringBuffer sb=new StringBuffer(name);
+        sb.append("Y");
+        System.out.println(sb);//sumitY
+
+       //sb.deleteCharAt(10);
+       // System.out.println(sb);//java.lang.StringIndexOutOfBoundsException: Index 10 out of bounds for length 6
+
+
+
+
+    }
 }

@@ -45,10 +45,8 @@ public class jsonPathDemo {
 			if(jp.get("courses["+i+"].title").toString().equalsIgnoreCase("RPA")) {
 				System.out.println(" price :"+ jp.get("courses["+i+"].price"));
 				break;
-				
 			}
 			//45
-			
 		}
 
 //jsonpath.com

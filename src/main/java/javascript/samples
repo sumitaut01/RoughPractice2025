@@ -1,0 +1,6 @@
+https://testautomationpractice.blogspot.com/
+
+document.getElementById('name').value='sumit'
+
+
+js.executescript('

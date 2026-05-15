@@ -13,9 +13,5 @@ public class ConcurrentHashMapDemo {
         //cm.put(null,null);//Exception in thread "main" java.lang.NullPointerException
        // cm.entrySet();
        // cm.keys();
-
-
-
-
     }
 }

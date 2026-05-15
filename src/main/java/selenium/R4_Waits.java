@@ -13,27 +13,21 @@ import java.time.Duration;
 
 public class R4_Waits {
 
-//public class WebDriverWait
+    //public class WebDriverWait
 //extends org.openqa.selenium.support.ui.FluentWait<org.openqa.selenium.WebDriver>
     public static void main(String[] args) {
-
-
-        WebDriver driver=new ChromeDriver();
+        WebDriver driver = new ChromeDriver();
         driver.get("https://www.selenium.dev/");
-        WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.titleIs("somr random text"));
         driver.quit();
     }
 
 
-
-
-
-
     @Test
-    public void Test(){
-        WebDriver driver=new ChromeDriver();
-        Wait<WebDriver> wait=new FluentWait<>(driver)
+    public void Test() {
+        WebDriver driver = new ChromeDriver();
+        Wait<WebDriver> wait = new FluentWait<>(driver)
                 .ignoring(Exception.class)
                 .pollingEvery(Duration.ofSeconds(1))
                 .withTimeout(Duration.ofSeconds(10))
@@ -44,7 +38,6 @@ public class R4_Waits {
         wait.until(ExpectedConditions.titleIs("some title"));
         driver.quit();
     }
-}
 
 
 //Exception in thread "main" org.openqa.selenium.TimeoutException: Expected condition failed: waiting for title to be "somr random text". Current title: "Selenium" (tried for 10 second(s) with 500 milliseconds interval)
@@ -59,3 +52,20 @@ public class R4_Waits {
 //
 //    Process finished with exit code 1
 
+
+    @Test
+    public void Rough() {
+
+        WebDriver driver=new ChromeDriver();
+        driver.manage().deleteAllCookies();
+
+        driver.get("http://www.rediff.com");
+        WebDriverWait wait= (WebDriverWait) new WebDriverWait(driver,Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofSeconds(1))
+                .withMessage("In progress..")
+                .ignoring(Exception.class);
+
+        wait.until(ExpectedConditions.titleIs("this is it"));
+    }
+
+}

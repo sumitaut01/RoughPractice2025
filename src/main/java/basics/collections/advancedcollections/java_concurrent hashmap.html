@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Thread-Safe Collections Guide</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      color: white;
+      text-align: center;
+      padding: 45px 20px;
+    }
+
+    header h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 18px;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      color: #2563eb;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #dbeafe;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #d1d5db;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    table th {
+      background: #dbeafe;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      font-size: 14px;
+    }
+
+    .highlight {
+      background: #eff6ff;
+      border-left: 5px solid #2563eb;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .danger {
+      background: #fef2f2;
+      border-left: 5px solid #dc2626;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .good {
+      background: #ecfdf5;
+      border-left: 5px solid #16a34a;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    footer {
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Java Thread-Safe Collections Guide</h1>
+  <p>ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue and Other Concurrent Collections</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>1. What are Thread-Safe Collections?</h2>
+
+    <p>
+      Thread-safe collections are special data structures designed to work safely
+      when multiple threads access or modify them simultaneously.
+    </p>
+
+    <div class="highlight">
+      Normal collections like HashMap and ArrayList are NOT thread-safe.
+      Concurrent collections prevent data corruption and race conditions.
+    </div>
+
+    <h3>Why Needed?</h3>
+
+    <ul>
+      <li>Parallel processing</li>
+      <li>Multi-user applications</li>
+      <li>Thread-safe caching</li>
+      <li>Producer-consumer systems</li>
+      <li>High-performance concurrent applications</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>2. Problems with Normal Collections</h2>
+
+    <h3>HashMap Issue</h3>
+
+    <pre><code>Map<Integer, String> map = new HashMap<>();
+
+// Multiple threads modifying map
+map.put(1, "A");</code></pre>
+
+    <div class="danger">
+      Multiple threads modifying HashMap can cause:
+      <ul>
+        <li>Data inconsistency</li>
+        <li>Race conditions</li>
+        <li>Infinite loops internally</li>
+        <li>ConcurrentModificationException</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. ConcurrentHashMap</h2>
+
+    <p>
+      ConcurrentHashMap is a thread-safe version of HashMap.
+      Multiple threads can read/write simultaneously with high performance.
+    </p>
+
+    <h3>Example</h3>
+
+    <pre><code>ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
+
+map.put(1, "Java");
+map.put(2, "Thread");
+
+System.out.println(map.get(1));</code></pre>
+
+    <h3>Purpose</h3>
+
+    <ul>
+      <li>Thread-safe caching</li>
+      <li>Shared application data</li>
+      <li>Session management</li>
+      <li>High concurrent read/write operations</li>
+    </ul>
+
+    <h3>Advantages</h3>
+
+    <ul>
+      <li>Better performance than Hashtable</li>
+      <li>Allows concurrent reads</li>
+      <li>Segment-level locking internally</li>
+      <li>No full synchronization lock</li>
+    </ul>
+
+    <div class="good">
+      Use ConcurrentHashMap when many threads access shared map data.
+    </div>
+
+    <div class="danger">
+      Do NOT use HashMap in multithreaded applications.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. CopyOnWriteArrayList</h2>
+
+    <p>
+      CopyOnWriteArrayList creates a new copy of the array whenever modification happens.
+    </p>
+
+    <pre><code>CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+
+list.add("Java");
+list.add("Selenium");</code></pre>
+
+    <h3>Purpose</h3>
+
+    <ul>
+      <li>Frequent reads and rare writes</li>
+      <li>Thread-safe iteration</li>
+      <li>Read-heavy applications</li>
+    </ul>
+
+    <h3>Advantages</h3>
+
+    <ul>
+      <li>No ConcurrentModificationException</li>
+      <li>Safe iteration during modification</li>
+      <li>Simple thread-safe design</li>
+    </ul>
+
+    <h3>Disadvantages</h3>
+
+    <ul>
+      <li>Memory expensive</li>
+      <li>Slow for heavy write operations</li>
+    </ul>
+
+    <div class="good">
+      Best for applications with many reads and very few updates.
+    </div>
+
+    <div class="danger">
+      Avoid when data changes frequently.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>5. BlockingQueue</h2>
+
+    <p>
+      BlockingQueue is mainly used in producer-consumer problems.
+      It automatically waits when queue is full or empty.
+    </p>
+
+    <pre><code>BlockingQueue<String> queue = new ArrayBlockingQueue<>(5);
+
+queue.put("Task1");
+
+String value = queue.take();</code></pre>
+
+    <h3>Purpose</h3>
+
+    <ul>
+      <li>Task scheduling</li>
+      <li>Thread pools</li>
+      <li>Producer-consumer systems</li>
+      <li>Messaging systems</li>
+    </ul>
+
+    <div class="good">
+      ExecutorService internally uses BlockingQueue.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>6. ConcurrentLinkedQueue</h2>
+
+    <p>
+      Thread-safe non-blocking queue based on linked nodes.
+    </p>
+
+    <pre><code>ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
+
+queue.add(10);
+queue.add(20);</code></pre>
+
+    <h3>Purpose</h3>
+
+    <ul>
+      <li>High-speed queue operations</li>
+      <li>Asynchronous systems</li>
+      <li>Event processing</li>
+    </ul>
+
+    <div class="highlight">
+      Non-blocking means threads do not wait for locks heavily.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>7. ConcurrentSkipListMap</h2>
+
+    <p>
+      Thread-safe sorted map implementation.
+    </p>
+
+    <pre><code>ConcurrentSkipListMap<Integer, String> map = new ConcurrentSkipListMap<>();
+
+map.put(2, "B");
+map.put(1, "A");</code></pre>
+
+    <h3>Purpose</h3>
+
+    <ul>
+      <li>Sorted concurrent data</li>
+      <li>Ranking systems</li>
+      <li>Leaderboards</li>
+      <li>Ordered processing</li>
+    </ul>
+
+    <div class="good">
+      Maintains sorted order automatically.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>8. Hashtable vs ConcurrentHashMap</h2>
+
+    <table>
+      <tr>
+        <th>Hashtable</th>
+        <th>ConcurrentHashMap</th>
+      </tr>
+      <tr>
+        <td>Entire map locked</td>
+        <td>Partial locking</td>
+      </tr>
+      <tr>
+        <td>Slower</td>
+        <td>Faster</td>
+      </tr>
+      <tr>
+        <td>Legacy class</td>
+        <td>Modern concurrent class</td>
+      </tr>
+      <tr>
+        <td>Less scalable</td>
+        <td>Highly scalable</td>
+      </tr>
+    </table>
+
+    <div class="danger">
+      Prefer ConcurrentHashMap over Hashtable in modern applications.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>9. Collections.synchronizedList()</h2>
+
+    <pre><code>List<String> list = Collections.synchronizedList(new ArrayList<>());</code></pre>
+
+    <h3>Purpose</h3>
+
+    <p>
+      Makes normal collections thread-safe using synchronization wrapper.
+    </p>
+
+    <h3>Limitation</h3>
+
+    <div class="danger">
+      Entire collection gets locked, reducing performance.
+    </div>
+
+    <div class="highlight">
+      Concurrent collections are usually preferred over synchronized wrappers.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>10. Do's and Don'ts</h2>
+
+    <table>
+      <tr>
+        <th>Do</th>
+        <th>Don't</th>
+      </tr>
+
+      <tr>
+        <td>Use ConcurrentHashMap for shared maps</td>
+        <td>Use HashMap with multiple threads</td>
+      </tr>
+
+      <tr>
+        <td>Use CopyOnWriteArrayList for read-heavy systems</td>
+        <td>Use it for frequent writes</td>
+      </tr>
+
+      <tr>
+        <td>Use BlockingQueue for producer-consumer</td>
+        <td>Create manual waiting logic unnecessarily</td>
+      </tr>
+
+      <tr>
+        <td>Prefer concurrent collections</td>
+        <td>Synchronize everything blindly</td>
+      </tr>
+
+      <tr>
+        <td>Understand read/write patterns first</td>
+        <td>Choose collections randomly</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>11. Real Industry Use Cases</h2>
+
+    <table>
+      <tr>
+        <th>Technology</th>
+        <th>Usage</th>
+      </tr>
+
+      <tr>
+        <td>Spring Boot</td>
+        <td>Concurrent request handling</td>
+      </tr>
+
+      <tr>
+        <td>Selenium Parallel Testing</td>
+        <td>Thread-safe test data storage</td>
+      </tr>
+
+      <tr>
+        <td>Banking Systems</td>
+        <td>Concurrent transactions</td>
+      </tr>
+
+      <tr>
+        <td>Gaming</td>
+        <td>Event queues and shared state</td>
+      </tr>
+
+      <tr>
+        <td>E-commerce</td>
+        <td>Cart/session caching</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>12. Quick Revision Notes</h2>
+
+    <ul>
+      <li>HashMap is NOT thread-safe</li>
+      <li>ConcurrentHashMap is preferred for concurrent access</li>
+      <li>CopyOnWriteArrayList is best for read-heavy systems</li>
+      <li>BlockingQueue used in producer-consumer</li>
+      <li>Concurrent collections improve performance</li>
+      <li>Avoid excessive synchronization</li>
+      <li>Choose collections based on usage pattern</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  <p>Java Concurrent Collections Study Guide | Thread-Safe Data Structures</p>
+</footer>
+
+</body>
+</html>

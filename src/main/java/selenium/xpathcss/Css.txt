@@ -7,7 +7,7 @@ htmltag.class
 =>div.subnav.field
 
 3. Parent Child
-Parent>Chid
+Parent>Chid  or PArent child
 xpath:  parent//child
 div>ul.menu
 
@@ -49,7 +49,7 @@ li[class='menu__item flex leading-5']:first-of-type   ==matches first element
 11 last-of-type
 li[class='menu__item flex leading-5']  ==matches 5 elements
 
-li[class='menu__item flex leading-5']:last-of-type   ==matches first element
+li[class='menu__item flex leading-5']:last-of-type   ==matches last element
 
 12 nth-of-type(12)
 li[class='menu__item flex leading-5']  ==matches 5 elements

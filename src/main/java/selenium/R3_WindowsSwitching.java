@@ -38,9 +38,6 @@ public class R3_WindowsSwitching {
         driver.get("");
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-
-
-
         driver.switchTo().newWindow(WindowType.WINDOW);//window
         driver.switchTo().newWindow(WindowType.TAB);//tab
 

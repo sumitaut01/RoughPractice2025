@@ -40,7 +40,6 @@ interface  jsexecutor {
 class chrome extends   Remote{
      public void getChromeDriver(){
          System.out.println("chrome invoked");
-
      }
 }
 

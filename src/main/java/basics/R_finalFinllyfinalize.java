@@ -65,8 +65,11 @@ package basics;
 //        ✅ Use try-with-resources or manual close instead.
 
 
+import net.javacrumbs.jsonunit.core.internal.JsonUtils;
+import org.testng.annotations.Test;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 //        Real-World Tips
 //        Scenario	Use
@@ -76,4 +79,25 @@ package basics;
 //        Prevent class extension	final class Utility {}
 //    Avoid finalize()	Use AutoCloseable / manual close
 public class R_finalFinllyfinalize {
+
+    public static void main(String[] args) {
+
+        //final demo
+
+        //1 Primitive
+        final int age=10;
+       // age=12;//Cannot assign a value to final variable 'age'
+
+        // Non promitive.. see the reference reassignment
+
+       final List<Integer> lst=new ArrayList<>();
+        lst.add(1);
+        lst.add(2);
+        lst.add(3);
+        final List<Integer> lst2=new ArrayList<>();
+        //lst=lst2;//Cannot assign a value to final variable 'lst'
+    }
+
+
+
 }

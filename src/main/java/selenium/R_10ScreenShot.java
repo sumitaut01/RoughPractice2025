@@ -43,15 +43,5 @@ public class R_10ScreenShot {
         System.out.println(js.executeScript("return document.title"));
         driver.quit();
 
-
-
-
-
-
-
-
-
-
-
     }
 }

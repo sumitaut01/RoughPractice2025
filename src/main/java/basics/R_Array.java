@@ -106,4 +106,51 @@ public class R_Array {
             System.out.println(" row end loop");
         }
     }
+
+
+
+    @Test
+    public void Rough130526(){
+
+        int [][] data={{1,2,3},{4,5},{6,7,9}};
+
+        for(int [] a:data){
+
+            for(int i: a){
+                System.out.print(i);
+                System.out.print(" ");
+            }
+            System.out.println(" ");
+        }
+    }
+
+
+    @Test
+    public void Rough2ndFromArray(){
+
+        int arr[]={1,2,3,4,5,0,1};
+
+        System.out.println();
+
+        int first=0,second=0;
+
+        for(int i=0;i<arr.length;i++){
+
+            if(arr[i]>first){
+                second=first;
+                first=arr[i];
+            }
+            else{
+                if(arr[i]>second) second=arr[i];
+            }
+        }
+
+        System.out.println(first +" "+second); //5//4
+
+
+
+
+
+
+    }
 }

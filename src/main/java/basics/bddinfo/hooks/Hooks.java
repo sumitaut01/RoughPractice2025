@@ -18,7 +18,6 @@ public class Hooks {
 	//@After
     public void afterScenario(Scenario scenario){
         // this is guarantted to run as per docs... u can
-
         System.out.println("This will run after the Scenario");
     }
 }

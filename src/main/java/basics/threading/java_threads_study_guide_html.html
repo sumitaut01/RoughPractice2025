@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Threads Study Guide</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 18px;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      color: #1d4ed8;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #dbeafe;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      margin-top: 20px;
+      color: #0f172a;
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      background: #eff6ff;
+      padding: 15px;
+      border-left: 5px solid #2563eb;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #d1d5db;
+      padding: 12px;
+      text-align: left;
+    }
+
+    table th {
+      background: #dbeafe;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .flow-box {
+      background: #2563eb;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      min-width: 150px;
+      text-align: center;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .arrow {
+      font-size: 28px;
+      align-self: center;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    .thread-state {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .state-card {
+      background: #f8fafc;
+      border: 2px solid #bfdbfe;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    footer {
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Java Threads - Complete Study Guide</h1>
+    <p>Understand Multithreading, Thread Lifecycle, Use Cases, Synchronization and Interview Concepts</p>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>1. What is a Thread?</h2>
+
+      <p>
+        A <strong>Thread</strong> is the smallest unit of execution inside a process.
+        Java allows multiple threads to run simultaneously.
+      </p>
+
+      <div class="highlight">
+        Think of a process as a restaurant and threads as waiters working together.
+        Multiple waiters can serve different customers at the same time.
+      </div>
+
+      <h3>Real Life Examples</h3>
+      <ul>
+        <li>WhatsApp downloading file while you continue chatting</li>
+        <li>YouTube buffering video while playing</li>
+        <li>Browser opening multiple tabs</li>
+        <li>Selenium framework running tests in parallel</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2. Why Do We Need Threads?</h2>
+
+      <table>
+        <tr>
+          <th>Without Threads</th>
+          <th>With Threads</th>
+        </tr>
+        <tr>
+          <td>Tasks execute one by one</td>
+          <td>Tasks execute simultaneously</td>
+        </tr>
+        <tr>
+          <td>Application becomes slow</td>
+          <td>Better performance</td>
+        </tr>
+        <tr>
+          <td>UI may freeze</td>
+          <td>Responsive applications</td>
+        </tr>
+        <tr>
+          <td>CPU underutilized</td>
+          <td>CPU utilized efficiently</td>
+        </tr>
+      </table>
+
+      <h3>Main Benefits</h3>
+      <span class="tag">Concurrency</span>
+      <span class="tag">Performance</span>
+      <span class="tag">Parallel Execution</span>
+      <span class="tag">Responsiveness</span>
+      <span class="tag">Background Processing</span>
+    </div>
+
+    <div class="card">
+      <h2>3. Process vs Thread</h2>
+
+      <table>
+        <tr>
+          <th>Process</th>
+          <th>Thread</th>
+        </tr>
+        <tr>
+          <td>Independent program</td>
+          <td>Part of a process</td>
+        </tr>
+        <tr>
+          <td>Heavyweight</td>
+          <td>Lightweight</td>
+        </tr>
+        <tr>
+          <td>Separate memory</td>
+          <td>Shared memory</td>
+        </tr>
+        <tr>
+          <td>Slow communication</td>
+          <td>Fast communication</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>4. How to Create Threads in Java</h2>
+
+      <h3>Method 1: Extend Thread Class</h3>
+
+      <pre><code>class MyThread extends Thread {
+
+    public void run() {
+        System.out.println("Thread is running");
+    }
+
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();
+    }
+}</code></pre>
+
+      <div class="highlight">
+        Always use <strong>start()</strong> instead of directly calling run().
+        start() creates a new thread internally.
+      </div>
+
+      <h3>Method 2: Implement Runnable Interface</h3>
+
+      <pre><code>class MyRunnable implements Runnable {
+
+    public void run() {
+        System.out.println("Runnable thread running");
+    }
+
+    public static void main(String[] args) {
+        MyRunnable obj = new MyRunnable();
+        Thread t1 = new Thread(obj);
+        t1.start();
+    }
+}</code></pre>
+
+      <h3>Which One is Better?</h3>
+
+      <table>
+        <tr>
+          <th>Thread Class</th>
+          <th>Runnable Interface</th>
+        </tr>
+        <tr>
+          <td>Inheritance used</td>
+          <td>More flexible</td>
+        </tr>
+        <tr>
+          <td>Cannot extend another class</td>
+          <td>Can extend another class</td>
+        </tr>
+        <tr>
+          <td>Less preferred</td>
+          <td>Industry preferred</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>5. Thread Lifecycle</h2>
+
+      <div class="flow">
+        <div class="flow-box">NEW</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">RUNNABLE</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">RUNNING</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">TERMINATED</div>
+      </div>
+
+      <div class="thread-state">
+
+        <div class="state-card">
+          <h3>NEW</h3>
+          <p>Thread object created but start() not called.</p>
+        </div>
+
+        <div class="state-card">
+          <h3>RUNNABLE</h3>
+          <p>Thread ready to execute.</p>
+        </div>
+
+        <div class="state-card">
+          <h3>RUNNING</h3>
+          <p>CPU executing thread code.</p>
+        </div>
+
+        <div class="state-card">
+          <h3>WAITING / BLOCKED</h3>
+          <p>Waiting for resource or another thread.</p>
+        </div>
+
+        <div class="state-card">
+          <h3>TERMINATED</h3>
+          <p>Execution completed.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>6. Important Thread Methods</h2>
+
+      <table>
+        <tr>
+          <th>Method</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td>start()</td>
+          <td>Starts new thread</td>
+        </tr>
+        <tr>
+          <td>run()</td>
+          <td>Contains task logic</td>
+        </tr>
+        <tr>
+          <td>sleep(ms)</td>
+          <td>Pause thread temporarily</td>
+        </tr>
+        <tr>
+          <td>join()</td>
+          <td>Wait for another thread</td>
+        </tr>
+        <tr>
+          <td>setName()</td>
+          <td>Set thread name</td>
+        </tr>
+        <tr>
+          <td>getName()</td>
+          <td>Get thread name</td>
+        </tr>
+        <tr>
+          <td>setPriority()</td>
+          <td>Set execution priority</td>
+        </tr>
+      </table>
+
+      <h3>Example</h3>
+
+      <pre><code>Thread t1 = new Thread();
+
+System.out.println(t1.getName());
+
+Thread.sleep(2000);
+
+System.out.println("Waited for 2 seconds");</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>7. Multithreading Example</h2>
+
+      <pre><code>class Task1 extends Thread {
+    public void run() {
+        for(int i=1; i<=5; i++) {
+            System.out.println("Task1: " + i);
+        }
+    }
+}
+
+class Task2 extends Thread {
+    public void run() {
+        for(int i=1; i<=5; i++) {
+            System.out.println("Task2: " + i);
+        }
+    }
+}
+
+public class Demo {
+    public static void main(String[] args) {
+
+        Task1 t1 = new Task1();
+        Task2 t2 = new Task2();
+
+        t1.start();
+        t2.start();
+    }
+}</code></pre>
+
+      <div class="highlight">
+        Output order may change every time because threads execute independently.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>8. What is Synchronization?</h2>
+
+      <p>
+        Multiple threads sharing the same resource may create inconsistent results.
+        Synchronization prevents data corruption.
+      </p>
+
+      <h3>Problem Without Synchronization</h3>
+
+      <pre><code>Counter = 0
+
+Thread1 increments → 1
+Thread2 increments → 1
+
+Expected = 2
+Actual = 1</code></pre>
+
+      <h3>Synchronized Method Example</h3>
+
+      <pre><code>class Counter {
+
+    int count = 0;
+
+    synchronized void increment() {
+        count++;
+    }
+}</code></pre>
+
+      <div class="highlight">
+        synchronized allows only one thread at a time to access critical code.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>9. Thread Communication Methods</h2>
+
+      <table>
+        <tr>
+          <th>Method</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td>wait()</td>
+          <td>Thread waits</td>
+        </tr>
+        <tr>
+          <td>notify()</td>
+          <td>Wake one waiting thread</td>
+        </tr>
+        <tr>
+          <td>notifyAll()</td>
+          <td>Wake all waiting threads</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>10. Thread Pool & Executor Framework</h2>
+
+      <p>
+        Creating too many threads is expensive.
+        Java provides Executor Framework to reuse threads.
+      </p>
+
+      <pre><code>ExecutorService service = Executors.newFixedThreadPool(3);
+
+service.submit(() -> {
+    System.out.println("Task executed");
+});
+
+service.shutdown();</code></pre>
+
+      <h3>Why Thread Pool?</h3>
+
+      <ul>
+        <li>Better performance</li>
+        <li>Reuse threads</li>
+        <li>Reduced memory usage</li>
+        <li>Industry standard approach</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>11. Real Industry Use Cases</h2>
+
+      <table>
+        <tr>
+          <th>Area</th>
+          <th>How Threads are Used</th>
+        </tr>
+        <tr>
+          <td>Selenium Automation</td>
+          <td>Parallel execution using TestNG</td>
+        </tr>
+        <tr>
+          <td>Web Servers</td>
+          <td>Handle multiple requests simultaneously</td>
+        </tr>
+        <tr>
+          <td>Gaming</td>
+          <td>Graphics, sound, networking separately</td>
+        </tr>
+        <tr>
+          <td>Banking Apps</td>
+          <td>Concurrent transactions</td>
+        </tr>
+        <tr>
+          <td>Spring Boot APIs</td>
+          <td>Request handling threads</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>12. Common Interview Questions</h2>
+
+      <h3>1. Difference between Process and Thread?</h3>
+
+      <table>
+        <tr>
+          <th>Process</th>
+          <th>Thread</th>
+        </tr>
+        <tr>
+          <td>Independent program</td>
+          <td>Part of process</td>
+        </tr>
+        <tr>
+          <td>Heavyweight</td>
+          <td>Lightweight</td>
+        </tr>
+        <tr>
+          <td>Separate memory</td>
+          <td>Shared memory</td>
+        </tr>
+      </table>
+
+      <h3>2. Difference between start() and run()?</h3>
+
+      <table>
+        <tr>
+          <th>start()</th>
+          <th>run()</th>
+        </tr>
+        <tr>
+          <td>Creates new thread</td>
+          <td>Normal method call</td>
+        </tr>
+        <tr>
+          <td>Runs asynchronously</td>
+          <td>Runs in same thread</td>
+        </tr>
+      </table>
+
+      <div class="highlight">
+        Calling run() directly does NOT create a new thread.
+      </div>
+
+      <h3>3. What is Synchronization?</h3>
+
+      <p>
+        Synchronization is a mechanism that allows only one thread at a time
+        to access critical/shared resources.
+      </p>
+
+      <pre><code>synchronized void printData() {
+    // critical section
+}</code></pre>
+
+      <h3>4. What is Thread Safety?</h3>
+
+      <p>
+        Thread-safe code behaves correctly when multiple threads access it simultaneously.
+      </p>
+
+      <div class="highlight">
+        Synchronization, immutable objects and concurrent collections help achieve thread safety.
+      </div>
+
+      <h3>5. Difference between wait() and sleep()?</h3>
+
+      <table>
+        <tr>
+          <th>wait()</th>
+          <th>sleep()</th>
+        </tr>
+        <tr>
+          <td>Belongs to Object class</td>
+          <td>Belongs to Thread class</td>
+        </tr>
+        <tr>
+          <td>Releases lock</td>
+          <td>Does not release lock</td>
+        </tr>
+        <tr>
+          <td>Used in synchronization</td>
+          <td>Used for delay</td>
+        </tr>
+      </table>
+
+      <h3>6. What is Deadlock?</h3>
+
+      <p>
+        Deadlock occurs when two or more threads wait forever for each other’s resources.
+      </p>
+
+      <pre><code>Thread1 holds LockA and waits for LockB
+Thread2 holds LockB and waits for LockA</code></pre>
+
+      <div class="highlight">
+        Both threads become stuck permanently.
+      </div>
+
+      <h3>7. What is volatile keyword?</h3>
+
+      <p>
+        volatile ensures that changes made by one thread are immediately visible to other threads.
+      </p>
+
+      <pre><code>volatile boolean running = true;</code></pre>
+
+      <div class="highlight">
+        volatile provides visibility, but not thread safety for complex operations.
+      </div>
+
+      <h3>8. Why is ExecutorService preferred over manual threads?</h3>
+
+      <ul>
+        <li>Reuses threads efficiently</li>
+        <li>Improves performance</li>
+        <li>Better memory management</li>
+        <li>Easier task handling</li>
+        <li>Supports thread pools</li>
+      </ul>
+
+      <pre><code>ExecutorService service = Executors.newFixedThreadPool(5);</code></pre>
+
+      <h3>9. What is Race Condition?</h3>
+
+      <p>
+        Race condition happens when multiple threads modify shared data simultaneously,
+        causing unpredictable results.
+      </p>
+
+      <h3>10. What is join() method?</h3>
+
+      <p>
+        join() makes one thread wait until another thread completes execution.
+      </p>
+
+      <pre><code>t1.start();
+t1.join();
+System.out.println("Thread completed");</code></pre>
+
+    </div>
+
+    <div class="card">
+      <h2>13. Quick Revision Notes</h2>
+
+      <ul>
+        <li>Thread = lightweight unit of execution</li>
+        <li>Used for parallel execution</li>
+        <li>start() creates new thread</li>
+        <li>run() contains logic</li>
+        <li>Runnable preferred over Thread class</li>
+        <li>synchronized prevents data inconsistency</li>
+        <li>ExecutorService used in real projects</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Java Multithreading Study Guide | Prepared for Learning & Interview Revision</p>
+  </footer>
+
+</body>
+</html>

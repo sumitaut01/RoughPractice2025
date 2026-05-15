@@ -30,7 +30,6 @@ public class FailFastExample {
         HashMap<String, String> map = new HashMap<>();
         map.put("name", "Sumit");
 
-
         Iterator<String> itr2 = map.keySet().iterator();
 
         while (itr2.hasNext()) {

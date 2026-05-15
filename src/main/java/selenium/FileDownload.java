@@ -13,19 +13,18 @@ import java.time.Duration;
 public class FileDownload {
 
 	public static void main(String[] args) {
-
 		WebDriver driver = new ChromeDriver();
 		driver.get("https://get.jenkins.io/windows-stable/2.426.1/jenkins.msi");
-
 		String downloadPath = "/Users/naveenautomationlabs/Downloads";
 		String fileName = "jenkins.msi";
-
 		File file = new File(downloadPath, fileName);
 
 		FluentWait<File> wait = new FluentWait<File>(file)
 				.withTimeout(Duration.ofMinutes(5))
 				.pollingEvery(Duration.ofSeconds(2))
-				.ignoring(Exception.class).withMessage("file is not downloaded");
+				.ignoring(Exception.class)
+				.withMessage("file is not downloaded");
+
 
 		try {
 			boolean isDownloaded = wait.until(f -> f.exists() && f.canRead());

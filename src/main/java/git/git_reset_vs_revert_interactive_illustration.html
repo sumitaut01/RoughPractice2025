@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git Reset vs Git Revert</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      color: #222;
+      padding: 30px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #1e3a8a;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #555;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .reset {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .revert {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .commit {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .commit::after {
+      content: '';
+      position: absolute;
+      width: 35px;
+      height: 4px;
+      background: #94a3b8;
+      right: -35px;
+    }
+
+    .commit:last-child::after {
+      display: none;
+    }
+
+    .blue { background: #2563eb; }
+    .orange { background: #ea580c; }
+    .purple { background: #7c3aed; }
+    .red { background: #dc2626; }
+    .green { background: #16a34a; }
+    .gray { background: #64748b; }
+
+    .code {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 10px;
+      margin: 15px 0;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+
+    .explanation {
+      background: #f8fafc;
+      border-left: 5px solid #3b82f6;
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+      background: white;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table th,
+    .table td {
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      text-align: left;
+    }
+
+    .table th {
+      background: #1e293b;
+      color: white;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #1d4ed8;
+    }
+
+    .danger {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .safe {
+      color: #15803d;
+      font-weight: bold;
+    }
+
+    .flow {
+      margin-top: 18px;
+      padding: 12px;
+      background: #eff6ff;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Git Reset vs Git Revert</h1>
+  <p class="subtitle">
+    Understand the difference visually with examples and commit history changes.
+  </p>
+
+  <div class="container">
+
+    <!-- RESET -->
+    <div class="card">
+      <span class="tag reset">git reset</span>
+      <h2>Rewrites History</h2>
+
+      <p>
+        <span class="highlight">git reset</span> moves the branch pointer backward.
+        Commits may disappear from history.
+      </p>
+
+      <h3 style="margin-top:20px;">Before Reset</h3>
+      <div class="timeline">
+        <div class="commit blue">A</div>
+        <div class="commit orange">B</div>
+        <div class="commit purple">C</div>
+        <div class="commit red">D</div>
+      </div>
+
+      <div class="code">
+        git reset --hard B
+      </div>
+
+      <h3>After Reset</h3>
+      <div class="timeline">
+        <div class="commit blue">A</div>
+        <div class="commit orange">B</div>
+      </div>
+
+      <div class="explanation">
+        Commits <b>C</b> and <b>D</b> are removed from branch history.
+        This changes commit history.
+      </div>
+
+      <div class="flow">
+        <b>Use when:</b>
+        <ul style="margin-left:20px; margin-top:8px;">
+          <li>You want to undo local commits</li>
+          <li>Commits are NOT shared with others</li>
+          <li>You want a clean history</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:20px;">Example</h3>
+
+      <div class="code">
+# Last commits
+A -> B -> C -> D (HEAD)
+
+# Move HEAD back to B
+ git reset --hard B
+      </div>
+
+      <p>
+        Now your branch history becomes:
+      </p>
+
+      <div class="code">
+A -> B (HEAD)
+      </div>
+
+      <p class="danger">
+        Dangerous on shared branches.
+      </p>
+    </div>
+
+
+    <!-- REVERT -->
+    <div class="card">
+      <span class="tag revert">git revert</span>
+      <h2>Preserves History</h2>
+
+      <p>
+        <span class="highlight">git revert</span> creates a NEW commit that undoes previous changes.
+      </p>
+
+      <h3 style="margin-top:20px;">Before Revert</h3>
+      <div class="timeline">
+        <div class="commit blue">A</div>
+        <div class="commit orange">B</div>
+        <div class="commit purple">C</div>
+        <div class="commit red">D</div>
+      </div>
+
+      <div class="code">
+        git revert D
+      </div>
+
+      <h3>After Revert</h3>
+      <div class="timeline">
+        <div class="commit blue">A</div>
+        <div class="commit orange">B</div>
+        <div class="commit purple">C</div>
+        <div class="commit red">D</div>
+        <div class="commit green">R</div>
+      </div>
+
+      <div class="explanation">
+        A new commit <b>R</b> is created that reverses changes introduced by <b>D</b>.
+      </div>
+
+      <div class="flow">
+        <b>Use when:</b>
+        <ul style="margin-left:20px; margin-top:8px;">
+          <li>Commits are already pushed/shared</li>
+          <li>You want safe undo operations</li>
+          <li>You need complete audit history</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:20px;">Example</h3>
+
+      <div class="code">
+# Existing history
+A -> B -> C -> D (HEAD)
+
+# Revert commit D
+ git revert D
+      </div>
+
+      <p>
+        New history becomes:
+      </p>
+
+      <div class="code">
+A -> B -> C -> D -> R (HEAD)
+      </div>
+
+      <p class="safe">
+        Safe for shared branches.
+      </p>
+    </div>
+  </div>
+
+
+  <table class="table">
+    <tr>
+      <th>Feature</th>
+      <th>git reset</th>
+      <th>git revert</th>
+    </tr>
+
+    <tr>
+      <td>Changes commit history?</td>
+      <td>Yes</td>
+      <td>No</td>
+    </tr>
+
+    <tr>
+      <td>Safe for shared branches?</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+
+    <tr>
+      <td>Creates new commit?</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+
+    <tr>
+      <td>Best for</td>
+      <td>Local cleanup</td>
+      <td>Undoing public commits</td>
+    </tr>
+
+    <tr>
+      <td>Can lose commits?</td>
+      <td>Yes</td>
+      <td>No</td>
+    </tr>
+  </table>
+
+
+  <div class="card" style="margin-top:40px;">
+    <h2>Quick Mental Model</h2>
+
+    <div class="code">
+RESET  = Pretend commit never happened
+REVERT = Add another commit to cancel previous commit
+    </div>
+
+    <h3 style="margin-top:20px;">Common Commands</h3>
+
+    <div class="code">
+# Undo last commit but keep code
+ git reset --soft HEAD~1
+
+# Undo last commit and remove changes
+ git reset --hard HEAD~1
+
+# Safely undo a pushed commit
+ git revert HEAD
+    </div>
+  </div>
+
+</body>
+</html>

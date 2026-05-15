@@ -5,14 +5,10 @@ import java.util.Arrays;
 public class ArraysSort {
 	
 	public static void main(String[] args) {
-		
-		
+
 		int [] arr= {4,5,6,3,5};
 		System.out.println(arr.length);
-		
 		Arrays.sort(arr);
-		
-		
 		//1 Method 1 of Printing
 		for(int x:arr) {
 			System.out.println(x);	
@@ -22,7 +18,6 @@ public class ArraysSort {
 			//5
 			//5
 			//6
-			
 		}
 		
 		//2 Method 2 of Printing
