@@ -40,21 +40,9 @@ public class R18_Interface implements I1, I2 {
 
 
         //Accessing Private Method:
-
-
-
-
         R18_Interface ii=new R18_Interface();
         ii.mul(2,3);
         ii.sum(2,4);
-
-
-
-
-
-
-
-
 
     }
 

@@ -50,6 +50,11 @@ public class R11_ObjectMapper_JsonPropery {
         Studentxx xx=new ObjectMapper().readValue(dummyJson, Studentxx.class);
 
         System.out.println(xx);
+        /*
+        com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "address" (class restassured.Studentxx), not marked as ignorable (3 known properties: "lastName", "name", "addressxx"])
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 7, column: 4] (through reference chain: restassured.Studentxx["address"])
+
+         */
 
     }
 

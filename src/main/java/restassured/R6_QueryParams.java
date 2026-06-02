@@ -40,8 +40,5 @@ public class R6_QueryParams {
         System.out.println(response.getStatusCode());
         System.out.println(response.asString());
 
-
-
-
     }
 }

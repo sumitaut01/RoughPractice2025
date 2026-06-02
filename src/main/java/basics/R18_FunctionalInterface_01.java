@@ -21,14 +21,10 @@ package basics;
 //        Predicate<T>	boolean test(T t)	Takes input, returns boolean
 //        BiFunction<T,U,R>	R apply(T t, U u)	Two inputs, one output
 public class R18_FunctionalInterface_01 {
-
-
     public static void main(String[] args) {
         Greeting greet=()->System.out.println("some text");
         greet.sayHello();//some text
         }
-
-
     @FunctionalInterface//not mandatory
     interface Greeting {
         void sayHello();  // exactly one abstract method
