@@ -194,6 +194,50 @@ public class Rough {
 
 
 
+    @Test
+    public void Rough(){
+
+        List<String> lst=new ArrayList<>();
+        System.out.println(lst);
+        lst.add("Sumit");
+        lst.add("Neha");
+        lst.add("Amit");
+        System.out.println(lst);//[Sumit, Neha, Amit]
+        Collections.sort(lst);
+        System.out.println(lst);//[Amit, Neha, Sumit]
+
+
+        Collections.reverse(lst);
+        System.out.println(lst);//[Sumit, Neha, Amit]
+
+
+        //
+        List<String> lstfirst=new ArrayList<>();
+        lstfirst.add("Sumit");
+        lstfirst.add("Neha");
+
+        List<String> lstsecond=new ArrayList<>();
+        lstsecond.add("AMit");
+        lstsecond.add("Neha");
+
+        List<String> lstthird=new ArrayList<>();
+        lstthird.add("Neha");
+        lstthird.add("Sumit");
+
+        List<String> lstfour=new ArrayList<>();
+        lstfour.add("Sumit");
+        lstfour.add("Neha");
+
+        System.out.println(Objects.equals(lstfirst, lstsecond));
+
+        System.out.println(Objects.equals(lstfirst, lstthird));
+        System.out.println(Objects.equals(lstfirst, lstfour));
+
+
+    }
+
+
+
 
 
 

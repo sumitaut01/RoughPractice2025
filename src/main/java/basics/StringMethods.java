@@ -1,6 +1,10 @@
 package basics;
 
+import io.restassured.response.Response;
+
 import java.util.Arrays;
+
+import static io.restassured.RestAssured.given;
 
 public class StringMethods {
 
@@ -113,10 +117,53 @@ regardless of whether they live in SCP or heap.
 
 
 
+        //format
+
+        String result = String.format("Hello %s", "Sumit");
+
+        System.out.println(result); //Hello Sumit
+
+
+        String name = "Sumit";
+        int age = 39;
+        String msg = String.format("Name = %s Age = %d", name, age);
+
+        System.out.println(msg);//Name = Sumit Age = 39
+
+
+        /*
+        Common placeholders
+Placeholder	Type
+%s	String
+%d	Integer
+%f	Floating point
+%b	Boolean
+%c	Character
+%n	New line
+         */
+
+        double price = 123.4567;
+
+        System.out.println(
+                String.format("%.2f", price)
+        );
+//123.46
+
+
+        System.out.println(
+                String.format("%05d", 25)
+        );
+        //00025
 
 
 
+        int filmId=2;
+        String endpoint =
+                String.format("/films/%d", filmId);
 
+        Response response =
+                given()
+                        .get(endpoint);
 
     }
 }

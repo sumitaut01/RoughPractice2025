@@ -19,6 +19,6 @@ public class R2_RestAssuredBasic {
 //        The server cannot produce a response matching the list of acceptable values defined in the request's Accept header.
        Response response = request.get();
         System.out.println(response.getStatusCode());
-        System.out.println(response.asString());
+        System.out.println(response.asString()); //remeber to string with get object.. as string gives body as is
     }
 }

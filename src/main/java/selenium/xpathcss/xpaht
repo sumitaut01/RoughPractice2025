@@ -13,6 +13,8 @@
     //tagName[text()=’value’]
     //tagName[contains(text(),’value’)]
 
+//not is function..note below
+//td[normalize-space()='1']/following-sibling::td[not(input[@type='checkbox'])]
 
 //Using position method:
   Position refers order.
