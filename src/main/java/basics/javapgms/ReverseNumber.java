@@ -34,4 +34,21 @@ public class ReverseNumber {
         System.out.println(rev);//2345
 
     }
+
+
+    @Test
+    public void Rough120826(){
+        int num=5432;
+        int rev=0;
+        System.out.println(num);
+
+        while(num>0){
+           rev=rev*10+ num%10;
+            num=num/10;
+        }
+
+        System.out.println(rev);
+
+
+    }
 }

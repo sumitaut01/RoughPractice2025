@@ -1,0 +1,12 @@
+#1 Reading typed value from textbox
+
+        System.out.println(driver.findElement(name).getText());// this wont print typed value. This is best for innertext
+        System.out.println(driver.findElement(name).getAttribute("value"));//somedata
+        System.out.println(driver.findElement(name).getDomAttribute("value"));//null
+        System.out.println(driver.findElement(name).getDomProperty("value"));//somedata
+
+#2  Does opening new window transfers control to new window??
+
+#3 Actions need driver. Select needs Webelement
+
+#4 normalize-space() is a function, can we used in contains like text. Ignores spaces

@@ -124,6 +124,28 @@ public class R7_SecondMaxArray {
         System.out.println(second);
 
     }
+
+
+
+    @Test
+    public void Rough120826(){
+        int a[] = {15, 3, 12, 7,99};
+        int first = 0, second = 0;
+
+        for(int i=0;i<a.length;i++){
+          if(a[i]>first){
+              second=first;
+              first=a[i];
+          }
+          else if(a[i]>second){
+              second=a[i];
+          }
+        }
+
+        System.out.println(first +" "+second);
+
+
+    }
 }
 
 

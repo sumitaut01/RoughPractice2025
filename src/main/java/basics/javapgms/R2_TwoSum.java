@@ -96,4 +96,23 @@ public class R2_TwoSum {
             }
         }
     }
+
+
+    @Test
+    public void Rough120826(){
+        int[] a = {0, 9, 2, 3, 4, 5, 6, 7, 8, 1};
+        int eSum = 9;
+
+        HashMap<Integer, Integer> hm = new HashMap<>();
+
+
+        for(int i=0;i<a.length;i++){
+            if(hm.containsKey(eSum-a[i])){
+                System.out.println(a[i] +" "+(eSum-a[i]));
+            }
+            else{
+                hm.put(a[i],i);
+            }
+        }
+    }
 }

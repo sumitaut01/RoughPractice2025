@@ -19,7 +19,7 @@ public class LinkedHashSetDemo {
         str.add("neha");
         str.add("amit");
         str.add("juhi");
-        str.add(null);//one null aloowed
+        str.add(null);//one null allowed
 
         System.out.println(str);//[sumit, neha, amit, juhi]
 

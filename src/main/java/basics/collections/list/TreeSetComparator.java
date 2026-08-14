@@ -15,7 +15,7 @@ public class TreeSetComparator {
         //[Amit, Sumit]   Natural Sorting
 
 
-        //If we want to add custom object, then we need compator or comparable implemeted
+        //If we want to add custom object, then we need comparator or comparable implemeted
         TreeSet<Box> tBox=new TreeSet<>();
         //tBox.add(new Box(10,20));
         //Exception in thread "main" java.lang.ClassCastException: class basics.collections.list.Box cannot be cast to class java.lang.Comparable (basics.collections.list.Box is in unnamed module of loader 'app'; java.lang.Comparable is in module java.base of loader 'bootstrap')

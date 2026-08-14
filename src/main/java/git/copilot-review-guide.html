@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Copilot Code Review — Team Guide</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1c1c1e;
+    --muted: #5b5f66;
+    --accent: #6e40c9;
+    --accent-light: #f3effc;
+    --border: #e2e2e6;
+    --code-bg: #f6f6f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  header .tag {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    color: var(--muted);
+    margin: 0;
+    font-size: 15px;
+  }
+  h2 {
+    font-size: 19px;
+    margin: 40px 0 12px;
+    padding-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 22px 0 8px;
+    color: var(--text);
+  }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+  }
+  .callout {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--accent); }
+  .path-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13.5px;
+    margin: 10px 0 18px;
+    color: var(--text);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.8px;
+    line-height: 1.55;
+    margin: 10px 0 24px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .footer-note {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="tag">Internal Guide</span>
+    <h1>GitHub Copilot Code Review — Setup &amp; Custom Instructions</h1>
+    <p>How Copilot shows up as a PR reviewer, and how to steer its feedback for our Selenium/Java stack.</p>
+  </header>
+
+  <h2><span class="num">1</span>Why Copilot appears as a reviewer</h2>
+  <p>
+    Copilot code review is <strong>not on by default</strong> — it only appears on PRs because
+    someone (a repo or org admin) explicitly enabled it. Once enabled, it behaves like an
+    automated reviewer: it reads the PR diff and leaves inline comments and suggestions,
+    the same way a human reviewer would.
+  </p>
+  <p>It can be enabled in two ways:</p>
+  <table>
+    <tr><th>Mode</th><th>How it works</th></tr>
+    <tr>
+      <td><strong>Automatic</strong></td>
+      <td>A repo/org admin sets up a ruleset ("Automatically request Copilot code review") so Copilot is added to every new PR without anyone asking.</td>
+    </tr>
+    <tr>
+      <td><strong>Manual</strong></td>
+      <td>Anyone can add "Copilot" in the PR's Reviewers list, the same way you'd request a human reviewer.</td>
+    </tr>
+  </table>
+  <div class="callout">
+    <strong>Check it yourself:</strong> Go to <code>Repo → Settings → Rules → Rulesets</code>
+    and look for a rule referencing Copilot code review to see whether it's configured at the repo or org level.
+  </div>
+
+  <h2><span class="num">2</span>What rules Copilot follows</h2>
+  <p>
+    By default, Copilot reviews using its own general good-practice judgment — things like
+    code smells, potential bugs, naming, and error handling. It has <strong>no awareness of our
+    project-specific conventions</strong> unless we tell it.
+  </p>
+  <p>
+    We can steer it with a custom instructions file committed to the repo. Copilot reads
+    this automatically on every review — no extra configuration needed once the file exists.
+  </p>
+  <div class="path-box">.github/copilot-instructions.md</div>
+
+  <h2><span class="num">3</span>Our custom instructions file</h2>
+  <p>Below is the version tailored to our Selenium + Java + TestNG + RestAssured framework. Trim any section that doesn't apply to a given repo.</p>
+
+<pre><code># Copilot Code Review Instructions
+
+This project is a **Selenium + Java + TestNG** UI automation framework, with
+API testing via **RestAssured** and DB validation against **PostgreSQL/Oracle**.
+Use the conventions below when reviewing pull requests.
+
+## General Review Priorities
+
+- Flag flaky-prone patterns before style nits — flakiness costs more than
+  formatting.
+- Prefer correctness and maintainability over cleverness. Test code should be
+  boring and obvious to read.
+- Call out anything that will break in CI (headless mode, parallel execution,
+  environment-specific paths) even if it works locally.
+
+## Selenium / UI Layer
+
+- No hardcoded Thread.sleep() — flag it every time. Require explicit waits
+  (WebDriverWait + ExpectedConditions) or a framework wait utility instead.
+- Locators should prefer stable attributes (id, data-testid,
+  name) over brittle XPath chains or CSS built on DOM position/index.
+- Page Object classes should not contain assertions — assertions belong in
+  test/step classes, not Page Objects.
+- Driver instances must come from the framework's ThreadLocal driver
+  manager — flag any direct new ChromeDriver() / new FirefoxDriver()
+  instantiation inside test classes.
+- No static WebDriver fields — breaks parallel execution.
+
+## TestNG / Test Structure
+
+- Every test method should have a clear, single responsibility — flag tests
+  doing multiple unrelated validations under one @Test.
+- Test methods must use descriptive names (behavior-based, e.g.
+  shouldRejectLoginWithExpiredToken, not test1 or loginTest).
+- Required TestNG annotations/attributes should be present where
+  applicable: groups, priority (only when order truly matters), and
+  description.
+- Data-driven tests should use @DataProvider rather than duplicated test
+  methods with hardcoded variants.
+- No hard dependencies between independent test methods
+  (dependsOnMethods should only be used for genuine setup chains, not to
+  force ordering).
+
+## API Layer (RestAssured)
+
+- Response validation should use the framework's ResponseValidator /
+  schema validation utilities rather than ad hoc assertEquals on raw
+  JSON paths, where a validator already exists for that endpoint.
+- Flag inline base URIs, tokens, or environment-specific values — these
+  must come from the YAML/config-driven environment setup.
+- Request/response logging should use existing Filters, not
+  System.out.println debugging left in test code.
+
+## Assertions &amp; Reporting
+
+- Use soft assertions (SoftAssert) when validating multiple independent
+  fields in one test, so one failure doesn't mask the rest.
+- Every assertion should have a clear failure message — flag bare
+  assertEquals(a, b) with no message.
+- No swallowed exceptions — flag empty catch blocks or
+  catch (Exception e) {} with no logging/rethrow.
+
+## Database Validation
+
+- DB assertions should clean up any test data they insert (teardown in
+  @AfterMethod/@AfterClass), unless intentionally shared fixture data.
+- Flag raw SQL string concatenation with variables — require
+  parameterized queries.
+
+## Code Hygiene
+
+- No commented-out code blocks — flag and request removal.
+- No unused imports, unused variables, or dead code left from debugging.
+- Secrets, tokens, or credentials must never be hardcoded — must come from
+  config/environment/secrets manager.
+
+## What NOT to flag
+
+- Minor formatting differences already handled by the project's
+  formatter/linter (don't duplicate what static analysis already covers).
+- Naming style disagreements that don't affect readability (e.g. minor
+  verb choice in method names) — keep these low priority, not blocking.</code></pre>
+
+  <h2><span class="num">4</span>Rollout notes</h2>
+  <ul>
+    <li>Commit the file at repo root under <code>.github/copilot-instructions.md</code> — no toggle or setting needs to be flipped to activate it.</li>
+    <li>Remove sections that don't apply to a given repo (e.g. drop Oracle references if that repo only touches PostgreSQL) — mismatched rules just add noise.</li>
+    <li>Instructions can also be scoped to specific paths if we want different rules per module.</li>
+    <li>Treat this as a living document — watch what Copilot flags or misses over the next few PRs and tighten vague rules into concrete, explicit ones.</li>
+  </ul>
+
+  <div class="footer-note">
+    Internal reference — GitHub Copilot code review setup for our Selenium/Java automation repos.
+  </div>
+
+</div>
+</body>
+</html>

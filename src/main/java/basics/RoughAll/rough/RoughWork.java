@@ -1,4 +1,4 @@
-package basics.RoughAll;
+package basics.RoughAll.rough;
 
 public class RoughWork {
 

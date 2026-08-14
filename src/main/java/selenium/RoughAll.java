@@ -1,5 +1,6 @@
 package selenium;
 
+import basics.styleobject.Driver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -302,16 +303,62 @@ public class RoughAll {
         String sParent=driver.getWindowHandle();
         List<WebElement> els=driver.findElements(By.tagName("a"));
 
+    }
 
 
 
 
+    @Test
+    public void All(){
+
+
+        WebDriver driver=new ChromeDriver();
+
+        WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(20));
+
+
+        driver.get("https://testautomationpractice.blogspot.com/");
+        driver.manage().window().maximize();
+        driver.manage().deleteAllCookies();
 
 
 
 
+        WebElement sel= driver.findElement(By.xpath("//select[@id='country']"));
+        Select select=new Select(sel);
+        select.selectByVisibleText("India");
+        System.out.println(select.getOptions());
 
 
+
+        WebElement newTab=driver.findElement(By.xpath("//button[normalize-space()='New Tab']"));
+
+        System.out.println("Before Switching");
+        System.out.println(driver.getTitle());
+        String sParent=driver.getWindowHandle();
+        newTab.click();
+
+        System.out.println("AfterSwitching");
+        System.out.println(driver.getTitle());
+
+
+        WebElement text=driver.findElement(By.xpath("//span[normalize-space()='Self-Paced Learning']"));
+        wait.until(ExpectedConditions.elementToBeClickable(text));
+
+
+        Actions act=new Actions(driver);
+        act.moveToElement(text).click();
+        System.out.println(driver.getTitle());
+
+
+        System.out.println(driver.getTitle());
+        WebElement element=driver.findElement(By.xpath("//a[contains(text(),'Udemy Courses')]"));
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        element.click();
+
+
+
+        driver.quit();
 
 
 

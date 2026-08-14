@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,17 @@ public class R_10ScreenShot {
 
         System.out.println(js.executeScript("return document.title"));
         driver.quit();
+
+    }
+
+
+
+    @Test
+    public void Rough(){
+
+        WebDriver driver = new ChromeDriver();
+        String image=((TakesScreenshot)driver).getScreenshotAs(OutputType.BASE64);
+
 
     }
 }

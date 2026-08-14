@@ -32,7 +32,8 @@ build/
 !**/src/test/**/build/
 
 ##.idea/sonarlint/issuestore
-.idea/sonarlint/issuestore
+#.idea/sonarlint/issuestore
+.idea/sonarlint/
 
 ### VS Code ###
 .vscode/
