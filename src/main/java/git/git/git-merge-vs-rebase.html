@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merge vs Rebase — a visual field guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0d1117;
+    --bg-raised: #121822;
+    --bg-card: #161d29;
+    --line: #26303f;
+    --text: #e6edf3;
+    --muted: #8b96a5;
+    --muted-dim: #5a6472;
+    --merge: #58a6ff;
+    --merge-dim: #1f3a5c;
+    --rebase: #f0883e;
+    --rebase-dim: #5c3a1f;
+    --main-line: #3fb950;
+    --main-dim: #1c3d24;
+    --ghost: #3a4250;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--merge-dim); color:#fff;}
+
+  .wrap{max-width:980px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 56px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);
+    background-size: 28px 28px;
+    opacity:0.35;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--main-line); box-shadow:0 0 8px var(--main-line);}
+  h1{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:clamp(34px, 5vw, 54px);
+    line-height:1.06;
+    margin:0 0 20px;
+    letter-spacing:-0.02em;
+    position:relative;
+  }
+  h1 .accent-m{color:var(--merge);}
+  h1 .accent-r{color:var(--rebase);}
+  .hero p.lede{
+    font-size:18px;
+    color:var(--muted);
+    max-width:640px;
+    margin:0 0 30px;
+    position:relative;
+  }
+  .hero-cmd{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    padding:10px 16px;
+    border-radius:8px;
+    color:var(--muted);
+    position:relative;
+  }
+  .hero-cmd b{color:var(--text); font-weight:500;}
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:64px 0; border-bottom:1px solid var(--line);}
+  .section-head{margin-bottom:36px;}
+  .kicker{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+    margin:0 0 10px;
+  }
+  h2{
+    font-size:28px;
+    font-weight:700;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .section-head p{color:var(--muted); max-width:640px; margin:0; font-size:15.5px;}
+
+  /* ---------- DIAGRAM CARDS ---------- */
+  .diagram-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  @media (max-width:800px){ .diagram-grid{grid-template-columns:1fr;} }
+
+  .diagram-card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .diagram-card.merge{border-top:3px solid var(--merge);}
+  .diagram-card.rebase{border-top:3px solid var(--rebase);}
+
+  .diagram-card-head{
+    padding:20px 22px 0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .diagram-card-head h3{
+    margin:0;
+    font-size:17px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .diagram-card-head h3 .sw{width:9px;height:9px;border-radius:2px;}
+  .merge h3 .sw{background:var(--merge);}
+  .rebase h3 .sw{background:var(--rebase);}
+
+  .diagram-card-head code{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted);
+    background:var(--bg-raised);
+    padding:4px 8px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+
+  svg.graph{width:100%; height:auto; display:block; padding:14px 6px 4px;}
+
+  .node{ opacity:0; transform:scale(0.4); transform-origin:center; transition:opacity .35s ease, transform .35s cubic-bezier(.2,1.4,.4,1); }
+  .node.visible{ opacity:1; transform:scale(1); }
+  .edge{ stroke-dasharray:400; stroke-dashoffset:400; transition:stroke-dashoffset .5s ease, opacity .4s ease; opacity:1;}
+  .edge.visible{ stroke-dashoffset:0; }
+  .ghost{ opacity:0; transition:opacity .4s ease; }
+  .ghost.visible{ opacity:1; }
+  .fadeout{ transition:opacity .5s ease; }
+  .fadeout.dimmed{ opacity:0.22; }
+  .label{ font-family:var(--mono); font-size:11px; fill:var(--muted); opacity:0; transition:opacity .4s ease; }
+  .label.visible{ opacity:1; }
+  .commit-label{ font-family:var(--mono); font-weight:700; font-size:12px; fill:var(--bg); }
+
+  .diagram-caption{
+    min-height:20px;
+    padding:2px 22px 20px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .diagram-caption b{color:var(--text); font-weight:500;}
+
+  .diagram-controls{
+    display:flex;
+    gap:10px;
+    padding:0 22px 22px;
+  }
+  .btn{
+    font-family:var(--mono);
+    font-size:12.5px;
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    color:var(--text);
+    padding:9px 16px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:border-color .2s ease, transform .1s ease;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .btn:hover{border-color:var(--muted-dim);}
+  .btn:active{transform:scale(0.97);}
+  .diagram-card.merge .btn.primary{border-color:var(--merge); color:var(--merge);}
+  .diagram-card.rebase .btn.primary{border-color:var(--rebase); color:var(--rebase);}
+  .btn.ghost-btn{color:var(--muted);}
+
+  /* ---------- GOLDEN RULE ---------- */
+  .rule-box{
+    background:linear-gradient(135deg, var(--rebase-dim), var(--bg-card) 55%);
+    border:1px solid #6b3d20;
+    border-radius:14px;
+    padding:26px 28px;
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+  .rule-box .icon{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:20px;
+    color:var(--rebase);
+    background:var(--bg);
+    border:1px solid var(--rebase);
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:9px;
+    flex-shrink:0;
+  }
+  .rule-box h4{margin:0 0 6px; font-size:16px;}
+  .rule-box p{margin:0; color:var(--muted); font-size:14.5px;}
+
+  /* ---------- COMPARISON TABLE ---------- */
+  table.cmp{width:100%; border-collapse:collapse; font-size:14.5px;}
+  table.cmp th, table.cmp td{
+    text-align:left;
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  table.cmp th{
+    font-family:var(--mono);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--muted-dim);
+    font-weight:500;
+  }
+  table.cmp th.m{color:var(--merge);}
+  table.cmp th.r{color:var(--rebase);}
+  table.cmp td.label-col{color:var(--muted); font-family:var(--mono); font-size:13px; white-space:nowrap;}
+  table.cmp tr:last-child td{border-bottom:none;}
+
+  /* ---------- DECISION CARDS ---------- */
+  .decision-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:800px){ .decision-grid{grid-template-columns:1fr;} }
+  .decision-card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px 24px 22px;
+  }
+  .decision-card.m{border-left:3px solid var(--merge);}
+  .decision-card.r{border-left:3px solid var(--rebase);}
+  .decision-card h4{
+    margin:0 0 14px;
+    font-size:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .decision-card ul{margin:0; padding-left:0; list-style:none;}
+  .decision-card li{
+    font-size:14px;
+    color:var(--muted);
+    padding:8px 0 8px 22px;
+    position:relative;
+    border-top:1px dashed var(--line);
+  }
+  .decision-card li:first-child{border-top:none; padding-top:0;}
+  .decision-card li::before{
+    content:"→";
+    position:absolute; left:0; top:8px;
+    font-family:var(--mono);
+  }
+  .decision-card li:first-child::before{top:0;}
+  .decision-card li b{color:var(--text); font-weight:600;}
+
+  /* ---------- CHEATSHEET ---------- */
+  .cheatsheet{
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .cs-row{
+    display:grid;
+    grid-template-columns:200px 1fr;
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .cs-row:last-child{border-bottom:none;}
+  .cs-cmd{
+    padding:13px 18px;
+    color:var(--text);
+    background:var(--bg-card);
+    border-right:1px solid var(--line);
+    white-space:nowrap;
+    overflow-x:auto;
+  }
+  .cs-desc{padding:13px 18px; color:var(--muted); font-family:var(--sans); font-size:13.5px; display:flex; align-items:center;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer p{color:var(--muted-dim); font-size:12.5px; font-family:var(--mono);}
+
+  @media (prefers-reduced-motion: reduce){
+    .node, .edge, .ghost, .label, .fadeout{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span> git history &nbsp;·&nbsp; a visual field guide</div>
+    <h1>git <span class="accent-m">merge</span> vs git <span class="accent-r">rebase</span></h1>
+    <p class="lede">Same job — bring one branch's commits into another — two completely different shapes of history. Press play on each diagram below to watch exactly what each command does, commit by commit.</p>
+    <div class="hero-cmd">git log --graph --oneline &nbsp;→&nbsp; <b>the shape you're choosing, every time you integrate</b></div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">01 — watch it happen</p>
+      <h2>The same feature branch, two outcomes</h2>
+      <p>Both diagrams start identically: <b style="color:var(--text)">main</b> has commits A and B, and a <b style="color:var(--text)">feature</b> branch splits off at B with commits D and E, while main keeps moving with commit C. Press play to see how each command resolves that split.</p>
+    </div>
+
+    <div class="diagram-grid">
+
+      <!-- MERGE CARD -->
+      <div class="diagram-card merge" id="mergeCard">
+        <div class="diagram-card-head">
+          <h3><span class="sw"></span>git merge</h3>
+          <code>git checkout main && git merge feature</code>
+        </div>
+        <svg class="graph" viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- edges -->
+          <line class="edge" id="m-e-ab" x1="60" y1="190" x2="180" y2="190" stroke="var(--main-line)" stroke-width="3"/>
+          <line class="edge" id="m-e-bd" x1="180" y1="190" x2="300" y2="80" stroke="var(--merge)" stroke-width="3"/>
+          <line class="edge" id="m-e-de" x1="300" y1="80" x2="420" y2="80" stroke="var(--merge)" stroke-width="3"/>
+          <line class="edge" id="m-e-bc" x1="180" y1="190" x2="420" y2="190" stroke="var(--main-line)" stroke-width="3"/>
+          <line class="edge" id="m-e-cf" x1="420" y1="190" x2="540" y2="150" stroke="var(--main-line)" stroke-width="3"/>
+          <line class="edge" id="m-e-ef" x1="420" y1="80" x2="540" y2="150" stroke="var(--merge)" stroke-width="3"/>
+
+          <!-- nodes -->
+          <g class="node" id="m-n-a"><circle cx="60" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="60" y="194" text-anchor="middle">A</text></g>
+          <g class="node" id="m-n-b"><circle cx="180" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="180" y="194" text-anchor="middle">B</text></g>
+          <g class="node" id="m-n-d"><circle cx="300" cy="80" r="16" fill="var(--merge)"/><text class="commit-label" x="300" y="84" text-anchor="middle">D</text></g>
+          <g class="node" id="m-n-e"><circle cx="420" cy="80" r="16" fill="var(--merge)"/><text class="commit-label" x="420" y="84" text-anchor="middle">E</text></g>
+          <g class="node" id="m-n-c"><circle cx="420" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="420" y="194" text-anchor="middle">C</text></g>
+          <g class="node" id="m-n-f"><circle cx="540" cy="150" r="18" fill="none" stroke="var(--merge)" stroke-width="3"/><text class="commit-label" x="540" y="154" text-anchor="middle" style="fill:var(--merge)">F</text></g>
+
+          <text class="label" id="m-l-main1" x="30" y="215">main</text>
+          <text class="label" id="m-l-feat" x="290" y="55">feature</text>
+          <text class="label" id="m-l-merge" x="500" y="185">merge commit — 2 parents</text>
+        </svg>
+        <div class="diagram-caption" id="mergeCaption">Ready — press play to build the graph.</div>
+        <div class="diagram-controls">
+          <button class="btn primary" onclick="playMerge()">▶ Play merge</button>
+          <button class="btn ghost-btn" onclick="resetMerge()">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- REBASE CARD -->
+      <div class="diagram-card rebase" id="rebaseCard">
+        <div class="diagram-card-head">
+          <h3><span class="sw"></span>git rebase</h3>
+          <code>git checkout feature && git rebase main</code>
+        </div>
+        <svg class="graph" viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- edges -->
+          <line class="edge" id="r-e-ab" x1="60" y1="190" x2="180" y2="190" stroke="var(--main-line)" stroke-width="3"/>
+          <line class="edge fadeout" id="r-e-bd" x1="180" y1="190" x2="300" y2="80" stroke="var(--ghost)" stroke-width="3"/>
+          <line class="edge fadeout" id="r-e-de" x1="300" y1="80" x2="420" y2="80" stroke="var(--ghost)" stroke-width="3"/>
+          <line class="edge" id="r-e-bc" x1="180" y1="190" x2="300" y2="190" stroke="var(--main-line)" stroke-width="3"/>
+          <line class="edge" id="r-e-cd2" x1="300" y1="190" x2="420" y2="190" stroke="var(--rebase)" stroke-width="3" stroke-dasharray="400"/>
+          <line class="edge" id="r-e-d2e2" x1="420" y1="190" x2="540" y2="190" stroke="var(--rebase)" stroke-width="3" stroke-dasharray="400"/>
+
+          <!-- ghost original nodes (fade after rebase) -->
+          <g class="node fadeout" id="r-n-d"><circle cx="300" cy="80" r="16" fill="var(--ghost)"/><text class="commit-label" x="300" y="84" text-anchor="middle" style="fill:#0d1117">D</text></g>
+          <g class="node fadeout" id="r-n-e"><circle cx="420" cy="80" r="16" fill="var(--ghost)"/><text class="commit-label" x="420" y="84" text-anchor="middle" style="fill:#0d1117">E</text></g>
+
+          <!-- main line -->
+          <g class="node" id="r-n-a"><circle cx="60" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="60" y="194" text-anchor="middle">A</text></g>
+          <g class="node" id="r-n-b"><circle cx="180" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="180" y="194" text-anchor="middle">B</text></g>
+          <g class="node" id="r-n-c"><circle cx="300" cy="190" r="16" fill="var(--main-line)"/><text class="commit-label" x="300" y="194" text-anchor="middle">C</text></g>
+
+          <!-- replayed nodes -->
+          <g class="node" id="r-n-d2"><circle cx="420" cy="190" r="16" fill="var(--rebase)"/><text class="commit-label" x="420" y="194" text-anchor="middle">D'</text></g>
+          <g class="node" id="r-n-e2"><circle cx="540" cy="190" r="16" fill="var(--rebase)"/><text class="commit-label" x="540" y="194" text-anchor="middle">E'</text></g>
+
+          <text class="label" id="r-l-main1" x="30" y="215">main</text>
+          <text class="label ghost" id="r-l-feat" x="290" y="55">feature (before)</text>
+          <text class="label" id="r-l-replay" x="440" y="222">replayed onto C — linear history</text>
+        </svg>
+        <div class="diagram-caption" id="rebaseCaption">Ready — press play to build the graph.</div>
+        <div class="diagram-controls">
+          <button class="btn primary" onclick="playRebase()">▶ Play rebase</button>
+          <button class="btn ghost-btn" onclick="resetRebase()">↺ Reset</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">02 — the non-negotiable</p>
+      <h2>The one rule that matters more than preference</h2>
+    </div>
+    <div class="rule-box">
+      <div class="icon">!</div>
+      <div>
+        <h4>Never rebase a branch other people have already pulled from.</h4>
+        <p>Rebase rewrites commits — new hashes, same content. Anyone with a copy of the old commits now has a history that has diverged from yours, and their next pull turns into a painful, duplicated mess. Merge is <b style="color:var(--text)">additive and safe on shared branches</b>. Rebase is a <b style="color:var(--text)">local cleanup tool for history you alone own</b> — right up until the moment you push it, after which it becomes public and immutable by the same rule.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">03 — side by side</p>
+      <h2>What actually changes</h2>
+    </div>
+    <table class="cmp">
+      <thead>
+        <tr><th></th><th class="m">merge</th><th class="r">rebase</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="label-col">History shape</td><td>Branching, preserves the true timeline</td><td>Linear, rewritten to look like it happened in order</td></tr>
+        <tr><td class="label-col">Commit hashes</td><td>Unchanged</td><td>New hashes for every replayed commit</td></tr>
+        <tr><td class="label-col">Extra commit</td><td>Yes — a merge commit with 2 parents</td><td>No — no merge commit, history stays flat</td></tr>
+        <tr><td class="label-col">Safe on shared branches</td><td>Always</td><td>Only before pushing / on solo branches</td></tr>
+        <tr><td class="label-col">Conflict resolution</td><td>Resolved once, at the merge point</td><td>Potentially resolved once per replayed commit</td></tr>
+        <tr><td class="label-col"><code style="font-family:var(--mono); font-size:12px;">git log --graph</code> readability</td><td>Shows exactly what happened, but can get noisy with many merges</td><td>Reads like a clean, single story — easy to bisect and review</td></tr>
+        <tr><td class="label-col">Reversibility</td><td>Trivial — revert the merge commit</td><td>Harder — original commits are gone from the branch</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">04 — decision guide</p>
+      <h2>So which one, when?</h2>
+    </div>
+    <div class="decision-grid">
+      <div class="decision-card m">
+        <h4 style="color:var(--merge)">Reach for merge when…</h4>
+        <ul>
+          <li>You're integrating a <b>shared or public branch</b> — release branches, `main`, anything others have pulled</li>
+          <li>You want an <b>honest record</b> of when a feature actually landed, for audits or release notes</li>
+          <li>The feature branch is <b>long-lived</b> and you'd rather resolve conflicts once, at merge time</li>
+          <li>You need <b>easy revertability</b> — undoing a whole feature should be one command</li>
+          <li>Your team's workflow is <b>PR-based</b> with squash-and-merge or standard merge commits on GitHub/GitLab</li>
+        </ul>
+      </div>
+      <div class="decision-card r">
+        <h4 style="color:var(--rebase)">Reach for rebase when…</h4>
+        <ul>
+          <li>You're <b>cleaning up your own local branch</b> before opening a pull request</li>
+          <li>You want to <b>catch up with main</b> mid-feature without a noisy merge commit cluttering the log</li>
+          <li>You're <b>squashing or reordering</b> messy WIP commits into a coherent, reviewable story (interactive rebase)</li>
+          <li>The team values a <b>linear, bisectable history</b> for `git bisect` and clean blame</li>
+          <li>The branch is <b>yours alone</b> and hasn't been pushed — or you've explicitly agreed force-pushes are OK</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">05 — quick reference</p>
+      <h2>Commands you'll actually reach for</h2>
+    </div>
+    <div class="cheatsheet">
+      <div class="cs-row"><div class="cs-cmd">git merge feature</div><div class="cs-desc">Merge feature into the current branch, creating a merge commit if histories diverged</div></div>
+      <div class="cs-row"><div class="cs-cmd">git merge --no-ff feature</div><div class="cs-desc">Force a merge commit even if a fast-forward were possible — keeps the feature's shape visible in history</div></div>
+      <div class="cs-row"><div class="cs-cmd">git rebase main</div><div class="cs-desc">Replay the current branch's commits on top of main's latest tip</div></div>
+      <div class="cs-row"><div class="cs-cmd">git rebase -i HEAD~5</div><div class="cs-desc">Interactive rebase — squash, reorder, reword, or drop the last 5 commits before sharing them</div></div>
+      <div class="cs-row"><div class="cs-cmd">git rebase --abort</div><div class="cs-desc">Bail out mid-rebase and return to the state before it started</div></div>
+      <div class="cs-row"><div class="cs-cmd">git pull --rebase</div><div class="cs-desc">Fetch and replay your local commits on top instead of creating a merge commit on pull</div></div>
+      <div class="cs-row"><div class="cs-cmd">git push --force-with-lease</div><div class="cs-desc">The only safe way to push a rebased branch — fails if someone else pushed in the meantime</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>merge preserves truth · rebase preserves narrative — pick the one your history needs</p>
+  </div>
+</footer>
+
+<script>
+function q(id){ return document.getElementById(id); }
+function show(id, delay){ setTimeout(()=>{ var el=q(id); if(el) el.classList.add('visible'); }, delay); }
+function dim(id, delay){ setTimeout(()=>{ var el=q(id); if(el) el.classList.add('dimmed'); }, delay); }
+function hideAll(ids){ ids.forEach(id=>{ var el=q(id); if(el){ el.classList.remove('visible'); el.classList.remove('dimmed'); } }); }
+
+var mergeIds = ['m-n-a','m-n-b','m-e-ab','m-n-d','m-e-bd','m-n-e','m-e-de','m-n-c','m-e-bc','m-n-f','m-e-cf','m-e-ef','m-l-main1','m-l-feat','m-l-merge'];
+var mergeBtnLocked = false;
+
+function playMerge(){
+  if(mergeBtnLocked) return;
+  resetMerge();
+  mergeBtnLocked = true;
+  var cap = q('mergeCaption');
+  show('m-n-a', 100); show('m-n-b', 300); show('m-e-ab', 350); show('m-l-main1', 500);
+  setTimeout(()=>{ cap.innerHTML = "main starts with <b>A → B</b>"; }, 500);
+
+  show('m-e-bd', 900); show('m-n-d', 1200); show('m-l-feat', 1300);
+  setTimeout(()=>{ cap.innerHTML = "<b>feature</b> branches off B, adds commit <b>D</b>"; }, 1300);
+
+  show('m-e-de', 1700); show('m-n-e', 2000);
+  setTimeout(()=>{ cap.innerHTML = "feature adds commit <b>E</b>"; }, 2000);
+
+  show('m-e-bc', 2400); show('m-n-c', 2700);
+  setTimeout(()=>{ cap.innerHTML = "meanwhile main independently adds commit <b>C</b> — histories have diverged"; }, 2700);
+
+  show('m-e-cf', 3200); show('m-e-ef', 3200); show('m-n-f', 3500); show('m-l-merge', 3700);
+  setTimeout(()=>{ cap.innerHTML = "<b>git merge</b> creates commit <b>F</b>, tying both histories together with two parents — nothing rewritten"; mergeBtnLocked=false; }, 3700);
+}
+function resetMerge(){ hideAll(mergeIds); q('mergeCaption').textContent = 'Ready — press play to build the graph.'; mergeBtnLocked=false; }
+
+var rebaseMainIds = ['r-n-a','r-n-b','r-e-ab','r-l-main1'];
+var rebaseGhostIds = ['r-n-d','r-e-bd','r-n-e','r-e-de','r-l-feat'];
+var rebaseCIds = ['r-n-c','r-e-bc'];
+var rebaseReplayIds = ['r-n-d2','r-e-cd2','r-n-e2','r-e-d2e2','r-l-replay'];
+var rebaseAllIds = rebaseMainIds.concat(rebaseGhostIds, rebaseCIds, rebaseReplayIds);
+var rebaseBtnLocked = false;
+
+function playRebase(){
+  if(rebaseBtnLocked) return;
+  resetRebase();
+  rebaseBtnLocked = true;
+  var cap = q('rebaseCaption');
+
+  rebaseMainIds.forEach((id,i)=>show(id, 150+i*150));
+  setTimeout(()=>{ cap.innerHTML = "main starts with <b>A → B</b>"; }, 500);
+
+  rebaseGhostIds.forEach((id,i)=>show(id, 900+i*200));
+  setTimeout(()=>{ cap.innerHTML = "<b>feature</b> branches off B, adds <b>D</b> and <b>E</b>"; }, 1500);
+
+  rebaseCIds.forEach((id,i)=>show(id, 2000+i*200));
+  setTimeout(()=>{ cap.innerHTML = "meanwhile main adds commit <b>C</b> — histories diverge, same as before"; }, 2300);
+
+  setTimeout(()=>{
+    rebaseGhostIds.forEach(id=>dim(id,0));
+    cap.innerHTML = "<b>git rebase main</b> begins: the original D and E are set aside…";
+  }, 2900);
+
+  show('r-n-d2', 3500); show('r-e-cd2', 3500);
+  setTimeout(()=>{ cap.innerHTML = "…and replayed on top of C as a brand-new commit <b>D'</b> — same changes, new hash, new parent"; }, 3800);
+
+  show('r-n-e2', 4300); show('r-e-d2e2', 4300); show('r-l-replay', 4600);
+  setTimeout(()=>{ cap.innerHTML = "then <b>E'</b> is replayed on top of D'. Result: <b>A → B → C → D' → E'</b> — one straight line, as if it always happened that way"; rebaseBtnLocked=false; }, 4600);
+}
+function resetRebase(){ hideAll(rebaseAllIds); q('rebaseCaption').textContent = 'Ready — press play to build the graph.'; rebaseBtnLocked=false; }
+</script>
+
+</body>
+</html>
