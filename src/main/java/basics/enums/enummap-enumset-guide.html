@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EnumMap & EnumSet — Study Guide</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a23; --panel2:#1d212c; --border:#2a2f3d;
+    --text:#e6e8ef; --muted:#9aa2b1; --accent:#7dd3fc; --accent2:#c084fc;
+    --good:#4ade80; --warn:#fbbf24; --code:#e0e7ff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:32px 20px 80px}
+  header{margin-bottom:36px}
+  h1{font-size:2rem; margin:0 0 6px}
+  .sub{color:var(--muted); font-size:1rem}
+  nav{
+    display:flex; flex-wrap:wrap; gap:8px; margin:24px 0 40px;
+    padding:14px; background:var(--panel); border:1px solid var(--border); border-radius:10px;
+  }
+  nav a{
+    color:var(--accent); text-decoration:none; font-size:.85rem;
+    padding:6px 10px; border-radius:6px; background:var(--panel2);
+  }
+  nav a:hover{background:#242938}
+  section{margin-bottom:44px; scroll-margin-top:20px}
+  h2{
+    font-size:1.35rem; border-left:4px solid var(--accent); padding-left:12px;
+    margin-bottom:14px;
+  }
+  h3{color:var(--accent2); font-size:1.05rem; margin:22px 0 8px}
+  p{color:#d3d7e2}
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:18px 20px; margin:14px 0;
+  }
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.9rem}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left}
+  th{background:var(--panel2); color:var(--accent)}
+  tr:nth-child(even) td{background:#151822}
+  pre{
+    background:#0b0d13; border:1px solid var(--border); border-radius:8px;
+    padding:16px; overflow-x:auto; font-size:.85rem; line-height:1.55;
+  }
+  code{font-family:"SFMono-Regular",Consolas,Menlo,monospace; color:var(--code)}
+  pre code{color:var(--code)}
+  .kw{color:#ff7ab2} .type{color:#7dd3fc} .str{color:#a6e3a1}
+  .cm{color:#6b7280; font-style:italic} .num{color:#fab387} .ann{color:#f9e2af}
+  .badge{
+    display:inline-block; font-size:.72rem; padding:2px 9px; border-radius:20px;
+    background:#1f2937; color:var(--good); border:1px solid #234; margin-left:8px;
+  }
+  .warn{color:var(--warn)}
+  .note{
+    border-left:3px solid var(--accent2); background:#1a1730; padding:10px 14px;
+    border-radius:0 8px 8px 0; margin:12px 0; font-size:.92rem; color:#dcd6f7;
+  }
+  .qa{border-top:1px dashed var(--border); padding-top:14px; margin-top:14px}
+  .q{font-weight:600; color:var(--accent)}
+  .a{color:#d3d7e2; margin-top:4px}
+  footer{color:var(--muted); font-size:.8rem; text-align:center; margin-top:60px}
+  .runbtn{
+    background:#1e293b; color:var(--accent); border:1px solid var(--border);
+    padding:6px 12px; border-radius:6px; cursor:pointer; font-size:.8rem; margin-bottom:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>EnumMap &amp; EnumSet <span class="badge">Java Collections</span></h1>
+  <div class="sub">Specialized collections for enum keys/values — internals, examples, and interview Q&amp;A</div>
+</header>
+
+<nav>
+  <a href="#why">Why they exist</a>
+  <a href="#enumset">EnumSet</a>
+  <a href="#enummap">EnumMap</a>
+  <a href="#internals">Internals</a>
+  <a href="#comparison">Comparison table</a>
+  <a href="#pitfalls">Pitfalls</a>
+  <a href="#qa">Interview Q&amp;A</a>
+</nav>
+
+<section id="why">
+  <h2>1. Why EnumMap / EnumSet exist</h2>
+  <p>
+    You could always use a <code>HashMap&lt;MyEnum,V&gt;</code> or <code>HashSet&lt;MyEnum&gt;</code>.
+    They'd work correctly. But enums have a property ordinary keys don't: a fixed, known-in-advance
+    set of values, each with a stable <code>ordinal()</code> index. EnumMap/EnumSet exploit that
+    to trade the general-purpose hashing machinery for a flat array indexed by ordinal — faster,
+    more compact, and iterates in <strong>enum declaration order</strong> instead of hash order.
+  </p>
+  <div class="note">
+    Rule of thumb: <strong>if your key or element type is an enum, EnumMap/EnumSet should be your
+    default choice</strong> over HashMap/HashSet — it's strictly better for that use case, with no downside.
+  </div>
+</section>
+
+<section id="enumset">
+  <h2>2. EnumSet</h2>
+  <p>A <code>Set</code> implementation exclusively for enum types, backed internally by a bitmask (a <code>long</code>, or an array of <code>long</code>s if the enum has &gt;64 constants).</p>
+
+  <div class="card">
+<pre><code><span class="kw">enum</span> <span class="type">Day</span> { MON, TUE, WED, THU, FRI, SAT, SUN }
+
+<span class="kw">public class</span> <span class="type">EnumSetDemo</span> {
+    <span class="kw">public static void</span> main(<span class="type">String</span>[] args) {
+
+        <span class="cm">// 1. Factory methods — no public constructor exists</span>
+        <span class="type">EnumSet</span>&lt;Day&gt; weekdays = <span class="type">EnumSet</span>.range(Day.MON, Day.FRI);
+        <span class="type">EnumSet</span>&lt;Day&gt; weekend  = <span class="type">EnumSet</span>.of(Day.SAT, Day.SUN);
+        <span class="type">EnumSet</span>&lt;Day&gt; none     = <span class="type">EnumSet</span>.noneOf(Day.<span class="kw">class</span>);
+        <span class="type">EnumSet</span>&lt;Day&gt; all      = <span class="type">EnumSet</span>.allOf(Day.<span class="kw">class</span>);
+        <span class="type">EnumSet</span>&lt;Day&gt; notWed   = <span class="type">EnumSet</span>.complementOf(<span class="type">EnumSet</span>.of(Day.WED));
+
+        <span class="cm">// 2. Set algebra reads naturally</span>
+        weekdays.removeAll(<span class="type">EnumSet</span>.of(Day.FRI)); <span class="cm">// remove Friday</span>
+        <span class="type">System</span>.out.println(weekdays);            <span class="cm">// [MON, TUE, WED, THU]</span>
+
+        <span class="cm">// 3. Iteration order == declaration order, always</span>
+        <span class="kw">for</span> (Day d : all) <span class="type">System</span>.out.print(d + <span class="str">" "</span>);
+        <span class="cm">// MON TUE WED THU FRI SAT SUN</span>
+
+        <span class="cm">// 4. Bulk ops are bitwise under the hood -> very fast</span>
+        <span class="kw">boolean</span> isWorkday = weekdays.contains(Day.TUE); <span class="cm">// O(1), single bit test</span>
+    }
+}
+</code></pre>
+  </div>
+
+  <h3>Common factory methods</h3>
+  <table>
+    <tr><th>Method</th><th>Returns</th></tr>
+    <tr><td><code>noneOf(Class)</code></td><td>empty set</td></tr>
+    <tr><td><code>allOf(Class)</code></td><td>all constants</td></tr>
+    <tr><td><code>of(e1, e2, ...)</code></td><td>set of given elements</td></tr>
+    <tr><td><code>range(from, to)</code></td><td>contiguous range by ordinal, inclusive both ends</td></tr>
+    <tr><td><code>complementOf(set)</code></td><td>all constants NOT in the given set</td></tr>
+    <tr><td><code>copyOf(collection)</code></td><td>new EnumSet from an existing collection of the same enum type</td></tr>
+  </table>
+
+  <div class="note">
+    Classic use case: <strong>replacing bit-flag <code>int</code> constants</strong>. Instead of
+    <code>int PERMS = READ | WRITE;</code> with hand-rolled bitmasks, use
+    <code>EnumSet&lt;Permission&gt;</code> — same performance, type-safe, readable, no magic numbers.
+  </div>
+</section>
+
+<section id="enummap">
+  <h2>3. EnumMap</h2>
+  <p>A <code>Map</code> implementation exclusively for enum keys, backed internally by a plain array sized to the number of enum constants — indexed directly by <code>key.ordinal()</code>.</p>
+
+  <div class="card">
+<pre><code><span class="kw">enum</span> <span class="type">Status</span> { NEW, IN_PROGRESS, REVIEW, DONE }
+
+<span class="kw">public class</span> <span class="type">EnumMapDemo</span> {
+    <span class="kw">public static void</span> main(<span class="type">String</span>[] args) {
+
+        <span class="cm">// Constructor needs the enum's Class object (for array sizing)</span>
+        <span class="type">EnumMap</span>&lt;Status, <span class="type">Integer</span>&gt; ticketCounts = <span class="kw">new</span> <span class="type">EnumMap</span>&lt;&gt;(Status.<span class="kw">class</span>);
+
+        ticketCounts.put(Status.NEW, 12);
+        ticketCounts.put(Status.DONE, 47);
+        ticketCounts.put(Status.IN_PROGRESS, 5);
+
+        <span class="cm">// Iterates in enum declaration order, NOT insertion order</span>
+        ticketCounts.forEach((status, count) -&gt;
+            <span class="type">System</span>.out.println(status + <span class="str">" -> "</span> + count));
+        <span class="cm">// NEW -> 12
+        // IN_PROGRESS -> 5
+        // DONE -> 47</span>
+
+        <span class="cm">// getOrDefault / merge work exactly like HashMap</span>
+        ticketCounts.merge(Status.REVIEW, 1, <span class="type">Integer</span>::sum);
+    }
+}
+</code></pre>
+  </div>
+
+  <h3>Real interview-favorite pattern: grouping with EnumMap</h3>
+  <div class="card">
+<pre><code><span class="kw">enum</span> <span class="type">Suit</span> { CLUBS, DIAMONDS, HEARTS, SPADES }
+<span class="kw">record</span> <span class="type">Card</span>(Suit suit, <span class="type">String</span> rank) {}
+
+<span class="type">Map</span>&lt;Suit, <span class="type">List</span>&lt;Card&gt;&gt; bySuit = deck.stream()
+        .collect(<span class="type">Collectors</span>.groupingBy(
+                Card::suit,
+                () -&gt; <span class="kw">new</span> <span class="type">EnumMap</span>&lt;&gt;(Suit.<span class="kw">class</span>), <span class="cm">// 3-arg groupingBy: pick the map impl</span>
+                <span class="type">Collectors</span>.toList()));
+</code></pre>
+  </div>
+  <p>This is a common way EnumMap shows up in real code and interviews: swapping the default
+  <code>HashMap</code> supplier in <code>Collectors.groupingBy</code> for an EnumMap when the
+  grouping key is an enum.</p>
+</section>
+
+<section id="internals">
+  <h2>4. How they work internally</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>EnumSet</h3>
+      <p>Two package-private implementations, chosen automatically:</p>
+      <ul>
+        <li><code>RegularEnumSet</code> — enum has ≤ 64 constants. Backed by a single <code>long</code> bitmask; each bit position = one ordinal.</li>
+        <li><code>JumboEnumSet</code> — enum has &gt; 64 constants. Backed by a <code>long[]</code>.</li>
+      </ul>
+      <p><code>add(x)</code> is <code>bits |= (1L &lt;&lt; x.ordinal())</code>. <code>contains(x)</code> is a single AND + compare. Union/intersection/difference are single bitwise OR/AND/AND-NOT ops across the whole set — this is why bulk operations are so fast.</p>
+    </div>
+    <div class="card">
+      <h3>EnumMap</h3>
+      <p>Backed by a plain <code>Object[]</code> array, sized to <code>enumType.getEnumConstants().length</code>. A key's slot is simply <code>array[key.ordinal()]</code> — no hashing, no bucket, no collision handling. A parallel boolean/sentinel tracks which slots are populated (absent vs. null-valued).</p>
+      <p>Because there's no hashing step at all, both <code>get</code> and <code>put</code> are true O(1) with a lower constant factor than HashMap.</p>
+    </div>
+  </div>
+</section>
+
+<section id="comparison">
+  <h2>5. EnumMap/EnumSet vs HashMap/HashSet</h2>
+  <table>
+    <tr><th></th><th>EnumMap / EnumSet</th><th>HashMap / HashSet</th></tr>
+    <tr><td>Backing structure</td><td>Array indexed by ordinal (bitmask for Set)</td><td>Hash table + buckets/tree nodes</td></tr>
+    <tr><td>Null keys/elements</td><td>Not allowed → NPE</td><td>One null key allowed</td></tr>
+    <tr><td>Iteration order</td><td>Enum declaration (natural) order</td><td>Unspecified / hash order</td></tr>
+    <tr><td>Memory</td><td>Very compact (no node objects, no hash overhead)</td><td>Higher — node objects, load factor, resizing</td></tr>
+    <tr><td>Time complexity</td><td>O(1), no hashing, no collisions</td><td>O(1) average, but hashing + possible collision chains</td></tr>
+    <tr><td>Thread safety</td><td>Not synchronized (same as HashMap) — wrap with <code>Collections.synchronizedMap/Set</code> if needed</td><td>Not synchronized</td></tr>
+    <tr><td>Key/element type</td><td>Single specific enum type only</td><td>Any type</td></tr>
+  </table>
+</section>
+
+<section id="pitfalls">
+  <h2>6. Pitfalls &amp; gotchas</h2>
+  <ul>
+    <li><strong>No-arg constructor doesn't exist for EnumMap.</strong> You must pass <code>SomeEnum.class</code> (or copy from an existing EnumMap) — this is how it knows the array size and element order, since type erasure removes generic info at runtime.</li>
+    <li><strong>Null keys throw NPE immediately</strong> on <code>put</code>/<code>add</code> — unlike HashMap, which tolerates one null key.</li>
+    <li><strong>Adding constants to the enum later is safe</strong> — no rehashing needed, unlike HashMap where growth means resize + rehash.</li>
+    <li><strong>EnumSet has no public constructor</strong> — always created via static factories (<code>of</code>, <code>range</code>, <code>allOf</code>, etc.), which is itself a common "why" interview question.</li>
+    <li><strong>Comparing across different enum types</strong> in the same generic context is a compile error — EnumMap/EnumSet are strictly single-enum-type, which HashMap/HashSet don't enforce.</li>
+  </ul>
+</section>
+
+<section id="qa">
+  <h2>7. Interview Q&amp;A</h2>
+
+  <div class="card">
+    <div class="qa">
+      <div class="q">Q: Why use EnumMap instead of HashMap for enum keys?</div>
+      <div class="a">A: EnumMap indexes directly by ordinal into an array — no hashing, no collisions, lower memory footprint, and it iterates in natural enum order. It's a strictly better fit whenever the key type is a known enum.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: How is EnumSet implemented under the hood?</div>
+      <div class="a">A: As a bitmask — a single <code>long</code> (RegularEnumSet) if the enum has ≤64 constants, or a <code>long[]</code> (JumboEnumSet) otherwise. Each bit corresponds to one ordinal position.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: Why can't you just call <code>new EnumSet&lt;Day&gt;()</code>?</div>
+      <div class="a">A: EnumSet is abstract with no public constructor by design — you're forced through factory methods (<code>of</code>, <code>range</code>, <code>allOf</code>, <code>noneOf</code>, <code>complementOf</code>) that also select the right internal implementation (Regular vs Jumbo) based on the enum's size.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: What happens if you put a null key into an EnumMap?</div>
+      <div class="a">A: It throws <code>NullPointerException</code> immediately — unlike HashMap, EnumMap does not support null keys (or null elements in EnumSet).</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: Is EnumMap's iteration order guaranteed?</div>
+      <div class="a">A: Yes — it always iterates in the natural order of the enum, i.e., the order constants are declared in the enum's source, which corresponds to ascending <code>ordinal()</code>.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: When would you deliberately avoid EnumMap/EnumSet?</div>
+      <div class="a">A: When the key/element type isn't a single fixed enum — e.g., a heterogeneous key type, a key type that's decided at runtime/pluggable, or when you need null keys. Also not useful for enums with an enormous number of constants where a sparse map might actually save memory over an array sized to all constants (rare in practice).</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: Are EnumMap/EnumSet thread-safe?</div>
+      <div class="a">A: No, same as HashMap/HashSet. Wrap with <code>Collections.synchronizedMap(...)</code> / <code>synchronizedSet(...)</code>, or externally synchronize, for concurrent use.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q: Give a practical real-world use case for each.</div>
+      <div class="a">A: EnumSet — representing a set of permission flags or feature toggles (replacing bitwise int flags). EnumMap — a state machine's transition table, or grouping/counting results by a status enum (e.g., ticket counts by <code>Status</code>).</div>
+    </div>
+  </div>
+</section>
+
+<footer>Study guide generated for interview prep — EnumMap &amp; EnumSet (java.util)</footer>
+</div>
+</body>
+</html>

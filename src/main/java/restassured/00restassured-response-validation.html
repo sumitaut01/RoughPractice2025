@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RestAssured — Response Validation Techniques</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1c1e21;
+    --muted: #5f6368;
+    --accent: #b6423b;
+    --code-bg: #282c34;
+    --code-fg: #e6e6e6;
+    --border: #e3e5e8;
+    --pill-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  header h1 { margin: 0 0 6px; font-size: 28px; }
+  header p { margin: 0; color: var(--muted); font-size: 15px; }
+  nav {
+    background: var(--pill-bg);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 36px;
+  }
+  nav h2 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  nav ol { margin: 0; padding-left: 20px; columns: 2; }
+  nav a { color: var(--accent); text-decoration: none; font-size: 14px; }
+  nav a:hover { text-decoration: underline; }
+  section { margin-bottom: 44px; }
+  h2 {
+    font-size: 20px;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin-bottom: 6px;
+  }
+  h2 .num { color: var(--accent); margin-right: 6px; }
+  .lead { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 16px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  p code, li code, td code {
+    background: var(--pill-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #b6423b;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--pill-bg); }
+  .note {
+    background: #fff8ec;
+    border-left: 4px solid #e0a800;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .tip {
+    background: #eef7ee;
+    border-left: 4px solid #3a9d4c;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  footer {
+    margin-top: 60px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>RestAssured — Response Validation Cheatsheet</h1>
+  <p>Status codes, response time, body extraction, and value fetching (Java + RestAssured + TestNG)</p>
+</header>
+
+<nav>
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#status">Checking status code</a></li>
+    <li><a href="#time">Checking response time</a></li>
+    <li><a href="#raw">Fetching the raw body</a></li>
+    <li><a href="#jsonpath">JsonPath — fetching specific values</a></li>
+    <li><a href="#as">Deserializing with <code>.as(Class.class)</code></a></li>
+    <li><a href="#extract">Using <code>.then().extract()</code></a></li>
+    <li><a href="#headers">Headers, cookies, content-type</a></li>
+    <li><a href="#compare">Which approach to use when</a></li>
+  </ol>
+</nav>
+
+<section id="status">
+  <h2><span class="num">1.</span>Checking status code</h2>
+  <p class="lead">Two common styles: BDD-style assertion, or pulling the raw int for custom logic.</p>
+  <pre><code>// BDD style — fails the test immediately if mismatched
+given()
+    .baseUri("https://api.example.com")
+.when()
+    .get("/users/1")
+.then()
+    .statusCode(200);
+
+// Range / matcher style
+.then()
+    .statusCode(anyOf(is(200), is(201)));
+
+// Pull the raw status code for custom checks/logging
+Response response = given().get("/users/1");
+int statusCode = response.getStatusCode();
+Assert.assertEquals(statusCode, 200);</code></pre>
+</section>
+
+<section id="time">
+  <h2><span class="num">2.</span>Checking response time</h2>
+  <p class="lead">RestAssured gives you both a fluent assertion and a raw value in milliseconds.</p>
+  <pre><code>// Assert directly — fails if response takes 2000ms or more
+given()
+    .get("/users/1")
+.then()
+    .time(lessThan(2000L), TimeUnit.MILLISECONDS);
+
+// Fetch the raw value for logging / soft assertions / reporting
+Response response = given().get("/users/1");
+long timeInMs = response.getTime();                       // milliseconds (default)
+long timeInSec = response.timeIn(TimeUnit.SECONDS);        // any unit you like
+
+System.out.println("Response time: " + timeInMs + " ms");</code></pre>
+  <div class="tip">Use <code>response.getTimeIn(TimeUnit)</code> (older API) or <code>timeIn(TimeUnit)</code> depending on RestAssured version — both exist across 4.x/5.x, but prefer <code>timeIn()</code> going forward.</div>
+</section>
+
+<section id="raw">
+  <h2><span class="num">3.</span>Fetching the raw body</h2>
+  <pre><code>Response response = given().get("/users/1");
+
+String bodyAsString = response.getBody().asString();
+// or shorthand
+String bodyAsString2 = response.asString();
+
+byte[] bodyAsBytes = response.asByteArray();</code></pre>
+</section>
+
+<section id="jsonpath">
+  <h2><span class="num">4.</span>JsonPath — fetching specific values</h2>
+  <p class="lead">Best when you only need one or two fields and don't want a full POJO.</p>
+  <pre><code>Response response = given().get("/users/1");
+
+// Option A: via response.jsonPath()
+JsonPath jsonPath = response.jsonPath();
+String name  = jsonPath.getString("name");
+int    id    = jsonPath.getInt("id");
+List&lt;String&gt; roles = jsonPath.getList("roles");
+
+// Option B: inline, one-liner
+String email = response.jsonPath().getString("email");
+
+// Nested fields
+String city = response.jsonPath().getString("address.city");
+
+// Array/list access
+String firstRole = response.jsonPath().getString("roles[0]");
+List&lt;Map&lt;String,?&gt;&gt; items = response.jsonPath().getList("items");
+
+// Filtering with GPath-style expressions
+List&lt;String&gt; activeUserNames =
+    response.jsonPath().getList("users.findAll { it.active == true }.name");</code></pre>
+  <div class="note">JsonPath expressions support Groovy's GPath syntax, so filtering, <code>find</code>, <code>findAll</code>, and simple aggregation (<code>sum()</code>, <code>max()</code>) all work directly on the path string.</div>
+</section>
+
+<section id="as">
+  <h2><span class="num">5.</span>Deserializing with <code>.as(Class.class)</code></h2>
+  <p class="lead">Best when you want the whole payload mapped to a POJO for readable assertions.</p>
+  <pre><code>// POJO
+public class User {
+    private int id;
+    private String name;
+    private String email;
+    // getters/setters
+}
+
+Response response = given().get("/users/1");
+User user = response.as(User.class);
+
+Assert.assertEquals(user.getName(), "John Doe");
+
+// Works for lists too, via TypeRef
+List&lt;User&gt; users = response.as(new TypeRef&lt;List&lt;User&gt;&gt;() {});</code></pre>
+  <div class="note">Requires a JSON (de)serializer on the classpath — Jackson (<code>jackson-databind</code>) or Gson. RestAssured auto-detects whichever is present.</div>
+</section>
+
+<section id="extract">
+  <h2><span class="num">6.</span>Using <code>.then().extract()</code></h2>
+  <p class="lead">Lets you validate <em>and</em> pull data out in the same fluent chain — very common in real test methods.</p>
+  <pre><code>Response response =
+    given()
+        .baseUri("https://api.example.com")
+    .when()
+        .get("/users/1")
+    .then()
+        .statusCode(200)
+        .time(lessThan(2000L), TimeUnit.MILLISECONDS)
+        .extract()
+        .response();
+
+// From here, all techniques above apply on `response`
+String name = response.jsonPath().getString("name");
+User user   = response.as(User.class);
+
+// Or extract a single value directly, without the intermediate Response
+String name2 = given()
+    .get("/users/1")
+.then()
+    .statusCode(200)
+    .extract()
+    .path("name");   // shorthand for jsonPath().get("name")
+
+// Extract just the body as a JsonPath object
+JsonPath jp = given()
+    .get("/users/1")
+.then()
+    .statusCode(200)
+    .extract()
+    .jsonPath();</code></pre>
+</section>
+
+<section id="headers">
+  <h2><span class="num">7.</span>Headers, cookies, content-type</h2>
+  <pre><code>Response response = given().get("/users/1");
+
+String contentType = response.getContentType();
+String header      = response.getHeader("X-Request-Id");
+Map&lt;String,String&gt; cookies = response.getCookies();
+
+.then()
+    .header("Content-Type", containsString("application/json"))
+    .contentType(ContentType.JSON);</code></pre>
+</section>
+
+<section id="compare">
+  <h2><span class="num">8.</span>Which approach to use when</h2>
+  <table>
+    <tr><th>Need</th><th>Use</th></tr>
+    <tr><td>Just verify status/time/headers, no data needed</td><td><code>.then().statusCode()/.time()/.header()</code></td></tr>
+    <tr><td>Pull 1–2 fields quickly</td><td><code>response.jsonPath().get...()</code></td></tr>
+    <tr><td>Full payload mapped to a typed object for assertions</td><td><code>response.as(Class.class)</code></td></tr>
+    <tr><td>Validate + extract in one fluent chain (typical test method)</td><td><code>.then().statusCode(200).extract().response()</code></td></tr>
+    <tr><td>Need only the raw JSON text (logging, snapshotting, diffing)</td><td><code>response.asString()</code></td></tr>
+    <tr><td>Filtering/aggregating inside a JSON array</td><td>JsonPath GPath expressions (<code>findAll { }</code>, <code>sum()</code>)</td></tr>
+  </table>
+  <div class="tip">In a framework, the common pattern is: chain <code>.then()</code> for the cheap assertions (status, time, content-type), then <code>.extract().response()</code> once, and reuse that single <code>Response</code> object for every further JsonPath / POJO access — avoids re-parsing the body multiple times.</div>
+</section>
+
+<footer>
+  RestAssured reference notes — covers response.jsonPath(), .as(Class.class), .then().extract(), status code and response time checks.
+</footer>
+
+</div>
+</body>
+</html>

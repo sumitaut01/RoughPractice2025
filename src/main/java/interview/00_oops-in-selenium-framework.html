@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOPs in Selenium + Java + TestNG Framework — Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1a1a24;
+    --panel:#212230;
+    --panel-2:#262838;
+    --line:#33354a;
+    --text:#dfe1ee;
+    --text-dim:#9296b3;
+    --enc:#67d0f5;   /* Encapsulation - sky */
+    --inh:#b18cf7;   /* Inheritance - violet */
+    --poly:#fbc85a;  /* Polymorphism - amber */
+    --abs:#4fe0a8;   /* Abstraction - emerald */
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+  }
+  a{color:inherit;}
+
+  /* ---- layout ---- */
+  .shell{display:flex; max-width:1280px; margin:0 auto;}
+  nav.side{
+    position:sticky; top:0; align-self:flex-start;
+    height:100vh; overflow-y:auto;
+    width:250px; flex-shrink:0;
+    padding:32px 18px;
+    border-right:1px solid var(--line);
+  }
+  nav.side .brand{
+    font-family:var(--mono); font-size:13px; color:var(--text-dim);
+    letter-spacing:.08em; text-transform:uppercase; margin-bottom:22px;
+  }
+  nav.side .brand b{color:var(--text); display:block; font-size:15px; margin-top:4px; text-transform:none; letter-spacing:0;}
+  nav.side ul{list-style:none; padding:0; margin:0;}
+  nav.side li{margin-bottom:2px;}
+  nav.side a.navlink{
+    display:flex; align-items:center; gap:9px;
+    padding:8px 10px; border-radius:6px;
+    font-size:13.5px; text-decoration:none; color:var(--text-dim);
+    border-left:2px solid transparent;
+  }
+  nav.side a.navlink:hover{background:var(--panel-2); color:var(--text);}
+  nav.side .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  nav.side .subhead{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:.08em;
+    margin:20px 0 6px 10px;
+  }
+
+  main{flex:1; min-width:0; padding:48px 56px 120px;}
+
+  /* ---- hero ---- */
+  .hero{margin-bottom:64px;}
+  .hero .eyebrow{
+    font-family:var(--mono); font-size:12.5px; color:var(--poly);
+    letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:var(--mono); font-size:38px; line-height:1.25; margin:0 0 18px;
+    font-weight:700;
+  }
+  .hero h1 .brace{color:var(--text-dim);}
+  .hero p.lede{
+    font-size:16.5px; color:var(--text-dim); max-width:640px; margin:0 0 26px;
+  }
+  .diagram{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+    margin-top:28px;
+  }
+  .diagram .tile{
+    border:1px solid var(--line); border-radius:10px; padding:16px 14px;
+    background:var(--panel);
+    border-top:3px solid var(--tile-color);
+  }
+  .diagram .tile .tag{font-family:var(--mono); font-size:11px; color:var(--tile-color); text-transform:uppercase; letter-spacing:.06em;}
+  .diagram .tile .name{font-weight:600; margin:6px 0 4px; font-size:14.5px;}
+  .diagram .tile .desc{font-size:12.5px; color:var(--text-dim); line-height:1.5;}
+
+  /* ---- sections ---- */
+  section.pillar{
+    margin-bottom:76px; scroll-margin-top:24px;
+    border-left:3px solid var(--pillar-color);
+    padding-left:28px;
+  }
+  section.pillar .kicker{
+    font-family:var(--mono); font-size:12.5px; color:var(--pillar-color);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;
+  }
+  section.pillar h2{font-size:26px; margin:0 0 6px; font-weight:700;}
+  section.pillar .one-liner{color:var(--text-dim); font-size:15.5px; margin:0 0 22px; max-width:680px;}
+
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:22px 24px; margin-bottom:18px;
+  }
+  .card h3{margin:0 0 10px; font-size:15px; font-weight:600; color:var(--text);}
+  .card p{margin:0 0 10px; font-size:14.5px; color:var(--text-dim);}
+  .card p:last-child{margin-bottom:0;}
+
+  pre{
+    background:#15161f; border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px; overflow-x:auto; margin:10px 0 0;
+    font-family:var(--mono); font-size:13px; line-height:1.65;
+  }
+  code{font-family:var(--mono);}
+  .kw{color:#ff8fb3;}      /* keywords */
+  .tp{color:#67d0f5;}      /* types */
+  .str{color:#c6e26a;}     /* strings */
+  .cm{color:#6b6f8c;}      /* comments */
+  .mtd{color:#fbc85a;}     /* method names */
+  .ann{color:#b18cf7;}     /* annotations */
+
+  .why-box{
+    display:flex; gap:12px; align-items:flex-start;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:14px 16px; margin-top:14px; font-size:13.5px; color:var(--text-dim);
+  }
+  .why-box .label{
+    font-family:var(--mono); font-size:11px; color:var(--pillar-color);
+    text-transform:uppercase; letter-spacing:.06em; flex-shrink:0; padding-top:2px;
+  }
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:900px){.grid-2{grid-template-columns:1fr;}}
+
+  /* ---- interview section ---- */
+  .qa{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    margin-bottom:12px; overflow:hidden;
+  }
+  .qa summary{
+    cursor:pointer; list-style:none; padding:16px 20px;
+    font-weight:600; font-size:14.5px; display:flex; align-items:center; gap:10px;
+  }
+  .qa summary::-webkit-details-marker{display:none;}
+  .qa summary::before{
+    content:'▸'; color:var(--poly); transition:transform .15s ease; font-size:12px;
+  }
+  .qa[open] summary::before{transform:rotate(90deg);}
+  .qa .answer{padding:0 20px 18px 46px; font-size:14px; color:var(--text-dim);}
+  .qa .answer p{margin:0 0 8px;}
+
+  /* ---- table ---- */
+  table{width:100%; border-collapse:collapse; margin-top:12px; font-size:13.5px;}
+  th{
+    text-align:left; font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:.04em; padding:10px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  td{padding:11px 14px; border-bottom:1px solid var(--line); color:var(--text-dim);}
+  tr:last-child td{border-bottom:none;}
+  td.name{color:var(--text); font-weight:500;}
+
+  footer{
+    border-top:1px solid var(--line); margin-top:40px; padding-top:24px;
+    font-size:13px; color:var(--text-dim); font-family:var(--mono);
+  }
+
+  @media (max-width:820px){
+    nav.side{display:none;}
+    main{padding:32px 20px 80px;}
+    .diagram{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="side">
+    <div class="brand">Study Guide<b>OOPs in your Framework</b></div>
+    <div class="subhead">Pillars</div>
+    <ul>
+      <li><a class="navlink" href="#encapsulation"><span class="dot" style="background:var(--enc)"></span>Encapsulation</a></li>
+      <li><a class="navlink" href="#inheritance"><span class="dot" style="background:var(--inh)"></span>Inheritance</a></li>
+      <li><a class="navlink" href="#polymorphism"><span class="dot" style="background:var(--poly)"></span>Polymorphism</a></li>
+      <li><a class="navlink" href="#abstraction"><span class="dot" style="background:var(--abs)"></span>Abstraction</a></li>
+    </ul>
+    <div class="subhead">Reference</div>
+    <ul>
+      <li><a class="navlink" href="#map">Concept → File map</a></li>
+      <li><a class="navlink" href="#interview">Interview Q&amp;A</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">// framework-design.md</div>
+      <h1><span class="brace">class</span> SeleniumFramework <span class="brace">implements</span> OOP {</h1>
+      <p class="lede">
+        You've been using all four pillars of OOP already — <code>BasePage</code>, <code>ThreadLocal&lt;WebDriver&gt;</code>,
+        <code>PageFactory</code>, overloaded utility methods — you just haven't had to name them out loud yet.
+        This guide maps each pillar to the exact classes you already write, so next time someone asks
+        "how do you use OOPs in your framework?", you have a concrete, code-backed answer.
+      </p>
+
+      <div class="diagram">
+        <div class="tile" style="--tile-color:var(--enc)">
+          <div class="tag">01 · Encapsulation</div>
+          <div class="name">Hiding the driver &amp; locators</div>
+          <div class="desc">private WebDriver, private By locators, exposed only via public page methods.</div>
+        </div>
+        <div class="tile" style="--tile-color:var(--inh)">
+          <div class="tag">02 · Inheritance</div>
+          <div class="name">BaseTest / BasePage</div>
+          <div class="desc">Common setup, teardown, waits and utilities shared across every test/page class.</div>
+        </div>
+        <div class="tile" style="--tile-color:var(--poly)">
+          <div class="tag">03 · Polymorphism</div>
+          <div class="name">Overloads &amp; overrides</div>
+          <div class="desc">login(user,pass) vs login(user,pass,otp); WebDriver behaving differently per browser.</div>
+        </div>
+        <div class="tile" style="--tile-color:var(--abs)">
+          <div class="tag">04 · Abstraction</div>
+          <div class="name">Interfaces &amp; PageFactory</div>
+          <div class="desc">WebDriver interface, ITestListener, hiding "how" behind a clean "what".</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ENCAPSULATION ===================== -->
+    <section class="pillar" id="encapsulation" style="--pillar-color:var(--enc)">
+      <div class="kicker">Pillar 01</div>
+      <h2>Encapsulation</h2>
+      <p class="one-liner">Bundling data (WebElements, driver, locators) with the methods that act on them, and hiding the internals behind a public interface.</p>
+
+      <div class="card">
+        <h3>Where it lives in your framework: the Page Object itself</h3>
+        <p>Every Page Object you write is encapsulation in practice. The <code>WebDriver</code> instance and <code>By</code> locators are kept <code>private</code>; the outside world (your test class) never touches a locator directly — it only calls a public method like <code>login()</code> or <code>searchProduct()</code>.</p>
+        <pre><code><span class="kw">public class</span> <span class="tp">LoginPage</span> {
+
+    <span class="cm">// state is hidden — nothing outside this class can touch the driver or locators directly</span>
+    <span class="kw">private final</span> <span class="tp">WebDriver</span> driver;
+    <span class="kw">private final</span> <span class="tp">By</span> usernameField = <span class="tp">By</span>.id(<span class="str">"username"</span>);
+    <span class="kw">private final</span> <span class="tp">By</span> passwordField = <span class="tp">By</span>.id(<span class="str">"password"</span>);
+    <span class="kw">private final</span> <span class="tp">By</span> loginBtn      = <span class="tp">By</span>.id(<span class="str">"loginBtn"</span>);
+
+    <span class="kw">public</span> <span class="mtd">LoginPage</span>(<span class="tp">WebDriver</span> driver) {
+        <span class="kw">this</span>.driver = driver;
+    }
+
+    <span class="cm">// public method = the only "door" into this class's behaviour</span>
+    <span class="kw">public</span> <span class="tp">HomePage</span> <span class="mtd">login</span>(<span class="tp">String</span> user, <span class="tp">String</span> pass) {
+        driver.findElement(usernameField).sendKeys(user);
+        driver.findElement(passwordField).sendKeys(pass);
+        driver.findElement(loginBtn).click();
+        <span class="kw">return new</span> <span class="tp">HomePage</span>(driver);
+    }
+}</code></pre>
+        <div class="why-box">
+          <span class="label">Why it matters</span>
+          <span>If the login page's HTML changes tomorrow, you edit locators inside <code>LoginPage</code> only. Every test calling <code>loginPage.login(user, pass)</code> keeps working untouched — that's the entire point of encapsulation: internal change, zero external ripple.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>The other place you use it daily: ThreadLocal&lt;WebDriver&gt;</h3>
+        <p>In your parallel hybrid framework, the driver instance per thread is encapsulated behind a static utility class — no test ever new()'s a driver directly.</p>
+        <pre><code><span class="kw">public class</span> <span class="tp">DriverManager</span> {
+    <span class="kw">private static final</span> <span class="tp">ThreadLocal</span>&lt;<span class="tp">WebDriver</span>&gt; driverThread = <span class="kw">new</span> <span class="tp">ThreadLocal</span>&lt;&gt;();
+
+    <span class="kw">private</span> <span class="mtd">DriverManager</span>() {} <span class="cm">// prevents instantiation — encapsulation of construction too</span>
+
+    <span class="kw">public static</span> <span class="tp">WebDriver</span> <span class="mtd">getDriver</span>() {
+        <span class="kw">return</span> driverThread.get();
+    }
+
+    <span class="kw">static void</span> <span class="mtd">setDriver</span>(<span class="tp">WebDriver</span> driver) {
+        driverThread.set(driver);
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== INHERITANCE ===================== -->
+    <section class="pillar" id="inheritance" style="--pillar-color:var(--inh)">
+      <div class="kicker">Pillar 02</div>
+      <h2>Inheritance</h2>
+      <p class="one-liner">Common driver setup, waits, and utility methods live once in a base class; every page/test class reuses them via <code>extends</code>.</p>
+
+      <div class="card">
+        <h3>BasePage → every Page Object extends it</h3>
+        <pre><code><span class="kw">public abstract class</span> <span class="tp">BasePage</span> {
+    <span class="kw">protected</span> <span class="tp">WebDriver</span> driver;
+    <span class="kw">protected</span> <span class="tp">WebDriverWait</span> wait;
+
+    <span class="kw">public</span> <span class="mtd">BasePage</span>(<span class="tp">WebDriver</span> driver) {
+        <span class="kw">this</span>.driver = driver;
+        <span class="kw">this</span>.wait = <span class="kw">new</span> <span class="tp">WebDriverWait</span>(driver, <span class="tp">Duration</span>.ofSeconds(<span class="mtd">10</span>));
+    }
+
+    <span class="kw">protected void</span> <span class="mtd">click</span>(<span class="tp">By</span> locator) {
+        wait.until(<span class="tp">ExpectedConditions</span>.elementToBeClickable(locator)).click();
+    }
+
+    <span class="kw">protected void</span> <span class="mtd">type</span>(<span class="tp">By</span> locator, <span class="tp">String</span> text) {
+        wait.until(<span class="tp">ExpectedConditions</span>.visibilityOfElementLocated(locator)).sendKeys(text);
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">LoginPage</span> <span class="kw">extends</span> <span class="tp">BasePage</span> {
+    <span class="kw">public</span> <span class="mtd">LoginPage</span>(<span class="tp">WebDriver</span> driver) { <span class="kw">super</span>(driver); }
+    <span class="cm">// click() and type() come free — no re-writing wait logic per page</span>
+}</code></pre>
+        <div class="why-box">
+          <span class="label">Why it matters</span>
+          <span>Every wait strategy, screenshot-on-failure hook, and re-try logic is written exactly once in <code>BasePage</code>/<code>BaseTest</code>. Fifty page classes inherit it instead of fifty copies drifting out of sync.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>BaseTest → every TestNG test class extends it</h3>
+        <pre><code><span class="kw">public class</span> <span class="tp">BaseTest</span> {
+    <span class="ann">@BeforeMethod</span>
+    <span class="kw">public void</span> <span class="mtd">setUp</span>() {
+        <span class="tp">DriverManager</span>.setDriver(<span class="kw">new</span> <span class="tp">ChromeDriver</span>());
+    }
+
+    <span class="ann">@AfterMethod</span>
+    <span class="kw">public void</span> <span class="mtd">tearDown</span>() {
+        <span class="tp">DriverManager</span>.getDriver().quit();
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">LoginTest</span> <span class="kw">extends</span> <span class="tp">BaseTest</span> {
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="mtd">validLogin_navigatesToHome</span>() {
+        <span class="kw">new</span> <span class="tp">LoginPage</span>(<span class="tp">DriverManager</span>.getDriver()).login(<span class="str">"user"</span>, <span class="str">"pass"</span>);
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== POLYMORPHISM ===================== -->
+    <section class="pillar" id="polymorphism" style="--pillar-color:var(--poly)">
+      <div class="kicker">Pillar 03</div>
+      <h2>Polymorphism</h2>
+      <p class="one-liner">Same method name, different behaviour — either by signature (overloading, compile-time) or by subclass (overriding, run-time).</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Compile-time: overloaded helpers</h3>
+          <pre><code><span class="kw">public class</span> <span class="tp">ElementUtils</span> {
+    <span class="kw">public void</span> <span class="mtd">waitForElement</span>(<span class="tp">By</span> locator) {
+        <span class="mtd">waitForElement</span>(locator, <span class="mtd">10</span>);
+    }
+
+    <span class="kw">public void</span> <span class="mtd">waitForElement</span>(<span class="tp">By</span> locator, <span class="kw">int</span> timeoutSec) {
+        <span class="kw">new</span> <span class="tp">WebDriverWait</span>(driver, <span class="tp">Duration</span>.ofSeconds(timeoutSec))
+            .until(<span class="tp">ExpectedConditions</span>.visibilityOfElementLocated(locator));
+    }
+}</code></pre>
+          <p>Same <code>waitForElement</code> name, two signatures. Callers choose the default or a custom timeout — the JVM resolves which one at compile time.</p>
+        </div>
+
+        <div class="card">
+          <h3>Run-time: overridden behaviour</h3>
+          <pre><code><span class="kw">public abstract class</span> <span class="tp">BasePage</span> {
+    <span class="kw">public abstract boolean</span> <span class="mtd">isPageLoaded</span>();
+}
+
+<span class="kw">public class</span> <span class="tp">HomePage</span> <span class="kw">extends</span> <span class="tp">BasePage</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="mtd">isPageLoaded</span>() {
+        <span class="kw">return</span> driver.findElement(<span class="tp">By</span>.id(<span class="str">"dashboard"</span>)).isDisplayed();
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">CartPage</span> <span class="kw">extends</span> <span class="tp">BasePage</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="mtd">isPageLoaded</span>() {
+        <span class="kw">return</span> driver.findElement(<span class="tp">By</span>.id(<span class="str">"cartTotal"</span>)).isDisplayed();
+    }
+}</code></pre>
+          <p>You can hold a <code>BasePage page = new CartPage(driver)</code> and call <code>page.isPageLoaded()</code> — the correct override runs based on the actual object, not the reference type.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>The one that surprises people: WebDriver itself is polymorphic</h3>
+        <pre><code><span class="tp">WebDriver</span> driver = <span class="kw">new</span> <span class="tp">ChromeDriver</span>();  <span class="cm">// or FirefoxDriver(), EdgeDriver()...</span>
+driver.get(<span class="str">"https://example.com"</span>);</code></pre>
+        <p>You program against the <code>WebDriver</code> interface type, but the actual object is <code>ChromeDriver</code>, <code>FirefoxDriver</code>, or <code>RemoteWebDriver</code>. That's polymorphism baked into Selenium's own design — the reason your framework can run cross-browser without a single <code>if (browser == "chrome")</code> scattered through test logic.</p>
+      </div>
+    </section>
+
+    <!-- ===================== ABSTRACTION ===================== -->
+    <section class="pillar" id="abstraction" style="--pillar-color:var(--abs)">
+      <div class="kicker">Pillar 04</div>
+      <h2>Abstraction</h2>
+      <p class="one-liner">Exposing <em>what</em> a class does while hiding <em>how</em> — via interfaces, abstract classes, and frameworks like PageFactory.</p>
+
+      <div class="card">
+        <h3>PageFactory hides element-location mechanics entirely</h3>
+        <pre><code><span class="kw">public class</span> <span class="tp">LoginPage</span> {
+    <span class="ann">@FindBy</span>(id = <span class="str">"username"</span>)
+    <span class="kw">private</span> <span class="tp">WebElement</span> usernameField;
+
+    <span class="kw">public</span> <span class="mtd">LoginPage</span>(<span class="tp">WebDriver</span> driver) {
+        <span class="tp">PageFactory</span>.initElements(driver, <span class="kw">this</span>);
+    }
+
+    <span class="kw">public void</span> <span class="mtd">enterUsername</span>(<span class="tp">String</span> user) {
+        usernameField.sendKeys(user); <span class="cm">// how it's found (lazy proxy, @FindBy) is fully abstracted away</span>
+    }
+}</code></pre>
+        <p>The test caller has no idea whether Selenium used a lazy proxy, re-located the element on every call, or cached it. That complexity is abstracted behind <code>@FindBy</code> + <code>PageFactory.initElements()</code>.</p>
+      </div>
+
+      <div class="card">
+        <h3>ITestListener — TestNG's own abstraction for reporting hooks</h3>
+        <pre><code><span class="kw">public class</span> <span class="tp">TestListener</span> <span class="kw">implements</span> <span class="tp">ITestListener</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="mtd">onTestFailure</span>(<span class="tp">ITestResult</span> result) {
+        <span class="tp">ScreenshotUtil</span>.capture(result.getName());
+        <span class="tp">ExtentReportManager</span>.logFail(result);
+    }
+}</code></pre>
+        <p>You never call <code>onTestFailure()</code> yourself — TestNG's engine calls it for you at the right moment. You only implement the "what happens on failure" contract; TestNG owns "when it gets triggered."</p>
+      </div>
+
+      <div class="card">
+        <h3>Abstract class vs interface — the distinction interviewers probe</h3>
+        <table>
+          <tr><th>Aspect</th><th>Abstract class (e.g. BasePage)</th><th>Interface (e.g. ITestListener)</th></tr>
+          <tr><td class="name">Purpose</td><td>Share common state + partial implementation</td><td>Define a pure contract, no shared state</td></tr>
+          <tr><td class="name">In your framework</td><td><code>BasePage</code>, <code>BaseTest</code></td><td><code>ITestListener</code>, <code>WebDriver</code>, <code>ITestNGListener</code></td></tr>
+          <tr><td class="name">Multiple inheritance</td><td>A class extends only one</td><td>A class can implement several</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== MAP ===================== -->
+    <section id="map" style="scroll-margin-top:24px; margin-bottom:76px;">
+      <div class="kicker" style="font-family:var(--mono); font-size:12.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;">Quick reference</div>
+      <h2 style="font-size:26px; margin:0 0 18px;">Concept → framework file map</h2>
+      <div class="card">
+        <table>
+          <tr><th>OOP concept</th><th>Typical class in your project</th><th>What to say in an interview</th></tr>
+          <tr><td class="name">Encapsulation</td><td>LoginPage, DriverManager (ThreadLocal)</td><td>"Locators and driver state are private; only page methods are exposed."</td></tr>
+          <tr><td class="name">Inheritance</td><td>BasePage, BaseTest</td><td>"Common setup/teardown and wait utilities live in one base class, reused across all page/test classes."</td></tr>
+          <tr><td class="name">Polymorphism</td><td>ElementUtils overloads, BasePage.isPageLoaded()</td><td>"Overloading for flexible method signatures, overriding for page-specific behaviour behind one common type."</td></tr>
+          <tr><td class="name">Abstraction</td><td>PageFactory, ITestListener, WebDriver interface</td><td>"Callers depend on the interface/contract, not the implementation detail underneath."</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== INTERVIEW Q&A ===================== -->
+    <section id="interview" style="scroll-margin-top:24px;">
+      <div class="kicker" style="font-family:var(--mono); font-size:12.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;">Rehearse it</div>
+      <h2 style="font-size:26px; margin:0 0 18px;">Interview-style Q&amp;A</h2>
+
+      <details class="qa">
+        <summary>"Where exactly have you used OOPs in your framework?" — how do I answer this in 30 seconds?</summary>
+        <div class="answer">
+          <p>Give the one-line map, not a definition dump: "My Page Objects encapsulate locators and driver state; <code>BasePage</code>/<code>BaseTest</code> give inheritance for shared setup and waits; method overloading and <code>isPageLoaded()</code> overrides give polymorphism; and PageFactory plus interfaces like <code>ITestListener</code> abstract away the how." Then offer a concrete example if they want to dig in.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>Why use Page Object Model at all — isn't that just "organizing code"?</summary>
+        <div class="answer">
+          <p>POM is encapsulation + abstraction applied to UI automation specifically: it hides locators (encapsulation) behind readable action methods (abstraction), so a UI change means editing one page class instead of every test that touches that screen.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>Overloading vs overriding — what's the one-line difference?</summary>
+        <div class="answer">
+          <p>Overloading = same method name, different parameters, resolved at compile time (your <code>waitForElement(locator)</code> vs <code>waitForElement(locator, timeout)</code>). Overriding = subclass redefines a parent's method, resolved at run time based on the actual object (your <code>isPageLoaded()</code> per page).</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>Why is BasePage often abstract instead of a normal class?</summary>
+        <div class="answer">
+          <p>Because it's never meant to be instantiated on its own — it only exists to be extended. Marking it <code>abstract</code> makes that intent explicit and lets you declare methods like <code>isPageLoaded()</code> that every subclass must implement, which is abstraction + inheritance working together.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>How does composition fit in — do you use "has-a" relationships too?</summary>
+        <div class="answer">
+          <p>Yes — worth mentioning if asked. A <code>CheckoutPage</code> often <em>has-a</em> <code>HeaderComponent</code> and <em>has-a</em> <code>PaymentFormComponent</code> as fields, rather than inheriting from them. That's composition, and it's why "favor composition over inheritance" is a natural follow-up point if the interviewer pushes further.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>Any pitfall to avoid mentioning as a "best practice"?</summary>
+        <div class="answer">
+          <p>Deep inheritance chains (Page → BasePage → BaseComponent → BaseElement...) look impressive but get brittle fast. A shallow, one-level <code>extends BasePage</code> plus composition for shared widgets (headers, modals) is the more defensible answer if asked about framework design trade-offs.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      // study guide generated for quick review before interviews / team discussions — pair with your own X4V Unite or hybrid framework code for live examples.
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>

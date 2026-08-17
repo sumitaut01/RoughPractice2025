@@ -24,10 +24,9 @@ public class PropertiesDemo {
 
     @Test
     public void enumsDemo() throws IOException {
-
-
-
-
+       String dd="FIRST";
+        week wk=week.valueOf(dd);
+        System.out.println(wk.toString());
     }
 }
 

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Java NIO FileLock — Study Notes</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --panel2:#1a2236; --text:#e5e7eb; --muted:#9ca3af;
+    --accent:#38bdf8; --accent2:#a78bfa; --good:#34d399; --warn:#fbbf24; --bad:#f87171;
+    --code-bg:#0b1220; --border:#263049;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:linear-gradient(180deg,#0b1220,#0f172a 300px, #0f172a);
+    color:var(--text); font-family:"Segoe UI",Roboto,Arial,sans-serif; line-height:1.6;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:32px 20px 80px;}
+  header{margin-bottom:28px;}
+  header h1{font-size:1.9rem; margin:0 0 6px; color:#fff}
+  header p{color:var(--muted); margin:0}
+  .badge{display:inline-block; background:var(--panel2); border:1px solid var(--border); color:var(--accent);
+    padding:2px 10px; border-radius:999px; font-size:.75rem; margin-right:6px;}
+  nav{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 34px;}
+  nav a{color:var(--accent); text-decoration:none; font-size:.85rem; border:1px solid var(--border);
+    padding:5px 10px; border-radius:6px; background:var(--panel);}
+  nav a:hover{border-color:var(--accent)}
+  section{background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:22px 24px; margin-bottom:22px;}
+  h2{color:#fff; font-size:1.25rem; margin-top:0; display:flex; align-items:center; gap:8px;}
+  h2 .num{background:var(--accent); color:#04121f; font-weight:700; width:26px; height:26px;
+    border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem;}
+  h3{color:var(--accent2); font-size:1rem; margin:18px 0 8px;}
+  p{color:#d1d5db}
+  ul{color:#d1d5db; padding-left:22px}
+  li{margin-bottom:6px}
+  code{background:var(--code-bg); color:var(--good); padding:1px 6px; border-radius:4px; font-size:.9em;}
+  pre{background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:16px;
+    overflow-x:auto; font-size:.85rem;}
+  pre code{background:none; padding:0; color:#e2e8f0}
+  .tok-kw{color:#c792ea} .tok-type{color:#82aaff} .tok-str{color:#c3e88d}
+  .tok-com{color:#6b7a99; font-style:italic} .tok-fn{color:#ffcb6b}
+  table{width:100%; border-collapse:collapse; margin-top:10px; font-size:.9rem;}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--panel2); color:#fff;}
+  td{color:#d1d5db}
+  .callout{border-left:4px solid var(--accent); background:rgba(56,189,248,0.08);
+    padding:12px 16px; border-radius:0 8px 8px 0; margin:14px 0; color:#d1d5db;}
+  .callout.warn{border-color:var(--warn); background:rgba(251,191,36,0.08);}
+  .callout.bad{border-color:var(--bad); background:rgba(248,113,113,0.08);}
+  .callout strong{color:#fff}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:700px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px 16px;}
+  .card h4{margin:0 0 8px; color:var(--accent)}
+  .card h4.alt{color:var(--accent2)}
+  footer{text-align:center; color:var(--muted); font-size:.8rem; margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">Java NIO</span><span class="badge">Concurrency</span><span class="badge">Study Notes</span>
+  <h1>FileLock in Java NIO</h1>
+  <p>Purpose, working code, and how it differs from thread-level synchronization (incl. ThreadLocal).</p>
+</header>
+
+<nav>
+  <a href="#what">1. What is it</a>
+  <a href="#purpose">2. Purpose</a>
+  <a href="#types">3. Exclusive vs Shared</a>
+  <a href="#code">4. Sample Code</a>
+  <a href="#trylock">5. lock() vs tryLock()</a>
+  <a href="#threadlocal">6. vs ThreadLocal / thread locks</a>
+  <a href="#gotchas">7. Gotchas</a>
+</nav>
+
+<section id="what">
+  <h2><span class="num">1</span>What is FileLock</h2>
+  <p><code>java.nio.channels.FileLock</code> represents a lock on a region (or the whole) of a file, obtained
+  through a <code>FileChannel</code> (or <code>AsynchronousFileChannel</code>). It's part of NIO's file API,
+  introduced to let a program coordinate access to a file <strong>across processes</strong> — even processes
+  outside the JVM, written in a different language entirely.</p>
+  <div class="callout">
+    <strong>Key mental model:</strong> a FileLock is like a reservation ticket on a file that the
+    <em>operating system</em> enforces (or at least tracks), not something the JVM enforces internally
+    the way <code>synchronized</code> does.
+  </div>
+</section>
+
+<section id="purpose">
+  <h2><span class="num">2</span>Why it exists (purpose)</h2>
+  <ul>
+    <li><strong>Inter-process coordination:</strong> stop two separate programs (or two instances of the same
+      program) from writing to the same file simultaneously — e.g. a log file, a config file, a lock/pid file,
+      or a shared report/Excel export that multiple test runners might touch.</li>
+    <li><strong>Data integrity:</strong> avoid interleaved/corrupted writes when multiple writers exist.</li>
+    <li><strong>Single-instance enforcement:</strong> a very common pattern — acquire a lock on a
+      <code>.lock</code> file at startup; if it fails, another instance is already running.</li>
+    <li><strong>Region-level control:</strong> you can lock just a byte range of a large file instead of the
+      whole thing, letting different parts be updated independently.</li>
+  </ul>
+  <div class="callout warn">
+    <strong>Important nuance:</strong> on most platforms FileLock is <em>advisory</em>, not mandatory — it only
+    stops other <em>cooperating</em> programs that also try to acquire a lock. A process that ignores locking
+    entirely can still read/write the file. (On Windows it tends to be enforced more strictly at the OS level;
+    on Unix it's purely advisory.)
+  </div>
+</section>
+
+<section id="types">
+  <h2><span class="num">3</span>Exclusive vs Shared locks</h2>
+  <table>
+    <tr><th>Type</th><th>Meaning</th><th>Typical use</th></tr>
+    <tr><td><strong>Exclusive</strong></td><td>Only one holder at a time; blocks other exclusive
+      <em>and</em> shared locks on the overlapping region.</td><td>Writing to the file</td></tr>
+    <tr><td><strong>Shared</strong></td><td>Multiple holders allowed simultaneously, but blocks any
+      exclusive lock.</td><td>Reading the file (readers don't block each other)</td></tr>
+  </table>
+  <p style="margin-top:10px;">Not every OS/filesystem supports shared locks — check
+    <code>FileLock.isShared()</code> after acquiring; the JVM may silently upgrade to exclusive if shared
+    isn't supported.</p>
+</section>
+
+<section id="code">
+  <h2><span class="num">4</span>Sample code</h2>
+
+  <h3>Basic exclusive lock (write coordination)</h3>
+  <pre><code><span class="tok-kw">import</span> java.io.RandomAccessFile;
+<span class="tok-kw">import</span> java.nio.channels.FileChannel;
+<span class="tok-kw">import</span> java.nio.channels.FileLock;
+<span class="tok-kw">import</span> java.nio.charset.StandardCharsets;
+
+<span class="tok-kw">public class</span> <span class="tok-type">FileLockDemo</span> {
+    <span class="tok-kw">public static void</span> <span class="tok-fn">main</span>(String[] args) <span class="tok-kw">throws</span> Exception {
+        <span class="tok-kw">try</span> (RandomAccessFile raf = <span class="tok-kw">new</span> RandomAccessFile(<span class="tok-str">"report.txt"</span>, <span class="tok-str">"rw"</span>);
+             FileChannel channel = raf.getChannel()) {
+
+            <span class="tok-com">// Blocks until the lock is available (exclusive lock on whole file)</span>
+            <span class="tok-kw">try</span> (FileLock lock = channel.lock()) {
+                System.out.println(<span class="tok-str">"Lock acquired: "</span> + lock.isShared());
+
+                <span class="tok-com">// safe to write now — no other cooperating process can write concurrently</span>
+                <span class="tok-kw">byte</span>[] data = <span class="tok-str">"Test run result: PASS\n"</span>.getBytes(StandardCharsets.UTF_8);
+                channel.write(java.nio.ByteBuffer.wrap(data), channel.size());
+            } <span class="tok-com">// lock auto-released here (try-with-resources)</span>
+        }
+    }
+}</code></pre>
+
+  <h3>Locking just a byte-range (region lock)</h3>
+  <pre><code><span class="tok-com">// Lock only bytes 0..99 of the file, exclusive</span>
+FileLock lock = channel.lock(<span class="tok-fn">0</span>, <span class="tok-fn">100</span>, <span class="tok-kw">false</span>); <span class="tok-com">// false = exclusive, true = shared</span></code></pre>
+
+  <h3>Single-instance app guard (very common real-world use)</h3>
+  <pre><code><span class="tok-kw">RandomAccessFile</span> raf = <span class="tok-kw">new</span> RandomAccessFile(<span class="tok-str">"app.lock"</span>, <span class="tok-str">"rw"</span>);
+FileChannel channel = raf.getChannel();
+FileLock lock = channel.tryLock();
+
+<span class="tok-kw">if</span> (lock == <span class="tok-kw">null</span>) {
+    System.out.println(<span class="tok-str">"Another instance is already running. Exiting."</span>);
+    System.exit(<span class="tok-fn">1</span>);
+}
+<span class="tok-com">// else: this is the only instance — keep lock held for app lifetime</span></code></pre>
+</section>
+
+<section id="trylock">
+  <h2><span class="num">5</span><code>lock()</code> vs <code>tryLock()</code></h2>
+  <table>
+    <tr><th>Method</th><th>Behavior</th></tr>
+    <tr><td><code>channel.lock()</code></td><td>Blocks the calling thread until the lock becomes available
+      (or throws). Good when you're willing to wait.</td></tr>
+    <tr><td><code>channel.tryLock()</code></td><td>Non-blocking — returns immediately. Returns the
+      <code>FileLock</code> if acquired, or <code>null</code> if it's currently held elsewhere. Good for
+      "check and bail out" scenarios like the single-instance guard above.</td></tr>
+  </table>
+</section>
+
+<section id="threadlocal">
+  <h2><span class="num">6</span>How this differs from thread-level locking (and ThreadLocal)</h2>
+  <p>This is the part worth being precise about — <strong>FileLock</strong>, <strong>thread synchronization
+  (synchronized / ReentrantLock)</strong>, and <strong>ThreadLocal</strong> solve three <em>different</em>
+  problems, even though all three sound like "concurrency control."</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>FileLock</h4>
+      <ul>
+        <li>Scope: across <strong>processes</strong> (even across the OS)</li>
+        <li>Enforced by: the operating system (advisory on Unix)</li>
+        <li>Protects: a <em>file</em> or byte-range of a file</li>
+        <li>Not reentrant — a second <code>lock()</code> on the same region from the <em>same JVM</em>
+          throws <code>OverlappingFileLockException</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 class="alt">synchronized / ReentrantLock</h4>
+      <ul>
+        <li>Scope: threads <strong>within the same JVM</strong></li>
+        <li>Enforced by: the JVM's monitor/lock mechanism</li>
+        <li>Protects: shared in-memory objects/critical sections</li>
+        <li><code>ReentrantLock</code> (and intrinsic locks) <em>are</em> reentrant — same thread can
+          re-acquire</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:18px;">And ThreadLocal — a different category entirely</h3>
+  <p><code>ThreadLocal&lt;T&gt;</code> is <strong>not a locking mechanism at all</strong>. It doesn't
+  coordinate access to shared data — it <em>avoids sharing</em> by giving each thread its own independent
+  copy of a variable. There's nothing to "lock" because nothing is shared.</p>
+
+  <pre><code><span class="tok-kw">private static final</span> ThreadLocal&lt;SimpleDateFormat&gt; FORMATTER =
+    ThreadLocal.<span class="tok-fn">withInitial</span>(() -&gt; <span class="tok-kw">new</span> SimpleDateFormat(<span class="tok-str">"yyyy-MM-dd"</span>));
+
+<span class="tok-com">// Each thread calling FORMATTER.get() gets its own SimpleDateFormat instance —</span>
+<span class="tok-com">// no synchronization needed because there's no shared object to contend over.</span></code></pre>
+
+  <div class="callout bad">
+    <strong>Common mix-up:</strong> people sometimes assume ThreadLocal is "for locking things per thread."
+    It isn't — it's the opposite strategy. Locking (FileLock, synchronized) says <em>"only one at a time may
+    touch this shared thing."</em> ThreadLocal says <em>"give everyone their own thing, so there's nothing to
+    contend over."</em> In QA automation this shows up a lot with per-thread WebDriver instances in parallel
+    Selenium/TestNG runs — ThreadLocal&lt;WebDriver&gt; instead of locking a single shared driver.
+  </div>
+
+  <table style="margin-top:14px;">
+    <tr><th>Aspect</th><th>FileLock</th><th>synchronized / Lock</th><th>ThreadLocal</th></tr>
+    <tr><td>Coordinates</td><td>Processes</td><td>Threads</td><td>Nothing — isolates instead</td></tr>
+    <tr><td>Resource protected</td><td>A file / byte-range</td><td>An in-memory object/block</td>
+      <td>A variable, per thread</td></tr>
+    <tr><td>Enforced by</td><td>OS (advisory on Unix)</td><td>JVM</td><td>JVM (just storage indirection)</td></tr>
+    <tr><td>Blocking?</td><td>Optional (lock/tryLock)</td><td>Yes, until acquired</td><td>Never — no contention</td></tr>
+    <tr><td>Survives JVM restart context</td><td>Yes — visible to other processes</td><td>No — JVM-local only</td>
+      <td>No — thread-local only</td></tr>
+  </table>
+</section>
+
+<section id="gotchas">
+  <h2><span class="num">7</span>Gotchas to remember</h2>
+  <ul>
+    <li>FileLock is <strong>per JVM</strong>, not per thread — two threads in the same JVM can't hold
+      separate locks on the same file region; the second attempt throws
+      <code>OverlappingFileLockException</code>. Use a normal Java lock (e.g. <code>ReentrantLock</code>)
+      to coordinate threads within the same JVM first, then FileLock for cross-process safety.</li>
+    <li>Always release locks (use try-with-resources on <code>FileLock</code>) — an unreleased lock can
+      block other processes indefinitely.</li>
+    <li>Advisory locking means a misbehaving process can bypass it entirely — don't rely on it as a
+      security boundary, only as cooperative coordination.</li>
+    <li>Behavior can vary by OS/filesystem (especially over NFS) — test on your actual deployment target.</li>
+  </ul>
+</section>
+
+<footer>Study notes — Java NIO FileLock · generated for personal reference</footer>
+</div>
+</body>
+</html>
