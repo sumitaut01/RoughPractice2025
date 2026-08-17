@@ -15,7 +15,6 @@ public class R7_TableHandling {
         driver.get("https://toolsqa.com/selenium-webdriver/handle-dynamic-webtables-in-selenium-webdriver/");
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(13));
-
         By tblHeader= By.xpath("//table//th");
         By tblRw= By.xpath("//table//tr");
 

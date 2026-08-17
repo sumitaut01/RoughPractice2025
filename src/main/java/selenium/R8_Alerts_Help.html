@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handling Alerts in Selenium</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #ffffff;
+    --accent: #2563eb;
+    --accent-dark: #1e40af;
+    --text: #1e293b;
+    --muted: #64748b;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --border: #e2e8f0;
+    --warn-bg: #fef3c7;
+    --warn-border: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f1f5f9;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 2.2rem;
+  }
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.05rem;
+  }
+  main {
+    max-width: 900px;
+    margin: -32px auto 60px;
+    padding: 0 20px;
+  }
+  section {
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+  }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-top: 24px;
+  }
+  p { color: var(--text); }
+  code {
+    background: #eef2ff;
+    color: var(--accent-dark);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    background: #f8fafc;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+  tr:hover td { background: #f8fafc; }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .note {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-border);
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+  }
+  .note strong { color: #92400e; }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Handling Alerts in Selenium</h1>
+  <p>Native JS dialogs (alert / confirm / prompt) &mdash; the <code>Alert</code> interface, wait strategies, and common pitfalls</p>
+</header>
+
+<main>
+
+  <section>
+    <span class="tag">Overview</span>
+    <h2>Why Alerts Are Different</h2>
+    <p>
+      JavaScript alerts (<code>alert()</code>, <code>confirm()</code>, <code>prompt()</code>) are native
+      OS-level dialogs rendered outside the DOM. They can't be located with normal <code>WebElement</code>
+      locators &mdash; Selenium instead exposes a dedicated <code>Alert</code> interface, accessed via
+      <code>driver.switchTo().alert()</code>.
+    </p>
+  </section>
+
+  <section>
+    <span class="tag">Basics</span>
+    <h2>Basic Alert Handling</h2>
+    <pre><code>import org.openqa.selenium.Alert;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
+
+// Trigger the action that causes the alert
+driver.findElement(By.id("alertButton")).click();
+
+// Switch control to the alert
+Alert alert = driver.switchTo().alert();
+
+// Read the alert text
+String alertText = alert.getText();
+System.out.println("Alert says: " + alertText);
+
+// Accept (OK) or Dismiss (Cancel)
+alert.accept();   // clicks OK
+alert.dismiss();  // clicks Cancel</code></pre>
+
+    <h3>Handling a Prompt (text input alert)</h3>
+    <pre><code>Alert alert = driver.switchTo().alert();
+alert.sendKeys("some input text");
+alert.accept();</code></pre>
+  </section>
+
+  <section>
+    <span class="tag">Best Practice</span>
+    <h2>Waiting for the Alert</h2>
+    <p>
+      Alerts don't always appear instantly. Calling <code>switchTo().alert()</code> immediately can throw
+      <code>NoAlertPresentException</code>. Always wait explicitly:
+    </p>
+    <pre><code>WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+alert.accept();</code></pre>
+
+    <h3>Handling Unexpected Alerts Gracefully</h3>
+    <p>Wrap in try-catch when an alert may or may not appear:</p>
+    <pre><code>try {
+    Alert alert = driver.switchTo().alert();
+    alert.accept();
+} catch (NoAlertPresentException e) {
+    // no alert appeared, continue normally
+}</code></pre>
+  </section>
+
+  <section>
+    <span class="tag">Driver Config</span>
+    <h2>Setting Unexpected Alert Behavior at Driver Level</h2>
+    <p>
+      If alerts pop up unpredictably during a run (e.g. session-timeout warnings), configure Chrome to
+      auto-dismiss/accept them so they don't break your flow:
+    </p>
+    <pre><code>ChromeOptions options = new ChromeOptions();
+options.setCapability("unhandledPromptBehavior", "dismiss");
+// options: "accept", "dismiss", "accept and notify", "dismiss and notify", "ignore"</code></pre>
+  </section>
+
+  <section>
+    <span class="tag">Reference</span>
+    <h2>Key Gotchas</h2>
+    <table>
+      <tr>
+        <th>Issue</th>
+        <th>Cause / Fix</th>
+      </tr>
+      <tr>
+        <td><code>NoAlertPresentException</code></td>
+        <td>Alert not yet rendered &mdash; use <code>WebDriverWait</code> with <code>alertIsPresent()</code></td>
+      </tr>
+      <tr>
+        <td><code>UnhandledAlertException</code> on next command</td>
+        <td>An alert was left open from a previous step and blocks all further interaction &mdash; always resolve alerts immediately</td>
+      </tr>
+      <tr>
+        <td>Alert not detected at all</td>
+        <td>It might be a <strong>custom JS modal</strong> (a styled <code>&lt;div&gt;</code>), not a native <code>window.alert()</code> &mdash; those are handled like normal DOM elements, not via the <code>Alert</code> interface</td>
+      </tr>
+      <tr>
+        <td>Alert appears during page load</td>
+        <td>Some apps fire alerts via <code>beforeunload</code> &mdash; handle with the <code>unhandledPromptBehavior</code> capability</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>Parallel execution note:</strong> in a hybrid framework running tests in parallel, each thread's
+      <code>WebDriver</code> instance is independent, so alert handling is naturally thread-safe as long as
+      driver instances aren't shared &mdash; <code>ThreadLocal&lt;WebDriver&gt;</code> handles that already if
+      that's how the framework is structured.
+    </div>
+  </section>
+
+</main>
+
+<footer>Selenium Alert Handling &middot; Reference Notes</footer>
+
+</body>
+</html>

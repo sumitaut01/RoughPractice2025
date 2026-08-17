@@ -24,7 +24,6 @@ public class R_10ScreenShot {
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
         driver.get("https://www.selenium.dev/");
-
         JavascriptExecutor js=(JavascriptExecutor)driver;
 
 

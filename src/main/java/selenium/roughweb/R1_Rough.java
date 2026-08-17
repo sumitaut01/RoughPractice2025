@@ -72,10 +72,9 @@ public class R1_Rough {
 
             WebElement checkboxes = wait.until(ExpectedConditions.elementToBeClickable(allchkBox));
 
-            List<WebElement> checkbox = driver.findElements(allchkBox).stream().filter(ele -> ele.getText().contains("Image Viever")).collect(Collectors.toList());
-            ;
+            List<WebElement> checkbox = driver.findElements(allchkBox).stream()
+                    .filter(ele -> ele.getText().contains("Image Viever")).collect(Collectors.toList());
             checkbox.get(0).click();
-
             System.out.println("dummy");
         }
         catch (Exception oex){

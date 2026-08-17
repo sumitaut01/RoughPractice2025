@@ -2,7 +2,7 @@ High level modules should not depend on low level modules.
 Both should depend on abstractions:
 
 Abstraction should not be depend on details:
-details should be depned on abstractions:
+details should be depend on abstractions:
 
 Dependency Injection
 

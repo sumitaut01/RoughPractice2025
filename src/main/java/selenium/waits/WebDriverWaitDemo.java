@@ -83,10 +83,6 @@ public class WebDriverWaitDemo {
 
                 Select sel=new Select(select);
                 sel.selectByVisibleText("Canada");
-
-
-
-
                 //failing forcefully
         wait.until(ExpectedConditions.elementToBeClickable(searchBox));//this will fail after 10 seconds
 

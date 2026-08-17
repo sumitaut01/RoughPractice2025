@@ -29,36 +29,40 @@ public class R1_SoftAssert {
 
 
     @Test
-    public void RoughAssert(){
+    public void SADemo_NoAssertAll() {
+
+        SoftAssert softAssert = new SoftAssert();
+
+        softAssert.assertEquals(1, 2);//execution wont stop here even though its failing
+        softAssert.assertEquals(1, 4);
+        //softAssert.assertAll();//this is required else everything is considered as pass
+
+        //Total tests run: 1, Passes: 1, Failures: 0, Skips: 0
+    }
+
+
+    @Test
+    public void RoughAssert() {
 
         Assert.assertEquals(2, 2);
-
-        HashMap<String,Integer> hm=new HashMap<>();
+        HashMap<String, Integer> hm = new HashMap<>();
         hm.put("Sumit", 35);
         hm.put("Amit", 40);
         hm.put("Preeti", 39);
 
-        HashMap<String,Integer> hm2=new HashMap<>();
+        HashMap<String, Integer> hm2 = new HashMap<>();
         hm2.put("Sumit", 35);
         hm2.put("Preeti", 39);
         hm2.put("Amit", 40);
 
-
-        Assert.assertEquals(hm,hm2); //passes. order changed still
-
-
-        List<Integer> l1=new ArrayList<>();
-        List<Integer> l2=new ArrayList<>();
+        Assert.assertEquals(hm, hm2); //passes. order changed still
+        List<Integer> l1 = new ArrayList<>();
+        List<Integer> l2 = new ArrayList<>();
         l1.add(1);
         l2.add(2);
 
         l2.add(1);
         l1.add(2);
-
         Assert.assertEquals(l1, l2);//java.lang.AssertionError: Lists differ at element [0]: 2 != 1
-
-
-
-
     }
 }

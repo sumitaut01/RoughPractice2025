@@ -28,9 +28,7 @@ WebDriver driver=new ChromeDriver();
             driver.switchTo().frame(driver.findElement(By.xpath("//iframe[contains(@id,'map-instance')]")));
             var ele=driver.findElements(By.xpath("//*[local-name()='svg' and @id='map-svg']//*[name()='g' and @id='regions']//*[name()='g' and @class='region']"));
             System.out.println(ele.size());
-
             for (WebElement e:ele){
-
                     System.out.println(e.getDomAttribute("id"));
             }
             driver.quit();

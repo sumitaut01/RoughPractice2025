@@ -7,8 +7,6 @@ public class R_XGenerics {
         Gen<String> st=new Gen<>();
         st.setData("sumit");
         System.out.println(st.getData());//sumit
-
-
         Gen<Integer> sts=new Gen<>();
         sts.setData(4);
         System.out.println(sts.getData());//4

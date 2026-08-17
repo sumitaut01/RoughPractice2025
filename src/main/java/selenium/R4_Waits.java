@@ -33,7 +33,6 @@ public class R4_Waits {
                 .withTimeout(Duration.ofSeconds(10))
                 .withMessage("--failed to find something");
 
-
         driver.get("http://www.google.com");
         wait.until(ExpectedConditions.titleIs("some title"));
         driver.quit();

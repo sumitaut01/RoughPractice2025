@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maven Behind the Firewall — settings.xml &amp; manual jar install</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1F5;
+    --paper-alt:#E1E8F0;
+    --ink:#16233A;
+    --ink-soft:#4A5C78;
+    --line:#B9C6D6;
+    --navy-deep:#0F1D33;
+    --code-bg:#0F1D33;
+    --code-fg:#DCE6F2;
+    --code-comment:#7C93B3;
+    --amber:#DE9A34;
+    --amber-soft:#F4E3C4;
+    --green:#3E8361;
+    --green-soft:#DCEEE3;
+    --red:#C1442E;
+    --red-soft:#F6DCD5;
+    --blue-accent:#2E5C8A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:56px 28px 120px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding-bottom:36px;
+    margin-bottom:44px;
+    border-bottom:2px solid var(--ink);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--blue-accent);
+    font-weight:600;
+    margin-bottom:14px;
+  }
+  h1{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(28px,4.4vw,42px);
+    line-height:1.15;
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  .hero p.lede{
+    font-size:16.5px;
+    color:var(--ink-soft);
+    max-width:62ch;
+    margin:0;
+  }
+
+  /* ---------- Flow diagram ---------- */
+  .flow{
+    margin:34px 0 8px;
+    background:var(--navy-deep);
+    border-radius:10px;
+    padding:26px 22px 18px;
+    position:relative;
+  }
+  .flow-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#8FA6C7;
+    margin-bottom:18px;
+  }
+  svg{display:block;width:100%;height:auto;}
+  .node-label{font-family:'IBM Plex Mono',monospace;font-size:13px;fill:#EAF0F8;}
+  .node-sub{font-family:'IBM Plex Sans',sans-serif;font-size:10.5px;fill:#8FA6C7;}
+  .path-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;}
+
+  /* ---------- Section framing ---------- */
+  section{margin-top:64px;}
+  .sec-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--blue-accent);
+    font-weight:700;
+    letter-spacing:.06em;
+  }
+  h2{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:24px;
+    margin:6px 0 8px;
+    letter-spacing:-0.01em;
+  }
+  .sec-intro{color:var(--ink-soft);max-width:66ch;margin-bottom:26px;font-size:15.5px;}
+
+  /* ---------- Annotated code panel ---------- */
+  .panel{
+    background:var(--code-bg);
+    border-radius:10px;
+    overflow:hidden;
+    margin:20px 0;
+  }
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 16px;
+    background:#0A1526;
+    border-bottom:1px solid #1E3151;
+  }
+  .panel-path{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:#8FA6C7;
+  }
+  .dots{display:flex;gap:6px;}
+  .dots span{width:8px;height:8px;border-radius:50%;background:#233c60;}
+  pre{
+    margin:0;
+    padding:20px 20px 22px;
+    overflow-x:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    line-height:1.65;
+    color:var(--code-fg);
+  }
+  .c-tag{color:#7FB8E0;}
+  .c-attr{color:#DE9A34;}
+  .c-str{color:#9FCB88;}
+  .c-comment{color:var(--code-comment);font-style:italic;}
+  .c-hl{background:rgba(222,154,52,0.16);border-left:2px solid var(--amber);display:inline-block;width:100%;margin-left:-20px;padding-left:18px;}
+
+  /* callout numbers tied to code */
+  .annos{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;
+    margin-top:16px;
+  }
+  .anno{
+    background:var(--paper-alt);
+    border-left:3px solid var(--blue-accent);
+    border-radius:6px;
+    padding:12px 14px;
+    font-size:13.5px;
+  }
+  .anno b{
+    font-family:'IBM Plex Mono',monospace;
+    display:block;
+    font-size:12px;
+    color:var(--blue-accent);
+    margin-bottom:4px;
+  }
+
+  /* ---------- Comparison table ---------- */
+  table{width:100%;border-collapse:collapse;margin:18px 0 6px;font-size:14.5px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+  tr:last-child td{border-bottom:none;}
+
+  /* ---------- File tree ---------- */
+  .tree{
+    background:var(--paper-alt);
+    border-radius:10px;
+    padding:20px 22px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    line-height:1.9;
+  }
+  .tree .dim{color:var(--ink-soft);}
+  .tree .file{color:var(--blue-accent);font-weight:600;}
+  .tree .new{color:var(--green);font-weight:700;}
+
+  /* ---------- Steps ---------- */
+  .steps{counter-reset:step;margin-top:10px;}
+  .step{
+    position:relative;
+    padding:18px 0 18px 46px;
+    border-bottom:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:none;}
+  .step::before{
+    counter-increment:step;
+    content:counter(step);
+    position:absolute;
+    left:0;top:16px;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step h3{margin:0 0 6px;font-size:15.5px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;}
+  .step p{margin:0 0 8px;color:var(--ink-soft);font-size:14px;max-width:64ch;}
+
+  /* ---------- Warning / note boxes ---------- */
+  .box{border-radius:8px;padding:14px 16px;font-size:14px;margin:16px 0;}
+  .box.warn{background:var(--amber-soft);border-left:3px solid var(--amber);}
+  .box.ok{background:var(--green-soft);border-left:3px solid var(--green);}
+  .box strong{font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+
+  code.inline{
+    font-family:'IBM Plex Mono',monospace;
+    background:var(--paper-alt);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:.92em;
+  }
+
+  footer{
+    margin-top:70px;
+    padding-top:22px;
+    border-top:2px solid var(--ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:600px){
+    .wrap{padding:36px 18px 90px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Maven / Enterprise Networking</div>
+    <h1>When Maven Central<br>is off-limits</h1>
+    <p class="lede">Two ways around a locked-down company network: point Maven at an internal artifact server (Nexus / JFrog Artifactory), or hand-install the jar straight into your local repo. Here's exactly what changes, and where.</p>
+  </div>
+
+  <div class="flow">
+    <div class="flow-title">Request path — blocked vs. redirected</div>
+    <svg viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- dashed grid feel -->
+      <line x1="0" y1="55" x2="860" y2="55" stroke="#1E3151" stroke-width="1"/>
+      <line x1="0" y1="165" x2="860" y2="165" stroke="#1E3151" stroke-width="1"/>
+
+      <!-- Row 1: blocked path -->
+      <rect x="10" y="20" width="140" height="60" rx="8" fill="#152A47" stroke="#2E5C8A"/>
+      <text x="80" y="46" text-anchor="middle" class="node-label">Your Machine</text>
+      <text x="80" y="63" text-anchor="middle" class="node-sub">mvn install</text>
+
+      <line x1="150" y1="50" x2="330" y2="50" stroke="#C1442E" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="240" y="38" text-anchor="middle" class="path-label" fill="#E28577">central.maven.org</text>
+
+      <rect x="330" y="20" width="150" height="60" rx="8" fill="#3A1913" stroke="#C1442E"/>
+      <text x="405" y="46" text-anchor="middle" class="node-label">Maven Central</text>
+      <text x="405" y="63" text-anchor="middle" class="node-sub" fill="#E28577">firewall: BLOCKED ✕</text>
+
+      <!-- Row 2: allowed path via internal repo -->
+      <rect x="10" y="130" width="140" height="60" rx="8" fill="#152A47" stroke="#2E5C8A"/>
+      <text x="80" y="156" text-anchor="middle" class="node-label">Your Machine</text>
+      <text x="80" y="173" text-anchor="middle" class="node-sub">mvn install</text>
+
+      <line x1="150" y1="160" x2="330" y2="160" stroke="#3E8361" stroke-width="2"/>
+      <text x="240" y="148" text-anchor="middle" class="path-label" fill="#7FCBA4">settings.xml mirror</text>
+
+      <rect x="330" y="130" width="180" height="60" rx="8" fill="#0F2E20" stroke="#3E8361"/>
+      <text x="420" y="152" text-anchor="middle" class="node-label">Nexus / JFrog</text>
+      <text x="420" y="169" text-anchor="middle" class="node-sub" fill="#7FCBA4">internal, allowed ✓</text>
+
+      <line x1="510" y1="160" x2="650" y2="160" stroke="#3E8361" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="580" y="148" text-anchor="middle" class="path-label" fill="#7FCBA4">proxies / caches</text>
+
+      <rect x="650" y="130" width="180" height="60" rx="8" fill="#152A47" stroke="#2E5C8A"/>
+      <text x="740" y="152" text-anchor="middle" class="node-label">Maven Central</text>
+      <text x="740" y="169" text-anchor="middle" class="node-sub">reached on your behalf</text>
+    </svg>
+  </div>
+  <div class="box ok" style="margin-top:0;">
+    <strong>Reading the diagram</strong>
+    Your machine never talks to Maven Central directly. It only knows about the internal repo — the internal repo is the one with permission to reach the outside world and cache what it fetches.
+  </div>
+
+  <!-- ================= SECTION 1 ================= -->
+  <section>
+    <div class="sec-num">01</div>
+    <h2>Route 1 — redirect Maven via settings.xml</h2>
+    <p class="sec-intro">This file lives at <code class="inline">~/.m2/settings.xml</code> (or <code class="inline">$MAVEN_HOME/conf/settings.xml</code> for a machine-wide default). It's <em>not</em> your project's <code class="inline">pom.xml</code> — it's user/machine-level config, which is exactly why it's the right place for "how do I even reach a repo" rules that shouldn't be committed to source control.</p>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-path">~/.m2/settings.xml</span>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c-tag">&lt;settings&gt;</span>
+
+  <span class="c-comment">&lt;!-- ① tells Maven "for ANY request, go here instead" --&gt;</span>
+  <span class="c-hl"><span class="c-tag">&lt;mirrors&gt;</span>
+    <span class="c-tag">&lt;mirror&gt;</span>
+      <span class="c-tag">&lt;id&gt;</span>company-nexus<span class="c-tag">&lt;/id&gt;</span>
+      <span class="c-tag">&lt;name&gt;</span>Internal Nexus mirror of central<span class="c-tag">&lt;/name&gt;</span>
+      <span class="c-tag">&lt;url&gt;</span><span class="c-str">https://nexus.mycompany.com/repository/maven-public/</span><span class="c-tag">&lt;/url&gt;</span>
+      <span class="c-tag">&lt;mirrorOf&gt;</span>*<span class="c-tag">&lt;/mirrorOf&gt;</span>
+    <span class="c-tag">&lt;/mirror&gt;</span>
+  <span class="c-tag">&lt;/mirrors&gt;</span></span>
+
+  <span class="c-comment">&lt;!-- ② credentials for that same repo — id MUST match the mirror's id --&gt;</span>
+  <span class="c-hl"><span class="c-tag">&lt;servers&gt;</span>
+    <span class="c-tag">&lt;server&gt;</span>
+      <span class="c-tag">&lt;id&gt;</span>company-nexus<span class="c-tag">&lt;/id&gt;</span>
+      <span class="c-tag">&lt;username&gt;</span>sumit.sagar<span class="c-tag">&lt;/username&gt;</span>
+      <span class="c-tag">&lt;password&gt;</span>{{encrypted-or-token}}<span class="c-tag">&lt;/password&gt;</span>
+    <span class="c-tag">&lt;/server&gt;</span>
+  <span class="c-tag">&lt;/servers&gt;</span></span>
+
+  <span class="c-comment">&lt;!-- ③ optional: only needed if repo isn't set as a full mirror,
+       e.g. you want ONE extra repo alongside central --&gt;</span>
+  <span class="c-hl"><span class="c-tag">&lt;profiles&gt;</span>
+    <span class="c-tag">&lt;profile&gt;</span>
+      <span class="c-tag">&lt;id&gt;</span>internal-repo<span class="c-tag">&lt;/id&gt;</span>
+      <span class="c-tag">&lt;repositories&gt;</span>
+        <span class="c-tag">&lt;repository&gt;</span>
+          <span class="c-tag">&lt;id&gt;</span>company-nexus<span class="c-tag">&lt;/id&gt;</span>
+          <span class="c-tag">&lt;url&gt;</span><span class="c-str">https://nexus.mycompany.com/repository/maven-public/</span><span class="c-tag">&lt;/url&gt;</span>
+        <span class="c-tag">&lt;/repository&gt;</span>
+      <span class="c-tag">&lt;/repositories&gt;</span>
+    <span class="c-tag">&lt;/profile&gt;</span>
+  <span class="c-tag">&lt;/profiles&gt;</span>
+  <span class="c-tag">&lt;activeProfiles&gt;</span>
+    <span class="c-tag">&lt;activeProfile&gt;</span>internal-repo<span class="c-tag">&lt;/activeProfile&gt;</span>
+  <span class="c-tag">&lt;/activeProfiles&gt;</span></span>
+
+<span class="c-tag">&lt;/settings&gt;</span></pre>
+    </div>
+
+    <div class="annos">
+      <div class="anno"><b>① &lt;mirrors&gt;</b>The heavy lever. <code class="inline">mirrorOf</code> = <code class="inline">*</code> means "every single dependency request, no matter what repo the pom.xml declares, gets rewritten to this URL." This is what actually stops traffic from ever leaving toward Maven Central.</div>
+      <div class="anno"><b>② &lt;servers&gt;</b>Just credentials — Nexus/JFrog usually sit behind auth. The <code class="inline">id</code> here is a foreign key back to the mirror/repository block with the same id; that's how Maven knows which URL these creds belong to.</div>
+      <div class="anno"><b>③ &lt;profiles&gt;</b>Use this instead of a full mirror when you only want to <em>add</em> an internal repo (for private/internal artifacts) without redirecting everything. Most corporate setups use ①+② because Nexus/JFrog already proxy central internally.</div>
+    </div>
+
+    <div class="box warn">
+      <strong>Common gotcha</strong>
+      If <code class="inline">id</code> in <code class="inline">&lt;server&gt;</code> doesn't exactly match the <code class="inline">id</code> in <code class="inml">&lt;mirror&gt;</code>/<code class="inline">&lt;repository&gt;</code>, Maven fetches the URL fine but silently fails auth — you'll see <code class="inline">401 Unauthorized</code> or <code class="inline">403</code> in the log, not a "wrong config" message.
+    </div>
+
+    <h3 style="font-family:'IBM Plex Mono',monospace;font-size:16px;margin-top:28px;">Nexus vs. JFrog Artifactory — same idea, different URL shape</h3>
+    <table>
+      <tr><th>What you need</th><th>Nexus Repository</th><th>JFrog Artifactory</th></tr>
+      <tr><td>Typical group/proxy URL</td><td><code class="inline">/repository/maven-public/</code></td><td><code class="inline">/artifactory/libs-release/</code> (or a <code class="inline">-virtual</code> repo)</td></tr>
+      <tr><td>Auth style</td><td>username + password, or a token</td><td>username + <em>API key</em> or identity token (recommended over password)</td></tr>
+      <tr><td>Where to find the exact URL</td><td>Nexus UI → Browse → copy the repo's "Maven2" URL</td><td>Artifactory UI → repo → "Set Me Up" tab, which even generates the settings.xml block for you</td></tr>
+      <tr><td>settings.xml block used</td><td><code class="inline">&lt;mirror&gt;</code> + <code class="inline">&lt;server&gt;</code></td><td>same — identical shape, just different id/url/creds</td></tr>
+    </table>
+  </section>
+
+  <!-- ================= SECTION 2 ================= -->
+  <section>
+    <div class="sec-num">02</div>
+    <h2>Route 2 — manually install the jar into .m2</h2>
+    <p class="sec-intro">No network route to <em>any</em> repo (or the dependency isn't published anywhere internal, e.g. a vendor gave you a jar directly)? Skip resolution entirely and place the artifact into your local repository yourself, in the exact folder layout Maven expects.</p>
+
+    <div class="box warn">
+      <strong>Where Maven actually looks</strong>
+      Your local repo (<code class="inline">~/.m2/repository</code>) is not a flat folder — it mirrors <code class="inline">groupId.artifactId.version</code> as nested directories. Manual copy-paste in the wrong shape is the #1 reason "I installed it but Maven still says missing artifact."
+    </div>
+
+    <div class="tree">
+&nbsp;~/.m2/repository/<br>
+&nbsp;└── com/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── mycompany/<span class="dim">          ← groupId, dots become slashes</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── pricing-utils/<span class="dim">      ← artifactId</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── 2.3.1/<span class="dim">              ← version</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="new">pricing-utils-2.3.1.jar</span><span class="dim">      ← the artifact itself</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="new">pricing-utils-2.3.1.pom</span><span class="dim">      ← generated metadata, do NOT skip</span>
+    </div>
+
+    <p style="margin-top:18px;font-size:14.5px;color:var(--ink-soft);">You get that layout for free — for a single command, run:</p>
+
+    <div class="panel">
+      <div class="panel-head"><span class="panel-path">terminal</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre>mvn install:install-file <span class="c-comment">\</span>
+  -Dfile=<span class="c-str">/path/to/pricing-utils-2.3.1.jar</span> <span class="c-comment">\</span>
+  -DgroupId=<span class="c-str">com.mycompany</span> <span class="c-comment">\</span>
+  -DartifactId=<span class="c-str">pricing-utils</span> <span class="c-comment">\</span>
+  -Dversion=<span class="c-str">2.3.1</span> <span class="c-comment">\</span>
+  -Dpackaging=<span class="c-str">jar</span> <span class="c-comment">\</span>
+  -DgeneratePom=<span class="c-str">true</span></pre>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <h3>-Dfile</h3>
+        <p>Path to the jar you already have on disk — from a vendor, a colleague, or downloaded on a machine that <em>does</em> have access.</p>
+      </div>
+      <div class="step">
+        <h3>-DgroupId / -DartifactId / -Dversion</h3>
+        <p>These three together decide the folder path shown above. They must exactly match what your <code class="inline">pom.xml</code>'s <code class="inline">&lt;dependency&gt;</code> block declares, or Maven will look in the wrong nested folder and still report it missing.</p>
+      </div>
+      <div class="step">
+        <h3>-DgeneratePom=true</h3>
+        <p>Auto-creates the minimal <code class="inline">.pom</code> file Maven needs alongside the jar. Without it, some Maven versions refuse to resolve the artifact even though the jar is physically present.</p>
+      </div>
+      <div class="step">
+        <h3>Reference it in pom.xml — same as any normal dependency</h3>
+        <p>Once installed, it's indistinguishable from a jar Maven downloaded itself. No special syntax needed in the consuming project.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:8px;">
+      <div class="panel-head"><span class="panel-path">pom.xml</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="c-tag">&lt;dependency&gt;</span>
+  <span class="c-tag">&lt;groupId&gt;</span>com.mycompany<span class="c-tag">&lt;/groupId&gt;</span>
+  <span class="c-tag">&lt;artifactId&gt;</span>pricing-utils<span class="c-tag">&lt;/artifactId&gt;</span>
+  <span class="c-tag">&lt;version&gt;</span>2.3.1<span class="c-tag">&lt;/version&gt;</span>
+<span class="c-tag">&lt;/dependency&gt;</span></pre>
+    </div>
+
+    <div class="box ok">
+      <strong>Doing it by hand, no plugin</strong>
+      If <code class="inline">mvn</code> itself can't run install:install-file for some reason (e.g. resolving the plugin also needs a network you don't have), you can literally create the three files/folders in the tree above yourself and drop the jar in — Maven doesn't care how they got there, only that the layout is correct.
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3 ================= -->
+  <section>
+    <div class="sec-num">03</div>
+    <h2>Which route, when</h2>
+    <table>
+      <tr><th>Situation</th><th>Use</th></tr>
+      <tr><td>Company has Nexus/JFrog, proxies Maven Central internally</td><td>Route 1 — <code class="inline">&lt;mirrors&gt;</code>, set once, works for every dependency forever</td></tr>
+      <tr><td>Internal-only library your team publishes (not on any public repo)</td><td>Route 1, but as an added <code class="inline">&lt;repository&gt;</code> in a profile, not a full mirror</td></tr>
+      <tr><td>One-off vendor jar, no internal repo entry exists for it</td><td>Route 2 — <code class="inline">install:install-file</code>, quick and local to your machine</td></tr>
+      <tr><td>Need the whole team/CI to have it, not just your laptop</td><td>Upload it into Nexus/JFrog once (via their UI or <code class="inline">mvn deploy:deploy-file</code>), then it's Route 1 for everyone else</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    settings.xml lives per-user (~/.m2) or per-machine (Maven install dir) — never in the repo. Local .m2 installs are per-machine only; for a team/CI, push the artifact into Nexus/JFrog instead so everyone resolves it the normal way.
+  </footer>
+
+</div>
+</body>
+</html>
