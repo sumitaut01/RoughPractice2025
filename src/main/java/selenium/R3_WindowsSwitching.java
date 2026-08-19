@@ -22,16 +22,17 @@ public class R3_WindowsSwitching {
 
         String sParent=driver.getWindowHandle();
         System.out.println("Parent Window title is "+driver.getTitle());
-
+//Parent Window title is Automation Testing Practice
         By btnNewTab=By.xpath("//button[contains(text(),'New Tab')]");
         driver.findElement(btnNewTab).click();
         System.out.println("Current Window title is "+driver.getTitle());
-
+//Current Window title is Automation Testing Practice
         Set<String> sHandles = driver.getWindowHandles();
         for (String s : sHandles) {
             if(!s.equals(sParent)) {
                 driver.switchTo().window(s);
                 System.out.println("Child Window title is "+driver.getTitle());
+                //Child Window title is SDET-QA Blog
             }
         }
         driver.quit();

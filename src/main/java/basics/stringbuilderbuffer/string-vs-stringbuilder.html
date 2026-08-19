@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>String vs StringBuilder vs StringBuffer — Interview Reference</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-panel: #10161d;
+    --bg-code: #0a0d12;
+    --line: #1e2731;
+    --text: #dbe4ec;
+    --text-dim: #7d8a99;
+    --accent: #5eead4;      /* terminal teal */
+    --accent-2: #ffb454;    /* amber warning */
+    --accent-3: #ff6b6b;    /* red - danger/cost */
+    --accent-soft: rgba(94,234,212,0.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    padding-bottom: 80px;
+  }
+  code, .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 64px 8vw 48px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity:0.25;
+    mask-image: radial-gradient(ellipse at top left, black, transparent 70%);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow::before{ content:"$"; color:var(--text-dim); }
+  h1{
+    position:relative; z-index:1;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size: clamp(28px, 4.2vw, 46px);
+    margin-top:14px;
+    max-width: 16ch;
+    letter-spacing: -0.01em;
+    color:#fff;
+  }
+  h1 .q{ color: var(--accent); }
+  .hero-sub{
+    position:relative; z-index:1;
+    max-width: 640px;
+    margin-top:18px;
+    color: var(--text-dim);
+    font-size:16px;
+  }
+  .hero-answer{
+    position:relative; z-index:1;
+    margin-top: 28px;
+    max-width: 720px;
+    background: var(--bg-panel);
+    border:1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .hero-answer b{ color:#fff; }
+
+  section{ padding: 52px 8vw; border-bottom:1px solid var(--line); }
+  .section-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:26px; }
+  .section-num{ font-family:'JetBrains Mono', monospace; color: var(--text-dim); font-size:13px; }
+  h2{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 22px;
+    color:#fff;
+    font-weight:700;
+  }
+  p{ color: var(--text); max-width: 74ch; }
+  p + p{ margin-top:12px; }
+  .lede{ color: var(--text-dim); max-width: 74ch; margin-bottom:22px; }
+
+  /* ---------- IMMUTABILITY DIAGRAM ---------- */
+  .pool-wrap{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 28px;
+  }
+  @media (max-width: 820px){ .pool-wrap{ grid-template-columns: 1fr; } }
+  .pool-card{
+    background: var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .pool-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .pool-title .tag{
+    padding:2px 8px; border-radius:20px; font-size:11px;
+  }
+  .tag.bad{ background: rgba(255,107,107,0.12); color: var(--accent-3); border:1px solid rgba(255,107,107,0.3); }
+  .tag.good{ background: var(--accent-soft); color: var(--accent); border:1px solid rgba(94,234,212,0.3); }
+
+  .heap-row{ display:flex; align-items:center; gap:10px; margin:10px 0; }
+  .heap-obj{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    background: var(--bg-code);
+    border:1px solid var(--line);
+    padding:8px 12px;
+    border-radius:5px;
+    color: var(--text);
+    white-space:nowrap;
+  }
+  .heap-obj.discarded{ opacity:0.35; text-decoration: line-through; border-color:#3a2020; color: var(--accent-3); }
+  .arrow{ color: var(--text-dim); font-size:14px; }
+  .heap-obj.kept{ border-color: var(--accent); box-shadow: 0 0 0 1px rgba(94,234,212,0.15) inset; }
+  .buffer-obj{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    background: var(--bg-code);
+    border:1px solid var(--accent);
+    padding:8px 12px;
+    border-radius:5px;
+    display:inline-block;
+    transition: width 0.3s;
+  }
+  .note{ font-size:13px; color: var(--text-dim); margin-top:14px; }
+
+  /* ---------- CODE BLOCKS ---------- */
+  .code{
+    background: var(--bg-code);
+    border:1px solid var(--line);
+    border-radius: 8px;
+    overflow:hidden;
+    margin: 18px 0;
+  }
+  .code-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 10px 16px;
+    border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color: var(--text-dim);
+  }
+  .dots{ display:flex; gap:6px; }
+  .dots span{ width:9px; height:9px; border-radius:50%; background:#2a3540; display:inline-block; }
+  pre{
+    padding: 18px 20px;
+    overflow-x:auto;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height:1.65;
+  }
+  .kw{ color:#ff9d6f; }
+  .tp{ color:#5eead4; }
+  .str{ color:#a8e6a1; }
+  .cm{ color:#5c6b7a; font-style:italic; }
+  .mth{ color:#82c7ff; }
+  .num{ color:#ffb454; }
+
+  /* ---------- COMPARISON TABLE ---------- */
+  table{
+    width:100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  th, td{
+    text-align:left;
+    padding: 14px 16px;
+    border-bottom:1px solid var(--line);
+    vertical-align: top;
+  }
+  th{
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--accent);
+  }
+  td.attr{ color: var(--text-dim); font-family:'JetBrains Mono', monospace; font-size:13px; white-space:nowrap; }
+  td b{ color:#fff; }
+  tr:hover td{ background: rgba(255,255,255,0.015); }
+
+  /* ---------- BENCHMARK BARS ---------- */
+  .bench{ margin-top:28px; }
+  .bench-row{ display:grid; grid-template-columns: 160px 1fr 90px; align-items:center; gap:14px; margin-bottom:14px; }
+  .bench-label{ font-family:'JetBrains Mono', monospace; font-size:13px; color: var(--text-dim); }
+  .bench-track{ background: var(--bg-code); border:1px solid var(--line); border-radius:5px; height:26px; overflow:hidden; }
+  .bench-fill{ height:100%; border-radius:4px 0 0 4px; }
+  .bench-time{ font-family:'JetBrains Mono', monospace; font-size:13px; text-align:right; }
+
+  /* ---------- DECISION GRID ---------- */
+  .decision-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-top:26px;
+  }
+  @media (max-width: 900px){ .decision-grid{ grid-template-columns:1fr; } }
+  .dcard{
+    background: var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding: 22px;
+    position:relative;
+  }
+  .dcard.highlight{ border-color: var(--accent); }
+  .dcard h3{
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    color:#fff;
+    margin-bottom:10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .dcard .dot{ width:8px; height:8px; border-radius:50%; }
+  .dot.s{ background: var(--accent-3); }
+  .dot.sb{ background: var(--accent-2); }
+  .dot.sf{ background: var(--accent); }
+  .dcard ul{ margin-top:10px; padding-left:18px; color: var(--text-dim); font-size:13.5px; }
+  .dcard li{ margin-bottom:6px; }
+  .dcard .verdict{ margin-top:14px; font-size:13px; color: var(--accent); font-family:'JetBrains Mono', monospace; }
+
+  /* ---------- SELENIUM CALLOUT ---------- */
+  .callout{
+    background: linear-gradient(180deg, rgba(94,234,212,0.06), transparent);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent-2);
+    border-radius: 6px;
+    padding: 22px 24px;
+    margin-top:22px;
+  }
+  .callout .lbl{ font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--accent-2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+
+  /* ---------- CHEAT SHEET ---------- */
+  .cheat{
+    background: var(--bg-panel);
+    border:1px solid var(--accent);
+    border-radius: 10px;
+    padding: 30px 8vw;
+    margin: 0 -8vw;
+  }
+  .cheat h2{ margin-bottom: 6px; }
+  .cheat .lede{ margin-bottom: 20px; }
+  .cheat-list{ list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .cheat-list li{
+    display:flex; gap:12px; font-size:14.5px; align-items:flex-start;
+  }
+  .cheat-list .num{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight:700;
+    min-width:22px;
+  }
+
+  footer{ text-align:center; padding: 30px 8vw 0; color: var(--text-dim); font-size:12.5px; font-family:'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="eyebrow">java · interview-prep</div>
+    <h1>Why <span class="q">StringBuilder</span> / <span class="q">StringBuffer</span> over <span class="q">String</span>?</h1>
+    <p class="hero-sub">The question interviewers ask to check whether you actually understand Java memory, not just the syntax. Here's the full answer, with the diagrams and benchmarks to back it up.</p>
+    <div class="hero-answer">
+      <b>One-line answer:</b> <code class="mono">String</code> is <b>immutable</b> — every concatenation creates a brand-new object in memory. In a loop, that means throwaway garbage on every iteration. <code class="mono">StringBuilder</code> (and <code class="mono">StringBuffer</code>) use a <b>mutable, resizable buffer</b>, so repeated modification happens in place — no repeated allocation, no GC churn.
+    </div>
+  </div>
+
+  <!-- ============ 1. IMMUTABILITY ============ -->
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>The root cause: String is immutable</h2></div>
+    <p class="lede">Once a <code class="mono">String</code> object is created, its internal character array can never change. Any "modification" — concatenation, replace, substring — returns a <b>new</b> object. The old one just sits in memory until garbage collected.</p>
+
+    <div class="pool-wrap">
+      <div class="pool-card">
+        <div class="pool-title">String concatenation in a loop <span class="tag bad">3 objects created</span></div>
+        <div class="heap-row"><span class="heap-obj discarded">"Test"</span><span class="arrow">+= "1"</span></div>
+        <div class="heap-row"><span class="heap-obj discarded">"Test1"</span><span class="arrow">+= "2"</span></div>
+        <div class="heap-row"><span class="heap-obj kept">"Test12"</span><span class="arrow">← final reference</span></div>
+        <p class="note">Every <code class="mono">+=</code> abandons the previous object. The strikethrough ones are now unreachable garbage — pure allocation cost for no benefit.</p>
+      </div>
+      <div class="pool-card">
+        <div class="pool-title">StringBuilder.append() in a loop <span class="tag good">1 object, resized in place</span></div>
+        <div class="heap-row"><span class="buffer-obj" style="width:90px;">[T e s t _ _]</span></div>
+        <div class="heap-row"><span class="buffer-obj" style="width:130px;">[T e s t 1 _]</span></div>
+        <div class="heap-row"><span class="buffer-obj" style="width:170px;">[T e s t 1 2]</span></div>
+        <p class="note">Same char array, mutated directly. It only reallocates if it outgrows its internal capacity — and even then, it grows geometrically, not per-append.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. BENCHMARK ============ -->
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Why it matters: the cost compounds</h2></div>
+    <p class="lede">Concatenating <code class="mono">n</code> times with <code class="mono">String</code> is roughly <b>O(n²)</b> — each new string re-copies everything before it. <code class="mono">StringBuilder</code> amortizes to <b>O(n)</b>. This is invisible at 5 iterations and very visible at 50,000 (e.g. building a large report, a huge XPath, or log text row-by-row in an automation run).</p>
+
+    <div class="bench">
+      <div class="bench-row">
+        <span class="bench-label">String (+=)</span>
+        <div class="bench-track"><div class="bench-fill" style="width:97%; background: var(--accent-3);"></div></div>
+        <span class="bench-time" style="color:var(--accent-3);">~4800ms</span>
+      </div>
+      <div class="bench-row">
+        <span class="bench-label">StringBuffer</span>
+        <div class="bench-track"><div class="bench-fill" style="width:4%; background: var(--accent-2);"></div></div>
+        <span class="bench-time" style="color:var(--accent-2);">~18ms</span>
+      </div>
+      <div class="bench-row">
+        <span class="bench-label">StringBuilder</span>
+        <div class="bench-track"><div class="bench-fill" style="width:3%; background: var(--accent);"></div></div>
+        <span class="bench-time" style="color:var(--accent);">~12ms</span>
+      </div>
+    </div>
+    <p class="note">Illustrative proportions for ~50,000 concatenations of a short string — exact numbers vary by JVM/heap settings, but the order-of-magnitude gap is consistent and easy to reproduce yourself (code below).</p>
+
+    <div class="code">
+      <div class="code-head"><span>Benchmark.java</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="kw">public class</span> <span class="tp">Benchmark</span> {
+    <span class="kw">public static void</span> <span class="mth">main</span>(<span class="tp">String</span>[] args) {
+        <span class="kw">int</span> iterations = <span class="num">50_000</span>;
+
+        <span class="cm">// ---- String: creates a new object every single loop ----</span>
+        <span class="kw">long</span> start = <span class="tp">System</span>.<span class="mth">nanoTime</span>();
+        <span class="tp">String</span> result = <span class="str">""</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < iterations; i++) {
+            result += i;   <span class="cm">// new String object each time</span>
+        }
+        <span class="mth">printElapsed</span>(<span class="str">"String"</span>, start);
+
+        <span class="cm">// ---- StringBuilder: mutates one internal buffer ----</span>
+        start = <span class="tp">System</span>.<span class="mth">nanoTime</span>();
+        <span class="tp">StringBuilder</span> sb = <span class="kw">new</span> <span class="tp">StringBuilder</span>();
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < iterations; i++) {
+            sb.<span class="mth">append</span>(i);   <span class="cm">// in-place, no new object per iteration</span>
+        }
+        <span class="mth">printElapsed</span>(<span class="str">"StringBuilder"</span>, start);
+    }
+}</pre>
+    </div>
+  </section>
+
+  <!-- ============ 3. COMPARISON TABLE ============ -->
+  <section>
+    <div class="section-head"><span class="section-num">03</span><h2>String vs StringBuffer vs StringBuilder</h2></div>
+    <table>
+      <thead>
+        <tr><th>Attribute</th><th>String</th><th>StringBuffer</th><th>StringBuilder</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="attr">Mutability</td>
+          <td><b>Immutable</b> — new object on every change</td>
+          <td><b>Mutable</b> — same object modified</td>
+          <td><b>Mutable</b> — same object modified</td>
+        </tr>
+        <tr>
+          <td class="attr">Thread safety</td>
+          <td>N/A (immutable ⇒ inherently safe)</td>
+          <td><b>Synchronized</b> — safe across threads, slower</td>
+          <td><b>Not synchronized</b> — faster, not thread-safe</td>
+        </tr>
+        <tr>
+          <td class="attr">Performance</td>
+          <td>Slow for repeated concatenation</td>
+          <td>Fast, but sync overhead</td>
+          <td><b>Fastest</b> for single-threaded use</td>
+        </tr>
+        <tr>
+          <td class="attr">Storage</td>
+          <td>String constant pool (literals) / heap</td>
+          <td>Heap</td>
+          <td>Heap</td>
+        </tr>
+        <tr>
+          <td class="attr">Introduced</td>
+          <td>JDK 1.0</td>
+          <td>JDK 1.0</td>
+          <td>JDK 1.5 (added as the non-synchronized alternative)</td>
+        </tr>
+        <tr>
+          <td class="attr">Typical use</td>
+          <td>Fixed/rarely-changed text, map keys, constants</td>
+          <td>Shared buffer across multiple threads</td>
+          <td>Local, single-threaded string building (most common case)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ 4. WHEN TO USE ============ -->
+  <section>
+    <div class="section-head"><span class="section-num">04</span><h2>Which one, when</h2></div>
+    <div class="decision-grid">
+      <div class="dcard">
+        <h3><span class="dot s"></span>String</h3>
+        <ul>
+          <li>Value is fixed or changes rarely</li>
+          <li>Used as a HashMap/HashSet key (needs stable hashcode)</li>
+          <li>Small number of concatenations (JVM compiler often optimizes simple cases anyway)</li>
+        </ul>
+        <div class="verdict">→ Default choice for plain data</div>
+      </div>
+      <div class="dcard highlight">
+        <h3><span class="dot sf"></span>StringBuilder</h3>
+        <ul>
+          <li>Building text inside a loop, single-threaded</li>
+          <li>Local variable inside one method — never shared across threads</li>
+          <li>Most real-world "building a string" scenarios, including test automation code</li>
+        </ul>
+        <div class="verdict">→ Default choice for building/mutating text</div>
+      </div>
+      <div class="dcard">
+        <h3><span class="dot sb"></span>StringBuffer</h3>
+        <ul>
+          <li>The same buffer is genuinely accessed by multiple threads</li>
+          <li>You need built-in synchronization without adding your own locks</li>
+          <li>Legacy codebases already using it</li>
+        </ul>
+        <div class="verdict">→ Rare in new code — StringBuilder + your own sync usually wins</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. SELENIUM CONTEXT ============ -->
+  <section>
+    <div class="section-head"><span class="section-num">05</span><h2>Where this shows up in Selenium / test automation</h2></div>
+    <p class="lede">This isn't just theory for the interview — it's a real pattern in framework code you've probably already written.</p>
+
+    <div class="callout">
+      <div class="lbl">Common case</div>
+      <p>Building a dynamic XPath/CSS locator, an assertion failure message, or a test execution log line by appending values across several conditions/loops — e.g. iterating over a table's rows and columns to build one combined validation report string.</p>
+    </div>
+
+    <div class="code">
+      <div class="code-head"><span>DynamicLocatorBuilder.java</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="cm">// Building an XPath by concatenating conditions in a loop</span>
+<span class="tp">StringBuilder</span> xpath = <span class="kw">new</span> <span class="tp">StringBuilder</span>(<span class="str">"//table//tr"</span>);
+<span class="kw">for</span> (<span class="tp">String</span> col : expectedColumns) {
+    xpath.<span class="mth">append</span>(<span class="str">"[td[contains(text(),'"</span>)
+         .<span class="mth">append</span>(col)
+         .<span class="mth">append</span>(<span class="str">"')]]"</span>);
+}
+driver.<span class="mth">findElement</span>(<span class="tp">By</span>.<span class="mth">xpath</span>(xpath.<span class="mth">toString</span>()));
+
+<span class="cm">// Same idea for a soft-assertion summary across many rows</span>
+<span class="tp">StringBuilder</span> report = <span class="kw">new</span> <span class="tp">StringBuilder</span>();
+<span class="kw">for</span> (<span class="tp">RowResult</span> row : results) {
+    <span class="kw">if</span> (!row.<span class="mth">isPassed</span>()) {
+        report.<span class="mth">append</span>(<span class="str">"Row "</span>).<span class="mth">append</span>(row.<span class="mth">getIndex</span>())
+              .<span class="mth">append</span>(<span class="str">" mismatch: "</span>).<span class="mth">append</span>(row.<span class="mth">getDiff</span>())
+              .<span class="mth">append</span>(<span class="str">"\n"</span>);
+    }
+}
+<span class="tp">Assert</span>.<span class="mth">assertTrue</span>(report.<span class="mth">length</span>() == <span class="num">0</span>, report.<span class="mth">toString</span>());</pre>
+    </div>
+    <p class="note">With <code class="mono">String +=</code> here, every row would allocate a new full-length string — wasteful, and it gets worse the more rows/columns your test data has. <code class="mono">StringBuilder</code> is the natural fit since this buffer never leaves the current thread.</p>
+  </section>
+
+  <!-- ============ 6. CHEAT SHEET ============ -->
+  <section style="border-bottom:none;">
+    <div class="cheat">
+      <h2>30-second interview answer</h2>
+      <p class="lede">If asked to say it out loud in the room, structure it like this:</p>
+      <ul class="cheat-list">
+        <li><span class="num">1.</span><span><b>Immutability first:</b> "String is immutable in Java — every concatenation creates a new object instead of modifying the existing one."</span></li>
+        <li><span class="num">2.</span><span><b>Cost:</b> "In a loop, that means repeated allocation and garbage collection overhead — it degrades toward O(n²) for n concatenations."</span></li>
+        <li><span class="num">3.</span><span><b>The fix:</b> "StringBuilder/StringBuffer hold a mutable, resizable character buffer, so repeated appends happen in place — O(n) overall."</span></li>
+        <li><span class="num">4.</span><span><b>The difference between the two:</b> "StringBuffer's methods are synchronized — thread-safe but slower. StringBuilder isn't synchronized, so it's faster and is the default choice unless the buffer is truly shared across threads."</span></li>
+        <li><span class="num">5.</span><span><b>Anchor it to real code:</b> "For example, I use StringBuilder when building dynamic XPath locators or assembling multi-row validation messages in my test framework."</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>String vs StringBuilder vs StringBuffer — quick reference</footer>
+
+</body>
+</html>

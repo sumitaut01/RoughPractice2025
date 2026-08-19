@@ -53,5 +53,24 @@ public class R_28AnagramString {
         System.out.println(hm1.equals(hm2));//false
         System.out.println(hm1.equals(hm3));//true
 
+
+        // multi keys
+        HashMap<String,Integer> hm4=new HashMap<>();
+        HashMap<String,Integer> hm5=new HashMap<>();
+        HashMap<String,Integer> hm6=new HashMap<>();
+
+        hm4.put("age",35);
+        hm4.put("salary",1);
+
+        hm5.put("age",35);
+
+        hm6.put("age",35);
+        hm6.put("salary",1);
+
+        System.out.println(hm4.equals(hm5));
+        System.out.println(hm4.equals(hm6));
+
+
+
     }
 }

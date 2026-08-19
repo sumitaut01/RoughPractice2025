@@ -2,8 +2,7 @@ package basics.collections.rough;
 
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Rough1 {
 
@@ -43,12 +42,32 @@ public class Rough1 {
 
         System.out.println(name.replaceAll("[a-z]", ""));//R
 
+    }
 
 
+
+    @Test
+    public void TreeMapDemo(){
+
+        Map<String,Integer> hm=new TreeMap<>();
+        hm.put("B", 22);
+        hm.put("A", 23);
+        hm.put("C", 21);
+        System.out.println(hm);//{A=23, B=22, C=21}  sorted automatically
 
 
 
 
 
     }
+
+
+    @Test
+    public void TreeSetDemo(){
+
+
+
+    }
+
+
 }

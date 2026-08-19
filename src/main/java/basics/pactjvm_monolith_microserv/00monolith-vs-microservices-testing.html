@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monolith vs Microservices Testing — RestAssured & Pact-JVM</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #161925;
+    --panel-alt: #1c2030;
+    --border: #2a2f42;
+    --text: #e6e8f0;
+    --text-dim: #9aa1b8;
+    --accent: #7c9eff;
+    --accent2: #ff9d7c;
+    --green: #6fd68f;
+    --code-bg: #10121a;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 100px; }
+  header { margin-bottom: 40px; }
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle { color: var(--text-dim); font-size: 1.05rem; }
+
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 24px 0 40px;
+  }
+  nav.toc h3 { margin: 0 0 10px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section { margin-bottom: 56px; }
+  h2 {
+    font-size: 1.4rem;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin: 0 0 18px;
+  }
+  h3 { font-size: 1.1rem; color: var(--accent2); margin: 28px 0 10px; }
+  p { color: var(--text); }
+  .dim { color: var(--text-dim); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 20px 0;
+  }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card h4 { margin: 0 0 10px; font-size: 1rem; }
+  .card.mono h4 { color: var(--accent); }
+  .card.micro h4 { color: var(--accent2); }
+  .card ul { margin: 0; padding-left: 20px; color: var(--text-dim); font-size: 0.94rem; }
+  .card li { margin-bottom: 6px; }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-right: 8px;
+  }
+  .badge.tool1 { background: rgba(124,158,255,.15); color: var(--accent); border: 1px solid rgba(124,158,255,.4); }
+  .badge.tool2 { background: rgba(255,157,124,.15); color: var(--accent2); border: 1px solid rgba(255,157,124,.4); }
+
+  .scenario {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--green);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 18px 0;
+  }
+  .scenario strong { color: var(--green); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    margin: 14px 0 24px;
+  }
+  code { font-family: var(--mono); }
+  .kw { color: #ff9d7c; }
+  .str { color: #a8e6a1; }
+  .cmt { color: #6b7285; font-style: italic; }
+  .fn { color: #7c9eff; }
+  .ann { color: #d19aff; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 18px 0 26px;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  .flow .node {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .flow .arrow { color: var(--text-dim); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.92rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: var(--panel-alt); color: var(--accent); }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .callout {
+    background: rgba(124,158,255,.08);
+    border: 1px solid rgba(124,158,255,.3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .callout strong { color: var(--accent); }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Monolith vs Microservices Testing</h1>
+    <div class="subtitle">Where RestAssured and Pact-JVM each fit — worked through with your OrderService → X4VPricingEngine example</div>
+  </header>
+
+  <nav class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#concept">The core difference</a></li>
+      <li><a href="#monolith">Testing a monolith (RestAssured)</a></li>
+      <li><a href="#microservices">Testing microservices (Pact-JVM)</a></li>
+      <li><a href="#combined">Real example: OrderService + X4VPricingEngine</a></li>
+      <li><a href="#when">When to use which</a></li>
+    </ol>
+  </nav>
+
+  <section id="concept">
+    <h2>1. The core difference</h2>
+    <p>A <strong>monolith</strong> is one deployable app — even if it's internally layered, all its modules run in the same process and share the same database. A <strong>microservices</strong> system is many independently deployable services that talk to each other over the network (usually REST/HTTP or messaging), each owning its own data.</p>
+    <p class="dim">That single fact — shared process vs. network boundary — is what decides which testing tool you reach for.</p>
+
+    <div class="cards">
+      <div class="card mono">
+        <h4>Monolith</h4>
+        <ul>
+          <li>One codebase, one deployment</li>
+          <li>In-process calls between modules</li>
+          <li>One shared database/transaction</li>
+          <li>Integration test = spin up the app, hit its REST API</li>
+          <li><strong>Tool of choice: RestAssured</strong> (+ TestNG/JUnit)</li>
+        </ul>
+      </div>
+      <div class="card micro">
+        <h4>Microservices</h4>
+        <ul>
+          <li>Many codebases, many deployments</li>
+          <li>Network calls between services</li>
+          <li>Each service owns its own DB</li>
+          <li>Integration test = does every consumer/provider pair agree on the API shape?</li>
+          <li><strong>Tool of choice: Pact-JVM</strong> (contract testing) + RestAssured per-service</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Key insight:</strong> RestAssured doesn't go away in microservices — you still use it to test each service's own REST API in isolation. What changes is <em>how you test the connections between services</em>. Spinning up all real services for every test run doesn't scale, so you replace "real integration" with "contract testing."
+    </div>
+  </section>
+
+  <section id="monolith">
+    <h2>2. Testing a monolith with RestAssured</h2>
+    <p>In a monolith, integration testing is straightforward: start the whole app (in-memory or on a test port), then drive its REST endpoints exactly like a real client would. RestAssured is built for exactly this — fluent given/when/then syntax, JSON path assertions, schema validation.</p>
+
+    <div class="scenario"><strong>Example context:</strong> imagine X4V Unite was still a single monolith exposing both order placement and pricing calculation from one app. A test would create an order and assert the final price came back correct — all in one HTTP call, one process, one DB transaction.</div>
+
+    <pre><code><span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="fn">shouldReturnDiscountedPrice_whenBulkOrderPlaced</span>() {
+    <span class="kw">given</span>()
+        .baseUri(<span class="str">"http://localhost:8080"</span>)
+        .contentType(<span class="str">"application/json"</span>)
+        .body(<span class="str">"""
+            {
+              "customerId": "CUST-1042",
+              "items": [ { "sku": "X4V-PUMP-200", "qty": 12 } ]
+            }
+            """</span>)
+    .<span class="kw">when</span>()
+        .post(<span class="str">"/orders"</span>)
+    .<span class="kw">then</span>()
+        .statusCode(<span class="ann">201</span>)
+        .body(<span class="str">"pricing.ruleApplied"</span>, <span class="fn">equalTo</span>(<span class="str">"BULK_DISCOUNT_TIER_2"</span>))
+        .body(<span class="str">"pricing.finalUnitPrice"</span>, <span class="fn">lessThan</span>(<span class="ann">100.0f</span>))
+        .body(<span class="str">"orderStatus"</span>, <span class="fn">equalTo</span>(<span class="str">"CONFIRMED"</span>));
+}
+</code></pre>
+
+    <p class="dim">One test, one process, real DB — because in a monolith, "order placement" and "pricing calculation" live in the same deployable. There's no network boundary to worry about, so a straight end-to-end assertion is cheap and reliable.</p>
+  </section>
+
+  <section id="microservices">
+    <h2>3. Testing microservices with Pact-JVM</h2>
+    <p>Once pricing splits out into its own service — say, <strong>X4VPricingEngine</strong> — and <strong>OrderService</strong> calls it over HTTP, a full end-to-end test now needs both services running, both databases seeded, and network calls that can flake. Multiply that by every consumer of every service, and full integration testing stops scaling.</p>
+
+    <p><strong>Contract testing</strong> solves this by testing each side against a shared "contract" (a pact file) instead of against each other directly:</p>
+
+    <div class="flow">
+      <div class="node">OrderService<br><span class="dim">(consumer)</span></div>
+      <span class="arrow">— writes expectations →</span>
+      <div class="node">pact.json<br><span class="dim">(the contract)</span></div>
+      <span class="arrow">— verified against →</span>
+      <div class="node">X4VPricingEngine<br><span class="dim">(provider)</span></div>
+    </div>
+
+    <h3>3a. Consumer test — OrderService defines what it expects</h3>
+    <p>OrderService runs against a <em>mock</em> of X4VPricingEngine, generated by Pact-JVM. If the mock returns what OrderService expects, Pact records the interaction into a pact file.</p>
+
+    <pre><code><span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="fn">consumerTest_getPricingForSku</span>(<span class="kw">MockServer</span> mockServer) {
+
+    <span class="kw">RequestResponsePact</span> pact = <span class="kw">ConsumerPactBuilder</span>
+        .<span class="fn">consumer</span>(<span class="str">"OrderService"</span>)
+        .<span class="fn">hasPactWith</span>(<span class="str">"X4VPricingEngine"</span>)
+        .<span class="fn">given</span>(<span class="str">"SKU X4V-PUMP-200 has an active bulk discount rule"</span>)
+        .<span class="fn">uponReceiving</span>(<span class="str">"a request for pricing on a bulk quantity"</span>)
+            .path(<span class="str">"/pricing/calculate"</span>)
+            .method(<span class="str">"POST"</span>)
+            .body(<span class="str">"{ \"sku\": \"X4V-PUMP-200\", \"qty\": 12 }"</span>)
+        .<span class="fn">willRespondWith</span>()
+            .status(<span class="ann">200</span>)
+            .body(<span class="str">"{ \"finalUnitPrice\": 92.50, \"ruleApplied\": \"BULK_DISCOUNT_TIER_2\" }"</span>)
+        .toPact();
+
+    <span class="cmt">// call OrderService's client code against the Pact mock server,</span>
+    <span class="cmt">// assert it parses the response correctly — this ALSO writes the pact file</span>
+}
+</code></pre>
+
+    <h3>3b. Provider verification — X4VPricingEngine proves it honors the contract</h3>
+    <p>On the provider side, Pact-JVM replays every recorded interaction from the pact file against the <em>real</em> X4VPricingEngine (with test data seeded per the <code>given()</code> state) and checks the real response matches what was promised.</p>
+
+    <pre><code><span class="ann">@Provider</span>(<span class="str">"X4VPricingEngine"</span>)
+<span class="ann">@PactFolder</span>(<span class="str">"pacts"</span>)
+<span class="kw">public class</span> <span class="fn">PricingEngineProviderTest</span> {
+
+    <span class="ann">@State</span>(<span class="str">"SKU X4V-PUMP-200 has an active bulk discount rule"</span>)
+    <span class="kw">public void</span> <span class="fn">seedBulkDiscountRule</span>() {
+        <span class="cmt">// insert the pricing rule row the interaction assumes exists</span>
+        ruleRepository.<span class="fn">save</span>(<span class="kw">new</span> <span class="fn">PricingRule</span>(<span class="str">"X4V-PUMP-200"</span>, <span class="str">"BULK_DISCOUNT_TIER_2"</span>, <span class="ann">12</span>));
+    }
+
+    <span class="ann">@TestTemplate</span>
+    <span class="ann">@ExtendWith</span>(PactVerificationInvocationContextProvider.<span class="kw">class</span>)
+    <span class="kw">void</span> <span class="fn">pactVerificationTestTemplate</span>(<span class="kw">PactVerificationContext</span> context) {
+        context.<span class="fn">verifyInteraction</span>();
+    }
+}
+</code></pre>
+
+    <p class="dim">Neither side ever calls the other over a live network during CI. Each runs independently, both stay honest against the same pact file — and if X4VPricingEngine ever changes its response shape, provider verification fails immediately, before it ever reaches a real integration environment.</p>
+  </section>
+
+  <section id="combined">
+    <h2>4. Putting it together — your OrderService / X4VPricingEngine setup</h2>
+    <p>This maps directly onto the split you're already building:</p>
+
+    <table>
+      <tr><th>Layer</th><th>What's tested</th><th>Tool</th></tr>
+      <tr>
+        <td>X4VPricingEngine's own REST API</td>
+        <td>Does <code>/pricing/calculate</code> correctly apply the ~30 ranked rules for a given payload?</td>
+        <td><span class="badge tool1">RestAssured</span></td>
+      </tr>
+      <tr>
+        <td>OrderService's own REST API</td>
+        <td>Does <code>/orders</code> correctly create, validate, persist an order?</td>
+        <td><span class="badge tool1">RestAssured</span></td>
+      </tr>
+      <tr>
+        <td>OrderService ⇄ X4VPricingEngine contract</td>
+        <td>Does OrderService send what X4VPricingEngine expects, and does X4VPricingEngine return what OrderService expects — without running both together?</td>
+        <td><span class="badge tool2">Pact-JVM</span></td>
+      </tr>
+    </table>
+
+    <p>In practice this gives you three levels of confidence stacked on top of each other, each one cheap to run and fast to fail:</p>
+    <ol>
+      <li><strong>Unit/API tests</strong> per service (RestAssured) — fast, no cross-service dependency</li>
+      <li><strong>Contract tests</strong> (Pact-JVM) — catch breaking changes between OrderService and X4VPricingEngine in CI, before deployment</li>
+      <li><strong>A thin layer of real end-to-end tests</strong> (RestAssured against both services live) — kept small, reserved for the handful of critical business flows, since it's the slowest and flakiest layer</li>
+    </ol>
+  </section>
+
+  <section id="when">
+    <h2>5. When to use which</h2>
+    <table>
+      <tr><th>Situation</th><th>Use</th></tr>
+      <tr><td>Testing one service/app's own endpoints, DB, business logic</td><td>RestAssured</td></tr>
+      <tr><td>Verifying two independently-deployed services agree on a request/response shape</td><td>Pact-JVM</td></tr>
+      <tr><td>Confirming a full user journey works across several live services (rare, expensive)</td><td>RestAssured, run end-to-end, kept minimal</td></tr>
+      <tr><td>Catching a breaking API change before it reaches staging</td><td>Pact-JVM provider verification in CI</td></tr>
+    </table>
+    <div class="callout">
+      <strong>Rule of thumb:</strong> if two things are built and deployed together, test them together with RestAssured. If they're built and deployed <em>separately</em>, test the connection between them with Pact-JVM — and test each one's own behavior with RestAssured.
+    </div>
+  </section>
+
+  <footer>
+    Generated for reference — pairs with your existing OrderService (consumer) / X4VPricingEngine (provider) Pact-JVM work.
+  </footer>
+
+</div>
+</body>
+</html>

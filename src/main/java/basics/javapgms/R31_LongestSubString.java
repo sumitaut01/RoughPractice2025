@@ -86,6 +86,25 @@ public class R31_LongestSubString {
         }
 
         System.out.println(max);
+    }
 
+
+
+    @Test
+    public void Rough2(){
+        String input = "abcagcd";
+
+        for(int i=0;i<input.length();i++){
+            int max=0;
+            String res="";
+            for(int j=i;j<input.length();j++){
+                if(input.charAt(i)!=input.charAt(j)){
+                    res=res+input.charAt(j);
+                    max++;
+                }
+            }
+
+
+        }
     }
 }

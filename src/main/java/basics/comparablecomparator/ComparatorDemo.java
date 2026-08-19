@@ -34,6 +34,9 @@ public class ComparatorDemo {
         Comparator<StudentDemo> byAgeSort = (s1, s2) ->  Integer.compare(s1.age,s2.age);
         Comparator<StudentDemo> byNameSort = (s1, s2) -> s1.name.compareTo(s2.name);
 
+        //Other way
+        Comparator<StudentDemo> byAgeSort2 = Comparator.comparingInt(s -> s.age);
+        Comparator<StudentDemo> byNameSort2 = Comparator.comparing(s -> s.name);
 
         List<StudentDemo> stx = st.stream()
                 .sorted(byAgeSort.thenComparing(byNameSort))

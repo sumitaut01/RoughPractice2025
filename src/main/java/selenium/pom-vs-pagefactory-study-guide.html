@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>POM vs PageFactory — Study Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #171a23;
+    --accent: #7dd3fc;
+    --accent2: #fca5a5;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --code-bg: #0b0d12;
+    --border: #262b36;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 24px 16px 60px;
+    max-width: 800px;
+    margin-inline: auto;
+  }
+  h1 {
+    font-size: 1.6rem;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .subtitle { color: var(--muted); margin-bottom: 28px; font-size: 0.95rem; }
+  h2 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2::before { content: "▸"; color: var(--accent2); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 14px 0;
+  }
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 620px) {
+    .compare { grid-template-columns: 1fr 1fr; }
+  }
+  .compare .card h3 { margin-top: 0; }
+  .pom h3 { color: var(--accent); }
+  .pf h3 { color: var(--accent2); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin-bottom: 6px; }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: #a5f3fc;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  pre code { background: none; padding: 0; color: #d1fae5; }
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 34px;
+    margin-bottom: 14px;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 0;
+    background: var(--accent);
+    color: #0f1117;
+    font-weight: 700;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+  }
+  .callout {
+    border-left: 4px solid var(--accent2);
+    background: #201417;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 16px 0;
+    font-size: 0.92rem;
+  }
+  .callout strong { color: var(--accent2); }
+  .tag {
+    display: inline-block;
+    background: #1f2937;
+    color: var(--accent);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.88rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  th { color: var(--accent); }
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .flow-step {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.86rem;
+  }
+  footer {
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Page Object Model vs Page Factory</h1>
+<div class="subtitle">Interview-ready study guide — concept, distinction, and driver internals</div>
+
+<h2>The Core Distinction</h2>
+<div class="compare">
+  <div class="card pom">
+    <h3>Page Object Model (POM) <span class="tag">Design Pattern</span></h3>
+    <ul>
+      <li>A <strong>concept</strong>, not a library</li>
+      <li>Rule: one class per web page/screen</li>
+      <li>Elements + actions encapsulated inside the class</li>
+      <li>Tests call methods, never touch locators directly</li>
+      <li>Can be implemented with plain <code>driver.findElement()</code> — no special tooling required</li>
+    </ul>
+  </div>
+  <div class="card pf">
+    <h3>PageFactory <span class="tag">Selenium Utility</span></h3>
+    <ul>
+      <li>A concrete <strong>class</strong>: <code>org.openqa.selenium.support.PageFactory</code></li>
+      <li>One specific <em>way</em> to implement POM</li>
+      <li>Uses <code>@FindBy</code> annotations instead of manual <code>findElement()</code> calls</li>
+      <li>Adds reflection + dynamic proxies under the hood</li>
+      <li>Considered semi-legacy in modern frameworks</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <strong>The one-line answer that lands:</strong> POM is the "what/why" — the architecture rule.
+  PageFactory is "one tool that helps you write it faster." You can do POM without PageFactory at all.
+</div>
+
+<h2>Minimal Example</h2>
+<pre><code>public class LoginPage {
+
+    @FindBy(id = "username")
+    WebElement usernameField;
+
+    @FindBy(id = "password")
+    WebElement passwordField;
+
+    public LoginPage(WebDriver driver) {
+        PageFactory.initElements(driver, this);
+    }
+
+    public void login(String user, String pass) {
+        usernameField.sendKeys(user);
+        passwordField.sendKeys(pass);
+    }
+}</code></pre>
+
+<h2>How the Driver Actually Gets Passed In</h2>
+<p style="color:var(--muted); font-size:0.92rem; margin-top:-6px;">
+  <code>PageFactory.initElements(driver, this)</code> is where all the real work happens.
+</p>
+
+<ol class="steps">
+  <li><strong>Reflection scan</strong> — it scans the class (<code>this</code>) for every field annotated <code>@FindBy</code>.</li>
+  <li><strong>Locator built</strong> — for each field, it constructs an <code>ElementLocator</code> via <code>DefaultElementLocatorFactory(driver)</code>. This is the exact point where <code>driver</code> gets used — to know <em>how</em> to eventually find the element.</li>
+  <li><strong>Proxy created</strong> — instead of calling <code>findElement()</code> right away, it creates a dynamic proxy (<code>Proxy.newProxyInstance</code>) for each <code>WebElement</code> field, backed by a <code>LocatingElementHandler</code> (implements <code>InvocationHandler</code>).</li>
+  <li><strong>Field assigned</strong> — the proxy is set into the field via reflection: <code>field.set(page, proxy)</code>.</li>
+</ol>
+
+<div class="flow">
+  <div class="flow-step">new LoginPage(driver) → constructor runs</div>
+  <div class="flow-step">PageFactory.initElements(driver, this) → scans @FindBy fields</div>
+  <div class="flow-step">Each field replaced with a dynamic Proxy (not a real WebElement yet)</div>
+  <div class="flow-step">.click() / .sendKeys() called on the field → proxy intercepts</div>
+  <div class="flow-step">Only NOW does driver.findElement(By...) actually fire</div>
+</div>
+
+<div class="callout">
+  <strong>Why this matters (the interview payoff):</strong>
+  Because lookup is lazy, PageFactory elements do <em>not</em> throw <code>NoSuchElementException</code>
+  at page-object construction time — even if the element isn't on the DOM yet.
+  The exception only surfaces when you actually interact with the element.
+</div>
+
+<h2>Quick Comparison Table</h2>
+<table>
+  <tr><th>Aspect</th><th>POM (manual)</th><th>PageFactory</th></tr>
+  <tr><td>Element declaration</td><td><code>driver.findElement(By...)</code></td><td><code>@FindBy(...)</code></td></tr>
+  <tr><td>Lookup timing</td><td>Immediate (eager)</td><td>Lazy (on first interaction)</td></tr>
+  <tr><td>Under the hood</td><td>Direct WebDriver call</td><td>Reflection + dynamic Proxy</td></tr>
+  <tr><td>Stack trace debugging</td><td>Clean</td><td>Noisier (proxy layer)</td></tr>
+  <tr><td>Modern adoption</td><td>Common</td><td>Declining — often skipped</td></tr>
+</table>
+
+<h2>One-Liners to Remember</h2>
+<ul>
+  <li>POM = pattern. PageFactory = one implementation of that pattern.</li>
+  <li><code>initElements()</code> is where driver gets bound to locators, via a locator factory.</li>
+  <li>Fields become <strong>proxies</strong>, not real elements, until first use.</li>
+  <li>Laziness is the reason PageFactory doesn't blow up on construction for elements not yet on the DOM.</li>
+  <li>Most modern frameworks favor plain constructors over PageFactory, citing debuggability.</li>
+</ul>
+
+<footer>Study guide · Page Object Model vs PageFactory · Selenium / Java</footer>
+
+</body>
+</html>

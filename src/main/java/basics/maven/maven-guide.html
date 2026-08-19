@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Understanding Maven: Build Tool, Variables, Profiles &amp; Plugins</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --good: #16a34a;
+    --warn: #d97706;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 260px, #f1f5f9 260px);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 80px; }
+  header.hero {
+    padding: 56px 0 40px;
+    color: #f8fafc;
+  }
+  header.hero h1 {
+    font-size: 2.1rem;
+    margin: 0 0 10px;
+  }
+  header.hero p {
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    max-width: 680px;
+    margin: 0;
+  }
+  nav.toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-top: -28px;
+    box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+  }
+  nav.toc h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding-left: 20px;
+    columns: 2;
+    gap: 24px;
+  }
+  nav.toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-top: 24px;
+  }
+  section h2 {
+    font-size: 1.4rem;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section h2 .num {
+    background: var(--accent);
+    color: #fff;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex: none;
+  }
+  h3 { font-size: 1.08rem; margin-top: 28px; color: #0f172a; }
+  p { color: #334155; }
+  .lead { font-size: 1.02rem; color: #1e293b; }
+
+  code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.88em;
+    color: #b91c1c;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 18px 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    margin: 14px 0;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: 1em;
+  }
+  .cmd-line::before { content: "$ "; color: #64748b; }
+
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: var(--accent-light);
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 16px 0;
+    font-size: 0.94rem;
+  }
+  .callout.warn { border-color: var(--warn); background: #fffbeb; }
+  .callout strong { color: #1e3a8a; }
+  .callout.warn strong { color: #92400e; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 0.92rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: #fafbfd; }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    margin-right: 6px;
+  }
+  .badge.dep { background: #dcfce7; color: #166534; }
+  .badge.plugindep { background: #fee2e2; color: #991b1b; }
+
+  ul, ol { color: #334155; }
+  li { margin-bottom: 6px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🏗️ Understanding Maven</h1>
+  <p>What it is, why teams use it, how variables/properties work, how profiles switch behavior per environment, how to pass values from the command line, and how plugins (and plugin dependencies) actually fit into the build.</p>
+</header>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#what-is-maven">What is Maven &amp; why use it</a></li>
+    <li><a href="#variables">Using variables (properties) in Maven</a></li>
+    <li><a href="#profiles">Maven profiles</a></li>
+    <li><a href="#cli">Consuming variables from the command line</a></li>
+    <li><a href="#plugin-role">Role of a plugin in Maven</a></li>
+    <li><a href="#plugin-dependency">Plugin dependency vs. project dependency</a></li>
+  </ol>
+</nav>
+
+<section id="what-is-maven">
+  <h2><span class="num">1</span>What is the use of Maven?</h2>
+  <p class="lead">Maven is a <strong>build automation and project management tool</strong> for Java projects (though it can handle other JVM languages too). Instead of everyone on a team compiling, testing, and packaging code by hand with custom scripts, Maven standardizes the whole process using one file: <code>pom.xml</code> (Project Object Model).</p>
+
+  <p>Concretely, Maven is used for:</p>
+  <ul>
+    <li><strong>Dependency management</strong> — declare libraries (e.g. TestNG, RestAssured, Selenium) in <code>pom.xml</code> and Maven downloads them (and their transitive dependencies) from a repository like Maven Central, instead of you manually hunting for JARs.</li>
+    <li><strong>Standard build lifecycle</strong> — every Maven project follows the same phases: <code>validate → compile → test → package → verify → install → deploy</code>. Anyone who knows Maven can build <em>any</em> Maven project the same way.</li>
+    <li><strong>Consistent project structure</strong> — <code>src/main/java</code>, <code>src/test/java</code>, <code>src/main/resources</code>, etc. This "convention over configuration" means less setup per project.</li>
+    <li><strong>Packaging</strong> — produces the final artifact: JAR, WAR, EAR, etc.</li>
+    <li><strong>Running tests as part of the build</strong> — e.g. TestNG/JUnit suites run automatically via the Surefire plugin during the <code>test</code> phase — directly relevant to test-automation frameworks.</li>
+    <li><strong>Reproducible builds across machines/CI</strong> — the same <code>pom.xml</code> builds identically on a developer's laptop and on Jenkins/GitHub Actions.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>In short:</strong> Maven answers "what libraries do I need, how do I compile/test/package this project, and how do I do it the same way every time, on every machine?"
+  </div>
+</section>
+
+<section id="variables">
+  <h2><span class="num">2</span>Using variables in Maven (Properties)</h2>
+  <p>In Maven, "variables" are called <strong>properties</strong>. They're defined inside the <code>&lt;properties&gt;</code> block of <code>pom.xml</code> and referenced anywhere else using <code>${propertyName}</code> syntax.</p>
+
+  <h3>Defining a property</h3>
+  <pre><code>&lt;project&gt;
+    ...
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+        &lt;selenium.version&gt;4.22.0&lt;/selenium.version&gt;
+        &lt;testng.version&gt;7.10.2&lt;/testng.version&gt;
+        &lt;env&gt;qa&lt;/env&gt;
+    &lt;/properties&gt;
+&lt;/project&gt;</code></pre>
+
+  <h3>Referencing a property</h3>
+  <pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+        &lt;artifactId&gt;selenium-java&lt;/artifactId&gt;
+        &lt;version&gt;${selenium.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.testng&lt;/groupId&gt;
+        &lt;artifactId&gt;testng&lt;/artifactId&gt;
+        &lt;version&gt;${testng.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+                &lt;source&gt;${java.version}&lt;/source&gt;
+                &lt;target&gt;${java.version}&lt;/target&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+
+  <p>This means when Selenium releases a new version, you change it in <em>one</em> place instead of hunting through the whole POM.</p>
+
+  <h3>Kinds of built-in / implicit properties</h3>
+  <table>
+    <tr><th>Property</th><th>Meaning</th></tr>
+    <tr><td><code>${project.version}</code></td><td>The version of the project itself (from <code>&lt;version&gt;</code> tag)</td></tr>
+    <tr><td><code>${project.basedir}</code></td><td>Root directory of the project</td></tr>
+    <tr><td><code>${settings.localRepository}</code></td><td>Path to local <code>.m2</code> repo</td></tr>
+    <tr><td><code>${env.SOME_VAR}</code></td><td>Reads an OS environment variable, e.g. <code>${env.PATH}</code></td></tr>
+  </table>
+</section>
+
+<section id="profiles">
+  <h2><span class="num">3</span>Maven Profiles</h2>
+  <p>A <strong>profile</strong> is a named, optional set of configuration (properties, dependencies, plugins) that only gets applied when that profile is <em>activated</em>. This is exactly how test frameworks typically switch between environments — QA, Staging, Prod — or between browsers, without duplicating the whole POM.</p>
+
+  <h3>Defining profiles</h3>
+  <pre><code>&lt;project&gt;
+    ...
+    &lt;profiles&gt;
+        &lt;profile&gt;
+            &lt;id&gt;qa&lt;/id&gt;
+            &lt;properties&gt;
+                &lt;base.url&gt;https://qa.example.com&lt;/base.url&gt;
+                &lt;db.host&gt;qa-db.internal&lt;/db.host&gt;
+            &lt;/properties&gt;
+        &lt;/profile&gt;
+
+        &lt;profile&gt;
+            &lt;id&gt;staging&lt;/id&gt;
+            &lt;properties&gt;
+                &lt;base.url&gt;https://staging.example.com&lt;/base.url&gt;
+                &lt;db.host&gt;staging-db.internal&lt;/db.host&gt;
+            &lt;/properties&gt;
+        &lt;/profile&gt;
+
+        &lt;profile&gt;
+            &lt;id&gt;prod&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;activeByDefault&gt;false&lt;/activeByDefault&gt;
+            &lt;/activation&gt;
+            &lt;properties&gt;
+                &lt;base.url&gt;https://prod.example.com&lt;/base.url&gt;
+            &lt;/properties&gt;
+        &lt;/profile&gt;
+    &lt;/profiles&gt;
+&lt;/project&gt;</code></pre>
+
+  <h3>Ways a profile can activate</h3>
+  <ul>
+    <li><strong>Explicitly via CLI</strong> — <code>mvn test -Pqa</code></li>
+    <li><strong>By default</strong> — <code>&lt;activeByDefault&gt;true&lt;/activeByDefault&gt;</code>, runs when no other profile is specified</li>
+    <li><strong>By JDK version</strong> — <code>&lt;jdk&gt;17&lt;/jdk&gt;</code> inside <code>&lt;activation&gt;</code></li>
+    <li><strong>By OS</strong> — <code>&lt;os&gt;&lt;family&gt;windows&lt;/family&gt;&lt;/os&gt;</code></li>
+    <li><strong>By presence of a system property</strong> — <code>&lt;property&gt;&lt;name&gt;env&lt;/name&gt;&lt;/property&gt;</code></li>
+    <li><strong>By a file's existence/absence</strong> — useful to auto-detect local vs CI setups</li>
+  </ul>
+
+  <p>A profile can also add/override <code>&lt;dependencies&gt;</code>, <code>&lt;plugins&gt;</code>, or <code>&lt;build&gt;</code> config — not just properties.</p>
+</section>
+
+<section id="cli">
+  <h2><span class="num">4</span>Consuming / passing variables from the command line</h2>
+
+  <h3>1. Passing a system property directly with <code>-D</code></h3>
+  <p>You can inject or override a property value at runtime with <code>-D</code>, without touching the POM:</p>
+  <pre><code class="cmd-line">mvn test -Dbrowser=chrome -Denv=qa</code></pre>
+  <p>Inside your Java/TestNG code, you'd read it as:</p>
+  <pre><code>String browser = System.getProperty("browser", "chrome"); // default fallback</code></pre>
+  <p>Inside <code>pom.xml</code>, that same value is accessible as <code>${browser}</code>, and you can even wire it into the Surefire plugin so it's forwarded into the JVM running your tests:</p>
+  <pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;systemPropertyVariables&gt;
+            &lt;browser&gt;${browser}&lt;/browser&gt;
+            &lt;env&gt;${env}&lt;/env&gt;
+        &lt;/systemPropertyVariables&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+
+  <h3>2. Activating a profile with <code>-P</code></h3>
+  <pre><code class="cmd-line">mvn clean test -Pstaging</code></pre>
+  <p>This activates the <code>staging</code> profile block shown earlier, pulling in whatever properties/dependencies/plugins it defines — e.g. <code>${base.url}</code> now resolves to the staging URL for that run.</p>
+
+  <h3>3. Combining profile + override together</h3>
+  <pre><code class="cmd-line">mvn clean test -Pqa -Dbrowser=firefox -DsuiteXmlFile=testng-smoke.xml</code></pre>
+  <div class="callout">
+    <strong>Precedence tip:</strong> a value passed with <code>-D</code> on the command line overrides the same-named property defined inside <code>&lt;properties&gt;</code> in the POM (including inside an active profile). This is exactly why <code>-D</code> is the standard way CI pipelines override environment/browser/suite per run.
+  </div>
+
+  <h3>4. Passing a whole TestNG suite file dynamically</h3>
+  <pre><code class="cmd-line">mvn test -DsuiteXmlFile=testng-regression.xml</code></pre>
+  <pre><code>&lt;plugin&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;suiteXmlFiles&gt;
+            &lt;suiteXmlFile&gt;${suiteXmlFile}&lt;/suiteXmlFile&gt;
+        &lt;/suiteXmlFiles&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</section>
+
+<section id="plugin-role">
+  <h2><span class="num">5</span>Role of a plugin in Maven</h2>
+  <p>Maven's core itself does very little — almost everything it "does" (compiling, testing, packaging, code coverage, static analysis) is actually performed by <strong>plugins</strong>. A plugin is a collection of <strong>goals</strong> (individual tasks) that get bound to phases of the build lifecycle.</p>
+
+  <h3>Common plugins and what they do</h3>
+  <table>
+    <tr><th>Plugin</th><th>Role</th></tr>
+    <tr><td><code>maven-compiler-plugin</code></td><td>Compiles <code>.java</code> source files into <code>.class</code> bytecode</td></tr>
+    <tr><td><code>maven-surefire-plugin</code></td><td>Runs unit/integration tests (TestNG/JUnit) during the <code>test</code> phase</td></tr>
+    <tr><td><code>maven-failsafe-plugin</code></td><td>Runs integration tests during <code>verify</code>, separate from unit tests</td></tr>
+    <tr><td><code>maven-jar-plugin</code> / <code>maven-war-plugin</code></td><td>Packages compiled classes into a JAR/WAR</td></tr>
+    <tr><td><code>maven-shade-plugin</code></td><td>Builds an "uber/fat" JAR with all dependencies bundled in</td></tr>
+    <tr><td><code>maven-site-plugin</code></td><td>Generates project documentation/reports as a website</td></tr>
+    <tr><td><code>allure-maven</code></td><td>Generates Allure test reports (common in automation frameworks)</td></tr>
+  </table>
+
+  <h3>How a plugin goal gets triggered</h3>
+  <pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.2.5&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;test&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;test&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+  <p>You can also invoke a plugin goal directly without running a full lifecycle phase:</p>
+  <pre><code class="cmd-line">mvn org.apache.maven.plugins:maven-dependency-plugin:tree</code></pre>
+
+  <div class="callout">
+    <strong>Think of it this way:</strong> <code>pom.xml</code> is the "what to build" — plugins are the "how it's actually done." Maven core just orchestrates <em>when</em> each plugin goal fires.
+  </div>
+</section>
+
+<section id="plugin-dependency">
+  <h2><span class="num">6</span>Plugin dependency vs. regular project dependency</h2>
+  <p>This is a common point of confusion, so here's the distinction clearly:</p>
+
+  <table>
+    <tr>
+      <th>&nbsp;</th>
+      <th><span class="badge dep">Dependency</span></th>
+      <th><span class="badge plugindep">Plugin Dependency</span></th>
+    </tr>
+    <tr>
+      <td>Declared under</td>
+      <td><code>&lt;project&gt;&lt;dependencies&gt;</code></td>
+      <td><code>&lt;plugin&gt;&lt;dependencies&gt;</code> (nested inside a specific plugin)</td>
+    </tr>
+    <tr>
+      <td>Purpose</td>
+      <td>Adds a library to <strong>your project's</strong> compile/test/runtime classpath — code you write can import and use it directly</td>
+      <td>Adds a library to <strong>the plugin's own classpath</strong> so the plugin itself can use it while it executes — your application code never sees it</td>
+    </tr>
+    <tr>
+      <td>Example use case</td>
+      <td>Adding Selenium, RestAssured, or TestNG so your test classes can call their APIs</td>
+      <td>Adding a specific TestNG version to <code>maven-surefire-plugin</code> so Surefire knows how to discover/run TestNG tests with that exact version, independent of what's on your app classpath</td>
+    </tr>
+    <tr>
+      <td>Scope of effect</td>
+      <td>Affects compiling/running your source code</td>
+      <td>Affects only how that one plugin behaves during its execution</td>
+    </tr>
+  </table>
+
+  <h3>Regular dependency (for your code)</h3>
+  <pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+        &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+        &lt;version&gt;5.4.0&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+  <h3>Plugin dependency (for the plugin's own execution)</h3>
+  <pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.2.5&lt;/version&gt;
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;org.apache.maven.surefire&lt;/groupId&gt;
+                    &lt;artifactId&gt;surefire-testng&lt;/artifactId&gt;
+                    &lt;version&gt;3.2.5&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+
+  <div class="callout warn">
+    <strong>Rule of thumb:</strong> if the library needs to be <code>import</code>-ed in your <code>.java</code> source files → it's a regular <code>&lt;dependencies&gt;</code> entry. If the library only helps a <em>plugin</em> do its job internally (a provider, an extra plugin capability, a specific runner integration) → it's a plugin dependency nested inside that <code>&lt;plugin&gt;</code> block.
+  </div>
+</section>
+
+<footer>Maven reference — properties, profiles, CLI usage, plugins &amp; plugin dependencies</footer>
+</div>
+</body>
+</html>

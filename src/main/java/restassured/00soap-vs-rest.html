@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOAP vs REST — Interview Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D1117;
+    --surface:#151B26;
+    --surface2:#1B2331;
+    --line:#232B3D;
+    --text:#E6E9F0;
+    --muted:#8B93A7;
+    --soap:#8C93FF;
+    --soap-dim:#3A3B6B;
+    --rest:#2FD9A8;
+    --rest-dim:#154A3D;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ===== Header / Hero ===== */
+  header{
+    padding:56px 24px 28px;
+    max-width:1000px;
+    margin:0 auto;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  h1{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:clamp(26px,4vw,40px);
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  header p.sub{
+    color:var(--muted);
+    font-size:15px;
+    max-width:560px;
+    margin:0 auto;
+  }
+
+  /* ===== VS panel ===== */
+  .vs-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    margin:38px auto 8px;
+    max-width:640px;
+    padding:0 16px;
+  }
+  .side{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px 16px;
+    background:var(--surface);
+    position:relative;
+    overflow:hidden;
+  }
+  .side.soap{border-color:var(--soap-dim);}
+  .side.rest{border-color:var(--rest-dim);}
+  .side .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:5px;
+    display:inline-block;
+    margin-bottom:10px;
+  }
+  .side.soap .tag{background:var(--soap-dim);color:var(--soap);}
+  .side.rest .tag{background:var(--rest-dim);color:var(--rest);}
+  .side .name{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;}
+  .side .desc{color:var(--muted);font-size:13px;margin-top:4px;}
+  .envelope{
+    width:100%;height:46px;margin-top:14px;position:relative;
+  }
+  .envelope svg{width:100%;height:100%;}
+  .vs-divider{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--muted);
+    font-size:13px;
+    flex:0 0 auto;
+  }
+
+  /* ===== Tabs ===== */
+  .tabbar{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:44px auto 0;
+    padding:0 16px;
+    max-width:720px;
+    flex-wrap:wrap;
+  }
+  .tabbtn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:10px 18px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .tabbtn:hover{color:var(--text);border-color:#33405a;}
+  .tabbtn.active{
+    color:var(--bg);
+    background:var(--text);
+    border-color:var(--text);
+  }
+  .tabbtn .prompt{opacity:0.55;margin-right:2px;}
+
+  main{max-width:920px;margin:0 auto;padding:36px 20px 80px;}
+  section.panel{display:none;}
+  section.panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ===== Comparison table (spec sheet) ===== */
+  .spec{
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    background:var(--surface);
+  }
+  .spec-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr 1fr;
+    border-bottom:1px solid var(--line);
+    background:var(--surface2);
+  }
+  .spec-head div{
+    padding:14px 18px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .spec-head .h-soap{color:var(--soap);}
+  .spec-head .h-rest{color:var(--rest);}
+  .row{
+    display:grid;
+    grid-template-columns:1.1fr 1fr 1fr;
+    border-bottom:1px solid var(--line);
+  }
+  .row:last-child{border-bottom:none;}
+  .row:hover{background:#131a26;}
+  .row > div{padding:16px 18px;font-size:14px;}
+  .row .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--text);
+    font-weight:500;
+    display:flex;
+    align-items:center;
+  }
+  .row .val-soap{border-left:1px dashed var(--line);color:#C7CAF5;}
+  .row .val-rest{border-left:1px dashed var(--line);color:#B9F0DE;}
+
+  @media (max-width:640px){
+    .spec-head, .row{grid-template-columns:1fr;}
+    .spec-head div, .row > div{border-left:none !important;border-bottom:1px solid var(--line);}
+    .spec-head .h-label,.row .label{background:var(--surface2);}
+    .vs-wrap{flex-direction:column;}
+    .vs-divider{padding:4px 0;}
+  }
+
+  .callout{
+    margin-top:22px;
+    padding:16px 18px;
+    border-left:3px solid var(--rest);
+    background:var(--surface);
+    border-radius:0 10px 10px 0;
+    font-size:14px;
+    color:var(--muted);
+  }
+  .callout b{color:var(--text);}
+
+  /* ===== REST characteristics ===== */
+  .constraints{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px 20px 18px;
+  }
+  .card .num{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--rest);
+    font-size:13px;
+    display:block;
+    margin-bottom:8px;
+  }
+  .card h3{
+    font-family:'IBM Plex Mono',monospace;
+    margin:0 0 8px;
+    font-size:16px;
+    font-weight:600;
+  }
+  .card p{margin:0;color:var(--muted);font-size:13.5px;}
+  .card .opt{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:2px 6px;
+    border-radius:5px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+
+  h2.section-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 16px;
+  }
+  .verbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:26px;
+  }
+  .verb{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 14px;
+    flex:1 1 150px;
+  }
+  .verb b{color:var(--rest);display:block;font-size:14px;margin-bottom:3px;}
+  .verb span{color:var(--muted);font-size:12px;}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:20px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">RestAssured Interview Prep</div>
+  <h1>SOAP vs REST</h1>
+  <p class="sub">A quick-reference spec sheet — the differences that actually get asked, and the six constraints behind every RESTful API.</p>
+</header>
+
+<div class="vs-wrap">
+  <div class="side soap">
+    <span class="tag">Protocol</span>
+    <div class="name">SOAP</div>
+    <div class="desc">Simple Object Access Protocol</div>
+    <div class="envelope">
+      <svg viewBox="0 0 200 46" preserveAspectRatio="none">
+        <rect x="2" y="2" width="196" height="42" rx="6" fill="none" stroke="#8C93FF" stroke-opacity="0.55" stroke-width="1.5"/>
+        <path d="M4 6 L100 34 L196 6" fill="none" stroke="#8C93FF" stroke-opacity="0.55" stroke-width="1.5"/>
+      </svg>
+    </div>
+  </div>
+  <div class="vs-divider">vs</div>
+  <div class="side rest">
+    <span class="tag">Architectural style</span>
+    <div class="name">REST</div>
+    <div class="desc">Representational State Transfer</div>
+    <div class="envelope">
+      <svg viewBox="0 0 200 46" preserveAspectRatio="none">
+        <text x="4" y="18" font-family="IBM Plex Mono" font-size="11" fill="#2FD9A8">GET /users/42</text>
+        <text x="4" y="36" font-family="IBM Plex Mono" font-size="11" fill="#6fdcbf" opacity="0.7">200 OK · application/json</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="tabbar">
+  <button class="tabbtn active" data-tab="compare"><span class="prompt">$</span>soap-vs-rest --diff</button>
+  <button class="tabbtn" data-tab="characteristics"><span class="prompt">$</span>rest --characteristics</button>
+</div>
+
+<main>
+  <section class="panel active" id="compare">
+    <h2 class="section-title">// Side-by-side comparison</h2>
+    <div class="spec">
+      <div class="spec-head">
+        <div>Attribute</div>
+        <div class="h-soap">SOAP</div>
+        <div class="h-rest">REST</div>
+      </div>
+
+      <div class="row"><div class="label">Type</div><div class="val-soap">Protocol — strict specification</div><div class="val-rest">Architectural style — a set of constraints</div></div>
+      <div class="row"><div class="label">Message format</div><div class="val-soap">XML only</div><div class="val-rest">Any — JSON, XML, HTML, plain text (JSON in practice)</div></div>
+      <div class="row"><div class="label">Contract</div><div class="val-soap">WSDL — machine-readable, mandatory</div><div class="val-rest">None required; OpenAPI/Swagger used by convention</div></div>
+      <div class="row"><div class="label">Transport</div><div class="val-soap">HTTP, SMTP, TCP, JMS — transport-agnostic</div><div class="val-rest">HTTP/HTTPS only</div></div>
+      <div class="row"><div class="label">Style of calls</div><div class="val-soap">RPC-style — calls an operation/function</div><div class="val-rest">Resource-oriented — acts on nouns via HTTP verbs</div></div>
+      <div class="row"><div class="label">State</div><div class="val-soap">Can be stateful or stateless</div><div class="val-rest">Stateless by constraint — no client context stored server-side</div></div>
+      <div class="row"><div class="label">Error handling</div><div class="val-soap">&lt;Fault&gt; element inside the envelope</div><div class="val-rest">Standard HTTP status codes (4xx, 5xx)</div></div>
+      <div class="row"><div class="label">Security</div><div class="val-soap">WS-Security — built into the spec</div><div class="val-rest">HTTPS, OAuth2, API keys — bolted on, not built in</div></div>
+      <div class="row"><div class="label">Transactions</div><div class="val-soap">Supports ACID / distributed transactions</div><div class="val-rest">No built-in transaction support</div></div>
+      <div class="row"><div class="label">Payload weight</div><div class="val-soap">Heavier, verbose XML envelopes</div><div class="val-rest">Lighter, especially with JSON</div></div>
+      <div class="row"><div class="label">Typical use</div><div class="val-soap">Banking, payment gateways, legacy enterprise, telecom</div><div class="val-rest">Web/mobile apps, public APIs, microservices</div></div>
+      <div class="row"><div class="label">Testing tool fit</div><div class="val-soap">SoapUI, older Postman SOAP mode</div><div class="val-rest">RestAssured, Postman, Karate</div></div>
+    </div>
+
+    <div class="callout">
+      <b>One-line answer for the interview:</b> SOAP is a rigid, XML-only protocol with a formal contract (WSDL) and built-in security/transactions — REST is a lightweight architectural style built on HTTP verbs and stateless resource access, which is why it dominates modern APIs and tools like RestAssured are built around it.
+    </div>
+  </section>
+
+  <section class="panel" id="characteristics">
+    <h2 class="section-title">// The 6 constraints of a RESTful architecture (Fielding)</h2>
+    <div class="constraints">
+      <div class="card">
+        <span class="num">01</span>
+        <h3>Client–Server</h3>
+        <p>Client and server evolve independently. The client only needs to know the resource URI; it has no knowledge of how the server stores or processes data.</p>
+      </div>
+      <div class="card">
+        <span class="num">02</span>
+        <h3>Statelessness</h3>
+        <p>Every request carries all the information needed to process it. The server keeps no session/context between requests — that's why REST APIs scale so easily.</p>
+      </div>
+      <div class="card">
+        <span class="num">03</span>
+        <h3>Cacheability</h3>
+        <p>Responses must define themselves as cacheable or not (via headers like Cache-Control). Good caching cuts server load and improves client-perceived speed.</p>
+      </div>
+      <div class="card">
+        <span class="num">04</span>
+        <h3>Uniform Interface</h3>
+        <p>Resources are identified by URIs, manipulated through representations (JSON/XML), and accessed via standard HTTP methods — the constraint that makes REST "REST."</p>
+      </div>
+      <div class="card">
+        <span class="num">05</span>
+        <h3>Layered System</h3>
+        <p>A client can't tell whether it's talking directly to the end server or to an intermediary — load balancer, gateway, or cache — sitting in between.</p>
+      </div>
+      <div class="card">
+        <span class="num">06</span>
+        <h3>Code on Demand <span class="opt">optional</span></h3>
+        <p>Servers can temporarily extend client functionality by sending executable code, e.g. client-side JavaScript. Rarely used in typical API design.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:36px;">// Standard HTTP methods mapped to CRUD</h2>
+    <div class="verbs">
+      <div class="verb"><b>GET</b><span>Read a resource — safe, idempotent</span></div>
+      <div class="verb"><b>POST</b><span>Create a resource — not idempotent</span></div>
+      <div class="verb"><b>PUT</b><span>Replace a resource fully — idempotent</span></div>
+      <div class="verb"><b>PATCH</b><span>Partially update a resource</span></div>
+      <div class="verb"><b>DELETE</b><span>Remove a resource — idempotent</span></div>
+    </div>
+
+    <div class="callout">
+      <b>Interview follow-up to expect:</b> "Is REST always stateless in practice?" — yes by constraint, though many real systems add session tokens/JWTs at the app layer; that's a client-carried token, not server-side session state, so it doesn't violate the constraint.
+    </div>
+  </section>
+</main>
+
+<footer>SOAP vs REST — quick reference · built for interview prep</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tabbtn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -54,10 +54,18 @@ public class R31_Fibonacci {
             System.out.print(" "+c);
            a=b;
            b=c;
-
-
         }
 
+
+
+    }
+
+
+    public void Rough2() {
+
+        int first = 0;
+        int second = 1;
+        System.out.println(first + " " + second);
 
 
     }

@@ -53,4 +53,31 @@ public class RX_CoforgePattern {
 
     }
 
-}
+    //inprocess
+    @Test
+    public void Rough3(){
+
+        String str = "aabbccadd";
+        String variable="";
+        int count;
+
+        for(int i=0;i<str.length();i++){
+            count=0;
+            variable=String.valueOf(str.charAt(i));
+         for(int j=i;j<str.length();j++) {
+             if (variable.equalsIgnoreCase(String.valueOf(str.charAt(j)))) {
+                 count++;
+             }
+             else{
+                 break;
+             }
+
+         }
+
+         }
+
+        }
+
+    }
+
+
