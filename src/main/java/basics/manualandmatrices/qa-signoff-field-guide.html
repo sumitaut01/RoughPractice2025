@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Signoff Field Guide — Metrics, Justification & RCA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#10151A;
+    --bg-panel:#161D24;
+    --bg-panel-2:#1B242C;
+    --ink:#E7E2D6;
+    --ink-dim:#9BA6AC;
+    --hairline:#2A343C;
+    --amber:#E3A542;
+    --red:#D9634B;
+    --green:#5FAE7E;
+    --blue:#6C93B8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg-deep);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:40px 24px 80px;}
+
+  /* HEADER / STAMP SIGNATURE */
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    padding-bottom:28px;
+    border-bottom:1px solid var(--hairline);
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:34px;
+    line-height:1.12;
+    margin:0 0 10px;
+    font-weight:700;
+    max-width:560px;
+  }
+  header p.sub{
+    color:var(--ink-dim);
+    font-size:14.5px;
+    max-width:520px;
+    margin:0;
+    line-height:1.55;
+  }
+  .stamp{
+    position:relative;
+    width:150px;
+    height:150px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .stamp .ring{
+    position:absolute;
+    inset:0;
+    border:2.5px solid var(--green);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:rotate(-9deg);
+    opacity:.9;
+  }
+  .stamp .ring span{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.08em;
+    color:var(--green);
+    text-align:center;
+    line-height:1.3;
+  }
+  .stamp .crack{
+    position:absolute;
+    inset:-6px;
+    border:2.5px solid var(--red);
+    border-radius:50%;
+    transform:rotate(11deg) scale(1.03);
+    opacity:0;
+    transition:opacity .35s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .stamp .crack span{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:10px;
+    color:var(--red);
+    background:var(--bg-deep);
+    padding:2px 5px;
+    letter-spacing:.05em;
+  }
+  .stamp.active .ring{opacity:.25;}
+  .stamp.active .crack{opacity:1;}
+
+  /* TABS */
+  nav.tabs{
+    display:flex;
+    gap:2px;
+    margin:28px 0 0;
+    border-bottom:1px solid var(--hairline);
+    flex-wrap:wrap;
+  }
+  nav.tabs button{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:.02em;
+    background:none;
+    border:none;
+    color:var(--ink-dim);
+    padding:13px 16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border-bottom:2px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+    white-space:nowrap;
+  }
+  nav.tabs button .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--ink-dim);
+    flex-shrink:0;
+  }
+  nav.tabs button[data-tab="metrics"] .dot{background:var(--blue);}
+  nav.tabs button[data-tab="justify"] .dot{background:var(--amber);}
+  nav.tabs button[data-tab="rca"] .dot{background:var(--red);}
+  nav.tabs button[data-tab="report"] .dot{background:var(--green);}
+  nav.tabs button:hover{color:var(--ink);}
+  nav.tabs button.active{color:var(--ink);border-bottom-color:var(--ink);}
+
+  section.panel{display:none;padding-top:30px;}
+  section.panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:21px;
+    margin:0 0 6px;
+    font-weight:600;
+  }
+  .tagline{
+    color:var(--ink-dim);
+    font-size:13.5px;
+    margin:0 0 26px;
+    max-width:620px;
+    line-height:1.5;
+  }
+  h3{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin:30px 0 10px;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  h3::before{
+    content:'';
+    width:3px;height:14px;
+    background:var(--blue);
+    display:inline-block;
+    flex-shrink:0;
+  }
+  #justify h3::before{background:var(--amber);}
+  #rca h3::before{background:var(--red);}
+  #report h3::before{background:var(--green);}
+
+  p{font-size:14px;line-height:1.65;color:var(--ink);margin:0 0 12px;}
+  ul{margin:0 0 14px;padding-left:20px;}
+  li{font-size:13.5px;line-height:1.6;color:var(--ink);margin-bottom:6px;}
+  strong{color:var(--ink);font-weight:600;}
+
+  .card{
+    background:var(--bg-panel);
+    border:1px solid var(--hairline);
+    border-radius:6px;
+    padding:18px 20px;
+    margin-bottom:16px;
+  }
+  .example{
+    background:var(--bg-panel-2);
+    border-left:3px solid var(--blue);
+    border-radius:0 6px 6px 0;
+    padding:14px 18px;
+    margin:16px 0 24px;
+  }
+  #justify .example{border-left-color:var(--amber);}
+  #rca .example{border-left-color:var(--red);}
+  #report .example{border-left-color:var(--green);}
+  .example .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-bottom:8px;
+    display:block;
+  }
+  .example p, .example li{font-size:13px;}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:12.8px;}
+  th{
+    font-family:'IBM Plex Mono',monospace;
+    text-align:left;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    padding:8px 10px;
+    border-bottom:1px solid var(--hairline);
+  }
+  td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--hairline);
+    color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.3px;
+  }
+  tr:last-child td{border-bottom:none;}
+  .pass{color:var(--green);}
+  .fail{color:var(--red);}
+  .warn{color:var(--amber);}
+
+  .flow{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    margin:16px 0 24px;
+  }
+  .flow .step{
+    display:flex;
+    gap:14px;
+    padding:12px 0;
+    border-bottom:1px dashed var(--hairline);
+  }
+  .flow .step:last-child{border-bottom:none;}
+  .flow .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--red);
+    flex-shrink:0;
+    width:22px;
+    padding-top:1px;
+  }
+  .flow .step-body p{margin:0 0 4px;font-size:13.5px;}
+  .flow .step-body .q{font-weight:600;color:var(--ink);}
+  .flow .step-body .a{color:var(--ink-dim);}
+
+  .checklist{list-style:none;padding:0;margin:14px 0 22px;}
+  .checklist li{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    font-size:13.3px;
+    padding:7px 0;
+    border-bottom:1px solid var(--hairline);
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{
+    content:'☐';
+    color:var(--green);
+    font-size:14px;
+    flex-shrink:0;
+    line-height:1.4;
+  }
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+  footer{
+    margin-top:44px;
+    padding-top:18px;
+    border-top:1px solid var(--hairline);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-dim);
+    letter-spacing:.03em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="eyebrow">QA / Test Engineering — Reference Leaflet</div>
+      <h1>The Signoff Field Guide</h1>
+      <p class="sub">What to report at sprint close, how to justify a defect that escapes to production, how to run the RCA, and what the end-of-day test report should actually contain.</p>
+    </div>
+    <div class="stamp" id="stampBox">
+      <div class="ring"><span>SIGNED<br>OFF</span></div>
+      <div class="crack"><span>ESCAPED DEFECT</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="metrics"><span class="dot"></span>Sprint Metrics</button>
+    <button data-tab="justify"><span class="dot"></span>Signoff Justification</button>
+    <button data-tab="rca"><span class="dot"></span>Root Cause Analysis</button>
+    <button data-tab="report"><span class="dot"></span>Final Test Report</button>
+  </nav>
+
+  <!-- TAB 1: METRICS -->
+  <section class="panel active" id="metrics">
+    <h2>01 — What metrics to report after sprint testing</h2>
+    <p class="tagline">"Testing is over" isn't a feeling — it's a set of numbers against agreed exit criteria. These are the numbers people are actually asking for, whether they know it or not.</p>
+
+    <h3>Coverage metrics</h3>
+    <ul>
+      <li><strong>Requirement / story coverage</strong> — % of committed stories with at least one mapped test case.</li>
+      <li><strong>Test case execution coverage</strong> — executed ÷ planned.</li>
+      <li><strong>Automation coverage</strong> — % of the regression suite that runs unattended, and separately, % of this sprint's new scenarios automated.</li>
+      <li><strong>Risk coverage</strong> — % of pre-identified high-risk areas actually exercised (not just "tested," but tested with boundary/negative data).</li>
+    </ul>
+
+    <h3>Execution metrics</h3>
+    <ul>
+      <li>Planned vs Executed vs Passed vs Failed vs Blocked vs Not Run — as counts <em>and</em> percentages.</li>
+      <li>Pass rate trend across the sprint (day-1 pass % vs day-5 pass % tells you whether quality stabilized or the build kept regressing).</li>
+    </ul>
+
+    <h3>Defect metrics</h3>
+    <ul>
+      <li><strong>Defects by severity/priority</strong> — Critical / High / Medium / Low, new vs carried over.</li>
+      <li><strong>Defect density</strong> — defects per module, per story point, or per 100 test cases.</li>
+      <li><strong>Defect rejection rate</strong> — % raised as "not a bug" / duplicate / can't-reproduce.</li>
+      <li><strong>Reopen rate</strong> — % of "fixed" defects that failed retest.</li>
+      <li><strong>Defect leakage rate</strong> — bugs found in prod ÷ (bugs found in prod + bugs found in test), for the <em>previous</em> release. This is the number that answers "how good was our testing," and it's the one people conflate with "did you sign off wrong."</li>
+    </ul>
+
+    <h3>Automation health</h3>
+    <ul>
+      <li>Suite execution time, pass rate, and <strong>flaky test %</strong> (tests that pass/fail non-deterministically — a high flaky rate quietly erodes trust in every other number on this list).</li>
+      <li>Script maintenance load — how many scripts broke due to app changes vs genuine defects caught.</li>
+    </ul>
+
+    <h3>Environment & data stability</h3>
+    <ul>
+      <li>Environment downtime hours during the sprint, and how many test cycles they cost.</li>
+      <li>Test data readiness — % of required data combinations actually available in the test environment.</li>
+    </ul>
+
+    <div class="example">
+      <span class="label">Real-time example — X4V Unite, Sprint 14</span>
+      <table>
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td>Test cases planned / executed</td><td>142 / 138 (<span class="pass">97%</span>)</td></tr>
+        <tr><td>Passed / Failed / Blocked</td><td>129 / 9 / 0</td></tr>
+        <tr><td>Requirement coverage</td><td><span class="pass">100%</span> of committed stories</td></tr>
+        <tr><td>Automation coverage (regression)</td><td>68%</td></tr>
+        <tr><td>Defects — Critical / High / Med / Low</td><td>0 / 3 / 5 / 4</td></tr>
+        <tr><td>Defect density</td><td>0.6 per story point</td></tr>
+        <tr><td>Flaky test rate</td><td><span class="warn">4.2%</span> (3 scripts on the discount-rule suite)</td></tr>
+        <tr><td>Defect leakage (prev. release)</td><td>1 of 14 → <span class="warn">7.1%</span></td></tr>
+      </table>
+      <p style="margin-bottom:0;">This is the block people mean when they ask "what metrics did you send." Send it every sprint, in the same format, even when nobody asks — it's what makes the eventual "but you signed off" conversation a two-line reply instead of a scramble.</p>
+    </div>
+  </section>
+
+  <!-- TAB 2: JUSTIFICATION -->
+  <section class="panel" id="justify">
+    <h2>02 — A bug reached prod after signoff. What's the justification?</h2>
+    <p class="tagline">Signoff is not a promise of zero defects. It's a documented, risk-based decision that testing met an agreed exit criteria within known constraints. The justification is about restating that scope — not defending your competence.</p>
+
+    <h3>The core argument</h3>
+    <div class="card">
+      <p style="margin-bottom:0;"><strong>"Signoff certifies that testing was completed against the agreed scope and exit criteria, and that known residual risk was reviewed and accepted by stakeholders at that time. It is not a warranty against scenarios that fell outside that scope."</strong> Every justification below is a specific way of showing <em>where</em> the escaped defect sat relative to that scope.</p>
+    </div>
+
+    <h3>Escaped-defect categories — pick the one that actually fits</h3>
+    <table>
+      <tr><th>Category</th><th>What it means</th></tr>
+      <tr><td>Out-of-scope combination</td><td>A data/config combination that existed but wasn't in the test matrix because it wasn't flagged as in-scope or high-risk.</td></tr>
+      <tr><td>Requirement gap</td><td>The behavior was never specified, so no test case could have existed for it.</td></tr>
+      <tr><td>Environment/data mismatch</td><td>Test environment or test data didn't mirror prod closely enough to expose the issue (config drift, third-party stub vs real service, data volume).</td></tr>
+      <tr><td>Timing / load-dependent</td><td>Race condition, concurrency, or scale issue only reproducible under real production load.</td></tr>
+      <tr><td>Post-signoff change</td><td>Config, data, or a dependent service changed in prod <em>after</em> signoff was given.</td></tr>
+      <tr><td>Accepted known risk</td><td>The item was actually known and logged at signoff, with stakeholder sign-off to ship anyway.</td></tr>
+    </table>
+
+    <h3>How to structure the justification</h3>
+    <ul>
+      <li><strong>1. State the exit criteria that was actually met</strong> — e.g. "All P1/P2 defects closed, 100% of committed story coverage, 68% automation coverage — all criteria in the sprint DoD were satisfied at signoff."</li>
+      <li><strong>2. Name the category</strong> from the table above. This is the single most important line — it turns "we missed it" into "here is precisely why it wasn't visible to the process that existed."</li>
+      <li><strong>3. Show the evidence</strong> — the test data set used, the requirement doc, the environment diff — whatever proves the gap was structural, not neglect.</li>
+      <li><strong>4. Convert it into a corrective action</strong> immediately, in the same breath. A justification without a fix attached reads as an excuse; one with a fix attached reads as ownership.</li>
+    </ul>
+
+    <div class="example">
+      <span class="label">Real-time example — X4V Unite discount-rule rounding defect</span>
+      <p><strong>What happened:</strong> Two sprints after signoff, a rounding error surfaced in production for orders using a fractional quantity combined with a specific currency conversion path in the rule engine.</p>
+      <p><strong>Justification given:</strong> "At signoff, all 142 planned test cases covering the documented discount-rule requirements passed, including the standard boundary set (0, 1, max qty, whole-currency). The fractional-quantity + currency-conversion combination was never listed in the requirement spec or the risk register, so it wasn't part of the committed test matrix — this is an <strong>out-of-scope combination / requirement gap</strong>, not a missed execution of an existing case."</p>
+      <p style="margin-bottom:0;"><strong>Immediate corrective action attached:</strong> Test data matrix for the rule engine expanded to include fractional-quantity × multi-currency combinations; requirement template updated so the BA must call out numeric edge cases explicitly going forward.</p>
+    </div>
+  </section>
+
+  <!-- TAB 3: RCA -->
+  <section class="panel" id="rca">
+    <h2>03 — Root cause analysis for an escaped defect</h2>
+    <p class="tagline">Two tools, used together: <strong>5 Whys</strong> to drill from symptom to structural cause, and a <strong>fishbone</strong> to classify it once you get there. The output is never "someone missed it" — it's a bucket plus a preventive action.</p>
+
+    <h3>Step-by-step method</h3>
+    <div class="flow">
+      <div class="step"><div class="num">1</div><div class="step-body"><p class="q">Reproduce & isolate</p><p class="a">Confirm the defect, pin the exact input/data/config that triggers it.</p></div></div>
+      <div class="step"><div class="num">2</div><div class="step-body"><p class="q">Reconstruct the timeline</p><p class="a">When was it introduced (which build/commit), when should it have been caught (which test phase), why wasn't it.</p></div></div>
+      <div class="step"><div class="num">3</div><div class="step-body"><p class="q">Run the 5 Whys</p><p class="a">Keep asking "why" until you hit a process/system cause, not a person.</p></div></div>
+      <div class="step"><div class="num">4</div><div class="step-body"><p class="q">Classify the root cause bucket</p><p class="a">Requirement gap · Coverage/test-design gap · Test data gap · Environment gap · Process/schedule gap · Tooling/automation gap.</p></div></div>
+      <div class="step"><div class="num">5</div><div class="step-body"><p class="q">Define CAPA</p><p class="a">Corrective action (fix this defect + backfill the test case) and Preventive action (fix the process so the <em>class</em> of defect can't recur silently).</p></div></div>
+      <div class="step"><div class="num">6</div><div class="step-body"><p class="q">Log it</p><p class="a">Add to the defect-leakage log so it feeds next sprint's leakage-rate metric — the RCA should visibly move a number, not just live in a doc.</p></div></div>
+    </div>
+
+    <h3>Fishbone categories for software RCA</h3>
+    <div class="grid2">
+      <div class="card"><strong>People / Process</strong><p style="margin:6px 0 0;font-size:13px;">No exploratory session scheduled, review skipped, DoD not enforced.</p></div>
+      <div class="card"><strong>Requirements / Design</strong><p style="margin:6px 0 0;font-size:13px;">Edge case never specified, ambiguous acceptance criteria.</p></div>
+      <div class="card"><strong>Test Data</strong><p style="margin:6px 0 0;font-size:13px;">Data set didn't include the combination, no prod-like data available.</p></div>
+      <div class="card"><strong>Environment / Tools</strong><p style="margin:6px 0 0;font-size:13px;">Config drift from prod, third-party mock instead of real integration.</p></div>
+    </div>
+
+    <div class="example">
+      <span class="label">Real-time example — 5 Whys on the X4V Unite rounding defect</span>
+      <div class="flow">
+        <div class="step"><div class="num">Q1</div><div class="step-body"><p class="q">Why did the bug reach production?</p><p class="a">The rounding logic failed for a fractional-quantity + currency-conversion combination.</p></div></div>
+        <div class="step"><div class="num">Q2</div><div class="step-body"><p class="q">Why wasn't it caught in testing?</p><p class="a">The test data set for the rule engine didn't include that combination.</p></div></div>
+        <div class="step"><div class="num">Q3</div><div class="step-body"><p class="q">Why wasn't that combination in the test data?</p><p class="a">The requirement document never called out fractional-quantity edge cases.</p></div></div>
+        <div class="step"><div class="num">Q4</div><div class="step-body"><p class="q">Why didn't test design catch the gap independently?</p><p class="a">Test cases were derived strictly from documented requirements; no exploratory/boundary session was scheduled for this rule-engine change.</p></div></div>
+        <div class="step"><div class="num">Q5</div><div class="step-body"><p class="q">Why was no exploratory session scheduled?</p><p class="a">The sprint plan didn't allocate time for exploratory testing on pricing/rule-engine changes specifically.</p></div></div>
+      </div>
+      <p><strong>Root cause bucket:</strong> Requirement gap + Process/schedule gap.</p>
+      <p style="margin-bottom:0;"><strong>CAPA:</strong> (Corrective) Fix rounding logic, backfill regression case, hotfix release. (Preventive) Mandatory exploratory testing checklist for any rule-engine change; requirement template now requires the BA to specify numeric edge-case behavior; expanded boundary test-data matrix committed to the regression suite.</p>
+    </div>
+  </section>
+
+  <!-- TAB 4: FINAL REPORT -->
+  <section class="panel" id="report">
+    <h2>04 — What the end-of-day / sprint test report should look like</h2>
+    <p class="tagline">One document, same structure every time, so a reader can find the number they need in ten seconds without asking you for it.</p>
+
+    <ul class="checklist">
+      <li><strong>Executive snapshot</strong> — sprint/build number, one-line overall status (Green / Amber / Red), one-line headline of what changed since last report.</li>
+      <li><strong>Scope covered</strong> — modules/features tested this cycle, explicitly listing anything out of scope and why.</li>
+      <li><strong>Execution summary</strong> — planned / executed / passed / failed / blocked, as counts and %.</li>
+      <li><strong>Defect summary</strong> — by severity, new vs carried forward, defect density, leakage from the prior release if known.</li>
+      <li><strong>Automation status</strong> — scripts run, pass rate, coverage %, flaky-test count.</li>
+      <li><strong>Risks & open issues</strong> — anything known and <em>accepted</em>, environment blockers, dependencies not yet available.</li>
+      <li><strong>Exit criteria checklist</strong> — each DoD item, met/not met, with a named sign-off for any waiver.</li>
+      <li><strong>Recommendation</strong> — Go / No-Go / Go-with-conditions, stated as a single explicit line, not implied.</li>
+      <li><strong>Appendix</strong> — links to the full defect list and test case set, for anyone who wants to go one level deeper.</li>
+    </ul>
+
+    <div class="example">
+      <span class="label">Real-time example — closing snapshot for X4V Unite, Sprint 14</span>
+      <table>
+        <tr><th>Section</th><th>Status</th></tr>
+        <tr><td>Overall</td><td><span class="pass">GREEN</span> — go with 2 accepted known issues</td></tr>
+        <tr><td>Execution</td><td>138/142 executed (97%), 129 passed</td></tr>
+        <tr><td>Defects</td><td>0 Critical, 3 High (all closed), 5 Medium (2 open, accepted)</td></tr>
+        <tr><td>Automation</td><td>68% coverage, 94% regression pass rate</td></tr>
+        <tr><td>Exit criteria</td><td>All P1/P2 closed ✓ · Coverage ≥95% ✓ · Regression pass ≥90% ✓</td></tr>
+        <tr><td>Recommendation</td><td><span class="pass">GO</span> — 2 Medium defects logged as accepted risk, signed off by Product</td></tr>
+      </table>
+      <p style="margin-bottom:0;">This is the paragraph that gets reused verbatim if a defect later escapes — it's the record that shows exactly what was known, what was accepted, and by whom.</p>
+    </div>
+  </section>
+
+  <footer>QA FIELD GUIDE — SPRINT SIGNOFF &amp; DEFECT LEAKAGE — FOR INTERNAL REFERENCE</footer>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('nav.tabs button');
+  const panels = document.querySelectorAll('section.panel');
+  const stamp = document.getElementById('stampBox');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      panels.forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      if(btn.dataset.tab === 'justify' || btn.dataset.tab === 'rca'){
+        stamp.classList.add('active');
+      } else {
+        stamp.classList.remove('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>

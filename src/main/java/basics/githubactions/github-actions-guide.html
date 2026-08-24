@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Actions for Test Automation — A Working Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1519;
+    --panel:#171F26;
+    --panel-raised:#1D2731;
+    --border:#2A363F;
+    --text:#E7EDF0;
+    --text-muted:#8FA2AE;
+    --text-dim:#5E717C;
+    --amber:#F0A857;
+    --teal:#5FB4A6;
+    --red:#E2685B;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.6;
+    font-size:16px;
+  }
+  a{color:var(--amber);}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(15,21,25,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:24px;
+    padding:14px 28px;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  .topbar .brand{
+    font-family:var(--font-mono);
+    font-weight:600;
+    color:var(--amber);
+    font-size:13px;
+    letter-spacing:0.02em;
+    flex-shrink:0;
+  }
+  .topbar nav{display:flex; gap:18px;}
+  .topbar nav a{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--text-muted);
+    text-decoration:none;
+    padding:4px 0;
+    border-bottom:2px solid transparent;
+  }
+  .topbar nav a:hover{color:var(--text); border-bottom-color:var(--teal);}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:980px; margin:0 auto;
+    padding:64px 28px 40px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px; color:var(--teal);
+    text-transform:uppercase; letter-spacing:0.12em;
+    margin-bottom:14px;
+  }
+  h1{
+    font-family:var(--font-display);
+    font-size:42px; font-weight:700;
+    margin:0 0 16px; line-height:1.15;
+    color:#fff;
+  }
+  .hero p.lede{
+    color:var(--text-muted); font-size:17px; max-width:680px; margin:0 0 36px;
+  }
+
+  /* ===== Pipeline diagram (signature element) ===== */
+  .pipeline{
+    display:flex; align-items:center;
+    overflow-x:auto;
+    padding:22px 6px 28px;
+    gap:0;
+  }
+  .pnode{
+    flex-shrink:0;
+    background:var(--panel-raised);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:12px 16px;
+    min-width:118px;
+    text-align:center;
+  }
+  .pnode .k{
+    display:block; font-family:var(--font-mono); font-size:10px;
+    color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;
+  }
+  .pnode .v{
+    display:block; font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--text);
+  }
+  .pnode.active{border-color:var(--amber);}
+  .pnode.active .v{color:var(--amber);}
+  .pline{
+    flex-shrink:0; width:34px; height:2px;
+    background:repeating-linear-gradient(90deg, var(--border) 0 6px, transparent 6px 10px);
+    position:relative;
+  }
+  .pline::after{
+    content:'';
+    position:absolute; right:-1px; top:-3px;
+    width:0; height:0;
+    border-top:4px solid transparent; border-bottom:4px solid transparent;
+    border-left:6px solid var(--border);
+  }
+
+  /* ===== Sections ===== */
+  section{
+    max-width:980px; margin:0 auto;
+    padding:44px 28px;
+    border-top:1px solid var(--border);
+  }
+  section .tag{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+  }
+  h2{
+    font-family:var(--font-display); font-size:26px; font-weight:600;
+    color:#fff; margin:6px 0 6px;
+    display:flex; align-items:baseline; gap:12px;
+  }
+  h2 .num{
+    font-family:var(--font-mono); font-size:14px; color:var(--amber); font-weight:500;
+  }
+  h3{
+    font-family:var(--font-display); font-size:17px; font-weight:600;
+    color:var(--text); margin:28px 0 10px;
+  }
+  p{color:var(--text-muted); margin:0 0 14px;}
+  .section-intro{color:var(--text-muted); max-width:680px; margin-bottom:22px;}
+  strong{color:var(--text); font-weight:600;}
+  ul,ol{color:var(--text-muted); padding-left:20px; margin:0 0 16px;}
+  li{margin-bottom:6px;}
+  li::marker{color:var(--teal);}
+
+  /* ===== Code blocks ===== */
+  .code-block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    margin:16px 0 22px;
+    overflow:hidden;
+  }
+  .code-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:9px 14px;
+    background:var(--panel-raised);
+    border-bottom:1px solid var(--border);
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+  }
+  .code-head .fname{color:var(--teal);}
+  pre{
+    margin:0; padding:16px;
+    overflow-x:auto;
+    font-family:var(--font-mono); font-size:12.5px; line-height:1.65;
+    color:#D6DEE3;
+  }
+  pre .c{color:var(--text-dim); font-style:italic;} /* comment */
+  pre .k{color:var(--amber);} /* key */
+  pre .s{color:var(--teal);}  /* string/value */
+
+  /* ===== Callouts ===== */
+  .callout{
+    border-left:3px solid var(--teal);
+    background:var(--panel);
+    border-radius:0 6px 6px 0;
+    padding:14px 18px;
+    margin:18px 0;
+    color:var(--text-muted);
+    font-size:14.5px;
+  }
+  .callout strong{color:var(--teal);}
+  .callout.warn{border-left-color:var(--red);}
+  .callout.warn strong{color:var(--red);}
+
+  /* ===== Matrix table ===== */
+  table{width:100%; border-collapse:collapse; margin:16px 0 22px; font-size:14px;}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text-muted);}
+  th{font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); font-weight:500;}
+  td strong{color:var(--text);}
+  tr:last-child td{border-bottom:none;}
+
+  /* ===== Scenario cards ===== */
+  .scenario-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    margin:18px 0 6px;
+  }
+  @media (max-width:680px){ .scenario-grid{grid-template-columns:1fr;} }
+  .scard{
+    background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:16px 18px;
+  }
+  .scard .trig{
+    font-family:var(--font-mono); font-size:11px; color:var(--amber);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;
+  }
+  .scard h4{font-family:var(--font-display); font-size:15px; margin:0 0 6px; color:var(--text);}
+  .scard p{font-size:13.5px; margin:0;}
+
+  /* ===== Checklist ===== */
+  .checklist{list-style:none; padding:0;}
+  .checklist li{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:8px 0; border-bottom:1px solid var(--border);
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{
+    content:'✓';
+    font-family:var(--font-mono); color:var(--teal); font-weight:600;
+    flex-shrink:0;
+  }
+
+  footer{
+    max-width:980px; margin:0 auto; padding:36px 28px 60px;
+    color:var(--text-dim); font-size:13px; font-family:var(--font-mono);
+    border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">⎇ actions-for-qa.yml</span>
+  <nav>
+    <a href="#concepts">Concepts</a>
+    <a href="#anatomy">Workflow Anatomy</a>
+    <a href="#matrix">OS &amp; Browser Matrix</a>
+    <a href="#selective">Selective Runs</a>
+    <a href="#services">DB Services</a>
+    <a href="#reports">Reports &amp; Artifacts</a>
+    <a href="#secrets">Secrets</a>
+    <a href="#triggers">Trigger Scenarios</a>
+    <a href="#full-example">Full Example</a>
+    <a href="#checklist">Checklist</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">CI/CD for QA Automation</div>
+  <h1>Running Selenium &amp; RestAssured Suites on GitHub Actions</h1>
+  <p class="lede">You already know the basics — YAML config, OS/browser selection, selective test runs, and auto-attached reports. This is the fuller picture: how the pieces fit together, and the scenarios that come up once a suite goes from "runs on my machine" to "runs on every PR."</p>
+
+  <div class="pipeline">
+    <div class="pnode"><span class="k">trigger</span><span class="v">push / PR</span></div>
+    <div class="pline"></div>
+    <div class="pnode"><span class="k">step</span><span class="v">checkout</span></div>
+    <div class="pline"></div>
+    <div class="pnode"><span class="k">step</span><span class="v">setup JDK</span></div>
+    <div class="pline"></div>
+    <div class="pnode active"><span class="k">strategy</span><span class="v">matrix run</span></div>
+    <div class="pline"></div>
+    <div class="pnode"><span class="k">step</span><span class="v">mvn test</span></div>
+    <div class="pline"></div>
+    <div class="pnode"><span class="k">step</span><span class="v">upload report</span></div>
+  </div>
+</div>
+
+<!-- ===================== CONCEPTS ===================== -->
+<section id="concepts">
+  <div class="tag">01</div>
+  <h2><span class="num">§1</span> The four building blocks</h2>
+  <p class="section-intro">Everything below is a combination of these. Once these click, reading any workflow file — yours or someone else's — gets a lot faster.</p>
+
+  <table>
+    <tr><th>Term</th><th>What it is</th><th>In your context</th></tr>
+    <tr><td><strong>Workflow</strong></td><td>One YAML file, one automated process, triggered by an event</td><td><code>.github/workflows/regression.yml</code></td></tr>
+    <tr><td><strong>Job</strong></td><td>A set of steps that run together on one runner (VM)</td><td>"run-selenium-tests", "run-api-tests"</td></tr>
+    <tr><td><strong>Step</strong></td><td>A single command or a reusable Action inside a job</td><td><code>mvn test</code>, or <code>actions/checkout@v4</code></td></tr>
+    <tr><td><strong>Runner</strong></td><td>The actual VM the job executes on</td><td><code>ubuntu-latest</code>, <code>windows-latest</code></td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Jobs run in parallel by default.</strong> If <code>run-selenium-tests</code> and <code>run-api-tests</code> are separate jobs, they'll fire simultaneously on separate runners unless one declares <code>needs: run-selenium-tests</code>. That's the mechanism behind splitting UI and API suites into independent, faster lanes.
+  </div>
+</section>
+
+<!-- ===================== ANATOMY ===================== -->
+<section id="anatomy">
+  <div class="tag">02</div>
+  <h2><span class="num">§2</span> Anatomy of a test workflow</h2>
+  <p class="section-intro">A minimal but realistic setup for a Java/Maven project with TestNG, Selenium and RestAssured together.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/regression.yml</span><span>YAML</span></div>
+<pre><span class="k">name:</span> <span class="s">Regression Suite</span>
+
+<span class="c"># --- 1. When it runs ---</span>
+<span class="k">on:</span>
+  <span class="k">push:</span>
+    <span class="k">branches:</span> [<span class="s">main</span>, <span class="s">develop</span>]
+  <span class="k">pull_request:</span>
+    <span class="k">branches:</span> [<span class="s">main</span>]
+
+<span class="c"># --- 2. What it runs on and with ---</span>
+<span class="k">jobs:</span>
+  <span class="k">test:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">timeout-minutes:</span> <span class="s">30</span>
+
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+
+      <span class="k">- name:</span> <span class="s">Set up JDK 17</span>
+        <span class="k">uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span>
+          <span class="k">java-version:</span> <span class="s">'17'</span>
+          <span class="k">distribution:</span> <span class="s">'temurin'</span>
+          <span class="k">cache:</span> <span class="s">maven</span>
+
+      <span class="k">- name:</span> <span class="s">Run TestNG suite</span>
+        <span class="k">run:</span> <span class="s">mvn -B clean test -DsuiteXmlFile=testng.xml</span></pre>
+  </div>
+
+  <p>Two things worth noticing that aren't obvious from the docs:</p>
+  <ul>
+    <li><strong><code>cache: maven</code></strong> on <code>setup-java</code> alone caches <code>~/.m2</code> keyed off your <code>pom.xml</code> hash — no separate <code>actions/cache</code> step needed for a standard Maven build.</li>
+    <li><strong><code>timeout-minutes</code></strong> matters more for UI suites than API suites — a hung WebDriver session will otherwise burn your full runner minutes budget before Actions' own 6-hour default cutoff kicks in.</li>
+  </ul>
+</section>
+
+<!-- ===================== MATRIX ===================== -->
+<section id="matrix">
+  <div class="tag">03</div>
+  <h2><span class="num">§3</span> OS and browser matrix</h2>
+  <p class="section-intro"><code>strategy.matrix</code> multiplies your job — one combination per runner, all in parallel. For Selenium 4+, you don't need Selenium Manager binaries or a separate driver-download action; Selenium Manager resolves the right driver automatically per OS/browser at runtime.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/cross-browser.yml</span><span>YAML</span></div>
+<pre><span class="k">jobs:</span>
+  <span class="k">cross-browser:</span>
+    <span class="k">strategy:</span>
+      <span class="k">fail-fast:</span> <span class="s">false</span>       <span class="c"># one failing combo shouldn't cancel the rest</span>
+      <span class="k">matrix:</span>
+        <span class="k">os:</span> [<span class="s">ubuntu-latest</span>, <span class="s">windows-latest</span>, <span class="s">macos-latest</span>]
+        <span class="k">browser:</span> [<span class="s">chrome</span>, <span class="s">firefox</span>, <span class="s">edge</span>]
+        <span class="k">exclude:</span>
+          <span class="k">- os:</span> <span class="s">macos-latest</span>
+            <span class="k">browser:</span> <span class="s">edge</span>       <span class="c"># edge isn't preinstalled on macos runners</span>
+
+    <span class="k">runs-on:</span> <span class="s">${{ matrix.os }}</span>
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+
+      <span class="k">- name:</span> <span class="s">Run suite for ${{ matrix.browser }}</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -Dbrowser=${{ matrix.browser }}</span>
+        <span class="k">env:</span>
+          <span class="k">HEADLESS:</span> <span class="s">true</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <strong>Headless is not optional on Actions runners.</strong> There's no display server by default. Either run Chrome/Firefox in <code>--headless=new</code> mode from your driver options class, or add <code>xvfb</code> for cases where a library genuinely needs a real display (rare with modern Selenium).
+  </div>
+
+  <p>That single matrix block above produces <strong>8 parallel jobs</strong> (3 OS × 3 browsers, minus 1 excluded) — visible as separate rows in the Actions run summary, each with its own logs and pass/fail state.</p>
+</section>
+
+<!-- ===================== SELECTIVE ===================== -->
+<section id="selective">
+  <div class="tag">04</div>
+  <h2><span class="num">§4</span> Running a few tests vs. the full suite</h2>
+  <p class="section-intro">This is entirely a Maven/TestNG concern — Actions just passes through whatever flags or suite file you give it. Three levels of control:</p>
+
+  <h3>1 · By TestNG group</h3>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">workflow step</span><span>YAML</span></div>
+<pre><span class="k">- name:</span> <span class="s">Run smoke group only</span>
+  <span class="k">run:</span> <span class="s">mvn -B test -Dgroups=smoke</span></pre>
+  </div>
+
+  <h3>2 · By suite XML</h3>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">workflow step</span><span>YAML</span></div>
+<pre><span class="k">- name:</span> <span class="s">Run regression suite file</span>
+  <span class="k">run:</span> <span class="s">mvn -B test -DsuiteXmlFile=suites/regression.xml</span></pre>
+  </div>
+
+  <h3>3 · Operator's choice, at trigger time</h3>
+  <p>Combine this with a <code>workflow_dispatch</code> input so a teammate can pick the scope from the Actions "Run workflow" button instead of editing YAML:</p>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/on-demand.yml</span><span>YAML</span></div>
+<pre><span class="k">on:</span>
+  <span class="k">workflow_dispatch:</span>
+    <span class="k">inputs:</span>
+      <span class="k">suite:</span>
+        <span class="k">description:</span> <span class="s">'Which suite to run'</span>
+        <span class="k">required:</span> <span class="s">true</span>
+        <span class="k">default:</span> <span class="s">'smoke'</span>
+        <span class="k">type:</span> <span class="s">choice</span>
+        <span class="k">options:</span> [<span class="s">smoke</span>, <span class="s">regression</span>, <span class="s">full</span>]
+
+<span class="k">jobs:</span>
+  <span class="k">test:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- name:</span> <span class="s">Run selected suite</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -DsuiteXmlFile=suites/${{ github.event.inputs.suite }}.xml</span></pre>
+  </div>
+  <p>This is the closest thing to a manual "run button with options" that Actions offers — no custom UI needed.</p>
+</section>
+
+<!-- ===================== SERVICES ===================== -->
+<section id="services">
+  <div class="tag">05</div>
+  <h2><span class="num">§5</span> Spinning up a database for RestAssured/DB tests</h2>
+  <p class="section-intro">Since your hybrid framework validates responses against Postgres/Oracle directly, this is the piece that's easy to miss: Actions can run a <strong>service container</strong> alongside your job, so tests hit a real, disposable database instead of mocks.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/api-db-tests.yml</span><span>YAML</span></div>
+<pre><span class="k">jobs:</span>
+  <span class="k">api-tests:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">services:</span>
+      <span class="k">postgres:</span>
+        <span class="k">image:</span> <span class="s">postgres:16</span>
+        <span class="k">env:</span>
+          <span class="k">POSTGRES_USER:</span> <span class="s">test_user</span>
+          <span class="k">POSTGRES_PASSWORD:</span> <span class="s">test_pass</span>
+          <span class="k">POSTGRES_DB:</span> <span class="s">x4v_test</span>
+        <span class="k">ports:</span> [<span class="s">'5432:5432'</span>]
+        <span class="k">options:</span> <span class="s">>-</span>
+          <span class="k">--health-cmd=pg_isready</span>
+          <span class="k">--health-interval=10s</span>
+          <span class="k">--health-timeout=5s</span>
+          <span class="k">--health-retries=5</span>
+
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+
+      <span class="k">- name:</span> <span class="s">Run API + DB assertions</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -Dgroups=api</span>
+        <span class="k">env:</span>
+          <span class="k">DB_URL:</span> <span class="s">jdbc:postgresql://localhost:5432/x4v_test</span>
+          <span class="k">DB_USER:</span> <span class="s">test_user</span>
+          <span class="k">DB_PASS:</span> <span class="s">test_pass</span></pre>
+  </div>
+
+  <p>The <code>health-cmd</code> block matters — without it, your first test can fire before Postgres finishes initializing, giving a flaky "connection refused" on run one that mysteriously passes on retry.</p>
+
+  <div class="callout">
+    <strong>Oracle</strong> doesn't have an official lightweight service-container image the way Postgres does. The common pattern is to point the workflow at a persistent test Oracle instance (via secrets for host/credentials) rather than spinning one up per run.
+  </div>
+</section>
+
+<!-- ===================== REPORTS ===================== -->
+<section id="reports">
+  <div class="tag">06</div>
+  <h2><span class="num">§6</span> Attaching reports automatically</h2>
+  <p class="section-intro">"Attaches itself" covers two different things in Actions — worth separating, since they solve different problems.</p>
+
+  <h3>A · Artifacts (download-and-view)</h3>
+  <p>Any file the job produces — Surefire HTML, an Extent/Allure report, screenshots on failure — gets zipped and attached to the run summary with <code>actions/upload-artifact</code>.</p>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">workflow step</span><span>YAML</span></div>
+<pre><span class="k">- name:</span> <span class="s">Run tests</span>
+  <span class="k">run:</span> <span class="s">mvn -B test</span>
+
+<span class="k">- name:</span> <span class="s">Upload TestNG report</span>
+  <span class="k">if:</span> <span class="s">always()</span>            <span class="c"># upload even when tests fail</span>
+  <span class="k">uses:</span> <span class="s">actions/upload-artifact@v4</span>
+  <span class="k">with:</span>
+    <span class="k">name:</span> <span class="s">testng-report</span>
+    <span class="k">path:</span> <span class="s">test-output/</span>
+    <span class="k">retention-days:</span> <span class="s">14</span></pre>
+  </div>
+  <p><code>if: always()</code> is the detail that trips people up most — by default, a step is skipped once any prior step fails, so a red run silently uploads nothing unless you say otherwise.</p>
+
+  <h3>B · Inline run summary (no download needed)</h3>
+  <p>For a pass/fail count visible directly on the Actions run page — not just a zip to open — either write to <code>$GITHUB_STEP_SUMMARY</code>, or use a community action like <code>dorny/test-reporter</code> that parses your Surefire/TestNG XML into a rendered summary with per-test results.</p>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">workflow step</span><span>YAML</span></div>
+<pre><span class="k">- name:</span> <span class="s">Publish test summary</span>
+  <span class="k">if:</span> <span class="s">always()</span>
+  <span class="k">uses:</span> <span class="s">dorny/test-reporter@v1</span>
+  <span class="k">with:</span>
+    <span class="k">name:</span> <span class="s">TestNG Results</span>
+    <span class="k">path:</span> <span class="s">'target/surefire-reports/*.xml'</span>
+    <span class="k">reporter:</span> <span class="s">java-junit</span></pre>
+  </div>
+
+  <h3>C · A hosted HTML report (Allure-style)</h3>
+  <p>If you're generating an Allure report, pair the upload step with <code>actions/deploy-pages</code> (or publish to a <code>gh-pages</code> branch) so the report is a live link in the PR, not just a downloadable zip — useful when non-technical reviewers need to see it without pulling artifacts.</p>
+</section>
+
+<!-- ===================== SECRETS ===================== -->
+<section id="secrets">
+  <div class="tag">07</div>
+  <h2><span class="num">§7</span> Secrets — what they are, and where to set them</h2>
+  <p class="section-intro">A <strong>secret</strong> is an encrypted key/value pair stored by GitHub, outside your repo's code, that a workflow can read at run time but nobody can read back through the UI or the logs once it's saved. This is where DB passwords, API base URLs for staging vs. prod, and any credential your suite needs live — never inline in the YAML, never committed to the repo.</p>
+
+  <h3>Why not just hardcode it</h3>
+  <ul>
+    <li>The YAML file is public history the moment it's pushed — anyone with read access to the repo (or a fork, if public) can see it, forever, even if you remove it later in a new commit.</li>
+    <li>GitHub automatically <strong>masks</strong> a secret's value in the run logs — any place it would print, you see <code>***</code> instead. Hardcoded values get no such protection.</li>
+    <li>The same workflow file can run against different environments (staging, prod) just by swapping which secret is wired to which environment — no code change needed.</li>
+  </ul>
+
+  <h3>Where to create one</h3>
+  <div class="scenario-grid">
+    <div class="scard">
+      <div class="trig">Repository secret</div>
+      <h4>Repo → Settings → Secrets and variables → Actions</h4>
+      <p>Click <strong>New repository secret</strong>, give it a name (e.g. <code>DB_PASSWORD</code>) and a value. Scoped to this one repo — the most common choice for a single test-automation project.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">Environment secret</div>
+      <h4>Repo → Settings → Environments → (staging/prod) → Secrets</h4>
+      <p>Create an <strong>environment</strong> first (e.g. "staging"), then add secrets under it. Lets the same secret name (<code>API_BASE_URL</code>) hold a different value per environment, and can require manual approval before a job using it runs.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">Organization secret</div>
+      <h4>Org → Settings → Secrets and variables → Actions</h4>
+      <p>Shared across many repos in the org — useful for something like a shared test-account password used by several automation projects. Access can be restricted to selected repos.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">Non-secret config</div>
+      <h4>Same screen → the "Variables" tab</h4>
+      <p>For values that aren't sensitive (a base URL that's fine to be public) use a <strong>repository variable</strong> instead — referenced as <code>${{ vars.NAME }}</code>. Keeps the secrets list to things that actually need masking.</p>
+    </div>
+  </div>
+
+  <h3>Using it in the workflow</h3>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/api-db-tests.yml</span><span>YAML</span></div>
+<pre><span class="k">jobs:</span>
+  <span class="k">api-tests:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="c"># optional: pin this job to an environment to pull that env's secrets</span>
+    <span class="k">environment:</span> <span class="s">staging</span>
+
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+
+      <span class="k">- name:</span> <span class="s">Run RestAssured suite</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -Dgroups=api</span>
+        <span class="k">env:</span>
+          <span class="k">DB_PASSWORD:</span> <span class="s">${{ secrets.DB_PASSWORD }}</span>
+          <span class="k">API_BASE_URL:</span> <span class="s">${{ secrets.STAGING_API_URL }}</span></pre>
+  </div>
+  <p>The <code>env:</code> block maps each secret onto a plain environment variable your Java process can read the normal way — <code>System.getenv("DB_PASSWORD")</code> — so nothing in your test code or <code>pom.xml</code> needs to know it came from GitHub at all.</p>
+
+  <div class="callout warn">
+    <strong>A secret is only ever readable inside the run that references it.</strong> You can't view its value again in the Settings UI after saving — only overwrite it. If you lose track of what a credential was, rotate it and update the secret rather than trying to retrieve the old one.
+  </div>
+
+  <div class="callout">
+    <strong>Pull requests from forks don't get secrets by default.</strong> This is deliberate — it stops an outside contributor's PR from exfiltrating your credentials via a modified workflow file. If external contributors need CI to run, that typically means a maintainer-approved run or a separate, secret-free lane for fork PRs.
+  </div>
+</section>
+
+<!-- ===================== TRIGGERS ===================== -->
+<section id="triggers">
+  <div class="tag">08</div>
+  <h2><span class="num">§8</span> Trigger scenarios worth knowing</h2>
+  <p class="section-intro">The <code>on:</code> block is where most of the practical flexibility lives.</p>
+
+  <div class="scenario-grid">
+    <div class="scard">
+      <div class="trig">on: pull_request</div>
+      <h4>Gate before merge</h4>
+      <p>Runs the smoke/regression suite on every PR against <code>main</code>. Pair with branch protection rules to make it a required check.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">on: schedule (cron)</div>
+      <h4>Nightly full regression</h4>
+      <p><code>cron: '0 2 * * *'</code> — run the entire suite (all browsers, all groups) overnight when runner time doesn't compete with dev workflow.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">on: workflow_dispatch</div>
+      <h4>Manual, parameterized run</h4>
+      <p>A teammate clicks "Run workflow" and picks suite/browser/environment from dropdowns — no YAML edits needed for a one-off run.</p>
+    </div>
+    <div class="scard">
+      <div class="trig">on: workflow_run</div>
+      <h4>Chained after deploy</h4>
+      <p>Trigger the test workflow automatically once a separate "Deploy to staging" workflow completes successfully — useful for post-deploy smoke checks.</p>
+    </div>
+  </div>
+
+  <h3>Nightly full-suite example</h3>
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/nightly.yml</span><span>YAML</span></div>
+<pre><span class="k">on:</span>
+  <span class="k">schedule:</span>
+    <span class="k">- cron:</span> <span class="s">'0 2 * * *'</span>    <span class="c"># 02:00 UTC daily</span>
+  <span class="k">workflow_dispatch:</span>          <span class="c"># plus a manual override button</span>
+
+<span class="k">jobs:</span>
+  <span class="k">full-regression:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+      <span class="k">- run:</span> <span class="s">mvn -B test -DsuiteXmlFile=suites/full.xml</span></pre>
+  </div>
+
+  <div class="callout">
+    Combine <code>workflow_dispatch</code> with the <code>environment:</code> field from §7 to let a teammate pick staging vs. prod secrets at run time — the same mechanism as the suite-selection dropdown in §4, applied to environment instead of scope.
+  </div>
+</section>
+
+<!-- ===================== FULL EXAMPLE ===================== -->
+<section id="full-example">
+  <div class="tag">09</div>
+  <h2><span class="num">§9</span> Putting it together</h2>
+  <p class="section-intro">One workflow, two independent jobs — UI suite across a browser matrix, API suite against a live Postgres service — both reporting back to the same run.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">.github/workflows/full-regression.yml</span><span>YAML</span></div>
+<pre><span class="k">name:</span> <span class="s">Full Regression</span>
+
+<span class="k">on:</span>
+  <span class="k">pull_request:</span>
+    <span class="k">branches:</span> [<span class="s">main</span>]
+  <span class="k">workflow_dispatch:</span> {}
+
+<span class="k">jobs:</span>
+  <span class="k">ui-tests:</span>
+    <span class="k">strategy:</span>
+      <span class="k">fail-fast:</span> <span class="s">false</span>
+      <span class="k">matrix:</span>
+        <span class="k">browser:</span> [<span class="s">chrome</span>, <span class="s">firefox</span>]
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+      <span class="k">- name:</span> <span class="s">Run Selenium suite</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -Dgroups=ui -Dbrowser=${{ matrix.browser }}</span>
+      <span class="k">- name:</span> <span class="s">Upload UI report</span>
+        <span class="k">if:</span> <span class="s">always()</span>
+        <span class="k">uses:</span> <span class="s">actions/upload-artifact@v4</span>
+        <span class="k">with:</span>
+          <span class="k">name:</span> <span class="s">ui-report-${{ matrix.browser }}</span>
+          <span class="k">path:</span> <span class="s">test-output/</span>
+
+  <span class="k">api-tests:</span>
+    <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
+    <span class="k">services:</span>
+      <span class="k">postgres:</span>
+        <span class="k">image:</span> <span class="s">postgres:16</span>
+        <span class="k">env:</span> { <span class="k">POSTGRES_USER:</span> <span class="s">test_user</span>, <span class="k">POSTGRES_PASSWORD:</span> <span class="s">test_pass</span>, <span class="k">POSTGRES_DB:</span> <span class="s">x4v_test</span> }
+        <span class="k">ports:</span> [<span class="s">'5432:5432'</span>]
+        <span class="k">options:</span> <span class="s">--health-cmd=pg_isready --health-interval=10s --health-retries=5</span>
+    <span class="k">steps:</span>
+      <span class="k">- uses:</span> <span class="s">actions/checkout@v4</span>
+      <span class="k">- uses:</span> <span class="s">actions/setup-java@v4</span>
+        <span class="k">with:</span> { <span class="k">java-version:</span> <span class="s">'17'</span>, <span class="k">distribution:</span> <span class="s">'temurin'</span>, <span class="k">cache:</span> <span class="s">maven</span> }
+      <span class="k">- name:</span> <span class="s">Run RestAssured suite</span>
+        <span class="k">run:</span> <span class="s">mvn -B test -Dgroups=api</span>
+        <span class="k">env:</span>
+          <span class="k">DB_URL:</span> <span class="s">jdbc:postgresql://localhost:5432/x4v_test</span>
+          <span class="k">API_BASE_URL:</span> <span class="s">${{ secrets.STAGING_API_URL }}</span>
+      <span class="k">- name:</span> <span class="s">Upload API report</span>
+        <span class="k">if:</span> <span class="s">always()</span>
+        <span class="k">uses:</span> <span class="s">actions/upload-artifact@v4</span>
+        <span class="k">with:</span>
+          <span class="k">name:</span> <span class="s">api-report</span>
+          <span class="k">path:</span> <span class="s">target/surefire-reports/</span></pre>
+  </div>
+  <p><code>ui-tests</code> and <code>api-tests</code> run as two independent jobs — no <code>needs:</code> between them — so they execute at the same time and the whole run finishes in roughly the length of the slower one, not the sum of both.</p>
+</section>
+
+<!-- ===================== CHECKLIST ===================== -->
+<section id="checklist">
+  <div class="tag">10</div>
+  <h2><span class="num">§10</span> Before you ship the workflow</h2>
+  <ul class="checklist">
+    <li>Maven/Gradle dependency caching is enabled (<code>cache: maven</code> on <code>setup-java</code>, or an explicit <code>actions/cache</code> step)</li>
+    <li>Report/artifact upload steps use <code>if: always()</code> so failures still leave evidence behind</li>
+    <li>Browser runs are explicitly headless — no assumption of a display server on the runner</li>
+    <li>Secrets (DB creds, API base URLs) come from <code>secrets.*</code>, never hardcoded in the YAML — set at the right scope (repo / environment / org)</li>
+    <li><code>fail-fast: false</code> is set on any matrix where you want every combination's result, not just the first failure</li>
+    <li>A <code>timeout-minutes</code> is set per job so a hung WebDriver session can't quietly eat the whole runner budget</li>
+    <li>Service container health checks (<code>--health-cmd</code>) are in place before DB-dependent steps run</li>
+  </ul>
+</section>
+
+<footer>
+  Written for a Java · Selenium · TestNG · RestAssured stack — adjust runner images, cache keys, and service containers if yours differs.
+</footer>
+
+</body>
+</html>

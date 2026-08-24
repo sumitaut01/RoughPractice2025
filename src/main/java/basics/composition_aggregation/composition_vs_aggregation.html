@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Composition vs Aggregation in Java — Reference Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #161925;
+    --panel2: #1c2030;
+    --border: #2a2f42;
+    --text: #e4e6ef;
+    --muted: #9299b0;
+    --accent: #6ea8fe;
+    --accent2: #7ee8b8;
+    --warn: #ffb454;
+    --code-bg: #0b0d13;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    padding: 40px 24px 28px;
+    background: linear-gradient(135deg, #1a1f33, #12141f);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 28px 0;
+  }
+  nav.toc h2 { margin-top: 0; font-size: 15px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section {
+    margin: 44px 0;
+    padding-top: 8px;
+  }
+  h2 {
+    font-size: 22px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  h3 {
+    font-size: 17px;
+    color: var(--accent2);
+    margin-top: 28px;
+  }
+  p { color: #cfd2e0; }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-right: 6px;
+  }
+  .badge.comp { background: rgba(110,168,254,.15); color: var(--accent); border: 1px solid rgba(110,168,254,.4); }
+  .badge.agg { background: rgba(126,232,184,.15); color: var(--accent2); border: 1px solid rgba(126,232,184,.4); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--panel2);
+    color: var(--accent2);
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  code {
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+  }
+  .kw { color: #ff7ab2; }
+  .type { color: #6ea8fe; }
+  .str { color: #ffcb6b; }
+  .cmt { color: #6a7185; font-style: italic; }
+  .ann { color: #c792ea; }
+
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(110,168,254,.08);
+    padding: 12px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  .callout.warn {
+    border-left-color: var(--warn);
+    background: rgba(255,180,84,.08);
+  }
+  .callout strong { color: var(--accent2); }
+
+  .diagram {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 18px 0;
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+    font-size: 13.5px;
+    color: var(--muted);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 800px) {
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .card h4 {
+    margin-top: 0;
+    color: var(--accent);
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 30px 0 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap" style="padding:0;">
+    <h1>Composition vs Aggregation in Java</h1>
+    <p>A reference guide for designing test automation frameworks — Page Objects, Test Suites, and reusable components.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#concept">The Core Concept</a></li>
+      <li><a href="#comparison">Quick Comparison Table</a></li>
+      <li><a href="#composition">Composition — Deep Dive + Code</a></li>
+      <li><a href="#aggregation">Aggregation — Deep Dive + Code</a></li>
+      <li><a href="#framework">Applying This to a Test Automation Framework</a></li>
+      <li><a href="#pitfalls">Common Pitfalls</a></li>
+      <li><a href="#checklist">Which One Should I Use? Checklist</a></li>
+    </ol>
+  </nav>
+
+  <section id="concept">
+    <h2>1. The Core Concept</h2>
+    <p>
+      Both <strong>Composition</strong> and <strong>Aggregation</strong> are forms of the
+      "<strong>HAS-A</strong>" relationship between classes — as opposed to Inheritance, which is
+      an "<strong>IS-A</strong>" relationship. The difference between them comes down to one
+      question:
+    </p>
+    <div class="callout">
+      <strong>Who owns the lifecycle of the contained object?</strong><br>
+      If the container creates and destroys the part, and the part cannot meaningfully exist
+      without it → <span class="badge comp">Composition</span><br>
+      If the container just holds a reference to something that exists independently and can
+      outlive it, or be shared elsewhere → <span class="badge agg">Aggregation</span>
+    </div>
+
+    <div class="diagram">Composition (strong ownership, filled diamond in UML)
+┌────────────┐        ┌────────────┐
+│   Car      │◆──────▶│  Engine    │   Engine is created inside Car,
+└────────────┘        └────────────┘   dies when Car is destroyed.
+
+Aggregation (weak ownership, hollow diamond in UML)
+┌────────────┐        ┌────────────┐
+│  Team      │◇──────▶│  Player    │   Player exists independently,
+└────────────┘        └────────────┘   can belong to another Team too.</div>
+  </section>
+
+  <section id="comparison">
+    <h2>2. Quick Comparison Table</h2>
+    <table>
+      <tr>
+        <th>Aspect</th>
+        <th><span class="badge comp">Composition</span></th>
+        <th><span class="badge agg">Aggregation</span></th>
+      </tr>
+      <tr>
+        <td>Relationship strength</td>
+        <td>Strong ("owns-a")</td>
+        <td>Weak ("has-a")</td>
+      </tr>
+      <tr>
+        <td>Lifecycle</td>
+        <td>Part dies when whole dies</td>
+        <td>Part can outlive the whole</td>
+      </tr>
+      <tr>
+        <td>Object creation</td>
+        <td>Usually created inside the container (e.g. in constructor, <code>new</code>)</td>
+        <td>Usually passed in from outside (constructor injection / setter)</td>
+      </tr>
+      <tr>
+        <td>Sharing</td>
+        <td>Not shared with other objects</td>
+        <td>Can be shared across multiple containers</td>
+      </tr>
+      <tr>
+        <td>UML notation</td>
+        <td>Filled diamond ◆</td>
+        <td>Hollow diamond ◇</td>
+      </tr>
+      <tr>
+        <td>Test framework example</td>
+        <td>A <code>LoginPage</code> creates its own <code>WebDriverWait</code> internally</td>
+        <td>A <code>TestSuiteRunner</code> holds a list of <code>TestCase</code> objects supplied to it</td>
+      </tr>
+    </table>
+  </section>
+
+  <section id="composition">
+    <h2>3. Composition — Deep Dive</h2>
+    <p>
+      In composition, the "whole" object is responsible for creating and managing the "part."
+      If you delete the whole, the part goes with it — there's no independent existence.
+    </p>
+
+    <h3>Example: Car and Engine</h3>
+    <pre><code><span class="kw">class</span> <span class="type">Engine</span> {
+    <span class="kw">private final</span> <span class="type">String</span> type;
+
+    <span class="kw">public</span> Engine(<span class="type">String</span> type) {
+        <span class="kw">this</span>.type = type;
+    }
+
+    <span class="kw">public void</span> start() {
+        System.out.println(type + <span class="str">" engine starting..."</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="type">Car</span> {
+    <span class="cmt">// Engine is created INSIDE Car — Car owns its lifecycle entirely.</span>
+    <span class="kw">private final</span> Engine engine;
+
+    <span class="kw">public</span> Car(<span class="type">String</span> engineType) {
+        <span class="kw">this</span>.engine = <span class="kw">new</span> Engine(engineType); <span class="cmt">// created here, not passed in</span>
+    }
+
+    <span class="kw">public void</span> drive() {
+        engine.start();
+        System.out.println(<span class="str">"Car is driving"</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="type">Main</span> {
+    <span class="kw">public static void</span> main(<span class="type">String</span>[] args) {
+        Car car = <span class="kw">new</span> Car(<span class="str">"V8"</span>);
+        car.drive();
+        <span class="cmt">// There is no way to grab the Engine from outside and reuse it
+        // elsewhere. When `car` goes out of scope, its Engine goes too.</span>
+    }
+}</code></pre>
+
+    <div class="callout">
+      <strong>Key signal:</strong> the <code>new Engine(...)</code> call happens
+      <em>inside</em> the <code>Car</code> class. No one hands the engine to the car from outside.
+    </div>
+  </section>
+
+  <section id="aggregation">
+    <h2>4. Aggregation — Deep Dive</h2>
+    <p>
+      In aggregation, the "part" is created independently — usually outside the container —
+      and simply handed a reference. The part can be reused elsewhere, and it survives even if
+      the container is discarded.
+    </p>
+
+    <h3>Example: Team and Player</h3>
+    <pre><code><span class="kw">class</span> <span class="type">Player</span> {
+    <span class="kw">private final</span> <span class="type">String</span> name;
+
+    <span class="kw">public</span> Player(<span class="type">String</span> name) {
+        <span class="kw">this</span>.name = name;
+    }
+
+    <span class="kw">public</span> <span class="type">String</span> getName() {
+        <span class="kw">return</span> name;
+    }
+}
+
+<span class="kw">class</span> <span class="type">Team</span> {
+    <span class="cmt">// Players are created OUTSIDE and passed in — Team does not own their lifecycle.</span>
+    <span class="kw">private final</span> <span class="type">List</span>&lt;Player&gt; players;
+
+    <span class="kw">public</span> Team(<span class="type">List</span>&lt;Player&gt; players) {
+        <span class="kw">this</span>.players = players; <span class="cmt">// just holds a reference</span>
+    }
+
+    <span class="kw">public void</span> listPlayers() {
+        players.forEach(p -&gt; System.out.println(p.getName()));
+    }
+}
+
+<span class="kw">public class</span> <span class="type">Main</span> {
+    <span class="kw">public static void</span> main(<span class="type">String</span>[] args) {
+        Player messi = <span class="kw">new</span> Player(<span class="str">"Messi"</span>);
+        Player ronaldo = <span class="kw">new</span> Player(<span class="str">"Ronaldo"</span>);
+
+        Team barcelona = <span class="kw">new</span> Team(<span class="type">List</span>.of(messi));
+        <span class="cmt">// `messi` still exists independently and could be added to
+        // a different Team object, or a national squad, etc.</span>
+
+        barcelona.listPlayers();
+    }
+}</code></pre>
+
+    <div class="callout">
+      <strong>Key signal:</strong> <code>players</code> is passed into the constructor —
+      <code>Team</code> never calls <code>new Player(...)</code> itself.
+    </div>
+  </section>
+
+  <section id="framework">
+    <h2>5. Applying This to a Test Automation Framework</h2>
+    <p>
+      This distinction shows up constantly in Selenium/TestNG-style frameworks — knowing which
+      one you're using drives good, low-coupling design decisions.
+    </p>
+
+    <div class="grid2">
+      <div class="card">
+        <h4><span class="badge comp">Composition</span> Page Object owning its own wait helper</h4>
+        <pre><code><span class="kw">class</span> <span class="type">LoginPage</span> {
+    <span class="kw">private final</span> WebDriver driver;
+    <span class="cmt">// Wait is created internally — tightly bound
+    // to this page's lifecycle, never shared.</span>
+    <span class="kw">private final</span> WebDriverWait wait;
+
+    <span class="kw">public</span> LoginPage(WebDriver driver) {
+        <span class="kw">this</span>.driver = driver;
+        <span class="kw">this</span>.wait = <span class="kw">new</span> WebDriverWait(
+            driver, Duration.ofSeconds(<span class="ann">10</span>));
+    }
+
+    <span class="kw">public void</span> login(<span class="type">String</span> user, <span class="type">String</span> pass) {
+        wait.until(ExpectedConditions
+            .visibilityOfElementLocated(
+                By.id(<span class="str">"username"</span>)))
+            .sendKeys(user);
+        driver.findElement(By.id(<span class="str">"password"</span>))
+              .sendKeys(pass);
+        driver.findElement(By.id(<span class="str">"loginBtn"</span>))
+              .click();
+    }
+}</code></pre>
+      </div>
+
+      <div class="card">
+        <h4><span class="badge agg">Aggregation</span> Test Suite holding shared, reusable Test Cases</h4>
+        <pre><code><span class="kw">class</span> <span class="type">TestCase</span> {
+    <span class="kw">private final</span> <span class="type">String</span> name;
+    <span class="kw">public</span> TestCase(<span class="type">String</span> name) { <span class="kw">this</span>.name = name; }
+    <span class="kw">public void</span> run() {
+        System.out.println(<span class="str">"Running: "</span> + name);
+    }
+}
+
+<span class="kw">class</span> <span class="type">TestSuiteRunner</span> {
+    <span class="cmt">// TestCases are built elsewhere (e.g. by TestNG,
+    // a factory, or a config reader) and just handed in.</span>
+    <span class="kw">private final</span> <span class="type">List</span>&lt;TestCase&gt; testCases;
+
+    <span class="kw">public</span> TestSuiteRunner(<span class="type">List</span>&lt;TestCase&gt; testCases) {
+        <span class="kw">this</span>.testCases = testCases;
+    }
+
+    <span class="kw">public void</span> runAll() {
+        testCases.forEach(TestCase::run);
+    }
+}
+
+<span class="cmt">// Same TestCase objects could be reused in a different
+// suite (e.g. a "smoke" suite AND a "regression" suite)
+// without being duplicated or destroyed.</span></code></pre>
+      </div>
+    </div>
+
+    <h3>A realistic hybrid framework example: WebDriverManager</h3>
+    <p>
+      Here's a pattern common in hybrid Selenium + API + DB frameworks — a
+      <code>TestContext</code> that <strong>composes</strong> its own driver manager (owns it, creates
+      it, kills it), but <strong>aggregates</strong> a shared <code>ConfigReader</code> that's built once
+      and reused across every test in the run.
+    </p>
+    <pre><code><span class="kw">class</span> <span class="type">TestContext</span> {
+    <span class="cmt">// COMPOSITION: driver manager is created and destroyed with this context</span>
+    <span class="kw">private final</span> <span class="type">DriverManager</span> driverManager;
+
+    <span class="cmt">// AGGREGATION: config is built once at suite startup and shared
+    // across every TestContext instance — this class doesn't own it.</span>
+    <span class="kw">private final</span> <span class="type">ConfigReader</span> config;
+
+    <span class="kw">public</span> TestContext(<span class="type">ConfigReader</span> sharedConfig) {
+        <span class="kw">this</span>.config = sharedConfig;                 <span class="cmt">// injected, shared</span>
+        <span class="kw">this</span>.driverManager = <span class="kw">new</span> <span class="type">DriverManager</span>(sharedConfig); <span class="cmt">// owned, private</span>
+    }
+
+    <span class="kw">public void</span> tearDown() {
+        driverManager.quit(); <span class="cmt">// only TestContext controls this</span>
+        <span class="cmt">// config is left untouched — other TestContexts still need it</span>
+    }
+}</code></pre>
+  </section>
+
+  <section id="pitfalls">
+    <h2>6. Common Pitfalls</h2>
+    <div class="callout warn">
+      <strong>Pitfall 1 — Fake composition:</strong> Creating a "new" object every time but
+      still passing dependencies in from outside (e.g. driver, config) doesn't make something
+      composition. Composition is about who owns the <em>part's</em> lifecycle, not whether
+      <code>new</code> appears somewhere.
+    </div>
+    <div class="callout warn">
+      <strong>Pitfall 2 — Sharing a "composed" object by accident:</strong> If two Page Objects
+      end up holding the same <code>WebDriverWait</code> instance because someone passed a
+      reference around, you no longer have composition — you've drifted into (probably
+      unintended) aggregation, and now a change in one page can affect another.
+    </div>
+    <div class="callout warn">
+      <strong>Pitfall 3 — Over-composing framework utilities:</strong> Things like
+      <code>ExtentReportManager</code>, <code>ConfigReader</code>, or a shared
+      <code>DBConnectionPool</code> should almost always be aggregated (built once, injected
+      everywhere) — not re-created inside every class that needs them. Re-creating them as
+      composition leads to duplicate connections/reports and inconsistent state.
+    </div>
+  </section>
+
+  <section id="checklist">
+    <h2>7. Which One Should I Use? — Quick Checklist</h2>
+    <table>
+      <tr><th>Ask yourself...</th><th>If YES →</th></tr>
+      <tr>
+        <td>Should the part be destroyed when the container is?</td>
+        <td><span class="badge comp">Composition</span></td>
+      </tr>
+      <tr>
+        <td>Does the part make sense only in the context of this one container?</td>
+        <td><span class="badge comp">Composition</span></td>
+      </tr>
+      <tr>
+        <td>Will multiple objects need to share this same instance?</td>
+        <td><span class="badge agg">Aggregation</span></td>
+      </tr>
+      <tr>
+        <td>Is this object built once at suite/framework startup (config, driver factory, DB pool, report manager)?</td>
+        <td><span class="badge agg">Aggregation</span></td>
+      </tr>
+      <tr>
+        <td>Would unit testing this class require mocking the part and injecting it?</td>
+        <td><span class="badge agg">Aggregation</span> (favor constructor injection)</td>
+      </tr>
+    </table>
+    <div class="callout">
+      <strong>Rule of thumb for frameworks:</strong> Page Objects and step-specific helpers
+      lean toward <span class="badge comp">Composition</span>. Cross-cutting framework
+      infrastructure (config, driver factories, reporting, DB connections, test data providers)
+      leans toward <span class="badge agg">Aggregation</span> via dependency injection.
+    </div>
+  </section>
+
+</div>
+
+<footer>Reference guide for team use — Composition &amp; Aggregation in Java, applied to test automation framework design.</footer>
+
+</body>
+</html>

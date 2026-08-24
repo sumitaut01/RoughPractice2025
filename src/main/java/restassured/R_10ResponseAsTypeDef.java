@@ -41,7 +41,7 @@ REST Assured uses Jackson or Gson under the hood to map JSON fields to Java fiel
     public static void main(String[] args) {
 
         /*
-       2. What is TypeRef (as typedef / generic type)?
+       2. What is TypeRef (as typeref / generic type)?
 The problem with .as() is it cannot handle generics like List<User> directly due to Java's type erasure — at runtime, Java doesn't know the generic type.
 So this won't work properly:
 javaList<User> users = response.as(List.class); // ❌ You get List<LinkedHashMap>, not List<User>

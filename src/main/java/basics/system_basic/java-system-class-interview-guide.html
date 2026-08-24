@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>java.lang.System — Interview Guide</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --panel2:#1e293b; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#a78bfa; --good:#4ade80; --warn:#fbbf24; --code:#0b1220;
+    --border:#243044;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0 0 60px;
+    background:linear-gradient(180deg,var(--bg),#0b1220 400px, var(--bg));
+    color:var(--text); font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  header{
+    padding:48px 24px 32px; text-align:center;
+    background:radial-gradient(ellipse at top, rgba(56,189,248,0.15), transparent 60%);
+    border-bottom:1px solid var(--border);
+  }
+  header h1{
+    margin:0; font-size:2.2rem; letter-spacing:-0.5px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  header p{color:var(--muted); margin-top:10px; font-size:1.05rem;}
+  .badge{
+    display:inline-block; background:var(--panel2); border:1px solid var(--border);
+    color:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.8rem; margin:4px;
+  }
+  main{max-width:960px; margin:0 auto; padding:0 20px;}
+  section{margin-top:44px;}
+  h2{
+    font-size:1.5rem; color:var(--text); border-left:4px solid var(--accent);
+    padding-left:12px; margin-bottom:18px;
+  }
+  h3{color:var(--accent2); margin-top:28px; font-size:1.15rem;}
+  p{color:#cbd5e1;}
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:20px 24px; margin-bottom:16px;
+  }
+  table{width:100%; border-collapse:collapse; margin-top:12px; font-size:0.92rem;}
+  th, td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{color:var(--accent); font-weight:600; background:var(--panel2);}
+  tr:hover td{background:rgba(56,189,248,0.05);}
+  code, .inline-code{
+    background:var(--code); color:#7dd3fc; padding:2px 6px; border-radius:5px;
+    font-family:'Fira Code',Consolas,monospace; font-size:0.88rem;
+  }
+  pre{
+    background:var(--code); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; overflow-x:auto; font-family:'Fira Code',Consolas,monospace;
+    font-size:0.86rem; color:#d1fae5; line-height:1.55;
+  }
+  pre .cm{color:#64748b;}
+  pre .kw{color:#c084fc;}
+  pre .ty{color:#7dd3fc;}
+  pre .st{color:#fbbf24;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+  .qa{
+    background:var(--panel2); border-left:3px solid var(--warn);
+    padding:14px 18px; border-radius:8px; margin-bottom:14px;
+  }
+  .qa .q{color:var(--warn); font-weight:600; margin-bottom:6px;}
+  .qa .a{color:#e2e8f0; font-size:0.95rem;}
+  .tag-final{color:var(--good); font-weight:600;}
+  .toc{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:18px 24px; margin-top:30px;
+  }
+  .toc a{color:var(--accent); text-decoration:none; display:block; padding:4px 0; font-size:0.95rem;}
+  .toc a:hover{text-decoration:underline;}
+  footer{text-align:center; color:var(--muted); margin-top:60px; font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>java.lang.System</h1>
+  <p>The gateway between your JVM and the outside world — interview-ready reference</p>
+  <div>
+    <span class="badge">final class</span>
+    <span class="badge">no public constructor</span>
+    <span class="badge">all static members</span>
+    <span class="badge">java.lang</span>
+  </div>
+</header>
+
+<main>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <a href="#overview">1. Overview &amp; Why final</a>
+  <a href="#fields">2. Standard Streams — in / out / err</a>
+  <a href="#time">3. Timing Methods</a>
+  <a href="#arraycopy">4. arraycopy()</a>
+  <a href="#props">5. Properties &amp; Environment</a>
+  <a href="#exit">6. exit(), gc(), identityHashCode()</a>
+  <a href="#security">7. Security &amp; Misc</a>
+  <a href="#jni">8. What is JNI?</a>
+  <a href="#interview">9. Interview Q&amp;A</a>
+</div>
+
+<section id="overview">
+  <h2>1. Overview</h2>
+  <div class="card">
+    <p><code>System</code> is a <span class="tag-final">final</span> class in <code>java.lang</code> that provides
+    access to system-level resources and operations — standard I/O streams, environment variables, system properties,
+    timing, array copying, and JVM-level utilities like garbage collection hints and shutdown.</p>
+    <p><strong>Why it's final:</strong> it's a core utility class meant to expose a fixed, controlled API to the underlying
+    platform. Allowing subclassing would let someone override system-critical behavior — Java prevents that by design.</p>
+    <p><strong>Why the constructor is private:</strong> every member is <code>static</code>, so there's no reason to
+    instantiate it — instantiation is explicitly disallowed.</p>
+    <pre><span class="cm">// This will NOT compile:</span>
+<span class="kw">System</span> s = <span class="kw">new</span> System(); <span class="cm">// constructor is private</span></pre>
+  </div>
+</section>
+
+<section id="fields">
+  <h2>2. Standard Streams — the three public static final fields</h2>
+  <div class="card">
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+      <tr><td><code>System.in</code></td><td><code>InputStream</code></td><td>Standard input (keyboard / piped input)</td></tr>
+      <tr><td><code>System.out</code></td><td><code>PrintStream</code></td><td>Standard output (console)</td></tr>
+      <tr><td><code>System.err</code></td><td><code>PrintStream</code></td><td>Standard error (unbuffered, for error/log output)</td></tr>
+    </table>
+    <h3>Redirecting streams</h3>
+    <pre><span class="ty">PrintStream</span> fileOut = <span class="kw">new</span> PrintStream(<span class="kw">new</span> FileOutputStream(<span class="st">"log.txt"</span>));
+System.setOut(fileOut);   <span class="cm">// redirect System.out to a file</span>
+System.setErr(fileOut);   <span class="cm">// redirect System.err similarly</span>
+System.setIn(<span class="kw">new</span> FileInputStream(<span class="st">"input.txt"</span>)); <span class="cm">// redirect stdin</span></pre>
+    <p><strong>QA/automation angle:</strong> useful when capturing console output of a process under test, or
+    silencing noisy third-party logs to a buffer during a test run.</p>
+  </div>
+</section>
+
+<section id="time">
+  <h2>3. Timing Methods</h2>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h3><code>currentTimeMillis()</code></h3>
+        <p>Wall-clock time in milliseconds since the Unix epoch. Good for timestamps, but <em>not</em> reliable for
+        measuring elapsed duration since it can jump (NTP sync, manual clock changes).</p>
+      </div>
+      <div>
+        <h3><code>nanoTime()</code></h3>
+        <p>High-resolution, monotonic time source in nanoseconds — has <strong>no relation to wall-clock time</strong>,
+        only meaningful for measuring elapsed intervals. Always preferred for benchmarking/timeouts.</p>
+      </div>
+    </div>
+    <pre><span class="kw">long</span> start = System.nanoTime();
+runOperation();
+<span class="kw">long</span> elapsedMs = (System.nanoTime() - start) / 1_000_000;
+System.out.println(<span class="st">"Took "</span> + elapsedMs + <span class="st">" ms"</span>);</pre>
+    <div class="qa">
+      <div class="q">Why not use currentTimeMillis() for measuring performance?</div>
+      <div class="a">It's tied to the system clock, which can be adjusted forward/backward (NTP sync, DST, manual change),
+      producing negative or skewed durations. <code>nanoTime()</code> uses a monotonic clock source unaffected by wall-clock changes.</div>
+    </div>
+  </div>
+</section>
+
+<section id="arraycopy">
+  <h2>4. arraycopy() — native, high-performance array copy</h2>
+  <div class="card">
+    <pre><span class="kw">static void</span> arraycopy(<span class="ty">Object</span> src, <span class="kw">int</span> srcPos,
+                       <span class="ty">Object</span> dest, <span class="kw">int</span> destPos, <span class="kw">int</span> length)</pre>
+    <pre><span class="kw">int</span>[] source = {1, 2, 3, 4, 5};
+<span class="kw">int</span>[] dest = <span class="kw">new</span> int[5];
+System.arraycopy(source, 0, dest, 0, source.length);
+<span class="cm">// dest = [1, 2, 3, 4, 5]</span></pre>
+    <p>It's implemented natively (JNI), so it's significantly faster than a manual loop for large arrays. It's also what
+    <code>Arrays.copyOf()</code> and <code>ArrayList</code>'s internal resizing use under the hood.</p>
+    <p><strong>Handles overlapping ranges correctly</strong> — unlike a naive manual copy loop, which can corrupt data
+    when source and destination overlap.</p>
+  </div>
+</section>
+
+<section id="props">
+  <h2>5. Properties &amp; Environment Variables</h2>
+  <div class="card">
+    <table>
+      <tr><th>Method</th><th>Purpose</th></tr>
+      <tr><td><code>getProperty(String key)</code></td><td>Read a JVM system property (e.g. <code>"java.version"</code>, <code>"os.name"</code>, <code>"user.dir"</code>)</td></tr>
+      <tr><td><code>getProperty(key, default)</code></td><td>Same, with a fallback default value</td></tr>
+      <tr><td><code>setProperty(key, value)</code></td><td>Set/override a JVM system property at runtime</td></tr>
+      <tr><td><code>getProperties()</code></td><td>Returns all system properties as a <code>Properties</code> object</td></tr>
+      <tr><td><code>getenv(String name)</code></td><td>Read an OS-level environment variable (read-only, unlike properties)</td></tr>
+      <tr><td><code>getenv()</code></td><td>Returns all environment variables as an unmodifiable <code>Map&lt;String,String&gt;</code></td></tr>
+    </table>
+    <pre>String javaVersion = System.getProperty(<span class="st">"java.version"</span>);
+String osName      = System.getProperty(<span class="st">"os.name"</span>);
+String userDir     = System.getProperty(<span class="st">"user.dir"</span>);
+
+System.setProperty(<span class="st">"myapp.env"</span>, <span class="st">"staging"</span>);
+
+String path = System.getenv(<span class="st">"PATH"</span>);
+Map&lt;String,String&gt; allEnv = System.getenv();</pre>
+    <div class="qa">
+      <div class="q">Property vs environment variable — what's the difference?</div>
+      <div class="a">System <em>properties</em> are JVM-level, settable at runtime with <code>-D</code> flags or
+      <code>setProperty()</code>. Environment <em>variables</em> come from the OS process environment, are read-only
+      from Java, and are typically set before the JVM starts (shell, CI pipeline, Docker env, etc.).</div>
+    </div>
+    <p><strong>QA/automation angle:</strong> reading <code>getProperty("os.name")</code> to branch cross-platform
+    Selenium driver setup, or reading env vars for environment-specific base URLs / credentials in a test framework.</p>
+  </div>
+</section>
+
+<section id="exit">
+  <h2>6. exit(), gc(), identityHashCode(), lineSeparator()</h2>
+  <div class="card">
+    <h3><code>System.exit(int status)</code></h3>
+    <p>Terminates the JVM immediately. <code>0</code> conventionally means success, non-zero means abnormal
+    termination. Triggers registered shutdown hooks before the JVM actually dies.</p>
+    <pre>System.exit(0);   <span class="cm">// normal termination</span>
+System.exit(1);   <span class="cm">// error termination</span></pre>
+
+    <h3><code>System.gc()</code></h3>
+    <p>Only a <em>suggestion</em> to the JVM to run garbage collection — not a guarantee. The JVM is free to ignore it.
+    Rarely used in production code; mostly seen in memory-profiling/benchmark scenarios.</p>
+
+    <h3><code>System.identityHashCode(Object obj)</code></h3>
+    <p>Returns the default hash code an object would have (as from <code>Object.hashCode()</code>), even if the object's
+    class overrides <code>hashCode()</code>. Useful for identity comparisons/debugging.</p>
+
+    <h3><code>System.lineSeparator()</code></h3>
+    <p>Returns the platform-specific line separator (<code>\n</code> on Linux/Mac, <code>\r\n</code> on Windows) —
+    preferred over hardcoding <code>"\n"</code> for portability.</p>
+  </div>
+</section>
+
+<section id="security">
+  <h2>7. Security &amp; Misc</h2>
+  <div class="card">
+    <table>
+      <tr><th>Method</th><th>Purpose</th></tr>
+      <tr><td><code>load(String path)</code></td><td>Loads a native library from an absolute file path</td></tr>
+      <tr><td><code>loadLibrary(String name)</code></td><td>Loads a native library by name from the system library path</td></tr>
+      <tr><td><code>getSecurityManager()</code></td><td>Returns the current SecurityManager (deprecated for removal since Java 17+)</td></tr>
+      <tr><td><code>console()</code></td><td>Returns the unique <code>Console</code> object associated with the JVM, if any (useful for reading passwords without echoing)</td></tr>
+      <tr><td><code>getLogger(String name)</code></td><td>(Java 9+) Returns a System.Logger for platform logging</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="jni">
+  <h2>8. What is JNI? (Java Native Interface)</h2>
+  <div class="card">
+    <p>JNI is the framework that lets Java code call native code written in C/C++, and lets native code call back
+    into the JVM. It's the bridge between Java's managed, platform-independent world and platform-specific native
+    libraries — and it's exactly what <code>System.load()</code> / <code>System.loadLibrary()</code> plug into.</p>
+
+    <h3>Why it exists</h3>
+    <table>
+      <tr><th>Reason</th><th>Example</th></tr>
+      <tr><td>Access OS-specific features</td><td>Low-level hardware access, OS APIs Java doesn't expose</td></tr>
+      <tr><td>Reuse existing native code</td><td>Legacy C/C++ libraries instead of a full Java rewrite</td></tr>
+      <tr><td>Performance-critical paths</td><td>Native execution for hot code (less relevant now with JIT)</td></tr>
+    </table>
+
+    <h3>How it works</h3>
+    <ol style="color:#cbd5e1;">
+      <li>Declare a method with the <code>native</code> keyword — signature only, no body.</li>
+      <li>Implement it in C/C++ following JNI's calling conventions.</li>
+      <li>Compile it into a shared library: <code>.so</code> (Linux), <code>.dll</code> (Windows), <code>.dylib</code> (Mac).</li>
+      <li>At runtime, <code>System.loadLibrary()</code> loads it and links the native implementation to the Java stub.</li>
+    </ol>
+
+    <pre><span class="kw">public class</span> NativeExample {
+    <span class="kw">static</span> {
+        System.loadLibrary(<span class="st">"myNativeLib"</span>); <span class="cm">// loads mynativelib.so / .dll</span>
+    }
+    <span class="kw">public native int</span> computeFast(<span class="kw">int</span> x); <span class="cm">// implemented in C, no Java body</span>
+}</pre>
+
+    <h3>Trade-offs</h3>
+    <p>Harder to debug across the Java/native boundary, platform-specific (separate builds per OS/architecture), and
+    a crash in native code can bring down the entire JVM — no exception safety net like pure Java code has.</p>
+
+    <div class="qa">
+      <div class="q">Q: How does System.loadLibrary() relate to JNI?</div>
+      <div class="a">A: It's the runtime loading step of JNI — it locates and loads the compiled native shared library
+      (.so/.dll/.dylib) and links its native function implementations to the corresponding <code>native</code> method
+      stubs declared in Java.</div>
+    </div>
+  </div>
+</section>
+
+<section id="interview">
+  <h2>9. Interview Q&amp;A Quick-Fire</h2>
+
+  <div class="qa">
+    <div class="q">Q: Why is System a final class with a private constructor?</div>
+    <div class="a">A: All members are static, so there's no need to instantiate it, and making it final/non-subclassable
+    prevents altering core system-facing behavior.</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Q: How would you measure the execution time of a method accurately?</div>
+    <div class="a">A: Use <code>System.nanoTime()</code> before and after, and take the difference — not
+    <code>currentTimeMillis()</code>, since that's tied to the (adjustable) wall clock.</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Q: What's the fastest way to copy elements between two arrays in Java?</div>
+    <div class="a">A: <code>System.arraycopy()</code> — it's a native method, faster than a manual for-loop, and safely
+    handles overlapping source/destination ranges.</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Q: Does calling System.gc() guarantee garbage collection runs?</div>
+    <div class="a">A: No — it's only a hint to the JVM. The JVM may choose to ignore the request entirely.</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Q: How do you pass a custom system property to a running Java application?</div>
+    <div class="a">A: Via the <code>-D</code> JVM flag at startup, e.g. <code>java -Dmyapp.env=staging -jar app.jar</code>,
+    then read it with <code>System.getProperty("myapp.env")</code>.</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">Q: Can you redirect System.out to a file at runtime?</div>
+    <div class="a">A: Yes — construct a <code>PrintStream</code> wrapping a <code>FileOutputStream</code> and pass it to
+    <code>System.setOut(...)</code>.</div>
+  </div>
+
+</section>
+
+</main>
+
+<footer>java.lang.System — quick reference for interview prep</footer>
+
+</body>
+</html>

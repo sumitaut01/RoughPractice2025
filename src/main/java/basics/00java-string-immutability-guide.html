@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Java String Immutability — Deep Dive & Pitfalls</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #16213a;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent2: #34d399;
+    --warn: #f87171;
+    --code-bg: #0b1120;
+    --border: #263349;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    line-height: 1.65;
+  }
+  header {
+    padding: 40px 24px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #1a2647, transparent);
+  }
+  header h1 { margin: 0 0 8px; font-size: 1.9rem; color: #fff; }
+  header p { color: var(--muted); margin: 0; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 24px; }
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 32px;
+  }
+  nav.toc h2 { margin-top: 0; font-size: 1rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  nav.toc ol { columns: 2; gap: 24px; padding-left: 18px; }
+  nav.toc a { color: var(--text); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  section { margin-bottom: 42px; }
+  h2 {
+    color: #fff;
+    font-size: 1.35rem;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin-bottom: 14px;
+  }
+  h3 { color: var(--accent2); font-size: 1.05rem; margin: 20px 0 8px; }
+  p { color: var(--text); }
+  .muted { color: var(--muted); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+  }
+  code {
+    font-family: "Cascadia Code", Consolas, Menlo, monospace;
+  }
+  p code, li code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 0.88em;
+  }
+
+  .box {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    border: 1px solid var(--border);
+  }
+  .why { background: #10203a; }
+  .pitfall { background: #2a1518; border-color: #5c2a2f; }
+  .pitfall::before { content: "⚠ Pitfall"; display: block; font-weight: 600; color: var(--warn); margin-bottom: 6px; }
+  .tricky { background: #221a3a; border-color: #4a3a7a; }
+  .tricky::before { content: "🧠 Tricky"; display: block; font-weight: 600; color: #c4b5fd; margin-bottom: 6px; }
+  .diagram {
+    background: var(--code-bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: Consolas, monospace;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th { background: #1a2647; color: #fff; }
+  tr:nth-child(even) td { background: #131f38; }
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #1a2647;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    margin-left: 8px;
+  }
+  footer { text-align: center; color: var(--muted); padding: 30px 0 50px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Java String Immutability — The Full Picture</h1>
+  <p>Why strings can't change, where they live in memory, and the gotchas that trip people up in real code &amp; interviews.</p>
+</header>
+
+<div class="wrap">
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#what">What "immutable" actually means</a></li>
+    <li><a href="#why">Why String was designed immutable</a></li>
+    <li><a href="#scp">The String Constant Pool (SCP)</a></li>
+    <li><a href="#literal-vs-new">"sumit" vs new String("sumit")</a></li>
+    <li><a href="#equals-vs-eq">== vs .equals() vs .equals() semantics</a></li>
+    <li><a href="#identity">identityHashCode()</a></li>
+    <li><a href="#intern">intern()</a></li>
+    <li><a href="#concat">Concatenation gotchas</a></li>
+    <li><a href="#substring">substring() memory history</a></li>
+    <li><a href="#hashcode">Cached hashCode()</a></li>
+    <li><a href="#reflection">Breaking immutability via reflection</a></li>
+    <li><a href="#security">Security: passwords as String vs char[]</a></li>
+    <li><a href="#switch">String in switch</a></li>
+    <li><a href="#final">final + compile-time constants</a></li>
+    <li><a href="#autobox">Related gotcha: Integer cache</a></li>
+    <li><a href="#cheatsheet">Cheat sheet</a></li>
+  </ol>
+</nav>
+
+<section id="what">
+  <h2>1. What "immutable" actually means</h2>
+  <p>Once a <code>String</code> object is created, its internal character data can never be changed. Every method that looks like it "modifies" a string —
+  <code>toUpperCase()</code>, <code>replace()</code>, <code>concat()</code>, <code>substring()</code> — actually returns a
+  <b>brand-new String object</b>, leaving the original untouched.</p>
+  <pre><code>String s = "sumit";
+s.toUpperCase();       // return value is thrown away here!
+System.out.println(s); // still prints "sumit"
+
+s = s.toUpperCase();   // NOW s points to the new object
+System.out.println(s); // prints "SUMIT"</code></pre>
+  <div class="box pitfall">
+    Calling a String method without reassigning the result does nothing observable. This is one of the most common
+    beginner (and tired-senior-dev-at-11pm) bugs.
+  </div>
+</section>
+
+<section id="why">
+  <h2>2. Why String was designed immutable</h2>
+  <ul>
+    <li><b>String pool reuse</b> — safe to share one object across many references only if nobody can mutate it underneath another reference.</li>
+    <li><b>Thread safety</b> — immutable objects are automatically safe to share across threads, no synchronization needed.</li>
+    <li><b>Security</b> — class loaders, file paths, network connections, DB URLs are passed as Strings. If String were mutable, code could change a value after a security check but before it's used (a classic TOCTOU bug).</li>
+    <li><b>Hashcode caching</b> — since the content can never change, <code>hashCode()</code> can be computed once and cached, making Strings very fast as <code>HashMap</code> keys.</li>
+  </ul>
+</section>
+
+<section id="scp">
+  <h2>3. The String Constant Pool (SCP)</h2>
+  <p>The JVM keeps a special memory region (part of the heap since Java 7) called the <b>String Constant Pool</b>. Any string
+  literal written directly in code is placed there, and the JVM reuses an existing entry rather than creating a duplicate.</p>
+  <div class="diagram">
+String s1 = "sumit";      String s2 = "sumit";
+
+Heap
+ ┌───────────────────────────────┐
+ │  String Constant Pool         │
+ │   ┌───────────┐               │
+ │   │  "sumit"  │ &lt;── s1        │
+ │   └───────────┘ &lt;── s2 (same!)│
+ └───────────────────────────────┘
+  </div>
+  <p>Both <code>s1</code> and <code>s2</code> point to the <b>same object</b> in the pool, so <code>s1 == s2</code> is <code>true</code>.</p>
+</section>
+
+<section id="literal-vs-new">
+  <h2>4. <code>String s = "sumit"</code> vs <code>String ss = new String("sumit")</code></h2>
+  <table>
+    <tr><th></th><th><code>String s = "sumit";</code></th><th><code>String ss = new String("sumit");</code></th></tr>
+    <tr><td>Where it lives</td><td>String Constant Pool</td><td>Regular heap (a fresh object), <i>plus</i> it still references/creates the pooled "sumit" internally</td></tr>
+    <tr><td>Objects created</td><td>0 or 1 (reused if literal already exists)</td><td>Always 1 new heap object (2 if the literal "sumit" wasn't already in the pool)</td></tr>
+    <tr><td><code>s == ss</code></td><td colspan="2" style="text-align:center">false</td></tr>
+    <tr><td><code>s.equals(ss)</code></td><td colspan="2" style="text-align:center">true</td></tr>
+  </table>
+  <pre><code>String s  = "sumit";
+String ss = new String("sumit");
+
+System.out.println(s == ss);        // false  -> different objects
+System.out.println(s.equals(ss));   // true   -> same content
+System.out.println(s == ss.intern()); // true -> intern() pulls it back to the pool</code></pre>
+  <div class="box pitfall">
+    <code>new String(...)</code> deliberately breaks pooling. In automation frameworks (Selenium page objects, config loaders)
+    people sometimes build config keys with <code>new String()</code> and then use <code>==</code> for comparison somewhere
+    downstream — an intermittent, hard-to-reproduce bug because it "works" for pooled strings and silently fails for these.
+  </div>
+</section>
+
+<section id="equals-vs-eq">
+  <h2>5. <code>==</code> vs <code>.equals()</code></h2>
+  <ul>
+    <li><code>==</code> compares <b>references</b> (memory identity) for objects — it's asking "are these literally the same object?"</li>
+    <li><code>.equals()</code> (overridden in <code>String</code>) compares <b>content</b>, character by character.</li>
+  </ul>
+  <div class="box pitfall">
+    Never use <code>==</code> to compare Strings in test assertions or business logic — only use it when you deliberately
+    want reference identity (rare). In TestNG/JUnit, <code>Assert.assertEquals(actual, expected)</code> already uses
+    <code>.equals()</code> under the hood — good — but a raw <code>if (status == "PASSED")</code> in helper code is a landmine.
+  </div>
+</section>
+
+<section id="identity">
+  <h2>6. <code>System.identityHashCode()</code></h2>
+  <p><code>identityHashCode()</code> returns the JVM's default hash code (based on the object's memory identity),
+  <b>ignoring any overridden <code>hashCode()</code></b>. This is the tool to actually prove two references point to
+  the same object vs. two equal-but-distinct objects.</p>
+  <pre><code>String s  = "sumit";
+String ss = new String("sumit");
+
+System.out.println(s.hashCode());                 // same value for both (content-based)
+System.out.println(ss.hashCode());                 // same value for both (content-based)
+
+System.out.println(System.identityHashCode(s));   // different
+System.out.println(System.identityHashCode(ss));  // different</code></pre>
+  <div class="box tricky">
+    <code>hashCode()</code> can be equal for two different objects (it's content-based and even allows collisions by design),
+    but <code>identityHashCode()</code> being equal is a much stronger guarantee — for two ordinary objects it effectively
+    means <code>==</code> would be true.
+  </div>
+</section>
+
+<section id="intern">
+  <h2>7. <code>intern()</code></h2>
+  <p>Manually places a string's content into the pool (or returns the existing pooled entry if it's already there),
+  and returns that pooled reference.</p>
+  <pre><code>String ss = new String("sumit");
+String pooled = ss.intern();
+
+System.out.println(ss == pooled);        // false
+System.out.println("sumit" == pooled);   // true</code></pre>
+  <div class="box tricky">
+    Overusing <code>intern()</code> on high-cardinality, runtime-generated strings (e.g. dynamic test data, UUIDs) can
+    bloat the pool and cause GC/perf issues in long-running processes — it was a known problem before Java 7 moved the
+    pool into the regular garbage-collected heap.
+  </div>
+</section>
+
+<section id="concat">
+  <h2>8. Concatenation gotchas</h2>
+  <pre><code>String a = "sum" + "it";        // compile-time constant -> pooled, same as "sumit" literal
+String b = "sumit";
+System.out.println(a == b);      // true! javac folds literal + literal at compile time
+
+String part = "sum";
+String c = part + "it";          // NOT a compile-time constant (part is a variable)
+System.out.println(c == b);      // false — built at runtime via StringBuilder
+
+final String part2 = "sum";      // final + literal IS a compile-time constant
+String d = part2 + "it";
+System.out.println(d == b);      // true again!</code></pre>
+  <div class="box tricky">
+    Whether concatenation is resolved at compile time depends on whether every operand is a <code>final</code>
+    compile-time constant. Adding just one non-final variable flips the whole expression to runtime evaluation
+    (internally rewritten as <code>new StringBuilder().append(...).toString()</code>), which never touches the pool.
+  </div>
+  <div class="box pitfall">
+    Concatenating Strings with <code>+</code> inside a loop creates a new <code>StringBuilder</code> (and discards it)
+    on every iteration in older javac versions — O(n²) behavior. Always use an explicit <code>StringBuilder</code>
+    for loop-based concatenation, especially when building large log/report strings in test frameworks.
+  </div>
+</section>
+
+<section id="substring">
+  <h2>9. <code>substring()</code> memory history <span class="badge">pre-Java 7u6 vs modern</span></h2>
+  <p>Before Java 7 update 6, <code>substring()</code> shared the original character array — the substring object held
+  a reference to the <i>same</i> backing <code>char[]</code> as the original string, just with different offset/length
+  fields. This meant a tiny substring of a huge string kept the entire huge array alive in memory.</p>
+  <div class="diagram">
+Pre Java 7u6:
+  bigString.substring(0,3) --> shares char[] with bigString (memory leak risk)
+
+Java 7u6+:
+  substring() --> copies only the needed characters into a new char[] (Arrays.copyOfRange)</div>
+  <div class="box tricky">
+    This is largely historical now (fixed since 2012), but it still shows up in interviews and in legacy JDK 6 codebases.
+    If you ever see advice to "manually copy substrings with <code>new String(s.substring(...))</code> to avoid memory
+    leaks," that advice is a relic of pre-7u6 Java.
+  </div>
+</section>
+
+<section id="hashcode">
+  <h2>10. Cached <code>hashCode()</code></h2>
+  <p><code>String</code> caches its computed hash code in a private <code>int hash</code> field after the first call,
+  since immutability guarantees it will never change. This is exactly why Strings are efficient as
+  <code>HashMap</code>/<code>HashSet</code> keys — repeated lookups don't recompute the hash.</p>
+  <div class="box tricky">
+    This caching is a direct consequence of immutability — it's a good talking point that ties "why immutable" back
+    to "what concrete benefit does it give me."
+  </div>
+</section>
+
+<section id="reflection">
+  <h2>11. Breaking immutability via reflection <span class="badge">don't do this in prod</span></h2>
+  <p>Immutability is a language-level contract, not an absolute physical guarantee. Using reflection, it's historically
+  been possible to reach into a String's private backing array and mutate it — because pooled strings are shared,
+  this can corrupt every reference to that literal across the entire JVM.</p>
+  <div class="box tricky">
+    Modern JDKs (9+) increasingly restrict this via the module system and strong encapsulation
+    (<code>--illegal-access</code> changes, JEP 396/403), but it remains a favorite "immutability isn't magic"
+    interview gotcha. The practical lesson: immutability is enforced by the class's public API, not by the JVM
+    making mutation physically impossible.
+  </div>
+</section>
+
+<section id="security">
+  <h2>12. Why passwords should be <code>char[]</code>, not <code>String</code></h2>
+  <ul>
+    <li>A password stored as <code>String</code> may live in the pool (or heap) for an <b>indeterminate time</b> — you
+    cannot force-clear it, since Strings are immutable and there's no public API to zero out the contents.</li>
+    <li>It may get swapped to disk, appear in heap dumps, or linger for GC cycles.</li>
+    <li>A <code>char[]</code> can be explicitly overwritten (<code>Arrays.fill(pwd, '0')</code>) the moment it's no
+    longer needed.</li>
+  </ul>
+  <div class="box pitfall">
+    <code>JPasswordField.getPassword()</code> in Swing intentionally returns <code>char[]</code>, not
+    <code>String</code>, for exactly this reason. Same logic applies to any secrets/tokens read in automation
+    frameworks (e.g. reading credentials from a config file for a Selenium login test) — don't leave them as
+    long-lived Strings if you can avoid it.
+  </div>
+</section>
+
+<section id="switch">
+  <h2>13. String in <code>switch</code></h2>
+  <p>Java compiles a <code>switch</code> on Strings using <code>hashCode()</code> for the initial bucket, then falls
+  back to <code>.equals()</code> to confirm the match (guarding against hash collisions). It never uses <code>==</code>
+  internally, so it works correctly regardless of pooling.</p>
+</section>
+
+<section id="final">
+  <h2>14. <code>final</code> fields &amp; compile-time constants</h2>
+  <pre><code>final String BASE = "https://x4v";
+final String FULL = BASE + "/unite";   // compile-time constant -> pooled
+
+String base2 = "https://x4v";          // not final
+String full2 = base2 + "/unite";       // runtime concatenation -> NOT pooled
+
+System.out.println(FULL == "https://x4v/unite"); // true
+System.out.println(full2 == "https://x4v/unite"); // false</code></pre>
+  <div class="box tricky">
+    A common misconception: people assume any concatenation of "clearly fixed-looking" strings is pooled. It's only
+    pooled if the compiler can prove it's a constant — which requires every part to be either a literal or a
+    <code>final</code> variable initialized with a constant expression.
+  </div>
+</section>
+
+<section id="autobox">
+  <h2>15. Related gotcha: <code>Integer</code> caching (not String, but same shape of bug)</h2>
+  <pre><code>Integer i1 = 100;
+Integer i2 = 100;
+System.out.println(i1 == i2);  // true  (cached, -128 to 127)
+
+Integer i3 = 200;
+Integer i4 = 200;
+System.out.println(i3 == i4);  // false (outside cache range)</code></pre>
+  <div class="box tricky">
+    Not about String directly, but it's the exact same class of "pooling makes == behave inconsistently" bug, so it
+    tends to appear right after String pool discussions in interviews and in real code (flaky assertions that pass
+    for small numbers and fail for large ones).
+  </div>
+</section>
+
+<section id="cheatsheet">
+  <h2>16. Cheat sheet</h2>
+  <table>
+    <tr><th>Rule of thumb</th><th>Why</th></tr>
+    <tr><td>Always use <code>.equals()</code> for String comparison</td><td><code>==</code> depends on pooling/object identity, not content</td></tr>
+    <tr><td>Avoid <code>new String(...)</code> unless you specifically need a non-pooled object</td><td>Wastes memory, creates == traps</td></tr>
+    <tr><td>Use <code>StringBuilder</code> for loop concatenation</td><td>Avoids repeated object churn from <code>+</code></td></tr>
+    <tr><td>Don't rely on reassignment-free "mutation" calls (<code>s.trim(); s.toUpperCase();</code>)</td><td>They return new objects; original is unchanged</td></tr>
+    <tr><td>Use <code>char[]</code> for secrets</td><td>Strings can't be force-cleared from memory</td></tr>
+    <tr><td>Remember <code>final</code> + literal ⇒ compile-time constant ⇒ pooled</td><td>Non-final variables break compile-time folding</td></tr>
+  </table>
+  <p class="muted">Reference build: Java SE (concepts apply across Java 8–21+; the substring() sharing behavior is pre-7u6 only).</p>
+</section>
+
+</div>
+
+<footer>Java String Immutability Guide</footer>
+</body>
+</html>
