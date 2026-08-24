@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HashMap vs Hashtable — Java Interview Study Guide</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#657086;--line:#dde3ee;--blue:#315efb;--blue2:#eaf0ff;--green:#16865d;--red:#c43d3d;--gold:#a86800;--dark:#111827}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:1120px;margin:auto;padding:28px 20px 60px}
+.hero{background:linear-gradient(135deg,#172554,#315efb);color:#fff;border-radius:22px;padding:34px;box-shadow:0 12px 35px #203a8a25}.hero h1{margin:0 0 8px;font-size:36px}.hero p{margin:5px 0;opacity:.93}.tag{display:inline-block;background:#ffffff20;border:1px solid #ffffff35;border-radius:999px;padding:5px 10px;margin:10px 5px 0 0;font-size:13px}
+h2{margin-top:34px;font-size:26px}h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card,.qa,details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 14px #16213b08}.muted{color:var(--muted)}.good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}th,td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--blue2);color:#263b88}tr:last-child td{border-bottom:0}
+code{background:#eef1f6;padding:2px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{background:var(--dark);color:#e8edf7;border-radius:13px;padding:17px;overflow:auto;font-size:14px}.callout{border-left:5px solid var(--blue);background:#edf2ff;padding:16px 18px;border-radius:10px;margin:15px 0}.warning{border-left-color:#d48a00;background:#fff7e8}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0}.box{padding:15px 20px;border:2px solid var(--blue);border-radius:12px;background:#f7f9ff;text-align:center;font-weight:700}.arrow{font-size:25px;color:var(--blue)}
+.qa{margin:12px 0}.qa b{color:#243b8f}details{margin:10px 0}summary{cursor:pointer;font-weight:750}.small{font-size:14px}
+@media(max-width:750px){.grid,.grid3{grid-template-columns:1fr}.hero h1{font-size:29px}}
+</style></head>
+<body><div class="wrap">
+<section class="hero"><h1>HashMap vs Hashtable</h1><p>Java interview study guide — from the basic answer to the follow-up questions.</p><span class="tag">Collections Framework</span><span class="tag">Thread safety</span><span class="tag">Nulls</span><span class="tag">Performance</span><span class="tag">Internals</span></section>
+
+<h2>1. Your answer — was it correct?</h2><div class="card"><p><strong>Yes, but it was only the starting point.</strong></p><p>Your answer — “HashMap is newer; Hashtable is legacy, derived from Dictionary, and Hashtable is thread-safe” — is directionally correct.</p><p>The interviewer was probably looking for the <strong>practical differences</strong>: synchronization, null handling, performance, inheritance, ordering, iteration and what you would use today.</p></div>
+
+<h2>2. The 30-second interview answer</h2><div class="callout"><strong>Good answer:</strong><br>“Hashtable is a legacy class from Java 1.0 and extends <code>Dictionary</code>. Its methods are synchronized, so individual map operations are synchronized, with synchronization overhead. HashMap was introduced with the Collections Framework in Java 1.2, is not synchronized, and generally has less overhead in non-concurrent use. HashMap allows one null key and multiple null values, while Hashtable allows neither. Neither guarantees ordering. For modern concurrent code, I would normally consider <code>ConcurrentHashMap</code> rather than Hashtable.”</div>
+
+<h2>3. Core differences</h2><table><thead><tr><th>Topic</th><th>HashMap</th><th>Hashtable</th></tr></thead><tbody>
+<tr><td><strong>Introduced</strong></td><td>Java 1.2, with Collections Framework</td><td>Java 1.0</td></tr>
+<tr><td><strong>Legacy</strong></td><td>No</td><td class="bad">Yes</td></tr>
+<tr><td><strong>Inheritance</strong></td><td>Extends <code>AbstractMap</code>; implements <code>Map</code></td><td>Extends <code>Dictionary</code>; implements <code>Map</code></td></tr>
+<tr><td><strong>Thread safety</strong></td><td class="bad">Not synchronized</td><td class="good">Legacy map methods are synchronized</td></tr>
+<tr><td><strong>Null key</strong></td><td class="good">One allowed</td><td class="bad">Not allowed</td></tr>
+<tr><td><strong>Null values</strong></td><td class="good">Multiple allowed</td><td class="bad">Not allowed</td></tr>
+<tr><td><strong>Ordering</strong></td><td>No guaranteed order</td><td>No guaranteed order</td></tr>
+<tr><td><strong>Modern choice</strong></td><td class="good">Yes</td><td>Usually no for new code</td></tr>
+</tbody></table>
+
+<h2>4. The inheritance/history story</h2><div class="diagram"><div class="box">HashMap<br><span class="small">extends AbstractMap</span></div><div class="arrow">→</div><div class="box">Map<br><span class="small">Collections Framework</span></div><div style="width:100%;text-align:center;color:#8993a6">versus</div><div class="box">Hashtable<br><span class="small">extends Dictionary</span></div><div class="arrow">→</div><div class="box">Dictionary<br><span class="small">legacy abstract class</span></div></div>
+<div class="card"><p>Hashtable predates the Collections Framework. It came from Java 1.0. When the Collections Framework arrived in Java 1.2, HashMap was designed as part of the modern <code>Map</code> hierarchy. Hashtable was later made to implement <code>Map</code>, but retained its legacy design.</p></div>
+
+<h2>5. Thread safety — the important nuance</h2><div class="grid"><div class="card"><h3>Hashtable</h3><p>Methods such as <code>put()</code>, <code>get()</code> and <code>remove()</code> are synchronized.</p><pre>Hashtable&lt;String,Integer&gt; h = new Hashtable&lt;&gt;();
+h.put("A", 10); // synchronized
+h.get("A");     // synchronized</pre></div><div class="card"><h3>HashMap</h3><p>It does not synchronize access.</p><pre>HashMap&lt;String,Integer&gt; h = new HashMap&lt;&gt;();
+h.put("A", 10); // not synchronized
+h.get("A");     // not synchronized</pre></div></div>
+<div class="callout warning"><strong>Very important:</strong> “Hashtable is thread-safe” does <em>not</em> mean every multi-step business operation is automatically atomic.<br><br><code>if (!map.containsKey(k)) map.put(k,v)</code> is a compound operation. Synchronizing the individual calls does not automatically make the entire sequence atomic.</div>
+
+<h2>6. What should you use for concurrent code?</h2><div class="card"><div class="diagram"><div class="box">HashMap<br><span class="small">normal map</span></div><div class="arrow">→</div><div class="box">ConcurrentHashMap<br><span class="small">modern concurrent choice</span></div></div><p>If the interviewer asks, “If Hashtable is thread-safe, why not use it?”, a strong answer is:</p><p><strong>“Hashtable is legacy. For modern concurrent applications, ConcurrentHashMap is generally the better choice because it is designed specifically for concurrent access and provides concurrency-oriented operations.”</strong></p></div>
+
+<h2>7. Null handling — easy interview marks</h2><div class="grid"><div class="card"><h3>HashMap ✓</h3><pre>Map&lt;String,Integer&gt; map = new HashMap&lt;&gt;();
+map.put(null, 100); // OK
+map.put("A", null); // OK
+map.put("B", null); // OK</pre><p>One null key and multiple null values.</p></div><div class="card"><h3>Hashtable ✗</h3><pre>Hashtable&lt;String,Integer&gt; h = new Hashtable&lt;&gt;();
+h.put(null, 100); // NullPointerException
+h.put("A", null); // NullPointerException</pre><p>Neither null keys nor null values are allowed.</p></div></div>
+
+<h2>8. Ordering — common trap</h2><div class="card"><p><strong>Neither HashMap nor Hashtable guarantees insertion order.</strong></p><ul><li>Insertion order → <code>LinkedHashMap</code></li><li>Sorted keys → <code>TreeMap</code></li><li>Concurrent access → <code>ConcurrentHashMap</code></li></ul></div>
+
+<h2>9. Internal concepts</h2><div class="grid3"><div class="card"><h3>Hashing</h3><p>A key's <code>hashCode()</code> participates in locating the entry.</p></div><div class="card"><h3>Collision</h3><p>Different keys can map to the same bucket, so collisions must be handled.</p></div><div class="card"><h3>equals()</h3><p>After a hash collision, equality is important for determining whether keys are actually equal.</p></div></div>
+<div class="callout"><strong>Modern HashMap detail:</strong> In current JDK implementations, heavily-collided buckets can be treeified under certain conditions. You may hear this described as <strong>tree bins</strong>. This is a useful senior-level HashMap detail, but avoid presenting JDK implementation details as universal API guarantees.</div>
+
+<h2>10. Capacity &amp; load factor</h2><div class="card"><p>Both use hashing and have concepts such as capacity and load factor. The load factor helps determine when the table should grow and entries be redistributed.</p><pre>HashMap&lt;String,Integer&gt; map = new HashMap&lt;&gt;(16, 0.75f);
+Hashtable&lt;String,Integer&gt; table = new Hashtable&lt;&gt;(16, 0.75f);</pre><p class="muted">For interviews, understand the concept; don't over-focus on JDK-specific implementation details unless asked.</p></div>
+
+<h2>11. Iteration</h2><table><thead><tr><th>Feature</th><th>HashMap</th><th>Hashtable</th></tr></thead><tbody><tr><td>Modern Iterator</td><td>Yes</td><td>Yes</td></tr><tr><td>Legacy Enumeration</td><td>No</td><td>Yes — <code>keys()</code> / <code>elements()</code></td></tr><tr><td>Fail-fast behavior</td><td>Modern iterators are generally fail-fast on unexpected structural modification</td><td>Modern iterators are also fail-fast; legacy Enumeration has different semantics</td></tr></tbody></table>
+
+<h2>12. Fail-fast example</h2><div class="card"><pre>Map&lt;String,Integer&gt; map = new HashMap&lt;&gt;();
+map.put("A", 1);
+map.put("B", 2);
+
+for (String key : map.keySet()) {
+    map.put("C", 3); // structural modification
+}</pre><p>This can cause <code>ConcurrentModificationException</code>. Fail-fast behavior is <strong>not</strong> a thread-safety mechanism.</p></div>
+
+<h2>13. Quick decision guide</h2><table><thead><tr><th>Requirement</th><th>Typical choice</th></tr></thead><tbody><tr><td>Normal key-value storage</td><td><strong>HashMap</strong></td></tr><tr><td>Need insertion order</td><td><strong>LinkedHashMap</strong></td></tr><tr><td>Need sorted keys</td><td><strong>TreeMap</strong></td></tr><tr><td>Concurrent access from multiple threads</td><td><strong>ConcurrentHashMap</strong></td></tr><tr><td>Existing legacy code specifically using Hashtable</td><td><strong>Hashtable</strong> may remain</td></tr></tbody></table>
+
+<h2>14. Interview follow-up ladder</h2>
+<div class="qa"><b>Q1. Main difference?</b><br>Hashtable is legacy and synchronized; HashMap is part of the modern Collections Framework and is not synchronized.</div>
+<div class="qa"><b>Q2. Can HashMap contain null?</b><br>Yes — one null key and multiple null values.</div>
+<div class="qa"><b>Q3. Can Hashtable contain null?</b><br>No — neither null keys nor null values.</div>
+<div class="qa"><b>Q4. Is HashMap thread-safe?</b><br>No.</div>
+<div class="qa"><b>Q5. Is Hashtable thread-safe?</b><br>Its legacy map methods are synchronized, but multi-operation workflows still need appropriate coordination.</div>
+<div class="qa"><b>Q6. Thread-safe map today?</b><br>Usually consider <code>ConcurrentHashMap</code>, depending on the requirements.</div>
+<div class="qa"><b>Q7. Which preserves insertion order?</b><br>Neither. Use <code>LinkedHashMap</code>.</div>
+<div class="qa"><b>Q8. Which is faster?</b><br>HashMap generally has less synchronization overhead in non-concurrent use. Avoid claiming an absolute result without a benchmark/workload.</div>
+<div class="qa"><b>Q9. Why no null in Hashtable?</b><br>It is a legacy design choice; null keys and values are rejected.</div>
+<div class="qa"><b>Q10. HashMap vs ConcurrentHashMap?</b><br>ConcurrentHashMap is specifically designed for concurrent access and includes useful atomic-style operations such as <code>putIfAbsent()</code> and <code>computeIfAbsent()</code>.</div>
+
+<h2>15. What a senior QA/SDET answer should sound like</h2><div class="card"><p>Don't stop at “Hashtable is synchronized and HashMap isn't.” Connect the ideas:</p><ol><li><strong>History:</strong> Hashtable is Java 1.0 legacy; HashMap came with Collections Framework in Java 1.2.</li><li><strong>Design:</strong> Hashtable extends Dictionary; HashMap extends AbstractMap and participates naturally in the Map hierarchy.</li><li><strong>Behavior:</strong> HashMap allows null; Hashtable doesn't.</li><li><strong>Concurrency:</strong> Hashtable synchronizes legacy map methods; HashMap doesn't.</li><li><strong>Ordering:</strong> Neither guarantees insertion order.</li><li><strong>Modern choice:</strong> HashMap for normal use; ConcurrentHashMap for many concurrent use cases.</li></ol></div>
+
+<h2>16. One-minute revision card</h2><div class="grid3"><div class="card"><h3>HashMap</h3><ul><li>Java 1.2+</li><li>Modern Map</li><li>Not synchronized</li><li>1 null key</li><li>Multiple null values</li><li>No order guarantee</li></ul></div><div class="card"><h3>Hashtable</h3><ul><li>Java 1.0</li><li>Legacy Dictionary</li><li>Synchronized map methods</li><li>No null key</li><li>No null values</li><li>No order guarantee</li></ul></div><div class="card"><h3>ConcurrentHashMap</h3><ul><li>Modern concurrency</li><li>Designed for concurrent access</li><li>No null keys/values</li><li>Preferred over Hashtable for most new concurrent-map code</li></ul></div></div>
+
+<h2>17. Memory trick</h2><div class="callout"><strong>H</strong>ashMap = <strong>H</strong>ighly common modern choice.<br><strong>T</strong>able = think <strong>T</strong>raditional/legacy + synchronized.<br><strong>C</strong>oncurrentHashMap = think <strong>C</strong>oncurrent modern choice.</div>
+
+<details><summary>Bonus: What was the interviewer really testing?</summary><p>Often this question is testing whether you understand Java collection design rather than whether you can memorize two definitions. A strong answer shows history, API design, behavior and practical engineering judgment.</p></details>
+<p class="muted small" style="margin-top:35px">Study note: API behavior is the important interview target. Some internal implementation details can vary between JDK versions.</p>
+</div></body></html>

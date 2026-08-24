@@ -14,6 +14,7 @@ public class Rough1 {
 
         System.out.println(hs.remove("neha"));//true
         System.out.println(hs.remove("neha"));//false
+
     }
 
 

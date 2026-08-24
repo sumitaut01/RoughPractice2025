@@ -6,6 +6,7 @@ public class HashtableDemo {
     //Legacy
     //Thread Safe hence slow.
     // Concurrent Hashmap should be used in newer implementations
+    //exception thrown if its null is used in key or value
 
     public static void main(String[] args) {
 

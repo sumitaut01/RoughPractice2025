@@ -14,7 +14,8 @@ public class Rough3 {
 
         HashMap<String,String> hm=new HashMap<>();
 
-        hm.put("Name","Sumit");
+        System.out.println(hm.put("Name","Sumit"));//"null
+        System.out.println(hm.put("Name","Sumit"));//"sumit
         hm.put("Branch","IT");
         System.out.println(hm);//{Branch=IT, Name=Sumit}
 

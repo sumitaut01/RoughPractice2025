@@ -4,8 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentHashMapDemo {
     public static void main(String[] args) {
-
-
         ConcurrentHashMap<String, String> csh = new ConcurrentHashMap<>();
         csh.put("name", "sumit");
         csh.put("age", "35");

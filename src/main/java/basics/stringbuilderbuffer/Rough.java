@@ -78,9 +78,28 @@ public class Rough {
 
        //sb.deleteCharAt(10);
        // System.out.println(sb);//java.lang.StringIndexOutOfBoundsException: Index 10 out of bounds for length 6
+    }
 
 
+    @Test
+    public void RougCard(){
+        String num = "1234567812345678";
 
+        StringBuffer sb=new StringBuffer();
+        for(int i=0;i<num.length();i++){
+
+            if(i<=11){
+                sb.append("*");
+                if((i+1)%4==0){
+                     sb.append("-");
+                }
+            }
+            else{
+                sb.append(num.charAt(i));
+            }
+        }
+
+        System.out.println(sb);
 
     }
 }

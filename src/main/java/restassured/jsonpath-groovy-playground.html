@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JSONPath &amp; Groovy Closures — Interview Playground</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b1220;
+    --panel:#101a2e;
+    --panel-2:#0d1626;
+    --card-paper:#f4ecd8;
+    --card-paper-2:#eadfc4;
+    --amber:#e0a94f;
+    --amber-soft:#caa15a;
+    --teal:#5fd8c9;
+    --rose:#e08a7d;
+    --ink-line:rgba(224,169,79,0.18);
+    --text-hi:#f2e9d8;
+    --text-mid:#b9c2d6;
+    --text-dim:#7c88a3;
+    --mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(224,169,79,0.08), transparent 60%),
+      var(--ink);
+    color:var(--text-mid);
+    font-family:var(--serif);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:40px 28px 90px;}
+
+  header.hero{
+    display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--ink-line);
+    padding-bottom:26px;margin-bottom:34px;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--amber-soft);margin:0 0 10px;
+  }
+  h1{
+    font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,42px);
+    color:var(--text-hi);margin:0 0 10px;line-height:1.1;
+  }
+  .hero p{max-width:560px;margin:0;color:var(--text-mid);font-size:15.5px;line-height:1.6;}
+  .legend{font-family:var(--mono);font-size:12.5px;color:var(--text-dim);display:flex;gap:18px;flex-wrap:wrap;}
+  .legend span.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;position:relative;top:-1px;}
+  .dot.jp{background:var(--teal);} .dot.gr{background:var(--rose);}
+
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:26px;align-items:start;}
+  @media (max-width:920px){.layout{grid-template-columns:1fr;}}
+
+  /* ---- catalog card: the sample JSON response ---- */
+  .catalog{
+    position:sticky;top:24px;
+    background:linear-gradient(180deg,var(--card-paper),var(--card-paper-2));
+    border-radius:3px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(0,0,0,0.06);
+    overflow:hidden;
+  }
+  .catalog-tab{
+    background:var(--amber);color:#241a05;font-family:var(--mono);font-weight:600;
+    font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding:8px 16px;display:inline-block;border-radius:0 0 6px 0;
+  }
+  .catalog-head{padding:16px 20px 6px;}
+  .catalog-head h2{
+    font-family:var(--serif);font-size:19px;margin:6px 0 2px;color:#2a2010;
+  }
+  .catalog-head p{margin:0;font-size:12.5px;color:#6b5c3b;font-family:var(--mono);}
+  .catalog pre{
+    margin:0;padding:16px 20px 22px;font-family:var(--mono);font-size:12.4px;line-height:1.65;
+    max-height:72vh;overflow:auto;color:#2c2410;
+  }
+  .catalog pre .k{color:#8a5a1f;font-weight:600;}
+  .catalog pre .s{color:#2f6f5e;}
+  .catalog pre .n{color:#8a3b2e;}
+  .catalog pre .b{color:#4b3f8a;}
+  .catalog pre .z{color:#9a9174;font-style:italic;}
+  .catalog pre .p{color:#5c5236;}
+
+  /* ---- right side: tabs + query cards ---- */
+  .tabbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .tabbar button{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;
+    background:transparent;border:1px solid var(--ink-line);color:var(--text-dim);
+    padding:8px 14px;border-radius:999px;cursor:pointer;transition:all .15s ease;
+  }
+  .tabbar button:hover{color:var(--text-hi);border-color:var(--amber-soft);}
+  .tabbar button.active{background:var(--amber);color:#241a05;border-color:var(--amber);font-weight:600;}
+  .tabbar button:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+  .panel{display:none;}
+  .panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .panel-note{
+    font-size:13.5px;color:var(--text-dim);margin:0 0 18px;line-height:1.55;
+    border-left:2px solid var(--ink-line);padding-left:12px;
+  }
+
+  .qcard{
+    background:var(--panel);border:1px solid var(--ink-line);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .qcard h3{
+    margin:0 0 6px;font-family:var(--serif);font-size:15.5px;color:var(--text-hi);font-weight:600;
+  }
+  .qcard .desc{font-size:13px;color:var(--text-mid);margin:0 0 12px;line-height:1.5;}
+  .exprs{display:grid;gap:8px;margin-bottom:12px;}
+  .expr-row{
+    display:flex;gap:10px;align-items:flex-start;font-family:var(--mono);font-size:12.6px;
+    background:var(--panel-2);border-radius:6px;padding:9px 12px;
+  }
+  .expr-row .tag{
+    font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;
+  }
+  .tag.jp{color:#06251f;background:var(--teal);}
+  .tag.gr{color:#2b120c;background:var(--rose);}
+  .expr-row code{color:var(--text-hi);word-break:break-word;}
+
+  .qcard-foot{display:flex;align-items:center;gap:12px;}
+  .run-btn{
+    font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;
+    background:transparent;color:var(--amber-soft);border:1px solid var(--amber-soft);
+    padding:6px 13px;border-radius:6px;cursor:pointer;transition:all .15s ease;
+  }
+  .run-btn:hover{background:var(--amber-soft);color:#241a05;}
+  .run-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  .output{
+    display:none;margin-top:12px;background:#060b16;border:1px solid var(--ink-line);
+    border-radius:6px;padding:11px 13px;font-family:var(--mono);font-size:12.4px;
+    color:var(--teal);white-space:pre-wrap;word-break:break-word;
+  }
+  .output.show{display:block;animation:fade .2s ease;}
+  .output .lbl{color:var(--text-dim);display:block;margin-bottom:4px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;}
+
+  footer{margin-top:44px;border-top:1px solid var(--ink-line);padding-top:18px;font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+  footer b{color:var(--amber-soft);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Response inspection · RestAssured / Groovy JsonPath</p>
+      <h1>Fetching values from a complex JSON response</h1>
+      <p>One sample bookstore response, worked both ways: standard <b>JSONPath</b> where it's expressive enough, and the <b>Groovy closures</b> (<code>find</code> / <code>findAll</code> / <code>collect</code>) that RestAssured actually runs under the hood when plain JSONPath filters aren't enough.</p>
+    </div>
+    <div class="legend">
+      <span><span class="dot jp"></span>JSONPath</span>
+      <span><span class="dot gr"></span>Groovy (RestAssured)</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="catalog">
+      <span class="catalog-tab">Sample response</span>
+      <div class="catalog-head">
+        <h2>City Lights Books — API response</h2>
+        <p>GET /api/store</p>
+      </div>
+      <pre id="jsonView"></pre>
+    </div>
+
+    <div class="content">
+      <div class="tabbar" id="tabbar"></div>
+      <div id="panels"></div>
+
+      <footer>
+        <b>Gotcha:</b> <code>find</code> returns a single object (or <code>null</code> — <code>.title</code> on that throws NPE). <code>findAll</code> always returns a list, even empty — safer for assertions. Standard JSONPath filters (<code>?(@.price&lt;10)</code>) only do simple comparisons; regex, string methods, date parsing and multi-condition logic need a Groovy closure.
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------------- sample data ----------------
+const data = {
+  store: {
+    name: "City Lights Books",
+    established: 1998,
+    location: { city: "Pune", country: "India", coordinates: { lat: 18.5204, lng: 73.8567 } },
+    books: [
+      { id:1, title:"Brideshead Revisited", author:"Evelyn Waugh", category:"fiction", price:15.99, inStock:true, publishedDate:"1945-05-28", tags:["classic","british","war"], rating:{average:4.5,count:230}, reviews:[{user:"alice",rating:5,date:"2023-01-10"},{user:"bob",rating:4,date:"2023-03-22"}] },
+      { id:2, title:"Nigel's Voyage", author:"Nigel Farrows", category:"adventure", price:9.50, inStock:true, publishedDate:"2011-07-14", tags:["adventure","sea"], rating:{average:4.1,count:88}, reviews:[{user:"carl",rating:4,date:"2022-05-01"}] },
+      { id:3, title:"Nigel's Return", author:"Nigel Farrows", category:"adventure", price:11.20, inStock:false, publishedDate:"2015-09-02", tags:["adventure","sequel"], rating:{average:3.9,count:45}, reviews:[] },
+      { id:4, title:"Quiet Mathematics", author:"Ada Lin", category:"non-fiction", price:22.00, inStock:true, publishedDate:"1999-02-19", tags:["math","education"], rating:null, reviews:[{user:"dee",rating:5,date:"2020-11-11"}] }
+    ],
+    staff: [ {name:"Meera",role:"manager",yearsOfService:6}, {name:"Tom",role:"clerk",yearsOfService:1} ],
+    promotions: null
+  },
+  metadata: { generatedAt: "2026-08-20T10:15:00Z", totalBooks: 4, warehouses: ["Pune","Mumbai","Delhi"] }
+};
+
+// ---------------- syntax-highlighted JSON render ----------------
+function highlight(json){
+  const s = JSON.stringify(json, null, 2);
+  return s.replace(/(&)/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^(\s*)("(\\.|[^"\\])*")(\s*:)/gm, '$1<span class="k">$2</span>$4')
+    .replace(/: ("(\\.|[^"\\])*")/g, ': <span class="s">$1</span>')
+    .replace(/: (-?\d+(\.\d+)?)/g, ': <span class="n">$1</span>')
+    .replace(/: (true|false)/g, ': <span class="b">$1</span>')
+    .replace(/: (null)/g, ': <span class="z">$1</span>')
+    .replace(/([{}\[\],])/g, '<span class="p">$1</span>');
+}
+document.getElementById('jsonView').innerHTML = highlight(data);
+
+// ---------------- example catalog ----------------
+const categories = [
+  { id:'string', label:'String', note:'Plain field access, nested paths, regex matching and string methods on text fields.',
+    items:[
+      { title:'Top-level string field', desc:'Grab a single scalar value straight off the root object.',
+        jp:'$.store.name', gr:'store.name', run:()=>data.store.name },
+      { title:'Nested string, 3 levels deep', desc:'Chain dots to walk into nested objects.',
+        jp:'$.store.location.city', gr:'store.location.city', run:()=>data.store.location.city },
+      { title:'String from an array index', desc:'Index into an array before reading the field.',
+        jp:'$.store.books[0].title', gr:'store.books[0].title', run:()=>data.store.books[0].title },
+      { title:'Regex match on a field', desc:'JSONPath supports basic regex filters; Groovy\u2019s =~ does the same thing more readably.',
+        jp:'$.store.books[?(@.author =~ /Nigel.*/)].title', gr:"store.books.findAll { it.author =~ /Nigel.*/ }.title",
+        run:()=>data.store.books.filter(b=>/^Nigel.*/.test(b.author)).map(b=>b.title) },
+      { title:'Case-insensitive contains', desc:'Not expressible in plain JSONPath \u2014 needs a real string method, so Groovy only.',
+        jp:null, gr:"store.books.findAll { it.title.toLowerCase().contains('revisited') }.title",
+        run:()=>data.store.books.filter(b=>b.title.toLowerCase().includes('revisited')).map(b=>b.title) },
+    ]},
+  { id:'numeric', label:'Numeric', note:'Scalars, range filters and aggregation (sum / avg) across a collection.',
+    items:[
+      { title:'Plain numeric field', desc:'Root-level number, no traversal needed.',
+        jp:'$.store.established', gr:'store.established', run:()=>data.store.established },
+      { title:'Numeric range filter', desc:'JSONPath filter expressions handle simple comparisons directly.',
+        jp:'$.store.books[?(@.price>10 && @.price<20)].title', gr:'store.books.findAll { it.price>10 && it.price<20 }.title',
+        run:()=>data.store.books.filter(b=>b.price>10&&b.price<20).map(b=>b.title) },
+      { title:'Deeply nested numeric', desc:'Coordinates buried inside two nested objects.',
+        jp:'$.store.location.coordinates.lat', gr:'store.location.coordinates.lat', run:()=>data.store.location.coordinates.lat },
+      { title:'Aggregate: sum of a field', desc:'Aggregation is Groovy territory \u2014 JSONPath has no sum().',
+        jp:null, gr:'store.books.collect { it.price }.sum()',
+        run:()=>+data.store.books.reduce((a,b)=>a+b.price,0).toFixed(2) },
+    ]},
+  { id:'date', label:'Date', note:'Dates usually arrive as ISO strings \u2014 comparisons need parsing, which JSONPath can\u2019t do.',
+    items:[
+      { title:'Raw date string', desc:'As-is, still just a string field until you parse it.',
+        jp:'$.store.books[0].publishedDate', gr:'store.books[0].publishedDate', run:()=>data.store.books[0].publishedDate },
+      { title:'Filter by date threshold', desc:'Parse both sides, then compare \u2014 pure Groovy, no JSONPath equivalent.',
+        jp:null, gr:"store.books.findAll { Date.parse('yyyy-MM-dd', it.publishedDate) < Date.parse('yyyy-MM-dd','1950-01-01') }.title",
+        run:()=>data.store.books.filter(b=>new Date(b.publishedDate) < new Date('1950-01-01')).map(b=>b.title) },
+      { title:'ISO datetime field', desc:'Full timestamp string; extract the year via substring or a formal parse.',
+        jp:'$.metadata.generatedAt', gr:'metadata.generatedAt.substring(0,4)', run:()=>data.metadata.generatedAt.substring(0,4) },
+    ]},
+  { id:'array', label:'Array', note:'Collecting a field across every element, sizes, flattening, and membership checks.',
+    items:[
+      { title:'Collect one field from every element', desc:'GPath\u2019s implicit spread: dot a property straight onto a list.',
+        jp:'$.store.books[*].title', gr:'store.books.title', run:()=>data.store.books.map(b=>b.title) },
+      { title:'Array field on one element', desc:'Just the tags list for a single book.',
+        jp:'$.store.books[0].tags', gr:'store.books[0].tags', run:()=>data.store.books[0].tags },
+      { title:'Array length', desc:'Groovy\u2019s .size() vs JSONPath\u2019s length() function (support varies by implementation).',
+        jp:'$.store.books.length()', gr:'store.books.size()', run:()=>data.store.books.length },
+      { title:'Flatten nested arrays', desc:'Every book has its own tags array \u2014 flatten collapses them into one list.',
+        jp:null, gr:'store.books.tags.flatten()', run:()=>[].concat(...data.store.books.map(b=>b.tags)) },
+      { title:'Membership check inside a filter', desc:'"in" tests whether a value sits inside a nested array.',
+        jp:null, gr:"store.books.findAll { 'classic' in it.tags }.title", run:()=>data.store.books.filter(b=>b.tags.includes('classic')).map(b=>b.title) },
+    ]},
+  { id:'object', label:'Object', note:'Nested objects, spreading a sub-field across a list, and null-safe navigation.',
+    items:[
+      { title:'Whole nested object', desc:'Return the object as-is, not a single field off it.',
+        jp:'$.store.books[0].rating', gr:'store.books[0].rating', run:()=>data.store.books[0].rating },
+      { title:'Field spread across a list, null-safe', desc:'One book has rating:null \u2014 safe navigation (?.) skips it instead of throwing NPE.',
+        jp:null, gr:'store.books*.rating?.average', run:()=>data.store.books.map(b=>b.rating ? b.rating.average : null) },
+      { title:'Filter inside a nested array', desc:'Reviews live one level inside each book \u2014 collect, then filter, then flatten.',
+        jp:null, gr:'store.books.collect { it.reviews.findAll { r -> r.rating==5 } }.flatten()',
+        run:()=>[].concat(...data.store.books.map(b=>b.reviews.filter(r=>r.rating===5))) },
+      { title:'Null-safe access with a fallback', desc:'Elvis operator (?:) supplies a default when the path resolves to null.',
+        jp:null, gr:"store.promotions?.discount ?: 'no promotions'", run:()=>(data.store.promotions && data.store.promotions.discount) || 'no promotions' },
+    ]},
+  { id:'bool', label:'Boolean / Null', note:'Filtering on flags and explicitly hunting for missing data.',
+    items:[
+      { title:'Filter on a boolean flag', desc:'Straight equality check against a boolean field.',
+        jp:'$.store.books[?(@.inStock==false)].title', gr:'store.books.findAll { it.inStock==false }.title',
+        run:()=>data.store.books.filter(b=>b.inStock===false).map(b=>b.title) },
+      { title:'Find records with a null field', desc:'Useful for asserting the API correctly represents "no rating yet".',
+        jp:null, gr:'store.books.findAll { it.rating==null }.title', run:()=>data.store.books.filter(b=>b.rating===null).map(b=>b.title) },
+      { title:'Check a top-level field is null', desc:'Confirms an optional object was omitted rather than empty.',
+        jp:'$.store.promotions', gr:'store.promotions == null', run:()=>data.store.promotions===null },
+    ]},
+  { id:'advanced', label:'Advanced', note:'Sorting, grouping, min/max and dedup \u2014 all Groovy, all common in real assertions.',
+    items:[
+      { title:'Filter then sort', desc:'Chain findAll into sort { } for a price-ordered result.',
+        jp:null, gr:"store.books.findAll { it.category=='adventure' }.sort { it.price }.title",
+        run:()=>data.store.books.filter(b=>b.category==='adventure').sort((a,b)=>a.price-b.price).map(b=>b.title) },
+      { title:'Group by a field', desc:'groupBy returns a map keyed by category \u2014 handy for coverage assertions.',
+        jp:null, gr:'store.books.groupBy { it.category }',
+        run:()=>{const m={};data.store.books.forEach(b=>{(m[b.category]=m[b.category]||[]).push(b.title);});return m;} },
+      { title:'Min / max by a field', desc:'Groovy\u2019s min{}/max{} take a closure to compare by.',
+        jp:null, gr:'store.books.max { it.price }.title', run:()=>data.store.books.reduce((a,b)=>b.price>a.price?b:a).title },
+      { title:'Unique values across nested arrays', desc:'Flatten every tags array, then dedupe.',
+        jp:null, gr:'store.books.tags.flatten().unique()', run:()=>[...new Set([].concat(...data.store.books.map(b=>b.tags)))] },
+    ]},
+];
+
+// ---------------- render tabs + panels ----------------
+const tabbar = document.getElementById('tabbar');
+const panels = document.getElementById('panels');
+
+categories.forEach((cat, ci) => {
+  const btn = document.createElement('button');
+  btn.textContent = cat.label;
+  btn.className = ci===0 ? 'active' : '';
+  btn.addEventListener('click', () => switchTab(cat.id));
+  tabbar.appendChild(btn);
+
+  const panel = document.createElement('div');
+  panel.className = 'panel' + (ci===0 ? ' active' : '');
+  panel.id = 'panel-' + cat.id;
+
+  let html = `<p class="panel-note">${cat.note}</p>`;
+  cat.items.forEach((item, ii) => {
+    const outId = `out-${cat.id}-${ii}`;
+    html += `<div class="qcard">
+      <h3>${item.title}</h3>
+      <p class="desc">${item.desc}</p>
+      <div class="exprs">
+        ${item.jp ? `<div class="expr-row"><span class="tag jp">JSONPath</span><code>${escapeHtml(item.jp)}</code></div>` : ''}
+        <div class="expr-row"><span class="tag gr">Groovy</span><code>${escapeHtml(item.gr)}</code></div>
+      </div>
+      <div class="qcard-foot">
+        <button class="run-btn" data-target="${outId}">Run ▶</button>
+      </div>
+      <div class="output" id="${outId}"><span class="lbl">Result</span></div>
+    </div>`;
+  });
+  panel.innerHTML = html;
+  panels.appendChild(panel);
+
+  // wire up run buttons for this category
+  cat.items.forEach((item, ii) => {
+    const outId = `out-${cat.id}-${ii}`;
+    const outEl = panel.querySelector('#'+outId);
+    const btnEl = panel.querySelector(`.run-btn[data-target="${outId}"]`);
+    btnEl.addEventListener('click', () => {
+      const showing = outEl.classList.contains('show');
+      if (showing) { outEl.classList.remove('show'); btnEl.textContent = 'Run ▶'; return; }
+      let result;
+      try { result = item.run(); } catch(e){ result = 'Error: ' + e.message; }
+      outEl.innerHTML = '<span class="lbl">Result</span>' + escapeHtml(
+        typeof result === 'string' ? result : JSON.stringify(result, null, 2)
+      );
+      outEl.classList.add('show');
+      btnEl.textContent = 'Hide ▲';
+    });
+  });
+});
+
+function switchTab(id){
+  document.querySelectorAll('.tabbar button').forEach((b,i)=>b.classList.toggle('active', categories[i].id===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+id));
+}
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

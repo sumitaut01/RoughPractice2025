@@ -96,8 +96,8 @@ public class Rough2 {
         System.out.println("printing 2");
         System.out.println(tm2);//{city=sneha}
 
-
-
-
     }
+
+
+
 }
