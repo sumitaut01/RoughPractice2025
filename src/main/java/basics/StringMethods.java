@@ -42,9 +42,14 @@ regardless of whether they live in SCP or heap.
         System.out.println(s1.equals(s2));//true
         System.out.println(s1.equals(s3));//true
 
+        System.out.println("Separator");
+        System.out.println(s1.matches("^Su"));//false... looking for fulll match
+        System.out.println(s1.matches("^Su.*"));//true... looking for fulll match
+        System.out.println(s1.matches(".*it"));//true
+        System.out.println(s1.matches("//d+"));//false
 
-
-
+        String sNum="123";
+        System.out.println(sNum.matches("\\d+"));//true
 
         System.out.println(s1.charAt(0));//s
         //System.out.println(s1.charAt(50));//StringIndexOutOfBoundsException

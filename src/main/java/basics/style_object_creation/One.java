@@ -1,4 +1,4 @@
-package basics.styleobject;
+package basics.style_object_creation;
 
 public class One {
 

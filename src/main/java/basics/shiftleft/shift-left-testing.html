@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shift-Left Testing — A Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B1F33;
+    --bg-panel: #0F2A45;
+    --bg-panel-2: #123151;
+    --grid-line: #1E3A5F;
+    --grid-line-soft: #16304f;
+    --accent: #5EEAD4;
+    --accent-dim: #2E6F66;
+    --accent-warm: #F5A623;
+    --text: #E8F1F8;
+    --text-muted: #8FA7C2;
+    --text-dim: #52698A;
+    --danger: #F0716B;
+    --radius: 3px;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    background-image:
+      linear-gradient(var(--grid-line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line-soft) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+  }
+
+  a { color: var(--accent); }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .page{ max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    margin: 0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:16px; height:1px;
+    background: var(--accent-dim);
+    display:inline-block;
+  }
+
+  h1,h2,h3{ font-family: var(--mono); font-weight:600; letter-spacing:-0.01em; margin:0; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 88px 0 64px;
+    border-bottom: 1px solid var(--grid-line);
+  }
+  .hero .eyebrow{ justify-content:flex-start; }
+  .hero h1{
+    font-size: clamp(34px, 6vw, 56px);
+    line-height: 1.05;
+    color: #fff;
+  }
+  .hero h1 span{ color: var(--accent); }
+  .dek{
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 46ch;
+    margin: 16px 0 48px;
+  }
+
+  /* ---------- TIMELINE DIAGRAM (signature element) ---------- */
+  .diagram{
+    background: var(--bg-panel);
+    border: 1px solid var(--grid-line);
+    border-radius: var(--radius);
+    padding: 28px 24px 22px;
+    overflow-x: auto;
+  }
+  .diagram-label{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 18px;
+  }
+  .phases{
+    display:flex;
+    min-width: 620px;
+    position: relative;
+  }
+  .phase{
+    flex:1;
+    text-align:center;
+    padding: 10px 4px 0;
+    position:relative;
+  }
+  .phase-box{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    border: 1px solid var(--grid-line);
+    background: var(--bg-panel-2);
+    border-radius: 2px;
+    padding: 8px 4px;
+    position:relative;
+    z-index:2;
+  }
+  .phase:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top: 24px; right: -50%;
+    width:100%; height:1px;
+    background: var(--grid-line);
+    z-index:1;
+  }
+  .brackets{ position:relative; height:34px; min-width:620px; margin-top:10px; }
+  .bracket{
+    position:absolute;
+    top:0; height:22px;
+    border: 1px solid;
+    border-top:none;
+    border-radius: 0 0 6px 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-align:center;
+    padding-top: 26px;
+    letter-spacing: 0.03em;
+  }
+  .bracket.traditional{
+    right: 0; width: 28.5%;
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+  }
+  .bracket.shifted{
+    left: 0; width: 71%;
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: slideIn 900ms cubic-bezier(.2,.8,.2,1) both;
+    animation-delay: 200ms;
+  }
+  @keyframes slideIn{
+    from{ transform: translateX(40%); opacity: 0; }
+    to{ transform: translateX(0); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bracket.shifted{ animation: none; }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-bottom: 1px solid var(--grid-line); }
+  section:last-of-type{ border-bottom: none; }
+  section h2{ font-size: clamp(22px, 3vw, 30px); color:#fff; margin-bottom: 18px; max-width: 22ch; }
+  section > p{ color: var(--text-muted); max-width: 62ch; font-size: 16px; }
+
+  .lede{ font-size:17px; color: var(--text); max-width: 66ch; }
+  .lede strong{ color: var(--accent); font-weight:600; }
+
+  /* ---------- COST CHART ---------- */
+  .cost-wrap{
+    display:flex; gap: 28px; align-items:flex-end;
+    margin-top: 40px; padding: 24px 20px 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--grid-line);
+    border-radius: var(--radius);
+    overflow-x:auto;
+  }
+  .cost-bar{
+    flex: 1; min-width: 84px;
+    display:flex; flex-direction:column; align-items:center;
+    gap: 10px;
+  }
+  .cost-bar .bar{
+    width: 100%;
+    max-width: 56px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%);
+    border-radius: 2px 2px 0 0;
+    position:relative;
+  }
+  .cost-bar:nth-child(4) .bar, .cost-bar:nth-child(5) .bar{
+    background: linear-gradient(180deg, var(--accent-warm) 0%, #7a5716 100%);
+  }
+  .cost-bar .value{
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    position:absolute; top:-22px; left:0; right:0; text-align:center;
+  }
+  .cost-bar .label{
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    text-align:center; padding-bottom: 14px;
+  }
+  .cost-note{ font-size: 13px; color: var(--text-dim); margin-top: 14px; }
+
+  /* ---------- TECHNIQUE GRID ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--grid-line);
+    border: 1px solid var(--grid-line);
+    margin-top: 36px;
+    border-radius: var(--radius);
+    overflow:hidden;
+  }
+  @media (max-width: 680px){ .grid{ grid-template-columns: 1fr; } }
+  .card{
+    background: var(--bg-panel);
+    padding: 22px 22px 24px;
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .card:hover{ background: var(--bg-panel-2); transform: translateY(-1px); }
+  .tag{
+    display:inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    background: rgba(94,234,212,0.06);
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .card h3{ font-size: 15.5px; color:#fff; margin-bottom: 8px; line-height:1.3; }
+  .card p{ margin:0; font-size: 14px; color: var(--text-muted); }
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist{ list-style:none; margin: 36px 0 0; padding:0; max-width: 640px; }
+  .checklist li{
+    display:flex; gap:14px; align-items:flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--grid-line);
+    font-size: 15px;
+    color: var(--text);
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .box{
+    flex:0 0 auto;
+    width:16px; height:16px; margin-top:3px;
+    border: 1px solid var(--accent-dim);
+    border-radius: 3px;
+    position:relative;
+  }
+  .checklist .box::after{
+    content:"";
+    position:absolute; left:3px; top:0px;
+    width:4px; height:8px;
+    border: solid var(--accent);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding: 48px 0 72px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <p class="eyebrow">// test-strategy.md</p>
+    <h1>Shift <span>Left</span> Testing</h1>
+    <p class="dek">Move quality checks earlier in the pipeline — so bugs get caught where they're cheap, not where they're expensive.</p>
+
+    <div class="diagram">
+      <div class="diagram-label">SDLC — where testing activities happen</div>
+      <div class="phases">
+        <div class="phase"><div class="phase-box">Plan</div></div>
+        <div class="phase"><div class="phase-box">Design</div></div>
+        <div class="phase"><div class="phase-box">Code</div></div>
+        <div class="phase"><div class="phase-box">Build</div></div>
+        <div class="phase"><div class="phase-box">Test</div></div>
+        <div class="phase"><div class="phase-box">Release</div></div>
+        <div class="phase"><div class="phase-box">Operate</div></div>
+      </div>
+      <div class="brackets">
+        <div class="bracket traditional">test-only window</div>
+        <div class="bracket shifted">shift-left window</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="definition">
+    <p class="eyebrow">01 — the idea</p>
+    <h2>What "shift left" actually means</h2>
+    <p class="lede">On a timeline drawn left-to-right, testing traditionally sits near the end — after code is "done." <strong>Shifting left</strong> means moving testing activities — unit tests, API tests, contract tests, static analysis, even requirement reviews — earlier, so a defect is caught the same day it's introduced instead of weeks later in a staging environment.</p>
+    <p>It isn't one tool or one sprint ritual. It's a habit: every time you'd normally wait for a build to test something, ask whether it can be checked one step earlier instead.</p>
+  </section>
+
+  <section id="why">
+    <p class="eyebrow">02 — why it matters</p>
+    <h2>The later a bug is caught, the more it costs to fix</h2>
+    <p>This is the whole argument for shift-left in one chart. The same defect, found at different stages, has wildly different cost to diagnose and fix — more people involved, more context lost, more systems already built on top of the bad assumption.</p>
+
+    <div class="cost-wrap">
+      <div class="cost-bar"><div class="bar" style="height:14px;"><span class="value">1×</span></div><div class="label">Requirements</div></div>
+      <div class="cost-bar"><div class="bar" style="height:30px;"><span class="value">3×</span></div><div class="label">Design</div></div>
+      <div class="cost-bar"><div class="bar" style="height:56px;"><span class="value">6×</span></div><div class="label">Code</div></div>
+      <div class="cost-bar"><div class="bar" style="height:130px;"><span class="value">15×</span></div><div class="label">Pre-release<br>test</div></div>
+      <div class="cost-bar"><div class="bar" style="height:250px;"><span class="value">30×+</span></div><div class="label">Production</div></div>
+    </div>
+    <p class="cost-note">Relative cost-to-fix by stage found — illustrative, not exact figures; the ratio, not the number, is the point.</p>
+  </section>
+
+  <section id="how">
+    <p class="eyebrow">03 — how to do it</p>
+    <h2>Shifting left in test automation, practically</h2>
+    <p>Not theory — concrete moves you can make in a Java/Selenium/TestNG/RestAssured-style stack, roughly ordered from "closest to the developer's keyboard" to "closest to CI."</p>
+
+    <div class="grid">
+      <div class="card">
+        <span class="tag">TDD · JUnit5 / TestNG</span>
+        <h3>Write the failing test first</h3>
+        <p>Devs write the unit test before the implementation. Logic is verified the moment it's written, not after a build lands in QA's queue.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Static analysis</span>
+        <h3>Lint before you commit</h3>
+        <p>SonarLint, Checkstyle, PMD run in the IDE and on a pre-commit hook, so a whole class of bugs never even reaches version control.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Contract testing · Pact</span>
+        <h3>Verify contracts before integration</h3>
+        <p>Consumer-driven contracts catch a breaking API change between two services before a full end-to-end environment exists to test them together.</p>
+      </div>
+      <div class="card">
+        <span class="tag">API-first · RestAssured</span>
+        <h3>Automate at the API layer before the UI exists</h3>
+        <p>Business logic can be exercised with RestAssured against a stubbed endpoint, weeks before there's a UI to click through with Selenium.</p>
+      </div>
+      <div class="card">
+        <span class="tag">CI/CD gate</span>
+        <h3>Run the suite on every pull request</h3>
+        <p>Wire the TestNG/Selenium suite into the pipeline as a merge gate — a PR fails fast instead of the bug surviving to staging.</p>
+      </div>
+      <div class="card">
+        <span class="tag">BDD · Three Amigos</span>
+        <h3>Write acceptance criteria before a line of code</h3>
+        <p>Dev, QA, and product write Gherkin scenarios during grooming — turning an ambiguous ticket into an executable spec everyone agrees on.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Service virtualization</span>
+        <h3>Mock the dependency you don't have yet</h3>
+        <p>WireMock or a stubbed service lets you test against an agreed contract before the real downstream system is ready or stable.</p>
+      </div>
+      <div class="card">
+        <span class="tag">SAST · dependency scan</span>
+        <h3>Shift security left too</h3>
+        <p>Static analysis and dependency-vulnerability scans run on every commit — not as a pre-release security audit two days before launch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="checklist">
+    <p class="eyebrow">04 — maturity check</p>
+    <h2>Are you actually shifted left, or just testing early UI builds?</h2>
+    <ul class="checklist">
+      <li><span class="box"></span> Unit tests block the build on failure — they don't just exist somewhere in the repo.</li>
+      <li><span class="box"></span> QA is in the room at story-grooming time, not brought in after dev calls it "done."</li>
+      <li><span class="box"></span> API/contract tests exist before UI automation is even written.</li>
+      <li><span class="box"></span> A pull request cannot merge without the automated suite passing.</li>
+      <li><span class="box"></span> Test environments and test data are provisioned by automation, not a ticket to another team.</li>
+      <li><span class="box"></span> Security and static-analysis scans run on every commit, not once before release.</li>
+    </ul>
+  </section>
+
+  <footer>
+    shift-left-testing.html — a quick reference, not a standard.
+  </footer>
+
+</div>
+</body>
+</html>

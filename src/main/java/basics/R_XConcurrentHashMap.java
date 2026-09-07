@@ -7,11 +7,13 @@ public class R_XConcurrentHashMap {
     public static void main(String[] args) {
         //thread safe hashmap
         // different locking mechanism
+        //null won't be allowed in key or value
 
         ConcurrentHashMap<String, String> chm=new ConcurrentHashMap<>();
 
         chm.put("Name", "Sumit");
         chm.put("LastName", "Raut");
+
 
         System.out.println(chm);//{LastName=Raut, Name=Sumit}
 

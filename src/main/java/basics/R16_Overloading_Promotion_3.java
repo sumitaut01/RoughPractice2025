@@ -6,7 +6,6 @@ public class R16_Overloading_Promotion_3 {
     public static void main(String[] args) {
 
         R16_Overloading_Promotion_3 ol=new R16_Overloading_Promotion_3();
-
         byte b=1;
         short s=2;
         char c='C';

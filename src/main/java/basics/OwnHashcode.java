@@ -5,7 +5,7 @@ public class OwnHashcode {
 //Object class has hashCode method
 //every class extends Object class and hence has access to hashCode method
 //In below example we are overriding it. 
-//hashcode mthod is a native method and has return type as integer
+//hashcode method is a native method and has return type as integer
 //In below example we are Overriding hashCode() method of Object class to return our own logic
 
 	int aadharNum;
@@ -22,6 +22,6 @@ public OwnHashcode(int aadharNum, String name) {
 
 	public static void main(String[] args) {
 		OwnHashcode hs = new OwnHashcode(101, "sumit");
-		System.out.println(hs.hashCode());
+		System.out.println(hs.hashCode());//101
 	}
 }

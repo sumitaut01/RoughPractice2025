@@ -8,7 +8,7 @@ public class R6_ConstructorInhertingClasses extends R5_ConstructorOverloading  {
 
     //calling parameterized constructor from parent
     R6_ConstructorInhertingClasses(int year){
-        super(23,"parent");
+       //super(23,"parent");
         this.year=year;
         System.out.println("Parameter Constructor of Child");
     }

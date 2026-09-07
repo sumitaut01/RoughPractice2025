@@ -1,14 +1,16 @@
 package basics.characters;
 
+import org.testng.annotations.Test;
+
 public class Ascii {
 
 
     public static void main(String[] args) {
 
-        for (int i=0;i<256;i++){
-            char ch=(char)i;
-            if(Character.isAlphabetic(ch)){
-                System.out.println(i +" "+ch);
+        for (int i = 0; i < 256; i++) {
+            char ch = (char) i;
+            if (Character.isAlphabetic(ch)) {
+                System.out.println(i + " " + ch);
             }
         }
     }
@@ -129,4 +131,30 @@ public class Ascii {
     //253 ý
     //254 þ
     //255 ÿ
+
+
+    @Test
+    public void Test() {
+        for(int i=0;i<5;i++){
+
+            System.out.println(i);
+            System.out.println((char)i);
+            System.out.println(Character.isDigit(i));
+
+        }
+    }
+
+
+    @Test
+    public void TestX() {
+        for(int i=0;i<5;i++){
+
+            System.out.println(i);
+            System.out.println((char)i);
+            System.out.println(Character.isDigit(i));
+
+        }
+    }
+
+
 }

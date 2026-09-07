@@ -19,7 +19,6 @@ public class R8_StaticBlock {
 
 
     static int age = 30;
-
     static {
         System.out.println("Executing first static block");
         age++;
