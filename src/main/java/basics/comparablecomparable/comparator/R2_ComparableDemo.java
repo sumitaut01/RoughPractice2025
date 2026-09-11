@@ -20,7 +20,6 @@ public class R2_ComparableDemo {
         lDem.add(d3);
         System.out.println(lDem);//[Dem{name='Sumit', age=12}, Dem{name='Amit', age=2}, Dem{name='Neha', age=23}]
 
-
         Collections.sort(lDem,aName);
         System.out.println(lDem);//[Dem{name='Amit', age=2}, Dem{name='Neha', age=23}, Dem{name='Sumit', age=12}]
 

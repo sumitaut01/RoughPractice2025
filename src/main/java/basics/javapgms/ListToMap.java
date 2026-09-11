@@ -14,8 +14,6 @@ public class ListToMap {
         names.add("Neha");
         names.add("Pooja");
         names.add("Raghav");
-
-
         System.out.println(names.stream().collect(Collectors.toMap( s->s,s->s.length())));
         //{Raghav=6, Neha=4, Pooja=5, Sumit=5}
 

@@ -3,20 +3,20 @@ package basics;
 public class R_XEnumWithConstructor {
 
     public static void main(String[] args) {
-        Personel personel=Personel.IT;
+        Personnel personel= Personnel.IT;
         System.out.println(personel.getName());
         System.out.println(personel.getRole());
     }
 }
 
 
-enum Personel{
+enum Personnel {
 
     IT("Sumit","Manager"),
     CS("Amit","Architect");
     String name,role;
 
-    Personel(String name,String role){
+    Personnel(String name, String role){
         this.name=name;
         this.role=role;
     }

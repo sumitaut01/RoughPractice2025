@@ -4,6 +4,7 @@ import org.testng.annotations.Test;
 
 import java.io.CharConversionException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,5 +49,38 @@ public class FirstNonRepeatingChar {
             }
             }
         }
-    }
+
+
+
+
+
+        @Test
+    public void Rough2(){
+
+            String str="aabbcdefcac";  // o/p d1
+
+            LinkedHashMap<Character,Integer> lhm=new LinkedHashMap<>();
+
+            for(int i=0;i<str.length();i++){
+                lhm.put(str.charAt(i),(lhm.getOrDefault(str.charAt(i), 0))+1);
+            }
+
+            Iterator<Character> it=lhm.keySet().iterator();
+
+              while(it.hasNext()){
+
+                  Character ch=it.next();
+                  if(lhm.get(ch)==1) {
+                      System.out.println(ch);
+                      break;
+                  }
+                  }
+              }
+
+
+
+
+
+        }
+
 

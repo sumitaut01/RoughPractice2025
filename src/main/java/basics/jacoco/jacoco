@@ -1,0 +1,104 @@
+JaCoCo is a Java code-coverage tool.
+Think of it as a measurement tool that watches your Java code while tests are running and tells you:
+
+"Which parts of the code were actually executed by the tests?"
+
+
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.13</version>
+
+    <executions>
+        <execution>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+
+        <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+For your Java + Maven + TestNG project, the easiest way is to add the JaCoCo Maven plugin.
+
+Step 1 — Add JaCoCo to pom.xml
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.13</version>
+
+    <executions>
+        <execution>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+
+        <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
+Put this inside:
+
+<build>
+    <plugins>
+        <!-- JaCoCo here -->
+    </plugins>
+</build>
+Step 2 — Run your tests
+
+From IntelliJ terminal:
+
+mvn clean test
+
+Your TestNG tests execute normally.
+
+JaCoCo watches them in the background.
+
+Step 3 — Open the report
+
+After the build:
+
+target/
+   site/
+      jacoco/
+         index.html
+
+Open:
+
+target/site/jacoco/index.html
+
+You'll get something like:
+
+Package       Class          Line    Branch
+------------------------------------------------
+service       UserService    85%     75%
+repository    UserRepo       92%     80%
+
+Then click UserService and JaCoCo shows which lines/branches were covered.

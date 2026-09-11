@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConcurrentHashMapDemo {
 
     public static void main(String[] args) {
-// we can crud while iterating which is not alowed in other ds
+// we can crud while iterating which is not allowed in other ds
 
         ConcurrentHashMap<String,String> cm=new ConcurrentHashMap<>();
         cm.put("name", "sumit");

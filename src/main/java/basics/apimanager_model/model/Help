@@ -1,0 +1,20 @@
+In programming, a Model class is generally a data-holder class. It represents the data of some entity.
+
+User is the Model because it represents what a User looks like.
+Model
+  ↓
+"What data does a User have?"
+
+User
+ ├── id
+ ├── name
+ ├── email
+ ├── age
+ └── role
+
+It generally doesn't contain business logic.
+
+User              → Model / data
+UserRepository    → stores & retrieves Users
+UserService       → business logic
+UserController    → API/request handling

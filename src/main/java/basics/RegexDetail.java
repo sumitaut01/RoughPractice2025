@@ -50,7 +50,7 @@ public class RegexDetail {
 		int count=0;
 		while(m.find()){
 
-			System.out.println(m.start() + " "+m.end());
+			System.out.println(m.start() + " "+m.end() + " "+m.group());
 			count++;
 		}
 

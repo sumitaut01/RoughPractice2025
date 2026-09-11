@@ -12,11 +12,8 @@ public class MMTTest01 {
 
 
         WebDriver driver=new ChromeDriver();
-
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         driver.manage().window().maximize();
-
-
         driver.get("https://www.makemytrip.com/");
       //  driver.get("https://www.makemytrip.com/flight/search?itinerary=DEL-BLR-30/05/2026&tripType=O&paxType=A-1_C-0_I-0&intl=false&cabinClass=E&lang=eng");
 
