@@ -14,7 +14,7 @@ public class R3_DataProvider {
 
     @DataProvider(name="custom")
     public Object[][] myMethod() {
-        Object data[][] = new Object[2][3];// 2 rows 3 columns. Columns point to paramter
+        Object data[][] = new Object[2][3];// 2 rows 3 columns. Columns point to parameter
         data[0][0] = "01firstpapra,";
         data[0][1] = "01secondparam";
         data[0][2] = "02thirdparam";

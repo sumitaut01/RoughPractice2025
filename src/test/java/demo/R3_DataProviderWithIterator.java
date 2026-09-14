@@ -33,8 +33,6 @@ public class R3_DataProviderWithIterator {
           hm.put(""+i,""+i);
           lHm.add( hm);
         }
-
-
         return lHm.iterator();
     }
 

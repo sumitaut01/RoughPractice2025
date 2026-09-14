@@ -6,8 +6,6 @@ import org.testng.annotations.Test;
 public class RoughNg {
     @Test(enabled = false)
     public void demo() {
-
-
     }
 
 

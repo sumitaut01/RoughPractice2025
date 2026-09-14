@@ -2,19 +2,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="All Test Suite">
     <test verbose="2" preserve-order="true"
-          name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo/R_XChild.java">
-
-
+          name="D:/SeleniumFrameWorks/GitHubSumitraut01/RoughPractice2025/src/test/java/demo/RX_Base_Child.java">
 
         <groups>
             <run>
-                <include name="grptest"/>
+                <include name="Test"/>
             </run>
         </groups>
-        <classes>
-            <class name="demo.R_XChild">
+        </groups>
+            <class name="demo.RX_Base_Child">
                 <methods>
-                    <include name="demo"/>
+                    <include name="Demo"/>
                 </methods>
             </class>
         </classes>
