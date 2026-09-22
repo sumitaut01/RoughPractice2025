@@ -1,0 +1,312 @@
+For API testing, don't think only "status code + response body." A good API test checks several layers.
+I would remember it as this:
+API TESTING
+│
+├── 1. Request
+├── 2. Response
+├── 3. Business logic
+├── 4. Data / Database
+├── 5. Security
+├── 6. Error handling
+├── 7. Performance
+└── 8. Integration
+1. Request validation
+Check whether the API accepts the correct:
+- HTTP method — GET, POST, PUT, PATCH, DELETE
+- URL/path parameters
+- Query parameters
+- Headers
+- Authentication token
+- Request body
+- Content-Type
+Example:
+POST /customers
+Content-Type: application/json
+Authorization: Bearer xxx
+Check what happens if:
+Missing token
+Wrong token
+Missing required field
+Wrong data type
+Invalid parameter
+Extra parameter
+Empty body
+Malformed JSON
+
+2. Status code
+Don't blindly expect 200.
+For example:
+200 → successful request
+201 → resource created
+204 → successful, no content
+400 → bad request
+401 → authentication problem
+403 → forbidden
+404 → resource not found
+409 → conflict
+422 → validation/business validation
+500 → server error
+And as we just discussed:
+3xx → redirects / caching-related responses
+
+3. Response body
+Check:
+Structure
+{
+  "id": 123,
+  "name": "John",
+  "country": "IN"
+}
+Are the expected fields present?
+Data types
+id       → integer
+name     → string
+active   → boolean
+Values
+Don't just check:
+.statusCode(200)
+Also validate business values.
+For example:
+.then()
+    .body("country", equalTo("IN"))
+    .body("price", greaterThan(0));
+
+
+4. Schema validation
+This is especially important in your RestAssured framework.
+Suppose the expected response is:
+{
+  "id": 123,
+  "name": "Laptop",
+  "price": 50000
+}
+You can validate the JSON schema.
+This catches things such as:
+price suddenly becomes String instead of Number
+required field disappears
+wrong nesting
+unexpected structure
+
+
+5. Business logic
+This is arguably the most important part.
+Suppose your API calculates pricing:
+Customer
+Country
+Discount
+     ↓
+GET/POST Pricing API
+     ↓
+Final Price
+Don't just verify:
+200 OK
+Verify:
+base price = ₹10,000
+discount = 10%
+expected price = ₹9,000
+actual price = ₹9,000
+This is where API testing provides real value.
+
+6. Database validation
+If an API creates a customer:
+POST /customers
+       ↓
+    API
+       ↓
+   Database
+You can verify that the database contains the correct record.
+For example:
+API response:
+customerId = 123
+Then:
+SELECT * FROM customers WHERE id = 123;
+Verify the stored values.
+This is particularly useful for CRUD APIs.
+
+
+7. Negative testing
+Very important.
+For every API, think:
+"How can I break this?"
+
+Examples:
+Missing mandatory field
+Null
+Empty string
+Negative number
+Very large number
+Wrong data type
+Invalid enum
+Invalid date
+Expired token
+Malformed JSON
+Non-existent ID
+Duplicate request
+For example:
+{
+    "age": "abc"
+}
+instead of:
+{
+    "age": 40
+}
+Verify that the API doesn't incorrectly accept it.
+
+
+8. Authentication & authorization
+Check:
+No token
+Invalid token
+Expired token
+Valid token
+User A accessing User B's resource
+Insufficient permissions
+For example:
+Admin → DELETE customer → allowed
+
+Normal user → DELETE customer → 403
+
+
+9. Headers
+Check important response headers:
+Content-Type
+Cache-Control
+ETag
+Location
+Authorization-related headers
+Correlation/Request ID
+For example, we just discussed:
+Cache-Control: max-age=60
+ETag: "abc123"
+And redirects:
+Location: /new-endpoint
+
+10. Error response
+Don't only check the status code.
+For:
+400 Bad Request
+check whether the response gives a useful, consistent error:
+{
+  "code": "INVALID_CUSTOMER",
+  "message": "Customer ID is required"
+}
+You can validate:
+status
+error code
+message
+field causing error
+response structure
+11. CRUD behavior
+For APIs managing resources, test the complete lifecycle:
+POST
+ ↓
+Create
+
+GET
+ ↓
+Verify
+
+PUT/PATCH
+ ↓
+Update
+
+GET
+ ↓
+Verify update
+
+DELETE
+ ↓
+Delete
+
+GET
+ ↓
+Verify 404
+This is a very common automation scenario.
+
+12. Pagination, filtering and sorting
+Suppose:
+GET /customers?page=2&size=20
+Test:
+page size
+page number
+first page
+last page
+empty page
+invalid page
+sorting
+filtering
+combination of filters
+And verify metadata if present:
+{
+  "data": [...],
+  "page": 2,
+  "size": 20,
+  "totalElements": 100
+}
+
+13. Performance
+You can check things like:
+Response time
+Throughput
+Concurrent requests
+Large payload
+Load
+Stress
+For example:
+.then()
+    .time(lessThan(2000L));
+But remember: a simple RestAssured response-time assertion is not a replacement for proper load testing with tools such as JMeter/Gatling.
+
+
+14. Idempotency
+This is a good senior-level interview topic.
+For example:
+PUT /customer/123
+Sending the same request multiple times should generally result in the same final state.
+But:
+POST /orders
+may create a new order each time unless an idempotency mechanism is provided.
+You should understand what behavior the API contract specifies.
+
+15. Caching
+As we just discussed:
+Cache-Control
+ETag
+If-None-Match
+304
+Cache expiry
+Test whether stale data is returned incorrectly and whether cache invalidation works as expected.
+
+16. Integration / chaining
+This is very common in real projects.
+For example:
+POST /customer
+      ↓
+extract customerId
+      ↓
+POST /order
+      ↓
+extract orderId
+      ↓
+GET /order/{orderId}
+      ↓
+verify
+In RestAssured:
+int customerId =
+    given()
+        .body(customerRequest)
+    .when()
+        .post("/customers")
+    .then()
+        .statusCode(201)
+        .extract()
+        .path("id");
+Then use that ID in the next request.
+The interview-friendly answer
+If someone asks:
+"What do you check during API testing?"
+
+You can answer:
+"I start with request validation—method, URL, headers, parameters, authentication and payload. Then I validate status codes, response headers, response structure and schema, followed by business logic and data validation. I cover positive and negative scenarios, authentication and authorization, error handling, CRUD and API chaining. Depending on the API, I also check pagination, caching, idempotency, performance and database integration."
+
+That's a much stronger answer than simply saying "I check status code, response body and response time."

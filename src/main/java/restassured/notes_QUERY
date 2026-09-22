@@ -1,0 +1,73 @@
+QUERY is a genuinely new HTTP method, standardized in June 2026 as RFC 10008. RFC Editor
+The easiest way to understand it is:
+QUERY = “GET, but I need to send a request body containing a complex query.”
+
+Why was QUERY needed?
+Normally, if you want to retrieve data:
+GET /users?name=John&age=40&city=Pune
+The query information goes into the URL.
+But imagine a very complex search:
+{
+  "filters": {
+    "age": {"min": 30, "max": 50},
+    "cities": ["Pune", "Mumbai", "Nagpur"],
+    "skills": ["Java", "Selenium", "AWS"]
+  },
+  "sort": ["experience", "salary"],
+  "pagination": {
+    "page": 3,
+    "size": 100
+  }
+}
+Putting all of that into a GET URL can become huge and awkward. HTTP implementations can also impose URI-size limits. RFC Editor
+So historically developers often did:
+POST /users/search
+Content-Type: application/json
+
+{
+   ...complex query...
+}
+But POST doesn't inherently tell intermediaries that this is a safe read-only query. POST can potentially modify server state and doesn't have the same safe/idempotent semantics as GET. RFC Editor
+QUERY fills the gap
+Now you can have:
+QUERY /users/search
+Content-Type: application/json
+
+{
+   "age": {"min": 30, "max": 50},
+   "cities": ["Pune", "Mumbai"],
+   "skills": ["Java", "Selenium"]
+}
+The important part is:
+Method	Request body	Safe?	Idempotent?
+GET	❌	✅	✅
+POST	✅	potentially ❌	potentially ❌
+QUERY	✅	✅	✅
+
+
+The RFC explicitly defines QUERY as safe and idempotent, while allowing the query itself to be carried in the request content. RFC Editor
+Why does "safe + idempotent" matter?
+Suppose:
+QUERY /products/search
+with a complicated body.
+Because it's a safe, idempotent operation, infrastructure can potentially:
+- retry the request automatically
+- cache results
+- restart the request
+- treat it as a read operation
+without worrying that repeating it will create/update/delete something. RFC Editor
+One important distinction
+QUERY is not simply another version of GET.
+GET means roughly:
+"Give me the representation of this resource."
+
+QUERY means:
+"Perform this query against this resource and give me the result."
+
+The request body defines the query. RFC Editor
+And this is particularly useful for things like large/complex searches, filtering, analytics-style queries, and APIs where a GET URL would become unwieldy.
+For your API-testing preparation, I would remember this interview sentence:
+“HTTP QUERY is a safe and idempotent method designed for read-only queries that need to carry complex query input in the request body, avoiding the limitations of putting everything into a GET URL or semantically using POST for a query.”
+
+Also, an API doesn't automatically support QUERY just because it is now standardized. A server has to implement it; OPTIONS can advertise support through the Allow header. RFC Editor
+I can also show you how QUERY would look in Rest Assured and how it differs from GET-with-query-params and POST-with-body, which would make this much easier to remember for interviews.

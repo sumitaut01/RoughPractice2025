@@ -309,20 +309,11 @@ public class RoughAll {
 
     @Test
     public void All(){
-
-
         WebDriver driver=new ChromeDriver();
-
         WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(20));
-
-
         driver.get("https://testautomationpractice.blogspot.com/");
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-
-
-
-
         WebElement sel= driver.findElement(By.xpath("//select[@id='country']"));
         Select select=new Select(sel);
         select.selectByVisibleText("India");
@@ -343,21 +334,24 @@ public class RoughAll {
 
         WebElement text=driver.findElement(By.xpath("//span[normalize-space()='Self-Paced Learning']"));
         wait.until(ExpectedConditions.elementToBeClickable(text));
-
-
         Actions act=new Actions(driver);
         act.moveToElement(text).click();
         System.out.println(driver.getTitle());
-
-
         System.out.println(driver.getTitle());
         WebElement element=driver.findElement(By.xpath("//a[contains(text(),'Udemy Courses')]"));
         wait.until(ExpectedConditions.elementToBeClickable(element));
         element.click();
-
-
-
         driver.quit();
+    }
+
+
+
+
+
+    @Test
+    public void Demo(){
+      WebDriver driver=new ChromeDriver();
+
 
 
 
