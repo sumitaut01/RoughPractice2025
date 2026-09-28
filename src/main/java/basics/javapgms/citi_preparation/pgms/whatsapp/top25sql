@@ -1,68 +1,1553 @@
-1
-Write a SQL query to find the names of all employees who work in the 'Sales' department
-select empname from employees where dept="Sales'
+# SQL Interview & Learning Notes — SDET / QA
 
-2
-Write a SQL query to find the average salary of employees in each department
-select dept_no,avg(sal) as avg_sal from employee
-group by dept_no
+---
 
+## 1. Find Employees in Sales Department
+**Q:** Write a SQL query to find the names of all employees who work in the `Sales` department.
 
-3
-Write a SQL query to get the order details along with the customer name for all orders.
-Query:
+### Query
 
-select  o.* from order o
-inner join custor c on
-o.cust_id=c.cust_id
+```sql
+SELECT emp_name
+FROM employees
+WHERE department = 'Sales';
+```
 
-4:
-Write a SQL query to find the employees who earn more than the average salary
-select e_id from employess wheere e.sal>( select acg(sal) from employee)
+### Learning Point
 
-5:
-Question 5: Nested Subquery
-Q: Write a SQL query to find the departments that have more than 5 employees.
+Use `WHERE` when filtering individual rows.
 
-select dept_name, count(*) from employess
-group by dept_name
-having count(*)>5
+```text
+SELECT → what columns?
+FROM   → which table?
+WHERE  → which rows?
+```
 
+---
 
-6:
-Write a SQL query to find employees whose salary is higher than the average salary of their respective department
+# 2. Average Salary of Employees in Each Department
 
-select e.sal from emp e where
-  e1.sal> ( select avg(e2.sal) from employee e2 where  e1.dept=e2.dept)
+**Q:** Write a SQL query to find the average salary of employees in each department.
 
-7:
-Q: Write a SQL query to find all pairs of employees who work in the same department.
+### Query
 
- select e1.* from emp e1
- inner join on emp e2
- where e1.dept=e2.dept
- and e1.id<>e2.id
+```sql
+SELECT dept_no,
+       AVG(salary) AS avg_salary
+FROM employees
+GROUP BY dept_no;
+```
 
+### Learning Point
 
- 8:
- Q: Write a SQL query to find all customers who have placed at least one order.
+When using an aggregate function such as:
 
- Query:
- SELECT name
- FROM customers c
- WHERE EXISTS (SELECT 1
- FROM orders o
- WHERE o.customer_id = c.customer_id);
+```sql
+AVG()
+SUM()
+COUNT()
+MAX()
+MIN()
+```
 
- So SELECT 1, SELECT *, or SELECT o.order_id would all work here,
- but SELECT 1 clearly communicates that we only care about existence.
+with another selected column, that column generally needs to be included in `GROUP BY`.
 
+Example:
 
- 9.
+```sql
+SELECT dept_no, AVG(salary)
+FROM employees
+GROUP BY dept_no;
+```
 
+Conceptually:
 
+```text
+Employees
+   ↓
+GROUP BY department
+   ↓
+Calculate AVG(salary)
+   ↓
+One result per department
+```
 
+---
 
+# 3. Order Details with Customer Name
 
+**Q:** Write a SQL query to get the order details along with the customer name for all orders.
 
+### Query
 
+```sql
+SELECT o.*,
+       c.customer_name
+FROM orders o
+INNER JOIN customers c
+ON o.customer_id = c.customer_id;
+```
+
+### Learning Point
+
+Here:
+
+```sql
+orders o
+customers c
+```
+
+`o` and `c` are table aliases.
+
+So:
+
+```sql
+o.customer_id
+```
+
+means:
+
+> `customer_id` from the `orders` table.
+
+And:
+
+```sql
+c.customer_id
+```
+
+means:
+
+> `customer_id` from the `customers` table.
+
+---
+
+# 4. Employees Earning More Than Average Salary
+
+**Q:** Write a SQL query to find employees who earn more than the average salary.
+
+### Query
+
+```sql
+SELECT employee_id,
+       employee_name
+FROM employees
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+);
+```
+
+### Learning Point
+
+The inner query executes conceptually first:
+
+```sql
+SELECT AVG(salary)
+FROM employees;
+```
+
+Suppose it returns:
+
+```text
+60000
+```
+
+Then the outer query effectively becomes:
+
+```sql
+SELECT employee_id, employee_name
+FROM employees
+WHERE salary > 60000;
+```
+
+This is a **subquery**.
+
+---
+
+# 5. Departments Having More Than 5 Employees
+
+**Q:** Write a SQL query to find departments that have more than 5 employees.
+
+### Query
+
+```sql
+SELECT department,
+       COUNT(*) AS employee_count
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 5;
+```
+
+### Important Learning Point
+
+`WHERE` filters **rows before grouping**.
+
+`HAVING` filters **groups after GROUP BY**.
+
+Remember:
+
+```text
+WHERE
+  ↓
+GROUP BY
+  ↓
+HAVING
+```
+
+Example:
+
+```sql
+WHERE salary > 50000
+```
+
+filters individual employees.
+
+Whereas:
+
+```sql
+HAVING COUNT(*) > 5
+```
+
+filters departments.
+
+---
+
+# 6. Employees Whose Salary Is Higher Than Their Department Average
+
+**Q:** Find employees whose salary is higher than the average salary of their respective department.
+
+### Query
+
+```sql
+SELECT e.employee_name,
+       e.salary,
+       e.department
+FROM employees e
+WHERE e.salary >
+(
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.department = e.department
+);
+```
+
+### Learning Point
+
+This is a **correlated subquery**.
+
+The inner query depends on the current row of the outer query.
+
+Conceptually:
+
+```text
+Employee A
+   ↓
+Find Employee A's department
+   ↓
+Calculate average salary of that department
+   ↓
+Compare Employee A's salary
+```
+
+Then it repeats for the next employee.
+
+### Important Difference
+
+Normal subquery:
+
+```sql
+SELECT AVG(salary)
+FROM employees;
+```
+
+Calculates **one company-wide average**.
+
+Correlated subquery:
+
+```sql
+SELECT AVG(e2.salary)
+FROM employees e2
+WHERE e2.department = e.department;
+```
+
+Calculates the average for the **current employee's department**.
+
+---
+
+# 7. Self Join — Employees in the Same Department
+
+**Q:** Write a SQL query to find all pairs of employees who work in the same department.
+
+### Query
+
+```sql
+SELECT e1.employee_name AS employee1,
+       e2.employee_name AS employee2,
+       e1.department
+FROM employees e1
+JOIN employees e2
+ON e1.department = e2.department
+WHERE e1.employee_id <> e2.employee_id;
+```
+
+### Learning Point
+
+We are joining the table with **itself**.
+
+```text
+employees e1
+     ↕
+employees e2
+```
+
+Why?
+
+Because we want to compare one employee with another employee from the same table.
+
+### Why this condition?
+
+```sql
+e1.employee_id <> e2.employee_id
+```
+
+Without it, an employee would match with themselves.
+
+---
+
+# 8. Customers Who Have Placed At Least One Order
+
+**Q:** Write a SQL query to find all customers who have placed at least one order.
+
+### Query
+
+```sql
+SELECT customer_name
+FROM customers c
+WHERE EXISTS
+(
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+```
+
+### Learning Point — EXISTS
+
+`EXISTS` checks whether the subquery returns **at least one row**.
+
+We don't actually care what value is returned.
+
+Therefore:
+
+```sql
+SELECT 1
+```
+
+is commonly used.
+
+These would also work:
+
+```sql
+SELECT 1
+SELECT *
+SELECT o.order_id
+```
+
+But:
+
+```sql
+SELECT 1
+```
+
+clearly communicates:
+
+> I only care whether a matching row exists.
+
+### Conceptually
+
+```text
+Customer
+   ↓
+Does an order exist for this customer?
+   ↓
+YES → return customer
+NO  → don't return customer
+```
+
+---
+
+# 9. Employees in HR or Finance
+
+**Q:** Find the names/IDs of employees who work in `HR` or `Finance` using the `IN` clause.
+
+### Query
+
+```sql
+SELECT employee_id,
+       employee_name
+FROM employees
+WHERE department IN ('HR', 'Finance');
+```
+
+### Equivalent Query
+
+Without `IN`:
+
+```sql
+SELECT employee_id,
+       employee_name
+FROM employees
+WHERE department = 'HR'
+   OR department = 'Finance';
+```
+
+`IN` makes multiple-value filtering cleaner.
+
+---
+
+# 10. UNION vs UNION ALL
+
+## UNION
+
+`UNION` combines results of two or more `SELECT` queries and **removes duplicate rows**.
+
+```sql
+SELECT name
+FROM employees
+WHERE department = 'Marketing'
+
+UNION
+
+SELECT name
+FROM employees
+WHERE department = 'IT';
+```
+
+## UNION ALL
+
+`UNION ALL` combines results and **keeps duplicates**.
+
+```sql
+SELECT name
+FROM employees
+WHERE department = 'Marketing'
+
+UNION ALL
+
+SELECT name
+FROM employees
+WHERE department = 'IT';
+```
+
+### Example
+
+Marketing:
+
+```text
+Amit
+Neha
+```
+
+IT:
+
+```text
+Neha
+Ravi
+```
+
+### UNION
+
+```text
+Amit
+Neha
+Ravi
+```
+
+### UNION ALL
+
+```text
+Amit
+Neha
+Neha
+Ravi
+```
+
+### Important Interview Point
+
+Both `SELECT` statements must have:
+
+1. Same number of columns
+2. Compatible data types
+
+### Easy Way to Remember
+
+```text
+UNION      → removes duplicates
+UNION ALL  → retains duplicates
+```
+
+---
+
+# 11. GROUP BY with HAVING
+
+**Q:** Find departments with an average salary greater than 60000.
+
+### Query
+
+```sql
+SELECT department,
+       AVG(salary) AS average_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 60000;
+```
+
+### Learning Point
+
+You cannot normally use an aggregate condition such as:
+
+```sql
+WHERE AVG(salary) > 60000
+```
+
+because `WHERE` works before grouping.
+
+Use:
+
+```sql
+HAVING AVG(salary) > 60000
+```
+
+because `HAVING` filters grouped results.
+
+---
+
+# 12. Window Function — Top 3 Employees from Each Department
+
+**Q:** Find the top 3 employees from each department based on salary.
+
+### Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT employee_name,
+           department,
+           salary,
+           RANK() OVER
+           (
+               PARTITION BY department
+               ORDER BY salary DESC
+           ) AS rnk
+    FROM employees
+) ranked
+WHERE rnk <= 3;
+```
+
+### Learning Point
+
+This is a **Window Function**.
+
+Important syntax:
+
+```sql
+RANK() OVER
+(
+    PARTITION BY department
+    ORDER BY salary DESC
+)
+```
+
+### What does PARTITION BY do?
+
+It creates separate groups for the window calculation.
+
+```text
+IT
+ ├── Employee A
+ ├── Employee B
+ └── Employee C
+
+HR
+ ├── Employee D
+ ├── Employee E
+ └── Employee F
+```
+
+The ranking starts again for each department.
+
+### Window Functions to Revisit
+
+```sql
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+LEAD()
+LAG()
+```
+
+### Important Difference
+
+```text
+ROW_NUMBER → unique sequential number
+RANK       → same rank for ties, gaps possible
+DENSE_RANK → same rank for ties, no gaps
+```
+
+---
+
+# 13. CTE — Common Table Expression
+
+**Q:** Write a SQL query using CTE to find the total number of employees in each department.
+
+### Query
+
+```sql
+WITH dept_count AS
+(
+    SELECT department,
+           COUNT(*) AS employee_count
+    FROM employees
+    GROUP BY department
+)
+SELECT *
+FROM dept_count;
+```
+
+### Learning Point
+
+CTE syntax:
+
+```sql
+WITH name AS
+(
+    SELECT ...
+)
+SELECT ...
+FROM name;
+```
+
+Think of the CTE as a temporary named result that can be referenced by the main query.
+
+Conceptually:
+
+```text
+WITH dept_count
+       ↓
+Create result
+       ↓
+SELECT * FROM dept_count
+```
+
+---
+
+# 14. DELETE with Subquery
+
+**Q:** Delete all employees who have not placed any orders.
+
+### Query
+
+```sql
+DELETE FROM employees
+WHERE employee_id NOT IN
+(
+    SELECT DISTINCT employee_id
+    FROM orders
+);
+```
+
+### Learning Point
+
+The subquery identifies employees who **have orders**.
+
+The outer query uses:
+
+```sql
+NOT IN
+```
+
+to delete employees who are not present in that list.
+
+### Interview Caution
+
+`NOT IN` can behave unexpectedly if the subquery returns `NULL`.
+
+An alternative using `NOT EXISTS` is often safer:
+
+```sql
+DELETE FROM employees e
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM orders o
+    WHERE o.employee_id = e.employee_id
+);
+```
+
+---
+
+# 15. UPDATE — Increase Sales Salary by 10%
+
+**Q:** Update salaries of employees in the Sales department by 10%.
+
+### Query
+
+```sql
+UPDATE employees
+SET salary = salary * 1.10
+WHERE department = 'Sales';
+```
+
+### Learning Point
+
+10% increase:
+
+```text
+Old salary × 1.10
+```
+
+Example:
+
+```text
+50000 × 1.10 = 55000
+```
+
+---
+
+# 16. INSERT INTO ... VALUES
+
+### Q: Insert a new employee
+
+```sql
+INSERT INTO employees
+(employee_id, name, salary, department)
+VALUES
+(101, 'Sumit', 1000, 'IT');
+```
+
+### Multiple Rows
+
+```sql
+INSERT INTO employees
+(employee_id, name, salary, department)
+VALUES
+(101, 'Sumit', 1000, 'IT'),
+(102, 'Amit', 2000, 'HR'),
+(103, 'Neha', 3000, 'Finance');
+```
+
+### Learning Point
+
+`INSERT ... VALUES` is used when we already know the values we want to insert.
+
+---
+
+# 17. INSERT INTO ... SELECT
+
+**Q:** Insert into `high_salary_employees` all employees earning more than 70000.
+
+### Query
+
+```sql
+INSERT INTO high_salary_employees
+(employee_id, name, salary, department)
+SELECT employee_id,
+       name,
+       salary,
+       department
+FROM employees
+WHERE salary > 70000;
+```
+
+### Learning Point
+
+There are two major INSERT styles:
+
+### 1. INSERT ... VALUES
+
+Manually specified data:
+
+```sql
+INSERT INTO users
+(user_id, username, status)
+VALUES
+(1, 'testuser', 'ACTIVE');
+```
+
+### 2. INSERT ... SELECT
+
+Copy rows from another table/query:
+
+```sql
+INSERT INTO high_salary_employees
+(employee_id, name, salary, department)
+SELECT employee_id,
+       name,
+       salary,
+       department
+FROM employees
+WHERE salary > 70000;
+```
+
+The `SELECT` can return:
+
+```text
+0 rows
+1 row
+100 rows
+10,000 rows
+```
+
+and all matching rows can be inserted.
+
+### QA Testing Usage
+
+This is commonly useful for creating test data:
+
+```sql
+INSERT INTO users
+(user_id, username, status)
+VALUES
+(1, 'testuser', 'ACTIVE');
+```
+
+For backup/copying:
+
+```sql
+INSERT INTO users_backup
+SELECT *
+FROM users;
+```
+
+---
+
+# 18. Complex JOIN with Subquery
+
+**Q:** Find names of employees who have placed orders totaling more than 10000.
+
+## Solution 1 — JOIN with Derived Table
+
+```sql
+SELECT e.name
+FROM employees e
+JOIN
+(
+    SELECT employee_id
+    FROM orders
+    GROUP BY employee_id
+    HAVING SUM(amount) > 10000
+) o
+ON e.employee_id = o.employee_id;
+```
+
+### Important Learning Point
+
+A subquery in the `FROM` clause behaves like a **temporary result table**.
+
+This is called a:
+
+> **Derived Table**
+
+For example:
+
+```sql
+JOIN
+(
+    SELECT employee_id
+    FROM orders
+    GROUP BY employee_id
+    HAVING SUM(amount) > 10000
+) o
+```
+
+The result of:
+
+```sql
+SELECT employee_id
+FROM orders
+GROUP BY employee_id
+HAVING SUM(amount) > 10000
+```
+
+is treated like a table named:
+
+```text
+o
+```
+
+Conceptually:
+
+```text
+orders
+   ↓
+GROUP BY employee_id
+   ↓
+SUM(amount)
+   ↓
+HAVING SUM(amount) > 10000
+   ↓
+Derived table "o"
+   ↓
+JOIN employees
+```
+
+### Important Interview Question
+
+**Do we need an actual physical table after JOIN?**
+
+No.
+
+You can join:
+
+```sql
+JOIN employees e
+```
+
+or a derived table:
+
+```sql
+JOIN
+(
+    SELECT ...
+) o
+```
+
+because the subquery produces a result set that can be treated as a table for the query.
+
+---
+
+## Solution 2 — Correlated Subquery
+
+```sql
+SELECT e.name
+FROM employees e
+WHERE
+(
+    SELECT SUM(amount)
+    FROM orders o
+    WHERE o.employee_id = e.employee_id
+) > 10000;
+```
+
+### Learning Point
+
+This solution checks each employee's total orders individually.
+
+```text
+Employee
+   ↓
+Find their orders
+   ↓
+SUM(amount)
+   ↓
+Compare with 10000
+```
+
+---
+
+# 19. LEFT JOIN with COALESCE
+
+**Q:** List all customers and their order amounts, displaying `0` for customers with no orders.
+
+### Query
+
+```sql
+SELECT c.customer_name,
+       COALESCE(SUM(o.amount), 0) AS total_amount
+FROM customers c
+LEFT JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+```
+
+### Why LEFT JOIN?
+
+We want **all customers**, even customers who don't have orders.
+
+```text
+LEFT JOIN
+    ↓
+Keep every row from left table
+```
+
+### Why COALESCE?
+
+If a customer has no matching orders:
+
+```sql
+SUM(o.amount)
+```
+
+may produce:
+
+```text
+NULL
+```
+
+We want:
+
+```text
+0
+```
+
+So:
+
+```sql
+COALESCE(SUM(o.amount), 0)
+```
+
+means:
+
+> If SUM is NULL, return 0.
+
+### Example
+
+```text
+Customer    Orders
+Amit        5000
+Neha        NULL
+```
+
+After COALESCE:
+
+```text
+Amit        5000
+Neha        0
+```
+
+---
+
+# 20. FULL OUTER JOIN
+
+**Q:** Find all customers and their orders, including customers with no orders and orders with no customers.
+
+### Query
+
+```sql
+SELECT c.customer_name,
+       o.order_id,
+       o.order_date
+FROM customers c
+FULL OUTER JOIN orders o
+ON c.customer_id = o.customer_id;
+```
+
+### Learning Point
+
+`FULL OUTER JOIN` keeps:
+
+```text
+Matching customers/orders
++
+Customers without orders
++
+Orders without customers
+```
+
+Conceptually:
+
+```text
+Customers        Orders
+    \              /
+     \            /
+      FULL JOIN
+```
+
+---
+
+# 21. PIVOT — Conditional Aggregation
+
+**Q:** Pivot employee count by department and gender.
+
+Some databases support a dedicated `PIVOT` operation. In MySQL, conditional aggregation can be used instead.
+
+### Query
+
+```sql
+SELECT department,
+       SUM(CASE
+               WHEN gender = 'Male' THEN 1
+               ELSE 0
+           END) AS male_count,
+
+       SUM(CASE
+               WHEN gender = 'Female' THEN 1
+               ELSE 0
+           END) AS female_count
+FROM employees
+GROUP BY department;
+```
+
+### Learning Point
+
+`CASE` allows us to conditionally count rows.
+
+For example:
+
+```sql
+CASE
+    WHEN gender = 'Male' THEN 1
+    ELSE 0
+END
+```
+
+means:
+
+```text
+Male   → 1
+Female → 0
+```
+
+Then `SUM()` adds those values.
+
+---
+
+# 22. UNPIVOT — Using UNION ALL
+
+**Q:** Unpivot department employee counts into department, gender and count.
+
+### Query
+
+```sql
+SELECT department,
+       'Male' AS gender,
+       COUNT(*) AS employee_count
+FROM employees
+WHERE gender = 'Male'
+GROUP BY department
+
+UNION ALL
+
+SELECT department,
+       'Female' AS gender,
+       COUNT(*) AS employee_count
+FROM employees
+WHERE gender = 'Female'
+GROUP BY department;
+```
+
+### Learning Point
+
+`UNION ALL` combines the male and female result sets while preserving rows.
+
+---
+
+# 23. JSON Data Handling
+
+**Q:** Extract a value from a JSON column.
+
+## MySQL
+
+```sql
+SELECT id,
+       JSON_EXTRACT(data, '$.name') AS name
+FROM json_table;
+```
+
+## PostgreSQL
+
+For PostgreSQL, JSON operators are commonly used:
+
+```sql
+SELECT id,
+       data->>'name' AS name
+FROM json_table;
+```
+
+### Learning Point
+
+For PostgreSQL:
+
+```sql
+data->'name'
+```
+
+returns JSON.
+
+```sql
+data->>'name'
+```
+
+returns the value as text.
+
+Example JSON:
+
+```json
+{
+    "name": "Sumit",
+    "age": 39
+}
+```
+
+```sql
+data->>'name'
+```
+
+returns:
+
+```text
+Sumit
+```
+
+---
+
+# 24. XML Data Handling
+
+**Q:** Extract a value from an XML column.
+
+A commonly seen MySQL-style example is:
+
+```sql
+SELECT id,
+       EXTRACTVALUE(xml_data, '/employee/name') AS name
+FROM xml_table;
+```
+
+### Interview Note
+
+XML functions are **database-specific**. Always check which database the interviewer is asking about because MySQL, PostgreSQL, Oracle, etc. have different XML syntax/functions.
+
+---
+
+# 25. Recursive Query — Employee Hierarchy
+
+**Q:** Write a recursive SQL query to get a hierarchy of employees and their managers.
+
+### Query
+
+```sql
+WITH RECURSIVE EmployeeHierarchy AS
+(
+    -- Anchor query
+    SELECT employee_id,
+           employee_name,
+           manager_id
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive query
+    SELECT e.employee_id,
+           e.employee_name,
+           e.manager_id
+    FROM employees e
+    JOIN EmployeeHierarchy eh
+    ON e.manager_id = eh.employee_id
+)
+SELECT *
+FROM EmployeeHierarchy;
+```
+
+### Learning Point
+
+A recursive CTE has two main parts:
+
+### 1. Anchor Query
+
+Find the starting/root employees:
+
+```sql
+WHERE manager_id IS NULL
+```
+
+### 2. Recursive Query
+
+Find employees reporting to those employees:
+
+```sql
+JOIN EmployeeHierarchy eh
+ON e.manager_id = eh.employee_id
+```
+
+Conceptually:
+
+```text
+CEO
+ ↓
+Manager
+ ↓
+Team Lead
+ ↓
+Employee
+```
+
+Recursive CTE keeps going until there are no more matching employees.
+
+### Common Use Cases
+
+```text
+Employee → Manager hierarchy
+Organization charts
+Folder structures
+Category trees
+Parent → Child relationships
+```
+
+---
+
+# SQL Concepts to Revise for SDET Interviews
+
+## JOINs
+
+```text
+INNER JOIN
+LEFT JOIN
+RIGHT JOIN
+FULL OUTER JOIN
+SELF JOIN
+CROSS JOIN
+```
+
+### Remember
+
+```text
+INNER JOIN
+→ Matching rows only
+
+LEFT JOIN
+→ Everything from left + matching right
+
+RIGHT JOIN
+→ Everything from right + matching left
+
+FULL OUTER JOIN
+→ Everything from both sides
+```
+
+---
+
+# Subqueries
+
+```text
+Single-row subquery
+Multiple-row subquery
+Nested subquery
+Correlated subquery
+Derived table
+EXISTS
+NOT EXISTS
+IN
+NOT IN
+```
+
+### Important distinction
+
+```text
+Subquery
+→ A query inside another query
+
+Correlated subquery
+→ Inner query depends on outer query
+
+Derived table
+→ Subquery used in FROM/JOIN
+
+EXISTS
+→ Checks whether at least one row exists
+```
+
+---
+
+# GROUP BY / HAVING
+
+Remember the logical flow:
+
+```text
+FROM
+ ↓
+WHERE
+ ↓
+GROUP BY
+ ↓
+HAVING
+ ↓
+SELECT
+ ↓
+ORDER BY
+```
+
+Most important distinction:
+
+```text
+WHERE  → filters rows
+HAVING → filters groups
+```
+
+---
+
+# Set Operators
+
+```text
+UNION
+UNION ALL
+INTERSECT
+EXCEPT
+```
+
+For PostgreSQL:
+
+```text
+MINUS
+```
+
+is generally represented by:
+
+```sql
+EXCEPT
+```
+
+### Remember
+
+```text
+UNION
+→ Removes duplicates
+
+UNION ALL
+→ Keeps duplicates
+```
+
+---
+
+# Window Functions
+
+Revisit:
+
+```sql
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+LEAD()
+LAG()
+```
+
+Especially practice:
+
+```text
+Top N employees per department
+Nth highest salary
+Second highest salary
+Running total
+Previous/next record
+Duplicate detection
+```
+
+---
+
+# CTE
+
+Basic:
+
+```sql
+WITH name AS
+(
+    SELECT ...
+)
+SELECT ...
+FROM name;
+```
+
+Recursive:
+
+```sql
+WITH RECURSIVE name AS
+(
+    ...
+)
+```
+
+---
+
+# Important SQL Interview Problems for QA/SDET
+
+These are worth practicing repeatedly:
+
+```text
+1.  Second highest salary
+2.  Nth highest salary
+3.  Duplicate employees
+4.  Delete duplicate records
+5.  Employees earning above average
+6.  Employees earning above department average
+7.  Top 3 employees from each department
+8.  Employees without a manager
+9.  Customers without orders
+10. Employees without orders
+11. Department-wise employee count
+12. Department-wise average salary
+13. Source vs Destination validation
+14. UNION vs UNION ALL
+15. INTERSECT / EXCEPT
+16. Self Join
+17. Correlated Subquery
+18. EXISTS / NOT EXISTS
+19. IN / NOT IN
+20. LEFT JOIN + COALESCE
+21. Running total using Window Functions
+22. LAG / LEAD
+23. Pivot / Unpivot
+24. JSON extraction
+25. Recursive CTE
+```
+
+# Quick Mental Model
+
+When you see a SQL interview question, first identify **what operation they are testing**:
+
+```text
+Need filtering?
+        → WHERE
+
+Need grouping?
+        → GROUP BY
+
+Need filtering after grouping?
+        → HAVING
+
+Need another table?
+        → JOIN
+
+Need compare against another query?
+        → SUBQUERY
+
+Need check existence?
+        → EXISTS
+
+Need compare rows within same table?
+        → SELF JOIN
+
+Need ranking?
+        → WINDOW FUNCTION
+
+Need temporary query result?
+        → CTE / DERIVED TABLE
+
+Need combine query results?
+        → UNION / UNION ALL / EXCEPT
+
+Need hierarchy?
+        → RECURSIVE CTE
+```
+
+# Key Interview Mindset
+
+Don't just memorize the query.
+
+For every query, understand:
+
+```text
+1. What is the question asking?
+2. Which table(s) do I need?
+3. Do I need JOIN?
+4. Do I need filtering?
+5. Do I need GROUP BY?
+6. Do I need HAVING?
+7. Do I need a subquery?
+8. Is the subquery correlated?
+9. Do I need a window function?
+10. What will the intermediate result look like?
+```
+
+The goal is to be able to **build the query from the requirement**, rather than recall the exact syntax.
