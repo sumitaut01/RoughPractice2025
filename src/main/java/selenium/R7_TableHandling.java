@@ -24,5 +24,8 @@ public class R7_TableHandling {
             }
             System.out.println("");
         }
+
+
+        driver.quit();
     }
 }

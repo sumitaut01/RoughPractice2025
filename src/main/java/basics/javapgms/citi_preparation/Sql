@@ -1,0 +1,335 @@
+https://dev.to/sureshayyanna/top-25-sql-interview-question-for-sdet-2jlk
+
+SQL Interview Questions and Answers
+Question 1: Basic SELECT Query
+Q: Write a SQL query to find the names of all employees who work in the 'Sales' department.
+Query:
+SELECT name
+FROM employees
+WHERE department = 'Sales';
+Question 2: Aggregate Function
+
+Q: Write a SQL query to find the average salary of employees in each department.
+Query:
+SELECT department, AVG(salary) AS average_salary
+FROM employees
+GROUP BY department;
+
+Question 3: JOIN Query
+Q: Write a SQL query to get the order details along with the customer name for all orders.
+Query:
+SELECT orders.order_id, orders.order_date, customers.name AS customer_name
+FROM orders
+INNER JOIN customers ON orders.customer_id = customers.customer_id;
+
+Question 4: Subquery
+Q: Write a SQL query to find the employees who earn more than the average salary.
+Query:
+SELECT name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+
+Question 5: Nested Subquery
+Q: Write a SQL query to find the departments that have more than 5 employees.
+
+Query:
+SELECT department
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 5;
+
+
+Question 6: Correlated Subquery
+Q: Write a SQL query to find employees whose salary is higher than the average salary of their respective department.
+
+Query:
+SELECT e1.name, e1.salary, e1.department
+FROM employees e1
+WHERE e1.salary > (SELECT AVG(e2.salary)
+FROM employees e2
+WHERE e2.department = e1.department);
+
+Question 7: Self JOIN
+Q: Write a SQL query to find all pairs of employees who work in the same department.
+
+Query:
+SELECT e1.name AS employee1, e2.name AS employee2, e1.department
+FROM employees e1
+INNER JOIN employees e2 ON e1.department = e2.department
+WHERE e1.employee_id <> e2.employee_id;
+
+Question 8: Using EXISTS
+Q: Write a SQL query to find all customers who have placed at least one order.
+
+Query:
+SELECT name
+FROM customers c
+WHERE EXISTS (SELECT 1
+FROM orders o
+WHERE o.customer_id = c.customer_id);
+
+
+Question 9: Using IN
+Q: Write a SQL query to find the names of employees who work in 'HR' or 'Finance' departments using the IN clause.
+Query:
+SELECT name
+FROM employees
+WHERE department IN ('HR', 'Finance');
+
+Question 10: UNION
+Q: Write a SQL query to combine the results of two queries: one that selects all employees in the 'Marketing' department
+ and another that selects all employees in the 'IT' department.
+Query:
+SELECT name
+FROM employees
+WHERE department = 'Marketing'
+UNION
+SELECT name
+FROM employees
+WHERE department = 'IT';
+
+
+Question 11: CASE Statement
+Q: Write a SQL query to list employee names along with their salary status ('High' if salary > 50000, 'Low' otherwise).
+Query:
+SELECT name,
+CASE
+WHEN salary > 50000 THEN 'High'
+ELSE 'Low'
+END AS salary_status
+FROM employees;
+
+Question 12: GROUP BY with HAVING
+Q: Write a SQL query to find departments with an average salary greater than 60000.
+Query:
+SELECT department, AVG(salary) AS average_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 60000;
+
+Question 13: Window Function
+Q: Write a SQL query to find the top 3 highest salaries in each department.
+Query:
+SELECT name, department, salary
+FROM (
+SELECT name, department, salary,
+RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS rank
+FROM employees
+) ranked
+WHERE rank <= 3;
+
+
+Question 14: CTE (Common Table Expression)
+Q: Write a SQL query using CTE to find the total number of employees in each department.
+
+Query:
+WITH dept_count AS (
+SELECT department, COUNT(*) AS num_employees
+FROM employees
+GROUP BY department
+)
+SELECT *
+FROM dept_count;
+Question 15: DELETE with Subquery
+Q: Write a SQL query to delete all employees who have not placed any orders.
+
+Query:
+DELETE FROM employees
+WHERE employee_id NOT IN (
+SELECT DISTINCT employee_id
+FROM orders
+);
+Question 16: UPDATE with JOIN
+Q: Write a SQL query to update the salaries of employees by 10% in the 'Sales' department.
+
+Query:
+UPDATE employees
+SET salary = salary * 1.10
+WHERE department = 'Sales';
+Question 17: INSERT with SELECT
+Q: Write a SQL query to insert into a new table high_salary_employees all employees who earn more than 70000.
+
+Query:
+INSERT INTO high_salary_employees (employee_id, name, salary, department)
+SELECT employee_id, name, salary, department
+FROM employees
+WHERE salary > 70000;
+Question 18: Complex JOIN with Subquery
+Q: Write a SQL query to find the names of employees who have placed orders totaling more than 10000.
+
+Query:
+SELECT e.name
+FROM employees e
+JOIN (SELECT employee_id, SUM(amount) AS total_amount
+FROM orders
+GROUP BY employee_id
+HAVING SUM(amount) > 10000) o
+ON e.employee_id = o.employee_id;
+Question 19: LEFT JOIN with COALESCE
+Q: Write a SQL query to list all customers and their order amounts, displaying 0 for customers with no orders.
+
+Query:
+SELECT c.name, COALESCE(SUM(o.amount), 0) AS total_amount
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.name;
+Question 20: FULL OUTER JOIN
+Q: Write a SQL query to find all customers and their orders, including customers with no orders and orders with no customers.
+
+Query:
+SELECT c.name AS customer_name, o.order_id, o.order_date
+FROM customers c
+FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;
+Question 21: PIVOT (MySQL does not support PIVOT directly, so using conditional aggregation)
+Q: Write a SQL query to pivot the employee count by department and gender.
+
+Query:
+SELECT department,
+SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) AS male_count,
+SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) AS female_count
+FROM employees
+GROUP BY department;
+Question 22: UNPIVOT (Simulated using UNION ALL)
+Q: Write a SQL query to unpivot department employee counts into a single column of department and gender.
+
+Query:
+SELECT department, 'Male' AS gender, COUNT(*) AS count
+FROM employees
+WHERE gender = 'Male'
+GROUP BY department
+
+UNION ALL
+
+SELECT department, 'Female' AS gender, COUNT(*) AS count
+FROM employees
+WHERE gender = 'Female'
+GROUP BY department;
+Question 23: JSON Data Handling
+Q: Write a SQL query to extract a value from a JSON column in a table.
+
+Query:
+SELECT id, json_extract(data, '$.name') AS name
+FROM json_table;
+Question 24: XML Data Handling
+Q: Write a SQL query to extract a value from an XML column in a table.
+
+Query:
+SELECT id, extractvalue(xml_data, '/employee/name') AS name
+FROM xml_table;
+Question 25: Recursive Query
+Q: Write a recursive SQL query to get a hierarchy of employees and their managers.
+
+Query:
+WITH RECURSIVE EmployeeHierarchy AS (
+SELECT employee_id, name, manager_id
+FROM employees
+WHERE manager_id IS NULL
+UNION ALL
+SELECT e.employee_id, e.name, e.manager_id
+FROM employees e
+JOIN EmployeeHierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT * FROM EmployeeHierarchy;
+These questions and answers should provide a comprehensive understanding of how to handle various SQL scenarios, including queries and subqueries. These are often used in interviews to gauge your proficiency in SQL.
+
+
+
+/*
+
+
+what does union and minus does in postgres
+
+In PostgreSQL, UNION and MINUS (called EXCEPT in PostgreSQL) are set operators used to combine or compare results from multiple queries.
+
+1. UNION
+Combines rows from two queries and removes duplicates.
+
+1. UNION
+
+Combines rows from two queries and removes duplicates.
+
+Example
+SELECT city FROM customers
+UNION
+SELECT city FROM suppliers;
+
+If:
+
+customers
+
+city
+Pune
+Nagpur
+Mumbai
+
+suppliers
+
+city
+Mumbai
+Delhi
+Pune
+
+Result:
+
+city
+Pune
+Nagpur
+Mumbai
+Delhi
+
+Notice duplicates (Pune, Mumbai) appear only once.
+
+
+
+Union All:
+
+UNION ALL
+Keeps duplicates.
+SELECT city FROM customers
+UNION ALL
+SELECT city FROM suppliers;
+
+Result:
+
+city
+Pune
+Nagpur
+Mumbai
+Mumbai
+Delhi
+Pune
+
+
+2. MINUS / EXCEPT
+
+In Oracle, the operator is called MINUS.
+
+In PostgreSQL, use EXCEPT.
+
+Returns rows from the first query that are not present in the second query.
+
+Example
+SELECT city FROM customers
+EXCEPT
+SELECT city FROM suppliers;
+
+Result:
+
+city
+Nagpur
+
+Because:
+
+Pune exists in both → removed
+Mumbai exists in both → removed
+Nagpur exists only in customers → returned
+
+
+
+INTERSECT
+
+(Common in interviews)
+
+SELECT city FROM customers
+INTERSECT
+SELECT city FROM suppliers;

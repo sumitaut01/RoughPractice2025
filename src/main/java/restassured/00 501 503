@@ -1,0 +1,37 @@
+In API testing, 501 and 503 are both 5xx server-side errors, but they mean very different things.
+
+Code	Meaning	When you get it	Typical testing example
+501	Not Implemented	Server does not support the requested functionality/method	API doesn't support PATCH, OPTIONS, or some extension method
+503	Service Unavailable	Server temporarily cannot handle requests	Server is down, under maintenance, overloaded, or a dependency/resource is unavailable
+1. 501 — Not Implemented
+
+Think:
+
+"The server doesn't know/support how to do this."
+
+For example, your API supports:
+
+GET /users
+POST /users
+PUT /users
+DELETE /users
+
+But you send:
+
+PATCH /users/123
+
+and the server has no implementation for PATCH.
+
+Request
+   ↓
+PATCH /users/123
+   ↓
+Server
+   ↓
+"PATCH functionality is not implemented"
+   ↓
+501 Not Implemented
+
+HTTP specifies that 501 can be used when the server doesn't recognize/support the request method.
+If the server does recognize the method but doesn't allow it for that particular resource,
+405 Method Not Allowed is generally the appropriate response instead

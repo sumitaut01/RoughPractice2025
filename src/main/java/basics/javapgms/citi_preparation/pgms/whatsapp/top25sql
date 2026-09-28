@@ -1,0 +1,68 @@
+1
+Write a SQL query to find the names of all employees who work in the 'Sales' department
+select empname from employees where dept="Sales'
+
+2
+Write a SQL query to find the average salary of employees in each department
+select dept_no,avg(sal) as avg_sal from employee
+group by dept_no
+
+
+3
+Write a SQL query to get the order details along with the customer name for all orders.
+Query:
+
+select  o.* from order o
+inner join custor c on
+o.cust_id=c.cust_id
+
+4:
+Write a SQL query to find the employees who earn more than the average salary
+select e_id from employess wheere e.sal>( select acg(sal) from employee)
+
+5:
+Question 5: Nested Subquery
+Q: Write a SQL query to find the departments that have more than 5 employees.
+
+select dept_name, count(*) from employess
+group by dept_name
+having count(*)>5
+
+
+6:
+Write a SQL query to find employees whose salary is higher than the average salary of their respective department
+
+select e.sal from emp e where
+  e1.sal> ( select avg(e2.sal) from employee e2 where  e1.dept=e2.dept)
+
+7:
+Q: Write a SQL query to find all pairs of employees who work in the same department.
+
+ select e1.* from emp e1
+ inner join on emp e2
+ where e1.dept=e2.dept
+ and e1.id<>e2.id
+
+
+ 8:
+ Q: Write a SQL query to find all customers who have placed at least one order.
+
+ Query:
+ SELECT name
+ FROM customers c
+ WHERE EXISTS (SELECT 1
+ FROM orders o
+ WHERE o.customer_id = c.customer_id);
+
+ So SELECT 1, SELECT *, or SELECT o.order_id would all work here,
+ but SELECT 1 clearly communicates that we only care about existence.
+
+
+ 9.
+
+
+
+
+
+
+

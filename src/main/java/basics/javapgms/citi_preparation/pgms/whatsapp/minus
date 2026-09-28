@@ -1,0 +1,13 @@
+with sources as source
+(select empname,edept from employee),
+
+with sources as destination
+select empname,edept from employee,
+
+select * from source
+minus
+select * from destination
+
+--pattern matching
+SELECT * from employee where email like ‘%xyz.com’;
+

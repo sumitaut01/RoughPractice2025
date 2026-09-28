@@ -23,6 +23,7 @@ public class JavaScriptExecutor {
         TakesScreenshot sc=(TakesScreenshot) driver;
         File file=sc.getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(file, new File("D:\\Resurrection 2025.png"));
+        driver.quit();
     }
 
 
@@ -42,6 +43,9 @@ public class JavaScriptExecutor {
         js.executeScript("console.log('message sent from selenium')");
 
         System.out.println("wait");
+
+
+        driver.quit();
 
 
     }

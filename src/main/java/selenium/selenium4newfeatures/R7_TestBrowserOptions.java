@@ -31,6 +31,9 @@ public class R7_TestBrowserOptions {
 		driver.get("https://selenium.dev/");
 		
 		System.out.println(driver.getTitle());
+
+
+		driver.quit();
 		
 		
 		

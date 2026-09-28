@@ -193,7 +193,7 @@ FROM (
 WHERE dr = 1;
 
 
-Using a CTE
+#Using a CTE
 
 WITH ranked AS (
     SELECT

@@ -1,0 +1,4 @@
+select empid,count(*) from employee
+group by empid
+having count(*)>1
+

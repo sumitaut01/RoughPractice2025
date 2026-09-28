@@ -125,6 +125,14 @@ amount  |rnk|
      COALESCE(phone, email, alternate_contact, 'No contact') AS preferred_contact
  FROM temp_contacts;
 
+ SQL checks values from left to right:
+
+ phone
+ email
+ alternate_contact
+ 'No contact'
+ and returns the first one that is not NULL
+
 
  --limit and off set
 

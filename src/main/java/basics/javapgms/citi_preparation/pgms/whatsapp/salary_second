@@ -1,0 +1,7 @@
+select max(salary) from emp where salary <(select max(salary) from emp)
+
+select distinct(a.sal) from emp a
+where 1=(select count(distinct(b.sal) from emp b
+where b.sal>a.sal)
+
+

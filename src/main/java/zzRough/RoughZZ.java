@@ -147,4 +147,22 @@ public class RoughZZ {
         return data;
     }
 
+
+
+    @Test
+    public void moveZero() {
+
+        int arr[] = {0,1,4,0,5};
+        int j=0;
+        for(int i=0;i<arr.length;i++){
+          if(arr[i]!=0){
+              int temp=arr[i];
+              arr[j]=arr[i];
+              arr[i]=arr[i];
+
+              j++;
+          }
+        }
+    }
+
 }

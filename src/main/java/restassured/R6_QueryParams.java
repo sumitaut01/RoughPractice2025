@@ -33,8 +33,16 @@ public class R6_QueryParams {
         request.queryParam("role","admin");
         request.accept(ContentType.JSON);
 
-
         request.log().all();
+
+        /*
+        Request method:	GET
+Request URI:	http://localhost:8089/api/user?id=1&role=admin
+Proxy:			<none>
+Request params:	<none>
+Query params:	id=1
+				role=admin
+         */
 
         Response response = request.get();
         System.out.println(response.getStatusCode());
@@ -44,7 +52,7 @@ public class R6_QueryParams {
 
 
 
-
+        wireMockServer.stop();
 
     }
 }

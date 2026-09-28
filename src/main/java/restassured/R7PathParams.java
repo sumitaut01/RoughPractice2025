@@ -16,7 +16,7 @@ public class R7PathParams {
         //Prefer suing path parameter for pathsegments:
 
 
-                WireMockServer wireMockServer = new WireMockServer(8089);
+                WireMockServer wireMockServer = new WireMockServer(8090);
                 wireMockServer.start();
                 wireMockServer.stubFor(post(urlEqualTo("/api/1/user/create"))
                         .withHeader("Content-Type", equalTo("application/json"))
@@ -36,6 +36,11 @@ public class R7PathParams {
         request.pathParam("endPoint", "1");
 
         request.body("{ \"name\": \"Sumit\" }");
+        request.log().all();
+        /*
+
+
+         */
         Response response = request.post("{endPoint}"+"/user/create");
 
 
@@ -44,6 +49,7 @@ public class R7PathParams {
 
 
 
+        wireMockServer.stop();
 
             }
         }
