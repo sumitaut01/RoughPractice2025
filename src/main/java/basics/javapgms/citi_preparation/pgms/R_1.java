@@ -3,6 +3,7 @@ package basics.javapgms.citi_preparation.pgms;
 import org.testng.annotations.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class R_1 {
 
@@ -893,36 +894,36 @@ arr[0] arr [0]
     }
 
     @Test
-    public void firstNonRepeatedChar(){
+    public void firstNonRepeatedChar() {
 
         //First Non-Repeated Character in a String
         //swiss  w
 
-        String str="swiss";
-        LinkedHashMap<Character,Integer> lhm=new LinkedHashMap<>();
+        String str = "swiss";
+        LinkedHashMap<Character, Integer> lhm = new LinkedHashMap<>();
 
-        for(Character c:str.toCharArray()){
+        for (Character c : str.toCharArray()) {
 
-            if(lhm.containsKey(c)){
-                lhm.put(c, lhm.get(c)+1);
-            }
-            else{
+            if (lhm.containsKey(c)) {
+                lhm.put(c, lhm.get(c) + 1);
+            } else {
                 lhm.put(c, 1);
             }
         }
 
-        for(Character c: lhm.keySet()){
-            if(lhm.get(c)==1){
+        for (Character c : lhm.keySet()) {
+            if (lhm.get(c) == 1) {
 
-                System.out.println(c + " "+lhm.get(c));//w1
+                System.out.println(c + " " + lhm.get(c));//w1
                 return;
-            }
-            else{
+            } else {
                 System.out.println("no singles");
             }
         }
-    }
 
+        //via stream
+        System.out.println(lhm.entrySet().stream().filter((entry -> entry.getValue() == 1)).map(entry -> entry.getKey()).findFirst().orElse(null));
+    }
 
     @Test
     public void removeAllWhiteSpaces(){
@@ -970,27 +971,26 @@ arr[0] arr [0]
         //Java program to find the longest without repeating characters
         String s1 = "abcabcbb"; // Expected: "abc", length 3
 
-        //a  i    j i
-        //str max  str len
-        //curren
 
-        String temp="";
-        for(int i=0;i<s1.length();i++){
-          int curr=0;
-          int max=0;
-          for(int j=i;i<s1.length();j++){
 
-             if(temp.indexOf(s1.charAt(j)==--1))
-              {
-                  temp = temp + s1.charAt(j);
-                  curr++;
-              }
-          }
 
-        }
+
+
+
+
     }
 
-}
+    @Test
+    public void streamFilter(){
+        Map<String,Integer> hm=Map.of("a",4,"b",1,"c",5,"d",1);
+        System.out.println(hm.entrySet().stream().filter(entry -> entry.getValue() == 1).findFirst().orElse(null));//b=1
+        System.out.println(hm.entrySet().stream().filter(entry -> entry.getValue() == 1).collect(Collectors.toList()));//[d=1, b=1]
+        System.out.println(hm.entrySet().stream().filter(entry->entry.getValue()==1).map(entry->entry.getKey()).findFirst().orElse(null));
+    }
+        }
+
+
+
 
 
 

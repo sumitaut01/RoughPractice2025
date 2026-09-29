@@ -1,0 +1,138 @@
+In Oracle, MINUS returns rows that exist in the first query but not in the second query.
+
+Example:
+SELECT empname, edept
+FROM source
+
+MINUS
+SELECT empname, edept
+FROM destination;
+
+Result:
+
+Rows present in source
+But not present in destination
+
+PostgreSQL does NOT support MINUS
+PostgreSQL uses EXCEPT instead.
+
+Equivalent query:
+
+SELECT empname, edept
+FROM source
+
+EXCEPT
+
+SELECT empname, edept
+FROM destination;
+
+Example
+source
+empname	edept
+John	IT
+Mary	HR
+David	Sales
+
+destination
+empname	edept
+John	IT
+David	Sales
+
+Query:
+SELECT empname, edept
+FROM source
+
+EXCEPT
+
+SELECT empname, edept
+FROM destination;
+
+Output:
+
+empname	edept
+Mary	HR
+
+Because (Mary, HR) exists only in source.
+
+Duplicate Handling
+
+EXCEPT behaves like DISTINCT.
+
+source
+id
+1
+1
+2
+destination
+id
+2
+SELECT id FROM source
+EXCEPT
+SELECT id FROM destination;
+
+Output:
+
+id
+1
+
+Only one 1 is returned.
+
+To Keep Duplicates
+
+Use EXCEPT ALL:
+
+SELECT id FROM source
+EXCEPT ALL
+SELECT id FROM destination;
+
+Example:
+
+source
+id
+1
+1
+2
+
+destination
+id
+1
+
+Output:
+id
+1
+2
+
+One occurrence of 1 is removed.
+
+Common QA/DB Testing Use Case
+
+Compare source and destination tables after ETL:
+
+-- Records present in source but missing in destination
+SELECT *
+FROM source_table
+
+EXCEPT
+
+SELECT *
+FROM destination_table;
+
+And reverse:
+
+-- Records present in destination but not in source
+SELECT *
+FROM destination_table
+
+EXCEPT
+
+SELECT *
+FROM source_table;
+
+If both queries return 0 rows, the tables contain the same data (assuming same columns and compatible data types).
+
+Interview One-Liner
+
+Oracle: MINUS
+PostgreSQL / SQL Server: EXCEPT
+
+Both return rows from the first query that are not present in the second query
